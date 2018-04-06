@@ -1,4 +1,4 @@
-package mil.nga.geopackage.projection;
+package mil.nga.sf.proj;
 
 import java.util.HashMap;
 import java.util.Map;
