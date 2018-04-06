@@ -1,4 +1,0 @@
-CREATE TABLE nga_table_index (
-  table_name TEXT NOT NULL PRIMARY KEY,
-  last_indexed DATETIME
-);
