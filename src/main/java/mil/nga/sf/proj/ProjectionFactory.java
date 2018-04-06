@@ -6,8 +6,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import mil.nga.geopackage.GeoPackageException;
-import mil.nga.geopackage.core.srs.SpatialReferenceSystem;
+import mil.nga.sf.util.SFException;
 
 import org.osgeo.proj4j.CRSFactory;
 import org.osgeo.proj4j.CoordinateReferenceSystem;
@@ -214,7 +213,7 @@ public class ProjectionFactory {
 						projection = fromName(authorityProjections, code);
 
 						if (projection == null) {
-							throw new GeoPackageException(
+							throw new SFException(
 									"Failed to create projection for authority: "
 											+ authority + ", code: " + code
 											+ ", definition: " + definition
@@ -455,28 +454,6 @@ public class ProjectionFactory {
 	 */
 	private static String coordinateName(String authority, String code) {
 		return authority.toUpperCase() + ":" + code;
-	}
-
-	/**
-	 * Get the projection for the Spatial Reference System
-	 * 
-	 * @param srs
-	 *            spatial reference system
-	 * @return projection
-	 * @since 1.1.8
-	 */
-	public static Projection getProjection(SpatialReferenceSystem srs) {
-
-		String authority = srs.getOrganization();
-		long code = srs.getOrganizationCoordsysId();
-		String definition = srs.getDefinition_12_063();
-		if (definition == null) {
-			definition = srs.getDefinition();
-		}
-
-		Projection projection = getProjection(authority, code, null, definition);
-
-		return projection;
 	}
 
 }

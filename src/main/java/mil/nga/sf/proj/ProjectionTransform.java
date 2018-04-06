@@ -3,8 +3,8 @@ package mil.nga.sf.proj;
 import java.util.ArrayList;
 import java.util.List;
 
-import mil.nga.geopackage.BoundingBox;
 import mil.nga.sf.Geometry;
+import mil.nga.sf.GeometryEnvelope;
 import mil.nga.sf.Point;
 
 import org.osgeo.proj4j.CoordinateTransform;
@@ -120,22 +120,22 @@ public class ProjectionTransform {
 	}
 
 	/**
-	 * Transform the bounding box
+	 * Transform the geometry envelope
 	 * 
-	 * @param boundingBox
-	 *            bounding box
-	 * @return bounding box
+	 * @param envelope
+	 *            geometry envelope
+	 * @return geometry envelope
 	 */
-	public BoundingBox transform(BoundingBox boundingBox) {
+	public GeometryEnvelope transform(GeometryEnvelope envelope) {
 
-		ProjCoordinate lowerLeft = new ProjCoordinate(
-				boundingBox.getMinLongitude(), boundingBox.getMinLatitude());
-		ProjCoordinate lowerRight = new ProjCoordinate(
-				boundingBox.getMaxLongitude(), boundingBox.getMinLatitude());
-		ProjCoordinate upperRight = new ProjCoordinate(
-				boundingBox.getMaxLongitude(), boundingBox.getMaxLatitude());
-		ProjCoordinate upperLeft = new ProjCoordinate(
-				boundingBox.getMinLongitude(), boundingBox.getMaxLatitude());
+		ProjCoordinate lowerLeft = new ProjCoordinate(envelope.getMinX(),
+				envelope.getMinY());
+		ProjCoordinate lowerRight = new ProjCoordinate(envelope.getMaxX(),
+				envelope.getMinY());
+		ProjCoordinate upperRight = new ProjCoordinate(envelope.getMaxX(),
+				envelope.getMaxY());
+		ProjCoordinate upperLeft = new ProjCoordinate(envelope.getMinX(),
+				envelope.getMaxY());
 
 		ProjCoordinate projectedLowerLeft = transform(lowerLeft);
 		ProjCoordinate projectedLowerRight = transform(lowerRight);
@@ -147,10 +147,10 @@ public class ProjectionTransform {
 		double minY = Math.min(projectedLowerLeft.y, projectedLowerRight.y);
 		double maxY = Math.max(projectedUpperLeft.y, projectedUpperRight.y);
 
-		BoundingBox projectedBoundingBox = new BoundingBox(minX, minY, maxX,
-				maxY);
+		GeometryEnvelope projectedGeometryEnvelope = new GeometryEnvelope(minX,
+				minY, maxX, maxY);
 
-		return projectedBoundingBox;
+		return projectedGeometryEnvelope;
 	}
 
 	/**

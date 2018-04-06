@@ -60,7 +60,7 @@ public class ProjectionFactoryTest {
 		}
 
 		try {
-			ProjectionFactory.getProjection(authorityCode++);
+			ProjectionFactory.getProjection(authority, authorityCode++);
 			TestCase.fail("Invalid projection did not fail");
 		} catch (Exception e) {
 			// pass

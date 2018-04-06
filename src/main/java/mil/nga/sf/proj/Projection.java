@@ -1,7 +1,5 @@
 package mil.nga.sf.proj;
 
-import mil.nga.geopackage.core.srs.SpatialReferenceSystem;
-
 import org.osgeo.proj4j.CoordinateReferenceSystem;
 import org.osgeo.proj4j.parser.Proj4Keyword;
 import org.osgeo.proj4j.proj.LongLatProjection;
@@ -129,20 +127,6 @@ public class Projection {
 	public ProjectionTransform getTransformation(String authority, long code) {
 		Projection projectionTo = ProjectionFactory.getProjection(authority,
 				code);
-		return getTransformation(projectionTo);
-	}
-
-	/**
-	 * Get the transformation from this Projection to the Spatial Reference
-	 * System. Each thread of execution should have it's own transformation.
-	 * 
-	 * @param srs
-	 *            spatial reference system
-	 * @return projection transform
-	 * @since 1.1.8
-	 */
-	public ProjectionTransform getTransformation(SpatialReferenceSystem srs) {
-		Projection projectionTo = ProjectionFactory.getProjection(srs);
 		return getTransformation(projectionTo);
 	}
 

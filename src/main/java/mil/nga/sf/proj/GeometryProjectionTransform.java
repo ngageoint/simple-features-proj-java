@@ -1,6 +1,5 @@
 package mil.nga.sf.proj;
 
-import mil.nga.geopackage.GeoPackageException;
 import mil.nga.sf.CircularString;
 import mil.nga.sf.CompoundCurve;
 import mil.nga.sf.Geometry;
@@ -15,6 +14,7 @@ import mil.nga.sf.Polygon;
 import mil.nga.sf.PolyhedralSurface;
 import mil.nga.sf.TIN;
 import mil.nga.sf.Triangle;
+import mil.nga.sf.util.SFException;
 
 import org.osgeo.proj4j.ProjCoordinate;
 
@@ -91,8 +91,7 @@ public class GeometryProjectionTransform {
 			to = toCollection;
 			break;
 		default:
-			throw new GeoPackageException("Unsupported Geometry Type: "
-					+ geometryType);
+			throw new SFException("Unsupported Geometry Type: " + geometryType);
 		}
 
 		return to;
