@@ -11,11 +11,31 @@ Software source code previously released under an open source license and then m
 
 ### About ###
 
-[Simple Features Projection](http://ngageoint.github.io/simple-features-proj-java/) is a Java library for performing projection conversions between Simple Feature Geometries.
+[Simple Features Projection](http://ngageoint.github.io/simple-features-proj-java/) is a Java library for performing projection conversions between [Simple Feature](https://github.com/ngageoint/simple-features-java) Geometries.
 
 ### Usage ###
 
 View the latest [Javadoc](http://ngageoint.github.io/simple-features-proj-java/docs/api/)
+
+#### Transform ####
+
+```java
+
+//Geometry geometry = ...
+
+Projection projection1 = ProjectionFactory.getProjection(
+    ProjectionConstants.AUTHORITY_EPSG,
+    ProjectionConstants.EPSG_WEB_MERCATOR);
+Projection projection2 = ProjectionFactory.getProjection(
+    ProjectionConstants.AUTHORITY_EPSG,
+    ProjectionConstants.EPSG_WORLD_GEODETIC_SYSTEM);
+
+ProjectionTransform transform = new ProjectionTransform(
+    projection1, projection2);
+
+Geometry transformed = transform.transform(geometry);
+
+```
 
 ### Installation ###
 
@@ -36,3 +56,7 @@ Pull from the [Maven Central Repository](http://search.maven.org/#artifactdetail
 Build this repository using Eclipse and/or Maven:
 
     mvn clean install
+
+### Remote Dependencies ###
+
+* [Simple Features](https://github.com/ngageoint/simple-features-java) (The MIT License (MIT)) - Simple Features Lib
