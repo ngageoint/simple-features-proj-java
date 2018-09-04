@@ -2,6 +2,8 @@ package mil.nga.sf.proj;
 
 import mil.nga.sf.CircularString;
 import mil.nga.sf.CompoundCurve;
+import mil.nga.sf.Curve;
+import mil.nga.sf.CurvePolygon;
 import mil.nga.sf.Geometry;
 import mil.nga.sf.GeometryCollection;
 import mil.nga.sf.GeometryType;
@@ -35,6 +37,7 @@ public class GeometryProjectionTransform {
 	 * Constructor
 	 * 
 	 * @param transform
+	 *            projection transform
 	 */
 	public GeometryProjectionTransform(ProjectionTransform transform) {
 		this.transform = transform;
@@ -44,6 +47,7 @@ public class GeometryProjectionTransform {
 	 * Transform the geometry
 	 * 
 	 * @param geometry
+	 *            geometry
 	 * @return projected geometry
 	 */
 	public Geometry transform(Geometry geometry) {
@@ -76,6 +80,9 @@ public class GeometryProjectionTransform {
 		case COMPOUNDCURVE:
 			to = transform((CompoundCurve) geometry);
 			break;
+		case CURVEPOLYGON:
+			to = transform((CurvePolygon<?>) geometry);
+			break;
 		case POLYHEDRALSURFACE:
 			to = transform((PolyhedralSurface) geometry);
 			break;
@@ -101,6 +108,7 @@ public class GeometryProjectionTransform {
 	 * Transform the projected point
 	 * 
 	 * @param from
+	 *            from point
 	 * @return projected from
 	 */
 	public Point transform(Point from) {
@@ -134,11 +142,20 @@ public class GeometryProjectionTransform {
 	 * Transform the projected line string
 	 * 
 	 * @param lineString
+	 *            line string
 	 * @return projected line string
 	 */
 	public LineString transform(LineString lineString) {
 
-		LineString to = new LineString(lineString.hasZ(), lineString.hasM());
+		LineString to = null;
+
+		switch (lineString.getGeometryType()) {
+		case CIRCULARSTRING:
+			to = new CircularString(lineString.hasZ(), lineString.hasM());
+			break;
+		default:
+			to = new LineString(lineString.hasZ(), lineString.hasM());
+		}
 
 		for (Point point : lineString.getPoints()) {
 			Point toPoint = transform(point);
@@ -152,11 +169,20 @@ public class GeometryProjectionTransform {
 	 * Transform the projected polygon
 	 * 
 	 * @param polygon
+	 *            polygon
 	 * @return projected polygon
 	 */
 	public Polygon transform(Polygon polygon) {
 
-		Polygon to = new Polygon(polygon.hasZ(), polygon.hasM());
+		Polygon to = null;
+
+		switch (polygon.getGeometryType()) {
+		case TRIANGLE:
+			to = new Triangle(polygon.hasZ(), polygon.hasM());
+			break;
+		default:
+			to = new Polygon(polygon.hasZ(), polygon.hasM());
+		}
 
 		for (LineString ring : polygon.getRings()) {
 			LineString toRing = transform(ring);
@@ -170,6 +196,7 @@ public class GeometryProjectionTransform {
 	 * Transform the projected multi point
 	 * 
 	 * @param multiPoint
+	 *            multi point
 	 * @return projected multi point
 	 */
 	public MultiPoint transform(MultiPoint multiPoint) {
@@ -188,6 +215,7 @@ public class GeometryProjectionTransform {
 	 * Transform the projected multi line string
 	 * 
 	 * @param multiLineString
+	 *            multi line string
 	 * @return projected multi line string
 	 */
 	public MultiLineString transform(MultiLineString multiLineString) {
@@ -207,6 +235,7 @@ public class GeometryProjectionTransform {
 	 * Transform the projected multi polygon
 	 * 
 	 * @param multiPolygon
+	 *            multi polygon
 	 * @return projected multi polygon
 	 */
 	public MultiPolygon transform(MultiPolygon multiPolygon) {
@@ -226,25 +255,18 @@ public class GeometryProjectionTransform {
 	 * Transform the projected circular string
 	 * 
 	 * @param circularString
+	 *            circular string
 	 * @return projected circular string
 	 */
 	public CircularString transform(CircularString circularString) {
-
-		CircularString to = new CircularString(circularString.hasZ(),
-				circularString.hasM());
-
-		for (Point point : circularString.getPoints()) {
-			Point toPoint = transform(point);
-			to.addPoint(toPoint);
-		}
-
-		return to;
+		return (CircularString) transform((LineString) circularString);
 	}
 
 	/**
 	 * Transform the projected compound curve
 	 * 
 	 * @param compoundCurve
+	 *            compound curve
 	 * @return projected compound curve
 	 */
 	public CompoundCurve transform(CompoundCurve compoundCurve) {
@@ -261,15 +283,58 @@ public class GeometryProjectionTransform {
 	}
 
 	/**
+	 * Transform the projected curve polygon
+	 * 
+	 * @param curvePolygon
+	 *            curve polygon
+	 * @return projected curve polygon
+	 * @since 2.0.1
+	 */
+	public <T extends Curve> CurvePolygon<T> transform(
+			CurvePolygon<T> curvePolygon) {
+
+		CurvePolygon<T> to = new CurvePolygon<T>(curvePolygon.hasZ(),
+				curvePolygon.hasM());
+
+		for (T ring : curvePolygon.getRings()) {
+
+			Curve toRing = null;
+
+			switch (ring.getGeometryType()) {
+			case COMPOUNDCURVE:
+				toRing = transform((CompoundCurve) ring);
+				break;
+			default:
+				toRing = transform((LineString) ring);
+			}
+
+			@SuppressWarnings("unchecked")
+			T typedToRing = (T) toRing;
+			to.addRing(typedToRing);
+		}
+
+		return to;
+	}
+
+	/**
 	 * Transform the projected polyhedral surface
 	 * 
 	 * @param polyhedralSurface
+	 *            polyhedral surface
 	 * @return projected polyhedral surface
 	 */
 	public PolyhedralSurface transform(PolyhedralSurface polyhedralSurface) {
 
-		PolyhedralSurface to = new PolyhedralSurface(polyhedralSurface.hasZ(),
-				polyhedralSurface.hasM());
+		PolyhedralSurface to = null;
+
+		switch (polyhedralSurface.getGeometryType()) {
+		case TIN:
+			to = new TIN(polyhedralSurface.hasZ(), polyhedralSurface.hasM());
+			break;
+		default:
+			to = new PolyhedralSurface(polyhedralSurface.hasZ(),
+					polyhedralSurface.hasM());
+		}
 
 		for (Polygon polygon : polyhedralSurface.getPolygons()) {
 			Polygon toPolygon = transform(polygon);
@@ -283,42 +348,29 @@ public class GeometryProjectionTransform {
 	 * Transform the projected TIN
 	 * 
 	 * @param tin
+	 *            TIN
 	 * @return projected tin
 	 */
 	public TIN transform(TIN tin) {
-
-		TIN to = new TIN(tin.hasZ(), tin.hasM());
-
-		for (Polygon polygon : tin.getPolygons()) {
-			Polygon toPolygon = transform(polygon);
-			to.addPolygon(toPolygon);
-		}
-
-		return to;
+		return (TIN) transform((PolyhedralSurface) tin);
 	}
 
 	/**
 	 * Transform the projected triangle
 	 * 
 	 * @param triangle
+	 *            triangle
 	 * @return projected triangle
 	 */
 	public Triangle transform(Triangle triangle) {
-
-		Triangle to = new Triangle(triangle.hasZ(), triangle.hasM());
-
-		for (LineString ring : triangle.getRings()) {
-			LineString toRing = transform(ring);
-			to.addRing(toRing);
-		}
-
-		return to;
+		return (Triangle) transform((Polygon) triangle);
 	}
 
 	/**
 	 * Transform the projected geometry collection
 	 * 
 	 * @param geometryCollection
+	 *            geometry collection
 	 * @return projected geometry collection
 	 */
 	public GeometryCollection<Geometry> transform(
