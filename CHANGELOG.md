@@ -4,7 +4,7 @@ Adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## 2.0.1 (TBD)
+## [2.0.1](https://github.com/ngageoint/simple-features-proj-java/releases/tag/2.0.1) (09-25-2018)
 
 * Geometry Projection Transformations for Curve Polygons and derived Geometry types
 
