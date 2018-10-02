@@ -52,8 +52,8 @@ public class ProjectionTransformTest {
 				ProjectionConstants.AUTHORITY_EPSG,
 				ProjectionConstants.EPSG_WORLD_GEODETIC_SYSTEM);
 
-		ProjectionTransform transformWebMercatorToWgs84 = new ProjectionTransform(
-				webMercator, wgs84);
+		ProjectionTransform transformWebMercatorToWgs84 = webMercator
+				.getTransformation(wgs84);
 
 		Geometry transformedGeometry = transformWebMercatorToWgs84
 				.transform(polygon);
@@ -63,8 +63,8 @@ public class ProjectionTransformTest {
 
 		TestCase.assertEquals(wgs84Polygon, transformedGeometry);
 
-		ProjectionTransform transformWgs84ToWebMercator = new ProjectionTransform(
-				wgs84, webMercator);
+		ProjectionTransform transformWgs84ToWebMercator = wgs84
+				.getTransformation(webMercator);
 
 		Geometry transformedGeometry2 = transformWgs84ToWebMercator
 				.transform(transformedGeometry);
