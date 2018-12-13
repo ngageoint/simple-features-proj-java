@@ -1,8 +1,6 @@
 package mil.nga.sf.proj;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
-import org.locationtech.proj4j.parser.Proj4Keyword;
-import org.locationtech.proj4j.proj.LongLatProjection;
 import org.locationtech.proj4j.units.Unit;
 import org.locationtech.proj4j.units.Units;
 
@@ -27,11 +25,6 @@ public class Projection {
 	 * Coordinate Reference System
 	 */
 	private final CoordinateReferenceSystem crs;
-
-	/**
-	 * Projection unit
-	 */
-	private Unit unit;
 
 	/**
 	 * Constructor
@@ -160,37 +153,23 @@ public class Projection {
 	 * @since 1.2.0
 	 */
 	public Unit getUnit() {
-
+		Unit unit = crs.getProjection().getUnits();
 		if (unit == null) {
-
-			// The unit is currently not publicly available, check the
-			// projection instance and units param
-
-			if (crs.getProjection() instanceof LongLatProjection) {
-				unit = Units.DEGREES;
-			} else {
-
-				String unitParam = null;
-
-				for (String param : crs.getParameters()) {
-					if (param.startsWith("+" + Proj4Keyword.units)) {
-						int index = param.indexOf('=');
-						if (index != -1) {
-							unitParam = param.substring(index + 1);
-							break;
-						}
-					}
-				}
-
-				if (unitParam != null) {
-					unit = Units.findUnits(unitParam);
-				} else {
-					unit = Units.METRES;
-				}
-			}
+			unit = Units.METRES;
 		}
-
 		return unit;
+	}
+
+	/**
+	 * Determine if the projection is in the provided unit
+	 * 
+	 * @param unit
+	 *            unit
+	 * @return true if in the provided unit
+	 * @since 2.0.2
+	 */
+	public boolean isUnit(Unit unit) {
+		return unit != null && getUnit().equals(unit);
 	}
 
 	/**
