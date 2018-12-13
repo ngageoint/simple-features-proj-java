@@ -1,10 +1,10 @@
 package mil.nga.sf.proj;
 
-import org.osgeo.proj4j.CoordinateReferenceSystem;
-import org.osgeo.proj4j.parser.Proj4Keyword;
-import org.osgeo.proj4j.proj.LongLatProjection;
-import org.osgeo.proj4j.units.Unit;
-import org.osgeo.proj4j.units.Units;
+import org.locationtech.proj4j.CoordinateReferenceSystem;
+import org.locationtech.proj4j.parser.Proj4Keyword;
+import org.locationtech.proj4j.proj.LongLatProjection;
+import org.locationtech.proj4j.units.Unit;
+import org.locationtech.proj4j.units.Units;
 
 /**
  * Single Projection for an authority and code

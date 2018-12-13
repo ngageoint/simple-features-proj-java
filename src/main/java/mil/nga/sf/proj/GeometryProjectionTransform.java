@@ -18,7 +18,7 @@ import mil.nga.sf.TIN;
 import mil.nga.sf.Triangle;
 import mil.nga.sf.util.SFException;
 
-import org.osgeo.proj4j.ProjCoordinate;
+import org.locationtech.proj4j.ProjCoordinate;
 
 /**
  * Geometry Projection Transform
