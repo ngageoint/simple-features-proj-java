@@ -48,9 +48,9 @@
 			<version>2.0.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.osgeo</groupId>
+			<groupId>org.locationtech.proj4j</groupId>
 			<artifactId>proj4j</artifactId>
-			<version>0.1.0</version>
+			<version>0.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

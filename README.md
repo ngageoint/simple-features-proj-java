@@ -59,4 +59,4 @@ Build this repository using Eclipse and/or Maven:
 ### Remote Dependencies ###
 
 * [Simple Features](https://github.com/ngageoint/simple-features-java) (The MIT License (MIT)) - Simple Features Lib
-* [Proj4J](http://trac.osgeo.org/proj4j/) (Apache License, Version 2.0) - Projection Library
+* [Proj4J](https://github.com/locationtech/proj4j) (Apache License, Version 2.0) - Projection Library

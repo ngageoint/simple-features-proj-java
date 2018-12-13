@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 
 import mil.nga.sf.util.SFException;
 
-import org.osgeo.proj4j.CRSFactory;
-import org.osgeo.proj4j.CoordinateReferenceSystem;
+import org.locationtech.proj4j.CRSFactory;
+import org.locationtech.proj4j.CoordinateReferenceSystem;
 
 /**
  * Projection factory for coordinate projections and transformations

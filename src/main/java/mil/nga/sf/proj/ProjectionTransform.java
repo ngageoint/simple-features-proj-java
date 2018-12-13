@@ -7,9 +7,9 @@ import mil.nga.sf.Geometry;
 import mil.nga.sf.GeometryEnvelope;
 import mil.nga.sf.Point;
 
-import org.osgeo.proj4j.CoordinateTransform;
-import org.osgeo.proj4j.CoordinateTransformFactory;
-import org.osgeo.proj4j.ProjCoordinate;
+import org.locationtech.proj4j.CoordinateTransform;
+import org.locationtech.proj4j.CoordinateTransformFactory;
+import org.locationtech.proj4j.ProjCoordinate;
 
 /**
  * Projection transform wrapper
