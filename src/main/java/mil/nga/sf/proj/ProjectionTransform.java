@@ -205,4 +205,14 @@ public class ProjectionTransform {
 		return fromProjection.equals(toProjection);
 	}
 
+	/**
+	 * Get the inverse transformation
+	 * 
+	 * @return inverse transformation
+	 * @since 2.0.2
+	 */
+	public ProjectionTransform getInverseTransformation() {
+		return toProjection.getTransformation(fromProjection);
+	}
+
 }
