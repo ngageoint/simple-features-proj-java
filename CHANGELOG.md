@@ -4,7 +4,7 @@ Adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## 2.0.2 (TBD)
+## 3.0.0 (TBD)
 
 * proj4j changed to org.locationtech.proj4j version 1.0.0
 * Projection is unit method

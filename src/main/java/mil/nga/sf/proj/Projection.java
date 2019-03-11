@@ -166,7 +166,7 @@ public class Projection {
 	 * @param unit
 	 *            unit
 	 * @return true if in the provided unit
-	 * @since 2.0.2
+	 * @since 3.0.0
 	 */
 	public boolean isUnit(Unit unit) {
 		return unit != null && getUnit().equals(unit);

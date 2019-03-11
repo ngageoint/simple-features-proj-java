@@ -199,7 +199,6 @@ public class ProjectionTransform {
 	 * Is the from and to projection the same?
 	 * 
 	 * @return true if the same projection
-	 * @since 2.0.2
 	 */
 	public boolean isSameProjection() {
 		return fromProjection.equals(toProjection);
@@ -209,7 +208,7 @@ public class ProjectionTransform {
 	 * Get the inverse transformation
 	 * 
 	 * @return inverse transformation
-	 * @since 2.0.2
+	 * @since 3.0.0
 	 */
 	public ProjectionTransform getInverseTransformation() {
 		return toProjection.getTransformation(fromProjection);
