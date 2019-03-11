@@ -6,7 +6,10 @@ Adheres to [Semantic Versioning](http://semver.org/).
 
 ## 2.0.2 (TBD)
 
-* TBD
+* proj4j changed to org.locationtech.proj4j version 1.0.0
+* Projection is unit method
+* Projection Transform inverse transformation method
+* Eclipse project cleanup
 
 ## [2.0.1](https://github.com/ngageoint/simple-features-proj-java/releases/tag/2.0.1) (09-25-2018)
 
