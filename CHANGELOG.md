@@ -6,6 +6,7 @@ Adheres to [Semantic Versioning](http://semver.org/).
 
 ## 3.0.0 (TBD)
 
+* simple-features-java version 2.0.1
 * proj4j changed to org.locationtech.proj4j version 1.0.0
 * Projection is unit method
 * Projection Transform inverse transformation method
