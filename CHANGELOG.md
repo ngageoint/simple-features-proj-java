@@ -4,7 +4,7 @@ Adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## 3.0.0 (TBD)
+## [3.0.0](https://github.com/ngageoint/simple-features-proj-java/releases/tag/3.0.0) (04-01-2019)
 
 * simple-features-java version 2.0.1
 * proj4j changed to org.locationtech.proj4j version 1.0.0
