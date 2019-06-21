@@ -22,6 +22,13 @@ public class ProjectionConstants {
 	public static final String AUTHORITY_NONE = "NONE";
 
 	/**
+	 * OGC authority name
+	 * 
+	 * @since 3.0.1
+	 */
+	public static final String AUTHORITY_OGC = "OGC";
+
+	/**
 	 * Undefined Cartesian
 	 */
 	public static final int UNDEFINED_CARTESIAN = -1;
@@ -47,6 +54,13 @@ public class ProjectionConstants {
 	 * @since 1.2.1
 	 */
 	public static final int EPSG_WORLD_GEODETIC_SYSTEM_GEOGRAPHICAL_3D = 4979;
+
+	/**
+	 * OGC CRS84 code
+	 * 
+	 * @since 3.0.1
+	 */
+	public static final String OGC_CRS84 = "CRS84";
 
 	/**
 	 * Web Mercator Latitude Range (+ and -)
