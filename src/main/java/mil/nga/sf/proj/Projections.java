@@ -14,7 +14,7 @@ public class Projections {
 	/**
 	 * Mapping of authorities to authority projections
 	 */
-	private static Map<String, AuthorityProjections> authorities = new HashMap<>();
+	private Map<String, AuthorityProjections> authorities = new HashMap<>();
 
 	/**
 	 * Constructor
