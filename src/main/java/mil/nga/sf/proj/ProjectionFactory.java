@@ -1,15 +1,13 @@
 package mil.nga.sf.proj;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import mil.nga.sf.util.SFException;
-
 import org.locationtech.proj4j.CRSFactory;
 import org.locationtech.proj4j.CoordinateReferenceSystem;
+
+import mil.nga.sf.util.SFException;
 
 /**
  * Projection factory for coordinate projections and transformations
@@ -30,9 +28,9 @@ public class ProjectionFactory {
 	private static final CRSFactory csFactory = new CRSFactory();
 
 	/**
-	 * Mapping of authorities to projections
+	 * Projections
 	 */
-	private static Map<String, AuthorityProjections> authorities = new HashMap<>();
+	private static Projections projections = new Projections();
 
 	/**
 	 * Get the projection for the EPSG code
@@ -186,31 +184,28 @@ public class ProjectionFactory {
 	public static Projection getProjection(String authority, String code,
 			String[] params, String definition) {
 
-		// Get or create the authority
-		AuthorityProjections authorityProjections = getProjections(authority);
-
 		// Check if the projection already exists
-		Projection projection = authorityProjections.getProjection(code);
+		Projection projection = projections.getProjection(authority, code);
 
 		if (projection == null) {
 
 			// Try to get or create the projection from a definition
-			projection = fromDefinition(authorityProjections, code, definition);
+			projection = fromDefinition(authority, code, definition);
 
 			if (projection == null) {
 
 				// Try to create the projection from the provided params
-				projection = fromParams(authorityProjections, code, params);
+				projection = fromParams(authority, code, params);
 
 				if (projection == null) {
 
 					// Try to create the projection from properties
-					projection = fromProperties(authorityProjections, code);
+					projection = fromProperties(authority, code);
 
 					if (projection == null) {
 
 						// Try to create the projection from the authority name
-						projection = fromName(authorityProjections, code);
+						projection = fromName(authority, code);
 
 						if (projection == null) {
 							throw new SFException(
@@ -229,7 +224,17 @@ public class ProjectionFactory {
 	}
 
 	/**
-	 * Get or create projections for the authority
+	 * Get the projections
+	 * 
+	 * @return projections
+	 * @since 3.0.1
+	 */
+	public static Projections getProjections() {
+		return projections;
+	}
+
+	/**
+	 * Get the projections for the authority
 	 * 
 	 * @param authority
 	 *            coordinate authority
@@ -237,13 +242,7 @@ public class ProjectionFactory {
 	 * @since 1.3.0
 	 */
 	public static AuthorityProjections getProjections(String authority) {
-		AuthorityProjections authorityProjections = authorities.get(authority
-				.toUpperCase());
-		if (authorityProjections == null) {
-			authorityProjections = new AuthorityProjections(authority);
-			authorities.put(authority.toUpperCase(), authorityProjections);
-		}
-		return authorityProjections;
+		return projections.getProjections(authority);
 	}
 
 	/**
@@ -252,7 +251,7 @@ public class ProjectionFactory {
 	 * @since 1.3.0
 	 */
 	public static void clear() {
-		authorities.clear();
+		projections.clear();
 	}
 
 	/**
@@ -263,7 +262,7 @@ public class ProjectionFactory {
 	 * @since 1.3.0
 	 */
 	public static void clear(String authority) {
-		getProjections(authority).clear();
+		projections.clear(authority);
 	}
 
 	/**
@@ -276,7 +275,7 @@ public class ProjectionFactory {
 	 * @since 1.3.0
 	 */
 	public static void clear(String authority, long code) {
-		getProjections(authority).clear(code);
+		projections.remove(authority, code);
 	}
 
 	/**
@@ -289,22 +288,21 @@ public class ProjectionFactory {
 	 * @since 1.3.0
 	 */
 	public static void clear(String authority, String code) {
-		getProjections(authority).clear(code);
+		projections.remove(authority, code);
 	}
 
 	/**
 	 * Create a projection from the WKT definition
 	 * 
-	 * @param authorityProjections
-	 *            authority projections
+	 * @param authority
+	 *            coordinate authority
 	 * @param code
 	 *            coordinate code
 	 * @param definition
 	 *            WKT coordinate definition
 	 * @return projection
 	 */
-	private static Projection fromDefinition(
-			AuthorityProjections authorityProjections, String code,
+	private static Projection fromDefinition(String authority, String code,
 			String definition) {
 
 		Projection projection = null;
@@ -319,19 +317,17 @@ public class ProjectionFactory {
 				try {
 					CoordinateReferenceSystem crs = csFactory
 							.createFromParameters(
-									coordinateName(
-											authorityProjections.getAuthority(),
-											code), parametersString);
-					projection = new Projection(
-							authorityProjections.getAuthority(), code, crs);
-					authorityProjections.addProjection(projection);
+									coordinateName(authority, code),
+									parametersString);
+					projection = new Projection(authority, code, crs);
+					projections.addProjection(projection);
 				} catch (Exception e) {
 					logger.log(Level.WARNING,
 							"Failed to create projection for authority: "
-									+ authorityProjections.getAuthority()
-									+ ", code: " + code + ", definition: "
-									+ definition + ", parameters: "
-									+ parametersString, e);
+									+ authority + ", code: " + code
+									+ ", definition: " + definition
+									+ ", parameters: " + parametersString,
+							e);
 				}
 			}
 
@@ -343,16 +339,15 @@ public class ProjectionFactory {
 	/**
 	 * Create a projection from the proj4 parameters
 	 * 
-	 * @param authorityProjections
-	 *            authority projections
+	 * @param authority
+	 *            coordinate authority
 	 * @param code
 	 *            coordinate code
 	 * @param params
 	 *            proj4 parameters
 	 * @return projection
 	 */
-	private static Projection fromParams(
-			AuthorityProjections authorityProjections, String code,
+	private static Projection fromParams(String authority, String code,
 			String[] params) {
 
 		Projection projection = null;
@@ -360,18 +355,15 @@ public class ProjectionFactory {
 		if (params != null && params.length > 0) {
 			try {
 				CoordinateReferenceSystem crs = csFactory.createFromParameters(
-						coordinateName(authorityProjections.getAuthority(),
-								code), params);
-				projection = new Projection(
-						authorityProjections.getAuthority(), code, crs);
-				authorityProjections.addProjection(projection);
+						coordinateName(authority, code), params);
+				projection = new Projection(authority, code, crs);
+				projections.addProjection(projection);
 			} catch (Exception e) {
-				logger.log(
-						Level.WARNING,
+				logger.log(Level.WARNING,
 						"Failed to create projection for authority: "
-								+ authorityProjections.getAuthority()
-								+ ", code: " + code + ", parameters: "
-								+ Arrays.toString(params), e);
+								+ authority + ", code: " + code
+								+ ", parameters: " + Arrays.toString(params),
+						e);
 			}
 		}
 
@@ -381,34 +373,30 @@ public class ProjectionFactory {
 	/**
 	 * Create a projection from configured coordinate properties
 	 * 
-	 * @param authorityProjections
-	 *            authority projections
+	 * @param authority
+	 *            coordinate authority
 	 * @param code
 	 *            coordinate code
 	 * @return projection
 	 */
-	private static Projection fromProperties(
-			AuthorityProjections authorityProjections, String code) {
+	private static Projection fromProperties(String authority, String code) {
 
 		Projection projection = null;
 
-		String parameters = ProjectionRetriever.getProjection(
-				authorityProjections.getAuthority(), code);
+		String parameters = ProjectionRetriever.getProjection(authority, code);
 
 		if (parameters != null && !parameters.isEmpty()) {
 			try {
 				CoordinateReferenceSystem crs = csFactory.createFromParameters(
-						coordinateName(authorityProjections.getAuthority(),
-								code), parameters);
-				projection = new Projection(
-						authorityProjections.getAuthority(), code, crs);
-				authorityProjections.addProjection(projection);
+						coordinateName(authority, code), parameters);
+				projection = new Projection(authority, code, crs);
+				projections.addProjection(projection);
 			} catch (Exception e) {
 				logger.log(Level.WARNING,
 						"Failed to create projection for authority: "
-								+ authorityProjections.getAuthority()
-								+ ", code: " + code + ", parameters: "
-								+ parameters, e);
+								+ authority + ", code: " + code
+								+ ", parameters: " + parameters,
+						e);
 			}
 		}
 
@@ -418,26 +406,24 @@ public class ProjectionFactory {
 	/**
 	 * Create a projection from the coordinate authority and code name
 	 * 
-	 * @param authorityProjections
-	 *            authority projections
+	 * @param authority
+	 *            coordinate authority
 	 * @param code
 	 *            coordinate code
 	 * @return projection
 	 */
-	private static Projection fromName(
-			AuthorityProjections authorityProjections, String code) {
+	private static Projection fromName(String authority, String code) {
 
 		Projection projection = null;
 
-		String name = coordinateName(authorityProjections.getAuthority(), code);
+		String name = coordinateName(authority, code);
 		try {
 			CoordinateReferenceSystem crs = csFactory.createFromName(name);
-			projection = new Projection(authorityProjections.getAuthority(),
-					code, crs);
-			authorityProjections.addProjection(projection);
+			projection = new Projection(authority, code, crs);
+			projections.addProjection(projection);
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Failed to create projection from name: "
-					+ name, e);
+			logger.log(Level.WARNING,
+					"Failed to create projection from name: " + name, e);
 		}
 
 		return projection;

@@ -1,7 +1,9 @@
 package mil.nga.sf.proj;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Collection of projections for a single coordinate authority
@@ -46,9 +48,57 @@ public class AuthorityProjections {
 	 * @param code
 	 *            coordinate code
 	 * @return projection
+	 * @Since 3.0.1
+	 */
+	public Projection getProjection(long code) {
+		return getProjection(String.valueOf(code));
+	}
+
+	/**
+	 * Get the projection for the code
+	 * 
+	 * @param code
+	 *            coordinate code
+	 * @return projection
 	 */
 	public Projection getProjection(String code) {
-		return projections.get(code);
+		return projections.get(code.toUpperCase());
+	}
+
+	/**
+	 * Check if the collection contains the projection
+	 * 
+	 * @param projection
+	 *            projection
+	 * @return true if has the projection
+	 * @Since 3.0.1
+	 */
+	public boolean hasProjection(Projection projection) {
+		return hasProjection(projection.getCode());
+	}
+
+	/**
+	 * Check if the collection contains a projection for the code
+	 * 
+	 * @param code
+	 *            coordinate code
+	 * @return true if has a projection
+	 * @Since 3.0.1
+	 */
+	public boolean hasProjection(long code) {
+		return hasProjection(String.valueOf(code));
+	}
+
+	/**
+	 * Check if the collection contains a projection for the code
+	 * 
+	 * @param code
+	 *            coordinate code
+	 * @return true if has a projection
+	 * @Since 3.0.1
+	 */
+	public boolean hasProjection(String code) {
+		return getProjection(code) != null;
 	}
 
 	/**
@@ -58,7 +108,7 @@ public class AuthorityProjections {
 	 *            projection
 	 */
 	public void addProjection(Projection projection) {
-		projections.put(projection.getCode(), projection);
+		projections.put(projection.getCode().toUpperCase(), projection);
 	}
 
 	/**
@@ -69,23 +119,76 @@ public class AuthorityProjections {
 	}
 
 	/**
-	 * Clear the projection with the code
+	 * Remove the projection with the code
 	 * 
 	 * @param code
 	 *            coordinate code
+	 * @Since 3.0.1
 	 */
-	public void clear(long code) {
-		projections.remove(String.valueOf(code));
+	public void remove(long code) {
+		remove(String.valueOf(code));
 	}
 
 	/**
-	 * Clear the projection with the code
+	 * Remove the projection with the code
 	 * 
 	 * @param code
 	 *            coordinate code
+	 * @Since 3.0.1
 	 */
-	public void clear(String code) {
-		projections.remove(code);
+	public void remove(String code) {
+		projections.remove(code.toUpperCase());
+	}
+
+	/**
+	 * Remove the projection
+	 * 
+	 * @param projection
+	 *            projection
+	 * @Since 3.0.1
+	 */
+	public void remove(Projection projection) {
+		remove(projection.getCode());
+	}
+
+	/**
+	 * Get the count of authority projections
+	 * 
+	 * @return count
+	 * @Since 3.0.1
+	 */
+	public int count() {
+		return projections.size();
+	}
+
+	/**
+	 * Is the collection empty?
+	 * 
+	 * @return true if empty
+	 * @Since 3.0.1
+	 */
+	public boolean isEmpty() {
+		return projections.isEmpty();
+	}
+
+	/**
+	 * Get the projection codes
+	 * 
+	 * @return projection codes
+	 * @Since 3.0.1
+	 */
+	public Set<String> getCodes() {
+		return projections.keySet();
+	}
+
+	/**
+	 * Get the projections
+	 * 
+	 * @return projections
+	 * @Since 3.0.1
+	 */
+	public Collection<Projection> getProjections() {
+		return projections.values();
 	}
 
 }

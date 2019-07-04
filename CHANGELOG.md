@@ -8,6 +8,7 @@ Adheres to [Semantic Versioning](http://semver.org/).
 
 * simple-features-java version 2.0.2
 * Added OGC projection authority
+* Projections collection of cached authority projections
 
 ## [3.0.0](https://github.com/ngageoint/simple-features-proj-java/releases/tag/3.0.0) (04-01-2019)
 
