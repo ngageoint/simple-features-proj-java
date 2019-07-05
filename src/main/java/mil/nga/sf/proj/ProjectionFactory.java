@@ -184,6 +184,8 @@ public class ProjectionFactory {
 	public static Projection getProjection(String authority, String code,
 			String[] params, String definition) {
 
+		authority = authority.toUpperCase();
+
 		// Check if the projection already exists
 		Projection projection = projections.getProjection(authority, code);
 
