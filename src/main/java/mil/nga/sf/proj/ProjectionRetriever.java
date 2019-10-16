@@ -180,8 +180,8 @@ public class ProjectionRetriever {
 	private static void loadProperties(String authority) {
 
 		String authorityFile = propertyFileName(authority);
-		InputStream in = ProjectionRetriever.class.getResourceAsStream("/"
-				+ authorityFile);
+		InputStream in = ProjectionRetriever.class
+				.getResourceAsStream("/" + authorityFile);
 
 		setProjections(authority, in);
 	}
@@ -220,14 +220,14 @@ public class ProjectionRetriever {
 			try {
 				authorityProperties.load(propertiesStream);
 			} catch (Exception e) {
-				log.log(Level.WARNING,
-						"Failed to load authority: " + authority, e);
+				log.log(Level.WARNING, "Failed to load authority: " + authority,
+						e);
 			} finally {
 				try {
 					propertiesStream.close();
 				} catch (IOException e) {
-					log.log(Level.WARNING, "Failed to close authority: "
-							+ authority, e);
+					log.log(Level.WARNING,
+							"Failed to close authority: " + authority, e);
 				}
 			}
 		} else {
@@ -259,6 +259,7 @@ public class ProjectionRetriever {
 	 * @param propertiesFile
 	 *            properties file
 	 * @throws FileNotFoundException
+	 *             if properties file not found
 	 * @since 1.3.0
 	 */
 	public static void setProjections(String authority, File propertiesFile)

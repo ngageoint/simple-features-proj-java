@@ -1,5 +1,7 @@
 package mil.nga.sf.proj;
 
+import org.locationtech.proj4j.ProjCoordinate;
+
 import mil.nga.sf.CircularString;
 import mil.nga.sf.CompoundCurve;
 import mil.nga.sf.Curve;
@@ -17,8 +19,6 @@ import mil.nga.sf.PolyhedralSurface;
 import mil.nga.sf.TIN;
 import mil.nga.sf.Triangle;
 import mil.nga.sf.util.SFException;
-
-import org.locationtech.proj4j.ProjCoordinate;
 
 /**
  * Geometry Projection Transform
@@ -94,7 +94,8 @@ public class GeometryProjectionTransform {
 			break;
 		case GEOMETRYCOLLECTION:
 			@SuppressWarnings("unchecked")
-			GeometryCollection<Geometry> toCollection = transform((GeometryCollection<Geometry>) geometry);
+			GeometryCollection<Geometry> toCollection = transform(
+					(GeometryCollection<Geometry>) geometry);
 			to = toCollection;
 			break;
 		default:
@@ -287,6 +288,8 @@ public class GeometryProjectionTransform {
 	 * 
 	 * @param curvePolygon
 	 *            curve polygon
+	 * @param <T>
+	 *            curve type
 	 * @return projected curve polygon
 	 * @since 2.0.1
 	 */
