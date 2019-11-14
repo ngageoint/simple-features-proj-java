@@ -4,6 +4,10 @@ Adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## 3.0.3 (TBD)
+
+* TBD
+
 ## [3.0.2](https://github.com/ngageoint/simple-features-proj-java/releases/tag/3.0.2) (11-14-2019)
 
 * proj4j version 1.1.0
