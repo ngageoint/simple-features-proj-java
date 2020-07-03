@@ -37,7 +37,8 @@ public class Projection {
 	 *            crs
 	 * @since 1.3.0
 	 */
-	public Projection(String authority, long code, CoordinateReferenceSystem crs) {
+	public Projection(String authority, long code,
+			CoordinateReferenceSystem crs) {
 		this(authority, String.valueOf(code), crs);
 	}
 
@@ -231,6 +232,15 @@ public class Projection {
 			return false;
 		Projection other = (Projection) obj;
 		return equals(other.authority, other.code);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.0.3
+	 */
+	public String toString() {
+		return authority + ":" + code;
 	}
 
 }
