@@ -4,9 +4,11 @@ Adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## 3.0.3 (TBD)
+## [3.0.3](https://github.com/ngageoint/simple-features-proj-java/releases/tag/3.0.3) (07-13-2020)
 
-* TBD
+* simple-features-java version 2.0.3
+* proj4j version 1.1.1
+* Projection toString implementation as authority:code
 
 ## [3.0.2](https://github.com/ngageoint/simple-features-proj-java/releases/tag/3.0.2) (11-14-2019)
 
