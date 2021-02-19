@@ -45,6 +45,39 @@ public class ProjectionFactory {
 	}
 
 	/**
+	 * Get the projection for the projection name, expected as 'authority:code'
+	 * or 'epsg_code'
+	 * 
+	 * @param name
+	 *            projection name
+	 * @return projection
+	 * @since 3.0.4
+	 */
+	public static Projection getProjection(String name) {
+
+		String authority = null;
+		String code = null;
+
+		String[] projectionParts = name.split(":");
+
+		switch (projectionParts.length) {
+		case 1:
+			authority = ProjectionConstants.AUTHORITY_EPSG;
+			code = projectionParts[0];
+			break;
+		case 2:
+			authority = projectionParts[0];
+			code = projectionParts[1];
+			break;
+		default:
+			throw new SFException("Invalid projection name '" + name
+					+ "', expected 'authority:code' or 'epsg_code'");
+		}
+
+		return getProjection(authority, code);
+	}
+
+	/**
 	 * Get the projection for authority and code
 	 * 
 	 * @param authority
