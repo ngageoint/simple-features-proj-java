@@ -3,6 +3,9 @@ package mil.nga.sf.proj;
 import org.junit.Test;
 
 import junit.framework.TestCase;
+import mil.nga.proj.Projection;
+import mil.nga.proj.ProjectionConstants;
+import mil.nga.proj.ProjectionFactory;
 import mil.nga.sf.Geometry;
 import mil.nga.sf.GeometryType;
 import mil.nga.sf.Point;
@@ -34,8 +37,8 @@ public class ReadmeTest {
 	/**
 	 * Test transform
 	 * 
-	 * @param content
-	 *            content
+	 * @param geometry
+	 *            geometry
 	 * @return geometry
 	 */
 	private Geometry testTransform(Geometry geometry) {
@@ -49,8 +52,8 @@ public class ReadmeTest {
 				ProjectionConstants.AUTHORITY_EPSG,
 				ProjectionConstants.EPSG_WORLD_GEODETIC_SYSTEM);
 
-		ProjectionTransform transform = projection1
-				.getTransformation(projection2);
+		GeometryTransform transform = GeometryTransform.create(projection1,
+				projection2);
 
 		Geometry transformed = transform.transform(geometry);
 

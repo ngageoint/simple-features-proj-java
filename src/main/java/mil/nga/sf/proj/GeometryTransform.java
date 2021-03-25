@@ -1,13 +1,19 @@
 package mil.nga.sf.proj;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.locationtech.proj4j.ProjCoordinate;
 
+import mil.nga.proj.Projection;
+import mil.nga.proj.ProjectionTransform;
 import mil.nga.sf.CircularString;
 import mil.nga.sf.CompoundCurve;
 import mil.nga.sf.Curve;
 import mil.nga.sf.CurvePolygon;
 import mil.nga.sf.Geometry;
 import mil.nga.sf.GeometryCollection;
+import mil.nga.sf.GeometryEnvelope;
 import mil.nga.sf.GeometryType;
 import mil.nga.sf.LineString;
 import mil.nga.sf.MultiLineString;
@@ -24,14 +30,36 @@ import mil.nga.sf.util.SFException;
  * Geometry Projection Transform
  * 
  * @author osbornb
- * @since 1.1.3
+ * @since 4.0.0
  */
-public class GeometryProjectionTransform {
+public class GeometryTransform extends ProjectionTransform {
 
 	/**
-	 * Projection transform
+	 * Create a geometry projection transform
+	 * 
+	 * @param fromProjection
+	 *            from projection
+	 * @param toProjection
+	 *            to projection
+	 * @return projection transform
 	 */
-	private final ProjectionTransform transform;
+	public static GeometryTransform create(Projection fromProjection,
+			Projection toProjection) {
+		return new GeometryTransform(fromProjection, toProjection);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param fromProjection
+	 *            from projection
+	 * @param toProjection
+	 *            to projection
+	 */
+	public GeometryTransform(Projection fromProjection,
+			Projection toProjection) {
+		super(fromProjection, toProjection);
+	}
 
 	/**
 	 * Constructor
@@ -39,8 +67,61 @@ public class GeometryProjectionTransform {
 	 * @param transform
 	 *            projection transform
 	 */
-	public GeometryProjectionTransform(ProjectionTransform transform) {
-		this.transform = transform;
+	public GeometryTransform(ProjectionTransform transform) {
+		super(transform);
+	}
+
+	/**
+	 * Transform a list of points
+	 * 
+	 * @param from
+	 *            points to transform
+	 * @return transformed points
+	 */
+	public List<Point> transform(List<Point> from) {
+
+		List<Point> to = new ArrayList<>();
+
+		for (Point fromPoint : from) {
+			Point toPoint = transform(fromPoint);
+			to.add(toPoint);
+		}
+
+		return to;
+	}
+
+	/**
+	 * Transform the geometry envelope
+	 * 
+	 * @param envelope
+	 *            geometry envelope
+	 * @return geometry envelope
+	 */
+	public GeometryEnvelope transform(GeometryEnvelope envelope) {
+
+		ProjCoordinate lowerLeft = new ProjCoordinate(envelope.getMinX(),
+				envelope.getMinY());
+		ProjCoordinate lowerRight = new ProjCoordinate(envelope.getMaxX(),
+				envelope.getMinY());
+		ProjCoordinate upperRight = new ProjCoordinate(envelope.getMaxX(),
+				envelope.getMaxY());
+		ProjCoordinate upperLeft = new ProjCoordinate(envelope.getMinX(),
+				envelope.getMaxY());
+
+		ProjCoordinate projectedLowerLeft = transform(lowerLeft);
+		ProjCoordinate projectedLowerRight = transform(lowerRight);
+		ProjCoordinate projectedUpperRight = transform(upperRight);
+		ProjCoordinate projectedUpperLeft = transform(upperLeft);
+
+		double minX = Math.min(projectedLowerLeft.x, projectedUpperLeft.x);
+		double maxX = Math.max(projectedLowerRight.x, projectedUpperRight.x);
+		double minY = Math.min(projectedLowerLeft.y, projectedLowerRight.y);
+		double maxY = Math.max(projectedUpperLeft.y, projectedUpperRight.y);
+
+		GeometryEnvelope projectedGeometryEnvelope = new GeometryEnvelope(minX,
+				minY, maxX, maxY);
+
+		return projectedGeometryEnvelope;
 	}
 
 	/**
@@ -122,7 +203,7 @@ public class GeometryProjectionTransform {
 			fromCoord = new ProjCoordinate(from.getX(), from.getY());
 		}
 
-		ProjCoordinate toCoord = transform.transform(fromCoord);
+		ProjCoordinate toCoord = transform(fromCoord);
 
 		Point to = new Point(from.hasZ(), from.hasM(), toCoord.x, toCoord.y);
 		if (from.hasZ()) {
@@ -291,7 +372,6 @@ public class GeometryProjectionTransform {
 	 * @param <T>
 	 *            curve type
 	 * @return projected curve polygon
-	 * @since 2.0.1
 	 */
 	public <T extends Curve> CurvePolygon<T> transform(
 			CurvePolygon<T> curvePolygon) {

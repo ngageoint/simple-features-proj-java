@@ -1,34 +1,43 @@
-package mil.nga.sf.proj;
+package mil.nga.proj;
 
 import java.util.Arrays;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.TestCase;
+
+/**
+ * Projection Factory Test
+ * 
+ * @author osbornb
+ */
 public class ProjectionFactoryTest {
 
 	private final String authority = "Test";
 	private final long code = 100001;
 
+	/**
+	 * Clear the projections before each test
+	 */
 	@Before
 	public void clear() {
 		ProjectionFactory.clear();
 		ProjectionRetriever.clear();
 	}
 
+	/**
+	 * Test custom projections
+	 */
 	@Test
 	public void testCustomProjection() {
 
 		long authorityCode = code;
 
-		Projection projection = ProjectionFactory
-				.getProjection(
-						authority,
-						authorityCode++,
-						"+proj=tmerc +lat_0=0 +lon_0=121 +k=1 +x_0=500000 +y_0=0 +ellps=krass +units=m +no_defs");
+		Projection projection = ProjectionFactory.getProjection(authority,
+				authorityCode++,
+				"+proj=tmerc +lat_0=0 +lon_0=121 +k=1 +x_0=500000 +y_0=0 +ellps=krass +units=m +no_defs");
 		TestCase.assertNotNull(projection);
 
 		String[] params = new String[] { "+proj=tmerc", "+lat_0=0",
@@ -39,11 +48,8 @@ public class ProjectionFactoryTest {
 		TestCase.assertNotNull(projection2);
 
 		try {
-			ProjectionFactory
-					.getProjection(
-							authority,
-							authorityCode++,
-							"+proj=tmerc +lat_0=0 +lon_0=121 +k=1 +x_0=500000 +y_0=0 +ellps=krass +units=m +no_defs +invalid");
+			ProjectionFactory.getProjection(authority, authorityCode++,
+					"+proj=tmerc +lat_0=0 +lon_0=121 +k=1 +x_0=500000 +y_0=0 +ellps=krass +units=m +no_defs +invalid");
 			TestCase.fail("Invalid projection did not fail");
 		} catch (Exception e) {
 			// pass
@@ -52,8 +58,8 @@ public class ProjectionFactoryTest {
 		try {
 			String[] params2 = Arrays.copyOf(params, params.length + 1);
 			params2[params2.length - 1] = "+invalid";
-			ProjectionFactory
-					.getProjection(authority, authorityCode++, params2);
+			ProjectionFactory.getProjection(authority, authorityCode++,
+					params2);
 			TestCase.fail("Invalid projection did not fail");
 		} catch (Exception e) {
 			// pass
@@ -68,6 +74,9 @@ public class ProjectionFactoryTest {
 
 	}
 
+	/**
+	 * Test adding a projection to an authority
+	 */
 	@Test
 	public void testAddingProjectionToAuthority() {
 
@@ -79,17 +88,18 @@ public class ProjectionFactoryTest {
 			// pass
 		}
 
-		ProjectionRetriever
-				.setProjection(
-						ProjectionConstants.AUTHORITY_NONE,
-						code,
-						"+proj=tmerc +lat_0=0 +lon_0=121 +k=1 +x_0=500000 +y_0=0 +ellps=krass +units=m +no_defs");
+		ProjectionRetriever.setProjection(ProjectionConstants.AUTHORITY_NONE,
+				code,
+				"+proj=tmerc +lat_0=0 +lon_0=121 +k=1 +x_0=500000 +y_0=0 +ellps=krass +units=m +no_defs");
 
-		Projection projection = ProjectionFactory.getProjection(
-				ProjectionConstants.AUTHORITY_NONE, code);
+		Projection projection = ProjectionFactory
+				.getProjection(ProjectionConstants.AUTHORITY_NONE, code);
 		TestCase.assertNotNull(projection);
 	}
 
+	/**
+	 * Test adding projections to an authority
+	 */
 	@Test
 	public void testAddingAuthorityProjections() {
 
@@ -105,24 +115,20 @@ public class ProjectionFactoryTest {
 
 		// Add 3 custom projections to the new authority
 		Properties properties = new Properties();
-		properties
-				.setProperty(
-						String.valueOf(code),
-						"+proj=tmerc +lat_0=0 +lon_0=121 +k=1 +x_0=500000 +y_0=0 +ellps=krass +units=m +no_defs");
+		properties.setProperty(String.valueOf(code),
+				"+proj=tmerc +lat_0=0 +lon_0=121 +k=1 +x_0=500000 +y_0=0 +ellps=krass +units=m +no_defs");
 		properties.setProperty(String.valueOf(code + 1),
 				"+proj=longlat +datum=WGS84 +no_defs");
-		properties
-				.setProperty(
-						String.valueOf(code + 2),
-						"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
+		properties.setProperty(String.valueOf(code + 2),
+				"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
 		ProjectionRetriever.setProjections(authority, properties);
 
 		// Verify first 3 projections exist, last still does not
 		for (long i = code; i < code + 4; i++) {
 
 			if (i < code + 3) {
-				Projection projection = ProjectionFactory.getProjection(
-						authority, i);
+				Projection projection = ProjectionFactory
+						.getProjection(authority, i);
 				TestCase.assertNotNull(projection);
 			} else {
 				try {
@@ -136,8 +142,8 @@ public class ProjectionFactoryTest {
 
 		// Clear authority code from retriever but not from factory cache
 		ProjectionRetriever.clear(authority, code);
-		Projection projection = ProjectionFactory
-				.getProjection(authority, code);
+		Projection projection = ProjectionFactory.getProjection(authority,
+				code);
 		TestCase.assertNotNull(projection);
 
 		// Clear authority code from factory cache and verify no longer exists
@@ -156,4 +162,5 @@ public class ProjectionFactoryTest {
 		TestCase.assertNotNull(projection);
 
 	}
+
 }

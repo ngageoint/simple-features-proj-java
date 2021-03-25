@@ -1,4 +1,4 @@
-package mil.nga.sf.proj;
+package mil.nga.proj;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,15 +27,11 @@ public class ProjectionRetriever {
 
 	/**
 	 * Projections property file name prefix
-	 * 
-	 * @since 1.3.0
 	 */
 	public static final String PROJECTIONS_PROPERTY_FILE_PREFIX = "projections";
 
 	/**
 	 * Projections property file name suffix
-	 * 
-	 * @since 1.3.0
 	 */
 	public static final String PROJECTIONS_PROPERTY_FILE_SUFFIX = "properties";
 
@@ -63,7 +59,6 @@ public class ProjectionRetriever {
 	 * @param code
 	 *            coordinate code
 	 * @return proj4 projection
-	 * @since 1.3.0
 	 */
 	public static String getProjection(String authority, long code) {
 		return getProjection(authority, String.valueOf(code));
@@ -77,7 +72,6 @@ public class ProjectionRetriever {
 	 * @param code
 	 *            coordinate code
 	 * @return proj4 projection
-	 * @since 1.3.0
 	 */
 	public static String getProjection(String authority, String code) {
 
@@ -94,7 +88,6 @@ public class ProjectionRetriever {
 	 * @param authority
 	 *            coordinate authority
 	 * @return projection properties
-	 * @since 1.3.0
 	 */
 	public static Properties getOrCreateProjections(String authority) {
 
@@ -115,7 +108,6 @@ public class ProjectionRetriever {
 	 * @param authority
 	 *            coordinate authority
 	 * @return projection properties
-	 * @since 1.3.0
 	 */
 	public static Properties getProjections(String authority) {
 		return properties.get(authority.toLowerCase());
@@ -123,8 +115,6 @@ public class ProjectionRetriever {
 
 	/**
 	 * Clear the properties for all authorities
-	 * 
-	 * @since 1.3.0
 	 */
 	public static void clear() {
 		properties.clear();
@@ -135,7 +125,6 @@ public class ProjectionRetriever {
 	 * 
 	 * @param authority
 	 *            coordinate authority
-	 * @since 1.3.0
 	 */
 	public static void clear(String authority) {
 		properties.remove(authority.toLowerCase());
@@ -148,7 +137,6 @@ public class ProjectionRetriever {
 	 *            coordinate authority
 	 * @param code
 	 *            coordinate code
-	 * @since 1.3.0
 	 */
 	public static void clear(String authority, long code) {
 		clear(authority, String.valueOf(code));
@@ -161,7 +149,6 @@ public class ProjectionRetriever {
 	 *            coordinate authority
 	 * @param code
 	 *            coordinate code
-	 * @since 1.3.0
 	 */
 	public static void clear(String authority, String code) {
 		Properties properties = getProjections(authority);
@@ -195,7 +182,6 @@ public class ProjectionRetriever {
 	 * @param authority
 	 *            coordinate authority
 	 * @return property file name
-	 * @since 1.3.0
 	 */
 	public static String propertyFileName(String authority) {
 		return PROJECTIONS_PROPERTY_FILE_PREFIX + "." + authority.toLowerCase()
@@ -209,7 +195,6 @@ public class ProjectionRetriever {
 	 *            coordinate authority
 	 * @param propertiesStream
 	 *            properties input stream
-	 * @since 1.3.0
 	 */
 	public static void setProjections(String authority,
 			InputStream propertiesStream) {
@@ -244,7 +229,6 @@ public class ProjectionRetriever {
 	 *            coordinate authority
 	 * @param authorityProperties
 	 *            authority projection properties
-	 * @since 1.3.0
 	 */
 	public static void setProjections(String authority,
 			Properties authorityProperties) {
@@ -260,7 +244,6 @@ public class ProjectionRetriever {
 	 *            properties file
 	 * @throws FileNotFoundException
 	 *             if properties file not found
-	 * @since 1.3.0
 	 */
 	public static void setProjections(String authority, File propertiesFile)
 			throws FileNotFoundException {
@@ -278,7 +261,6 @@ public class ProjectionRetriever {
 	 *            coordinate code
 	 * @param projection
 	 *            proj4 projection
-	 * @since 1.3.0
 	 */
 	public static void setProjection(String authority, long code,
 			String projection) {
@@ -295,7 +277,6 @@ public class ProjectionRetriever {
 	 *            coordinate code
 	 * @param projection
 	 *            proj4 projection
-	 * @since 1.3.0
 	 */
 	public static void setProjection(String authority, String code,
 			String projection) {

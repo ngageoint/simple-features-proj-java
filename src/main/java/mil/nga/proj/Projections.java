@@ -1,4 +1,4 @@
-package mil.nga.sf.proj;
+package mil.nga.proj;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +7,6 @@ import java.util.Map;
  * Collection of projections by authority
  * 
  * @author osbornb
- * @since 3.0.1
  */
 public class Projections {
 

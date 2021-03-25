@@ -1,4 +1,4 @@
-package mil.nga.sf.proj;
+package mil.nga.proj;
 
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -6,8 +6,6 @@ import java.util.logging.Logger;
 
 import org.locationtech.proj4j.CRSFactory;
 import org.locationtech.proj4j.CoordinateReferenceSystem;
-
-import mil.nga.sf.util.SFException;
 
 /**
  * Projection factory for coordinate projections and transformations
@@ -51,7 +49,6 @@ public class ProjectionFactory {
 	 * @param name
 	 *            projection name
 	 * @return projection
-	 * @since 3.0.4
 	 */
 	public static Projection getProjection(String name) {
 
@@ -70,7 +67,7 @@ public class ProjectionFactory {
 			code = projectionParts[1];
 			break;
 		default:
-			throw new SFException("Invalid projection name '" + name
+			throw new ProjectionException("Invalid projection name '" + name
 					+ "', expected 'authority:code' or 'epsg_code'");
 		}
 
@@ -85,7 +82,6 @@ public class ProjectionFactory {
 	 * @param code
 	 *            authority coordinate code
 	 * @return projection
-	 * @since 1.3.0
 	 */
 	public static Projection getProjection(String authority, long code) {
 		return getProjection(authority, String.valueOf(code));
@@ -99,7 +95,6 @@ public class ProjectionFactory {
 	 * @param code
 	 *            authority coordinate code
 	 * @return projection
-	 * @since 1.3.0
 	 */
 	public static Projection getProjection(String authority, String code) {
 		return getProjection(authority, code, null, null);
@@ -115,7 +110,6 @@ public class ProjectionFactory {
 	 * @param paramStr
 	 *            proj4 string
 	 * @return projection
-	 * @since 1.3.0
 	 */
 	public static Projection getProjection(String authority, long code,
 			String paramStr) {
@@ -132,7 +126,6 @@ public class ProjectionFactory {
 	 * @param paramStr
 	 *            proj4 string
 	 * @return projection
-	 * @since 1.3.0
 	 */
 	public static Projection getProjection(String authority, String code,
 			String paramStr) {
@@ -154,7 +147,6 @@ public class ProjectionFactory {
 	 * @param params
 	 *            proj4 params array
 	 * @return projection
-	 * @since 1.3.0
 	 */
 	public static Projection getProjection(String authority, long code,
 			String[] params) {
@@ -171,7 +163,6 @@ public class ProjectionFactory {
 	 * @param params
 	 *            proj4 params array
 	 * @return projection
-	 * @since 1.3.0
 	 */
 	public static Projection getProjection(String authority, String code,
 			String[] params) {
@@ -191,7 +182,6 @@ public class ProjectionFactory {
 	 * @param definition
 	 *            definition
 	 * @return projection
-	 * @since 1.3.0
 	 */
 	public static Projection getProjection(String authority, long code,
 			String[] params, String definition) {
@@ -212,7 +202,6 @@ public class ProjectionFactory {
 	 * @param definition
 	 *            definition
 	 * @return projection
-	 * @since 1.3.0
 	 */
 	public static Projection getProjection(String authority, String code,
 			String[] params, String definition) {
@@ -243,7 +232,7 @@ public class ProjectionFactory {
 						projection = fromName(authority, code);
 
 						if (projection == null) {
-							throw new SFException(
+							throw new ProjectionException(
 									"Failed to create projection for authority: "
 											+ authority + ", code: " + code
 											+ ", definition: " + definition
@@ -262,7 +251,6 @@ public class ProjectionFactory {
 	 * Get the projections
 	 * 
 	 * @return projections
-	 * @since 3.0.1
 	 */
 	public static Projections getProjections() {
 		return projections;
@@ -274,7 +262,6 @@ public class ProjectionFactory {
 	 * @param authority
 	 *            coordinate authority
 	 * @return authority projections
-	 * @since 1.3.0
 	 */
 	public static AuthorityProjections getProjections(String authority) {
 		return projections.getProjections(authority);
@@ -282,8 +269,6 @@ public class ProjectionFactory {
 
 	/**
 	 * Clear all authority projections
-	 * 
-	 * @since 1.3.0
 	 */
 	public static void clear() {
 		projections.clear();
@@ -294,7 +279,6 @@ public class ProjectionFactory {
 	 * 
 	 * @param authority
 	 *            coordinate authority
-	 * @since 1.3.0
 	 */
 	public static void clear(String authority) {
 		projections.clear(authority);
@@ -307,7 +291,6 @@ public class ProjectionFactory {
 	 *            coordinate authority
 	 * @param code
 	 *            coordinate code
-	 * @since 1.3.0
 	 */
 	public static void clear(String authority, long code) {
 		projections.remove(authority, code);
@@ -320,7 +303,6 @@ public class ProjectionFactory {
 	 *            coordinate authority
 	 * @param code
 	 *            coordinate code
-	 * @since 1.3.0
 	 */
 	public static void clear(String authority, String code) {
 		projections.remove(authority, code);

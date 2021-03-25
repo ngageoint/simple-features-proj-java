@@ -1,4 +1,4 @@
-package mil.nga.sf.proj;
+package mil.nga.proj;
 
 /**
  * Projection constants
@@ -9,22 +9,16 @@ public class ProjectionConstants {
 
 	/**
 	 * EPSG authority name
-	 * 
-	 * @since 1.3.0
 	 */
 	public static final String AUTHORITY_EPSG = "EPSG";
 
 	/**
 	 * No authority name
-	 * 
-	 * @since 1.3.0
 	 */
 	public static final String AUTHORITY_NONE = "NONE";
 
 	/**
 	 * OGC authority name
-	 * 
-	 * @since 3.0.1
 	 */
 	public static final String AUTHORITY_OGC = "OGC";
 
@@ -50,15 +44,11 @@ public class ProjectionConstants {
 
 	/**
 	 * EPSG code for world geodetic system geographical 3d
-	 * 
-	 * @since 1.2.1
 	 */
 	public static final int EPSG_WORLD_GEODETIC_SYSTEM_GEOGRAPHICAL_3D = 4979;
 
 	/**
 	 * OGC CRS84 code
-	 * 
-	 * @since 3.0.1
 	 */
 	public static final String OGC_CRS84 = "CRS84";
 
@@ -79,15 +69,11 @@ public class ProjectionConstants {
 
 	/**
 	 * Half the world longitude width for WGS84
-	 * 
-	 * @since 1.2.0
 	 */
 	public static double WGS84_HALF_WORLD_LON_WIDTH = 180.0;
 
 	/**
 	 * Half the world latitude height for WGS84
-	 * 
-	 * @since 1.2.0
 	 */
 	public static double WGS84_HALF_WORLD_LAT_HEIGHT = 90.0;
 

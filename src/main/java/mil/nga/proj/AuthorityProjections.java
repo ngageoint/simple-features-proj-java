@@ -1,4 +1,4 @@
-package mil.nga.sf.proj;
+package mil.nga.proj;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,7 +9,6 @@ import java.util.Set;
  * Collection of projections for a single coordinate authority
  * 
  * @author osbornb
- * @since 1.3.0
  */
 public class AuthorityProjections {
 
@@ -48,7 +47,6 @@ public class AuthorityProjections {
 	 * @param code
 	 *            coordinate code
 	 * @return projection
-	 * @since 3.0.1
 	 */
 	public Projection getProjection(long code) {
 		return getProjection(String.valueOf(code));
@@ -71,7 +69,6 @@ public class AuthorityProjections {
 	 * @param projection
 	 *            projection
 	 * @return true if has the projection
-	 * @since 3.0.1
 	 */
 	public boolean hasProjection(Projection projection) {
 		return hasProjection(projection.getCode());
@@ -83,7 +80,6 @@ public class AuthorityProjections {
 	 * @param code
 	 *            coordinate code
 	 * @return true if has a projection
-	 * @since 3.0.1
 	 */
 	public boolean hasProjection(long code) {
 		return hasProjection(String.valueOf(code));
@@ -95,7 +91,6 @@ public class AuthorityProjections {
 	 * @param code
 	 *            coordinate code
 	 * @return true if has a projection
-	 * @since 3.0.1
 	 */
 	public boolean hasProjection(String code) {
 		return getProjection(code) != null;
@@ -123,7 +118,6 @@ public class AuthorityProjections {
 	 * 
 	 * @param code
 	 *            coordinate code
-	 * @since 3.0.1
 	 */
 	public void remove(long code) {
 		remove(String.valueOf(code));
@@ -134,7 +128,6 @@ public class AuthorityProjections {
 	 * 
 	 * @param code
 	 *            coordinate code
-	 * @since 3.0.1
 	 */
 	public void remove(String code) {
 		projections.remove(code.toUpperCase());
@@ -145,7 +138,6 @@ public class AuthorityProjections {
 	 * 
 	 * @param projection
 	 *            projection
-	 * @since 3.0.1
 	 */
 	public void remove(Projection projection) {
 		remove(projection.getCode());
@@ -155,7 +147,6 @@ public class AuthorityProjections {
 	 * Get the count of authority projections
 	 * 
 	 * @return count
-	 * @since 3.0.1
 	 */
 	public int count() {
 		return projections.size();
@@ -165,7 +156,6 @@ public class AuthorityProjections {
 	 * Is the collection empty?
 	 * 
 	 * @return true if empty
-	 * @since 3.0.1
 	 */
 	public boolean isEmpty() {
 		return projections.isEmpty();
@@ -175,7 +165,6 @@ public class AuthorityProjections {
 	 * Get the projection codes
 	 * 
 	 * @return projection codes
-	 * @since 3.0.1
 	 */
 	public Set<String> getCodes() {
 		return projections.keySet();
@@ -185,7 +174,6 @@ public class AuthorityProjections {
 	 * Get the projections
 	 * 
 	 * @return projections
-	 * @since 3.0.1
 	 */
 	public Collection<Projection> getProjections() {
 		return projections.values();

@@ -1,48 +1,59 @@
 package mil.nga.sf.proj;
 
+import org.junit.Test;
+
 import junit.framework.TestCase;
+import mil.nga.proj.Projection;
+import mil.nga.proj.ProjectionConstants;
+import mil.nga.proj.ProjectionFactory;
 import mil.nga.sf.Geometry;
 import mil.nga.sf.LineString;
 import mil.nga.sf.Point;
 import mil.nga.sf.Polygon;
 
-import org.junit.Test;
+/**
+ * Geometry Transform tests
+ * 
+ * @author osbornb
+ */
+public class GeometryTransformTest {
 
-public class ProjectionTransformTest {
-
+	/**
+	 * Test transforms
+	 */
 	@Test
-	public void testProjectionTransform() {
+	public void testTransform() {
 
 		Polygon polygon = new Polygon();
 		LineString ring = new LineString();
-		ring.addPoint(new Point(
-				-ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH,
-				-ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH));
-		ring.addPoint(new Point(
-				ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH,
-				-ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH));
-		ring.addPoint(new Point(
-				ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH,
-				ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH));
-		ring.addPoint(new Point(
-				-ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH,
-				ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH));
+		ring.addPoint(
+				new Point(-ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH,
+						-ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH));
+		ring.addPoint(
+				new Point(ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH,
+						-ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH));
+		ring.addPoint(
+				new Point(ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH,
+						ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH));
+		ring.addPoint(
+				new Point(-ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH,
+						ProjectionConstants.WEB_MERCATOR_HALF_WORLD_WIDTH));
 		polygon.addRing(ring);
 
 		Polygon wgs84Polygon = new Polygon();
 		LineString wgs84Ring = new LineString();
-		wgs84Ring.addPoint(new Point(
-				-ProjectionConstants.WGS84_HALF_WORLD_LON_WIDTH,
-				-ProjectionConstants.WEB_MERCATOR_MAX_LAT_RANGE));
-		wgs84Ring.addPoint(new Point(
-				ProjectionConstants.WGS84_HALF_WORLD_LON_WIDTH,
-				-ProjectionConstants.WEB_MERCATOR_MAX_LAT_RANGE));
-		wgs84Ring.addPoint(new Point(
-				ProjectionConstants.WGS84_HALF_WORLD_LON_WIDTH,
-				ProjectionConstants.WEB_MERCATOR_MAX_LAT_RANGE));
-		wgs84Ring.addPoint(new Point(
-				-ProjectionConstants.WGS84_HALF_WORLD_LON_WIDTH,
-				ProjectionConstants.WEB_MERCATOR_MAX_LAT_RANGE));
+		wgs84Ring.addPoint(
+				new Point(-ProjectionConstants.WGS84_HALF_WORLD_LON_WIDTH,
+						-ProjectionConstants.WEB_MERCATOR_MAX_LAT_RANGE));
+		wgs84Ring.addPoint(
+				new Point(ProjectionConstants.WGS84_HALF_WORLD_LON_WIDTH,
+						-ProjectionConstants.WEB_MERCATOR_MAX_LAT_RANGE));
+		wgs84Ring.addPoint(
+				new Point(ProjectionConstants.WGS84_HALF_WORLD_LON_WIDTH,
+						ProjectionConstants.WEB_MERCATOR_MAX_LAT_RANGE));
+		wgs84Ring.addPoint(
+				new Point(-ProjectionConstants.WGS84_HALF_WORLD_LON_WIDTH,
+						ProjectionConstants.WEB_MERCATOR_MAX_LAT_RANGE));
 		wgs84Polygon.addRing(wgs84Ring);
 
 		Projection webMercator = ProjectionFactory.getProjection(
@@ -52,8 +63,8 @@ public class ProjectionTransformTest {
 				ProjectionConstants.AUTHORITY_EPSG,
 				ProjectionConstants.EPSG_WORLD_GEODETIC_SYSTEM);
 
-		ProjectionTransform transformWebMercatorToWgs84 = webMercator
-				.getTransformation(wgs84);
+		GeometryTransform transformWebMercatorToWgs84 = GeometryTransform
+				.create(webMercator, wgs84);
 
 		Geometry transformedGeometry = transformWebMercatorToWgs84
 				.transform(polygon);
@@ -63,8 +74,8 @@ public class ProjectionTransformTest {
 
 		TestCase.assertEquals(wgs84Polygon, transformedGeometry);
 
-		ProjectionTransform transformWgs84ToWebMercator = wgs84
-				.getTransformation(webMercator);
+		GeometryTransform transformWgs84ToWebMercator = GeometryTransform
+				.create(wgs84, webMercator);
 
 		Geometry transformedGeometry2 = transformWgs84ToWebMercator
 				.transform(transformedGeometry);
