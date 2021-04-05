@@ -3,10 +3,10 @@ package mil.nga.proj.crs.wkt;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import mil.nga.sf.util.SFException;
 
 /**
  * Read through text string
@@ -27,9 +27,9 @@ public class TextReader {
 	private final Reader reader;
 
 	/**
-	 * Next token cache for peeks
+	 * Next tokens cache for peeks
 	 */
-	private String nextToken;
+	private final List<String> nextTokens = new ArrayList<>();
 
 	/**
 	 * Next character number cache for between token caching
@@ -90,9 +90,8 @@ public class TextReader {
 		String token = null;
 
 		// Get the next token, cached or read
-		if (nextToken != null) {
-			token = nextToken;
-			nextToken = null;
+		if (!nextTokens.isEmpty()) {
+			token = nextTokens.remove(0);
 		} else {
 
 			StringBuilder builder = null;
@@ -180,25 +179,34 @@ public class TextReader {
 	 *             upon read error
 	 */
 	public String peekToken() throws IOException {
-		if (nextToken == null) {
-			nextToken = readToken();
-		}
-		return nextToken;
+		return peekToken(1);
 	}
 
 	/**
-	 * Read a double
+	 * Peek at a token without reading past it
 	 * 
-	 * @return double
+	 * @param num
+	 *            number of tokens out to peek at
+	 * @return token
 	 * @throws IOException
 	 *             upon read error
 	 */
-	public double readDouble() throws IOException {
-		String token = readToken();
-		if (token == null) {
-			throw new SFException("Failed to read expected double value");
+	public String peekToken(int num) throws IOException {
+		for (int i = 1; i <= num; i++) {
+			if (nextTokens.size() < i) {
+				String token = readToken();
+				if (token != null) {
+					nextTokens.add(token);
+				} else {
+					break;
+				}
+			}
 		}
-		return Double.parseDouble(token);
+		String token = null;
+		if (num <= nextTokens.size()) {
+			token = nextTokens.get(num - 1);
+		}
+		return token;
 	}
 
 	/**

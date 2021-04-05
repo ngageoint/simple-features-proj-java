@@ -7,7 +7,6 @@ import java.io.IOException;
 import org.junit.Test;
 
 import mil.nga.proj.crs.CoordinateReferenceSystem;
-import mil.nga.proj.crs.wkt.CRSReader;
 
 /**
  * CRS Reader tests

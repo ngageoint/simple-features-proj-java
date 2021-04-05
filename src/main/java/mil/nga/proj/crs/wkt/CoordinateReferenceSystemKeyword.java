@@ -3,6 +3,7 @@ package mil.nga.proj.crs.wkt;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -47,23 +48,70 @@ public enum CoordinateReferenceSystemKeyword {
 	ELLIPSOID("SPHEROID"),
 
 	/**
+	 * Angle Unit
+	 */
+	ANGLEUNIT("UNIT"),
+
+	/**
 	 * Length Unit
 	 */
 	LENGTHUNIT("UNIT"),
 
 	/**
+	 * Parametric Unit
+	 */
+	PARAMETRICUNIT(),
+
+	/**
+	 * Scale Unit
+	 */
+	SCALEUNIT("UNIT"),
+
+	/**
+	 * Time Unit
+	 */
+	TIMEUNIT("TEMPORALQUANTITY"),
+
+	/**
 	 * Identifier
 	 */
-	ID();
+	ID("AUTHORITY"),
+
+	/**
+	 * Citation
+	 */
+	CITATION(),
+
+	/**
+	 * URI
+	 */
+	URI(),
+
+	/**
+	 * 
+	 */
+	ANCHOR(),
+
+	/**
+	 * 
+	 */
+	PRIMEM("PRIMEMERIDIAN");
 
 	/**
 	 * Keyword to type mapping
 	 */
-	private static final Map<String, CoordinateReferenceSystemKeyword> keywordTypes = new HashMap<>();
+	private static final Map<String, Set<CoordinateReferenceSystemKeyword>> keywordTypes = new HashMap<>();
 	static {
 		for (CoordinateReferenceSystemKeyword type : values()) {
 			for (String keyword : type.keywords) {
-				keywordTypes.put(keyword.toUpperCase(), type);
+				String keywordUpperCase = keyword.toUpperCase();
+				Set<CoordinateReferenceSystemKeyword> keywordSet = keywordTypes
+						.get(keywordUpperCase);
+				if (keywordSet == null) {
+					keywordSet = new HashSet<>();
+					keywordTypes.put(keywordUpperCase, keywordSet);
+				}
+				keywordSet.add(type);
 			}
 		}
 	}
@@ -101,7 +149,12 @@ public enum CoordinateReferenceSystemKeyword {
 	 * @return type
 	 */
 	public static CoordinateReferenceSystemKeyword getType(String keyword) {
-		return keywordTypes.get(keyword.toUpperCase());
+		CoordinateReferenceSystemKeyword type = null;
+		Set<CoordinateReferenceSystemKeyword> types = getTypes(keyword);
+		if (types != null && !types.isEmpty()) {
+			type = types.iterator().next();
+		}
+		return type;
 	}
 
 	/**
@@ -120,6 +173,40 @@ public enum CoordinateReferenceSystemKeyword {
 							+ keyword);
 		}
 		return type;
+	}
+
+	/**
+	 * Get the keyword types from the keyword
+	 * 
+	 * @param keyword
+	 *            CRS keyword
+	 * @return types
+	 */
+	public static Set<CoordinateReferenceSystemKeyword> getTypes(
+			String keyword) {
+		Set<CoordinateReferenceSystemKeyword> types = null;
+		if (keyword != null) {
+			types = keywordTypes.get(keyword.toUpperCase());
+		}
+		return types;
+	}
+
+	/**
+	 * Get the keyword types from the keyword
+	 * 
+	 * @param keyword
+	 *            CRS keyword
+	 * @return types
+	 */
+	public static Set<CoordinateReferenceSystemKeyword> getRequiredTypes(
+			String keyword) {
+		Set<CoordinateReferenceSystemKeyword> types = getTypes(keyword);
+		if (types == null || types.isEmpty()) {
+			throw new ProjectionException(
+					"No Coordinate Reference System Types for keyword: "
+							+ keyword);
+		}
+		return types;
 	}
 
 }

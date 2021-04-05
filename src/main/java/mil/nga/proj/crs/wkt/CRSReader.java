@@ -1,11 +1,21 @@
 package mil.nga.proj.crs.wkt;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import mil.nga.proj.PrimeMeridian;
 import mil.nga.proj.ProjectionException;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
+import mil.nga.proj.crs.CoordinateSystem;
 import mil.nga.proj.crs.Ellipsoid;
 import mil.nga.proj.crs.GeodeticReferenceFrame;
+import mil.nga.proj.crs.Identifier;
+import mil.nga.proj.crs.Unit;
+import mil.nga.proj.crs.UnitType;
 
 /**
  * Well Known Text reader
@@ -87,11 +97,11 @@ public class CRSReader {
 
 		CoordinateReferenceSystem crs = null;
 
-		CoordinateReferenceSystemKeyword keyword = readKeyword();
+		CoordinateReferenceSystemKeyword keyword = peekKeyword();
 		switch (keyword) {
 		case GEODCRS:
 		case GEOGCRS:
-			crs = readGeodeticOrGeographic(keyword);
+			crs = readGeodeticOrGeographic();
 			break;
 		default:
 			throw new ProjectionException(
@@ -109,24 +119,109 @@ public class CRSReader {
 	 *             upon failure to read
 	 */
 	public CoordinateReferenceSystemKeyword readKeyword() throws IOException {
-		String keywordToken = reader.readToken();
-		CoordinateReferenceSystemKeyword keyword = CoordinateReferenceSystemKeyword
-				.getRequiredType(keywordToken);
-		return keyword;
+		return CoordinateReferenceSystemKeyword
+				.getRequiredType(reader.readToken());
+	}
+
+	/**
+	 * Read WKT CRS keywords
+	 * 
+	 * @return keywords
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Set<CoordinateReferenceSystemKeyword> readKeywords()
+			throws IOException {
+		return CoordinateReferenceSystemKeyword
+				.getRequiredTypes(reader.readToken());
+	}
+
+	/**
+	 * Peek a WKT CRS keyword
+	 * 
+	 * @return keyword
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CoordinateReferenceSystemKeyword peekKeyword() throws IOException {
+		return CoordinateReferenceSystemKeyword
+				.getRequiredType(reader.peekToken());
+	}
+
+	/**
+	 * Peek WKT CRS keywords
+	 * 
+	 * @return keywords
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Set<CoordinateReferenceSystemKeyword> peekKeywords()
+			throws IOException {
+		return CoordinateReferenceSystemKeyword
+				.getRequiredTypes(reader.peekToken());
+	}
+
+	/**
+	 * Peek an optional WKT CRS keyword
+	 * 
+	 * @return keyword
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CoordinateReferenceSystemKeyword peekOptionalKeyword()
+			throws IOException {
+		return CoordinateReferenceSystemKeyword.getType(reader.peekToken());
+	}
+
+	/**
+	 * Peek an optional WKT CRS keywords
+	 * 
+	 * @return keywords
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Set<CoordinateReferenceSystemKeyword> peekOptionalKeywords()
+			throws IOException {
+		return CoordinateReferenceSystemKeyword.getTypes(reader.peekToken());
+	}
+
+	/**
+	 * Peek an optional WKT CRS keyword
+	 * 
+	 * @param num
+	 *            number of tokens out to peek at
+	 * @return keyword
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CoordinateReferenceSystemKeyword peekOptionalKeyword(int num)
+			throws IOException {
+		return CoordinateReferenceSystemKeyword.getType(reader.peekToken(num));
+	}
+
+	/**
+	 * Peek an optional WKT CRS keywords
+	 * 
+	 * @param num
+	 *            number of tokens out to peek at
+	 * @return keywords
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Set<CoordinateReferenceSystemKeyword> peekOptionalKeywords(int num)
+			throws IOException {
+		return CoordinateReferenceSystemKeyword.getTypes(reader.peekToken(num));
 	}
 
 	/**
 	 * Read a left delimiter
 	 * 
-	 * @param reader
-	 *            text reader
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	private static void readLeftDelimiter(TextReader reader)
-			throws IOException {
+	public void readLeftDelimiter() throws IOException {
 		String token = reader.readToken();
-		if (!token.equals("[") && !token.equals("(")) {
+		if (token == null || (!token.equals("[") && !token.equals("("))) {
 			throw new ProjectionException(
 					"Invalid left delimiter token, expected '[' or '('. found: '"
 							+ token + "'");
@@ -136,15 +231,12 @@ public class CRSReader {
 	/**
 	 * Read a right delimiter
 	 * 
-	 * @param reader
-	 *            text reader
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	private static void readRightDelimiter(TextReader reader)
-			throws IOException {
+	public void readRightDelimiter() throws IOException {
 		String token = reader.readToken();
-		if (!token.equals("]") && !token.equals(")")) {
+		if (token == null || (!token.equals("]") && !token.equals(")"))) {
 			throw new ProjectionException(
 					"Invalid right delimiter token, expected ']' or ')'. found: '"
 							+ token + "'");
@@ -154,14 +246,12 @@ public class CRSReader {
 	/**
 	 * Read a WKT Separator (comma)
 	 * 
-	 * @param reader
-	 *            text reader
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	private static void readSeparator(TextReader reader) throws IOException {
+	public void readSeparator() throws IOException {
 		String token = reader.readToken();
-		if (!token.equals(",")) {
+		if (token == null || !token.equals(",")) {
 			throw new ProjectionException(
 					"Invalid separator token, expected ','. found: '" + token
 							+ "'");
@@ -171,56 +261,152 @@ public class CRSReader {
 	/**
 	 * Peek if the next token is a WKT Separator (comma)
 	 * 
-	 * @param reader
-	 *            text reader
 	 * @return true if next token is a separator
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	private static boolean peekSeparator(TextReader reader) throws IOException {
+	public boolean peekSeparator() throws IOException {
 		return reader.peekToken().equals(",");
 	}
 
 	/**
 	 * Read quoted text
 	 * 
-	 * @param reader
-	 *            text reader
 	 * @return text
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	private static String readQuotedText(TextReader reader) throws IOException {
+	public String readQuotedText() throws IOException {
 		String token = reader.readToken();
-		if (!token.startsWith("\"") || !token.endsWith("\"")) {
+		if (token == null
+				|| (!token.startsWith("\"") || !token.endsWith("\""))) {
 			throw new ProjectionException(
-					"Invalid quoted text token, expected double quoted text. found: '"
-							+ token + "'");
+					"Invalid double quoted text token. found: '" + token + "'");
 		}
 		return token.substring(1, token.length() - 1);
 	}
 
 	/**
+	 * Read a number
+	 * 
+	 * @return number
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public double readNumber() throws IOException {
+		String token = reader.readToken();
+		double number;
+		if (token == null) {
+			throw new ProjectionException(
+					"Invalid number token. found: '" + token + "'");
+		}
+		try {
+			number = Double.parseDouble(token);
+		} catch (NumberFormatException e) {
+			throw new ProjectionException(
+					"Invalid number token. found: '" + token + "'", e);
+		}
+		return number;
+	}
+
+	/**
+	 * Read number or quoted text
+	 * 
+	 * @return number or text value
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public String readNumberOrQuotedText() throws IOException {
+		String token = reader.readToken();
+		if (token == null || token.startsWith("\"")) {
+			if (token != null && token.endsWith("\"")) {
+				token = token.substring(1, token.length() - 1);
+			} else {
+				throw new ProjectionException(
+						"Invalid number or quoted text token. found: '" + token
+								+ "'");
+			}
+		} else {
+			// Verify the token is a number
+			Double.parseDouble(token);
+		}
+		return token;
+	}
+
+	/**
+	 * Validate the keyword against the expected
+	 * 
+	 * @param keyword
+	 *            keyword
+	 * @param expected
+	 *            expected keyword
+	 */
+	private void validateKeyword(CoordinateReferenceSystemKeyword keyword,
+			CoordinateReferenceSystemKeyword expected) {
+		if (keyword != expected) {
+			throw new ProjectionException("Unexpected keyword. found: "
+					+ keyword + ", expected: " + expected);
+		}
+	}
+
+	/**
+	 * Validate the keyword against the expected keywords
+	 * 
+	 * @param keyword
+	 *            keyword
+	 * @param expected
+	 *            expected keywords
+	 */
+	private void validateKeyword(CoordinateReferenceSystemKeyword keyword,
+			CoordinateReferenceSystemKeyword... expected) {
+		Set<CoordinateReferenceSystemKeyword> expectedSet = new HashSet<>(
+				Arrays.asList(expected));
+		if (!expectedSet.contains(keyword)) {
+			throw new ProjectionException("Unexpected keyword. found: "
+					+ keyword + ", expected: " + expectedSet);
+		}
+	}
+
+	/**
+	 * Validate the keywords against the expected keyword
+	 * 
+	 * @param keywords
+	 *            keywords
+	 * @param expected
+	 *            expected keyword
+	 */
+	private void validateKeywords(
+			Set<CoordinateReferenceSystemKeyword> keywords,
+			CoordinateReferenceSystemKeyword expected) {
+		if (!keywords.contains(expected)) {
+			throw new ProjectionException("Unexpected keyword. found: "
+					+ keywords + ", expected: " + expected);
+		}
+	}
+
+	/**
 	 * Read a Geodetic or Geographic CRS
 	 * 
-	 * @param type
-	 *            WKT CRS type
 	 * @return crs
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public CoordinateReferenceSystem readGeodeticOrGeographic(
-			CoordinateReferenceSystemKeyword type) throws IOException {
+	public CoordinateReferenceSystem readGeodeticOrGeographic()
+			throws IOException {
 
 		CoordinateReferenceSystem crs = null;
 
-		readLeftDelimiter(reader);
+		CoordinateReferenceSystemKeyword type = readKeyword();
+		validateKeyword(type, CoordinateReferenceSystemKeyword.GEODCRS,
+				CoordinateReferenceSystemKeyword.GEOGCRS);
 
-		String crsName = readQuotedText(reader);
+		readLeftDelimiter();
 
-		readSeparator(reader);
+		String crsName = readQuotedText();
 
-		CoordinateReferenceSystemKeyword keyword = readKeyword();
+		readSeparator();
+
+		CoordinateReferenceSystemKeyword keyword = peekKeyword();
 		switch (keyword) {
 		case DATUM:
 			GeodeticReferenceFrame geodeticReferenceFrame = readGeodeticReferenceFrame();
@@ -237,13 +423,13 @@ public class CRSReader {
 					"Unsupported WKT CRS keyword: " + keyword);
 		}
 
-		readSeparator(reader);
+		readSeparator();
 
-		// TODO <coordinate system>
+		CoordinateSystem coordinateSystem = readCoordinateSystem();
 
 		// TODO <scope extent identifier remark>
 
-		readRightDelimiter(reader);
+		readRightDelimiter();
 
 		return crs; // TODO
 	}
@@ -260,17 +446,131 @@ public class CRSReader {
 
 		GeodeticReferenceFrame geodeticReferenceFrame = null; // TODO
 
-		readLeftDelimiter(reader);
+		CoordinateReferenceSystemKeyword keyword = readKeyword();
+		validateKeyword(keyword, CoordinateReferenceSystemKeyword.DATUM);
 
-		String name = readQuotedText(reader);
+		readLeftDelimiter();
 
-		readSeparator(reader);
+		String name = readQuotedText();
+
+		readSeparator();
 
 		Ellipsoid ellipsoid = readEllipsoid();
 
-		// TODO
+		String datumAnchor = null;
+		List<Identifier> identifiers = new ArrayList<>();
+
+		while (peekSeparator()) {
+
+			readSeparator();
+			CoordinateReferenceSystemKeyword optionalKeyword = peekKeyword();
+
+			switch (optionalKeyword) {
+			case ANCHOR:
+				if (datumAnchor != null || !identifiers.isEmpty()) {
+					throw new ProjectionException(
+							"Unexpected geodetic reference frame optional keyword. found: "
+									+ optionalKeyword);
+				}
+				readKeyword();
+				readLeftDelimiter();
+				datumAnchor = readQuotedText();
+				readRightDelimiter();
+				break;
+			case ID:
+				identifiers.add(readIdentifier());
+				break;
+			default:
+				throw new ProjectionException(
+						"Unexpected geodetic reference frame optional keyword. found: "
+								+ optionalKeyword);
+			}
+
+		}
+
+		readRightDelimiter();
+
+		if (peekSeparator()) {
+
+			CoordinateReferenceSystemKeyword primeMeridianKeyword = peekOptionalKeyword(
+					2);
+			if (primeMeridianKeyword != null
+					&& primeMeridianKeyword == CoordinateReferenceSystemKeyword.PRIMEM) {
+
+				readSeparator();
+
+				PrimeMeridian primeMeridian = readPrimeMeridian();
+
+				// TODO
+
+			}
+
+		}
 
 		return geodeticReferenceFrame;
+	}
+
+	/**
+	 * Read a Prime meridian
+	 * 
+	 * @return prime meridian
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public PrimeMeridian readPrimeMeridian() throws IOException {
+
+		PrimeMeridian primeMeridian = null; // TODO
+
+		CoordinateReferenceSystemKeyword keyword = readKeyword();
+		validateKeyword(keyword, CoordinateReferenceSystemKeyword.PRIMEM);
+
+		readLeftDelimiter();
+
+		String name = readQuotedText();
+
+		readSeparator();
+
+		double irmLongitude = readNumber();
+
+		Unit angleUnit = null;
+		List<Identifier> identifiers = new ArrayList<>();
+
+		while (peekSeparator()) {
+
+			readSeparator();
+
+			CoordinateReferenceSystemKeyword optionalKeyword = null;
+			Set<CoordinateReferenceSystemKeyword> optionalKeywords = peekKeywords();
+			if (optionalKeywords
+					.contains(CoordinateReferenceSystemKeyword.ANGLEUNIT)) {
+				optionalKeyword = CoordinateReferenceSystemKeyword.ANGLEUNIT;
+			} else {
+				optionalKeyword = optionalKeywords.iterator().next();
+			}
+
+			switch (optionalKeyword) {
+			case ANGLEUNIT:
+				if (angleUnit != null || !identifiers.isEmpty()) {
+					throw new ProjectionException(
+							"Unexpected prime meridian optional keyword. found: "
+									+ optionalKeyword);
+				}
+				angleUnit = readAngleUnit();
+				break;
+			case ID:
+				identifiers.add(readIdentifier());
+				break;
+			default:
+				throw new ProjectionException(
+						"Unexpected prime meridian optional keyword. found: "
+								+ optionalKeyword);
+			}
+
+		}
+
+		readRightDelimiter();
+
+		return primeMeridian;
 	}
 
 	/**
@@ -285,55 +585,213 @@ public class CRSReader {
 		Ellipsoid ellipsoid = null; // TODO
 
 		CoordinateReferenceSystemKeyword keyword = readKeyword();
-		if (keyword != CoordinateReferenceSystemKeyword.ELLIPSOID) {
-			throw new ProjectionException(
-					"Unexpected ellipsoid keyword. found: " + keyword);
-		}
+		validateKeyword(keyword, CoordinateReferenceSystemKeyword.ELLIPSOID);
 
-		readLeftDelimiter(reader);
+		readLeftDelimiter();
 
-		String name = readQuotedText(reader);
+		String name = readQuotedText();
 
-		readSeparator(reader);
+		readSeparator();
 
-		double semiMajorAxis = reader.readDouble();
+		double semiMajorAxis = readNumber();
 
-		readSeparator(reader);
+		readSeparator();
 
-		double inverseFlattening = reader.readDouble();
+		double inverseFlattening = readNumber();
 
-		boolean firstOptional = true;
-		while (peekSeparator(reader)) {
+		Unit lengthUnit = null;
+		List<Identifier> identifiers = new ArrayList<>();
 
-			readSeparator(reader);
-			CoordinateReferenceSystemKeyword optionalKeyword = readKeyword();
+		while (peekSeparator()) {
+
+			readSeparator();
+
+			CoordinateReferenceSystemKeyword optionalKeyword = null;
+			Set<CoordinateReferenceSystemKeyword> optionalKeywords = peekKeywords();
+			if (optionalKeywords
+					.contains(CoordinateReferenceSystemKeyword.LENGTHUNIT)) {
+				optionalKeyword = CoordinateReferenceSystemKeyword.LENGTHUNIT;
+			} else {
+				optionalKeyword = optionalKeywords.iterator().next();
+			}
 
 			switch (optionalKeyword) {
 			case LENGTHUNIT:
-				if (firstOptional) {
-					// TODO
-				} else {
+				if (lengthUnit != null || !identifiers.isEmpty()) {
 					throw new ProjectionException(
 							"Unexpected ellipsoid optional keyword. found: "
-									+ keyword);
+									+ optionalKeyword);
 				}
+				lengthUnit = readLengthUnit();
 				break;
 			case ID:
-				// TODO
+				identifiers.add(readIdentifier());
 				break;
 			default:
 				throw new ProjectionException(
 						"Unexpected ellipsoid optional keyword. found: "
-								+ keyword);
+								+ optionalKeyword);
 			}
-
-			firstOptional = false;
 
 		}
 
-		readRightDelimiter(reader);
+		readRightDelimiter();
 
 		return ellipsoid;
+	}
+
+	/**
+	 * Read a Length Unit
+	 * 
+	 * @return length unit
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Unit readLengthUnit() throws IOException {
+		return readUnit(UnitType.LENGTHUNIT);
+	}
+
+	/**
+	 * Read an Angle Unit
+	 * 
+	 * @return angle unit
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Unit readAngleUnit() throws IOException {
+		return readUnit(UnitType.ANGLEUNIT);
+	}
+
+	/**
+	 * Read a Unit
+	 * 
+	 * @param type
+	 *            expected unit type
+	 * @return unit
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Unit readUnit(UnitType type) throws IOException {
+
+		Unit unit = null; // TODO
+
+		Set<CoordinateReferenceSystemKeyword> keywords = readKeywords();
+		CoordinateReferenceSystemKeyword crsType = CoordinateReferenceSystemKeyword
+				.getType(type.name());
+		validateKeywords(keywords, crsType);
+
+		readLeftDelimiter();
+
+		String name = readQuotedText();
+
+		readSeparator();
+
+		double conversationFactor = readNumber();
+
+		List<Identifier> identifiers = new ArrayList<>();
+
+		while (peekSeparator()) {
+
+			readSeparator();
+
+			identifiers.add(readIdentifier());
+
+		}
+
+		readRightDelimiter();
+
+		return unit;
+	}
+
+	/**
+	 * Read an Identifier
+	 * 
+	 * @return identifier
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Identifier readIdentifier() throws IOException {
+
+		Identifier identifier = null; // TODO
+
+		CoordinateReferenceSystemKeyword keyword = readKeyword();
+		validateKeyword(keyword, CoordinateReferenceSystemKeyword.ID);
+
+		readLeftDelimiter();
+
+		String authorityName = readQuotedText();
+
+		readSeparator();
+
+		String authorityUniqueIdentifier = readNumberOrQuotedText();
+
+		String version = null;
+		String authorityCitation = null;
+		String idUri = null;
+
+		while (peekSeparator()) {
+
+			CoordinateReferenceSystemKeyword optionalKeyword = peekOptionalKeyword();
+
+			if (optionalKeyword == null) {
+				if (version != null || authorityCitation != null
+						|| idUri != null) {
+					throw new ProjectionException(
+							"Unexpected identifier optional value. found: "
+									+ reader.peekToken());
+				}
+				version = readNumberOrQuotedText();
+			} else {
+
+				optionalKeyword = readKeyword();
+				readLeftDelimiter();
+				String quotedText = readQuotedText();
+
+				switch (optionalKeyword) {
+				case CITATION:
+					if (authorityCitation != null || idUri != null) {
+						throw new ProjectionException(
+								"Unexpected identifier optional keyword. found: "
+										+ optionalKeyword);
+					}
+					authorityCitation = quotedText;
+					break;
+				case URI:
+					if (idUri != null) {
+						throw new ProjectionException(
+								"Unexpected identifier optional keyword. found: "
+										+ optionalKeyword);
+					}
+					idUri = quotedText;
+					break;
+				default:
+					throw new ProjectionException(
+							"Unexpected ellipsoid optional keyword. found: "
+									+ keyword);
+				}
+				readRightDelimiter();
+
+			}
+
+		}
+
+		readRightDelimiter();
+
+		return identifier;
+	}
+
+	/**
+	 * Read a Coordinate system
+	 * 
+	 * @return coordinate system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CoordinateSystem readCoordinateSystem() throws IOException {
+
+		CoordinateSystem coordinateSystem = null; // TODO
+
+		return coordinateSystem;
 	}
 
 }
