@@ -1,4 +1,4 @@
-package mil.nga.proj.wkt;
+package mil.nga.proj.crs.wkt;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -96,6 +96,8 @@ public class TextReader {
 		} else {
 
 			StringBuilder builder = null;
+			boolean isQuote = false;
+			boolean previousCharQuote = false;
 
 			// Get the next character, cached or read
 			int characterNum;
@@ -114,8 +116,24 @@ public class TextReader {
 				// Check if not the first character in the token
 				if (builder != null) {
 
-					// Append token characters
-					if (isTokenCharacter(character)) {
+					// If in a quoted string
+					if (isQuote) {
+						boolean charQuote = character == '"';
+						if (!previousCharQuote || charQuote) {
+							builder.append(character);
+						}
+						if (previousCharQuote) {
+							previousCharQuote = false;
+							if (!charQuote) {
+								// End of quoted string found at previous
+								// character
+								nextCharacterNum = characterNum;
+								break;
+							}
+						}
+						previousCharQuote = charQuote;
+					} else if (isTokenCharacter(character)) {
+						// Append token characters
 						builder.append(character);
 					} else {
 						// Complete the token before this character and cache
@@ -132,8 +150,11 @@ public class TextReader {
 					builder = new StringBuilder();
 					builder.append(character);
 
-					// Complete token if a single character token
-					if (!isTokenCharacter(character)) {
+					// Start of a quoted string
+					if (character == '"') {
+						isQuote = true;
+					} else if (!isTokenCharacter(character)) {
+						// Complete token if a single character token
 						break;
 					}
 

@@ -1,11 +1,12 @@
-package mil.nga.proj.wkt;
+package mil.nga.proj.crs.wkt;
 
 /**
  * Coordinate Reference System Tokens from older WKT versions
  * 
  * @author osbornb
  */
-public class CRSOlderTokens {
+// TODO delete
+public class CRSCompatibilityTokens {
 
 	public static final String COMPDCS = "COMPDCS";
 

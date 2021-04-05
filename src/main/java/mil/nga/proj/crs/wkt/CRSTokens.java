@@ -1,10 +1,11 @@
-package mil.nga.proj.wkt;
+package mil.nga.proj.crs.wkt;
 
 /**
  * Coordinate Reference System Tokens
  * 
  * @author osbornb
  */
+//TODO delete
 public class CRSTokens {
 
 	/**

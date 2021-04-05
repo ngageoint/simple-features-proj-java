@@ -1,4 +1,4 @@
-package mil.nga.proj.wkt;
+package mil.nga.proj.crs;
 
 public class CoordinateReferenceSystem {
 
