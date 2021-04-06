@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mil.nga.proj.ProjectionException;
+
 /**
  * Read through text string
  * 
@@ -86,11 +88,27 @@ public class TextReader {
 	 *             upon read error
 	 */
 	public String readToken() throws IOException {
+		return readToken(true);
+	}
+
+	/**
+	 * Read the next token. Ignores whitespace until a non whitespace character
+	 * is encountered. Returns a contiguous block of token characters ( [a-z] |
+	 * [A-Z] | [0-9] | - | . | + ) or a non whitespace single character.
+	 * 
+	 * @param cache
+	 *            true to read from cached peeks, false to force read
+	 * 
+	 * @return token
+	 * @throws IOException
+	 *             upon read error
+	 */
+	private String readToken(boolean cache) throws IOException {
 
 		String token = null;
 
 		// Get the next token, cached or read
-		if (!nextTokens.isEmpty()) {
+		if (cache && !nextTokens.isEmpty()) {
 			token = nextTokens.remove(0);
 		} else {
 
@@ -194,7 +212,7 @@ public class TextReader {
 	public String peekToken(int num) throws IOException {
 		for (int i = 1; i <= num; i++) {
 			if (nextTokens.size() < i) {
-				String token = readToken();
+				String token = readToken(false);
 				if (token != null) {
 					nextTokens.add(token);
 				} else {
@@ -205,6 +223,157 @@ public class TextReader {
 		String token = null;
 		if (num <= nextTokens.size()) {
 			token = nextTokens.get(num - 1);
+		}
+		return token;
+	}
+
+	/**
+	 * Read an expected token
+	 * 
+	 * @return token
+	 * @throws IOException
+	 *             upon read error
+	 */
+	public String readExpectedToken() throws IOException {
+		String token = readToken();
+		if (token == null) {
+			throw new ProjectionException("Unexpected end of text, null token");
+		}
+		return token;
+	}
+
+	/**
+	 * Peek at the next expected token without reading past it
+	 * 
+	 * @return next token
+	 * @throws IOException
+	 *             upon read error
+	 */
+	public String peekExpectedToken() throws IOException {
+		return peekExpectedToken(1);
+	}
+
+	/**
+	 * Peek at the next expected token without reading past it
+	 * 
+	 * @param num
+	 *            number of tokens out to peek at
+	 * @return token
+	 * @throws IOException
+	 *             upon read error
+	 */
+	public String peekExpectedToken(int num) throws IOException {
+		String token = peekToken(num);
+		if (token == null) {
+			throw new ProjectionException("Unexpected end of text, null token");
+		}
+		return token;
+	}
+
+	/**
+	 * Read quoted text
+	 * 
+	 * @return text
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public String readQuotedText() throws IOException {
+		String token = readExpectedToken();
+		if (!token.startsWith("\"") || !token.endsWith("\"")) {
+			throw new ProjectionException(
+					"Invalid double quoted text token. found: '" + token + "'");
+		}
+		return token.substring(1, token.length() - 1);
+	}
+
+	/**
+	 * Read a signed number as a double
+	 * 
+	 * @return signed double
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public double readNumber() throws IOException {
+		String token = readExpectedToken();
+		double number;
+		try {
+			number = Double.parseDouble(token);
+		} catch (NumberFormatException e) {
+			throw new ProjectionException(
+					"Invalid number token. found: '" + token + "'", e);
+		}
+		return number;
+	}
+
+	/**
+	 * Read an unsigned number as a double
+	 * 
+	 * @return unsigned double
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public double readUnsignedNumber() throws IOException {
+		double number = readNumber();
+		if (number < 0) {
+			throw new ProjectionException(
+					"Invalid unsigned number. found: " + number);
+		}
+		return number;
+	}
+
+	/**
+	 * Read a signed integer
+	 * 
+	 * @return signed integer
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public int readInteger() throws IOException {
+		String token = readExpectedToken();
+		int number;
+		try {
+			number = Integer.parseInt(token);
+		} catch (NumberFormatException e) {
+			throw new ProjectionException(
+					"Invalid integer token. found: '" + token + "'", e);
+		}
+		return number;
+	}
+
+	/**
+	 * Read an unsigned integer
+	 * 
+	 * @return unsigned integer
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public int readUnsignedInteger() throws IOException {
+		String token = readExpectedToken();
+		int number;
+		try {
+			number = Integer.parseUnsignedInt(token);
+		} catch (NumberFormatException e) {
+			throw new ProjectionException(
+					"Invalid unsigned integer token. found: '" + token + "'",
+					e);
+		}
+		return number;
+	}
+
+	/**
+	 * Read number or quoted text
+	 * 
+	 * @return number or text value
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public String readNumberOrQuotedText() throws IOException {
+		String token = peekExpectedToken();
+		if (token.startsWith("\"")) {
+			token = readQuotedText();
+		} else {
+			double number = readNumber();
+			token = Double.toString(number);
 		}
 		return token;
 	}

@@ -18,24 +18,29 @@ import mil.nga.proj.ProjectionException;
 public enum CoordinateReferenceSystemKeyword {
 
 	/**
-	 * Geodetic CRS
+	 * Datum anchor
 	 */
-	GEODCRS("GEODETICCRS", "GEOCCS"),
+	ANCHOR(),
 
 	/**
-	 * Geographic CRS
+	 * Angle Unit
 	 */
-	GEOGCRS("GEOGRAPHICCRS", "GEOGCS"),
+	ANGLEUNIT("UNIT"),
+
+	/**
+	 * Citation
+	 */
+	CITATION(),
+
+	/**
+	 * Coordinate system
+	 */
+	CS(),
 
 	/**
 	 * Geodetic reference frame
 	 */
 	DATUM("GEODETICDATUM", "TRF"),
-
-	/**
-	 * Datum ensemble
-	 */
-	ENSEMBLE(),
 
 	/**
 	 * Dynamic coordinate reference systems
@@ -48,9 +53,24 @@ public enum CoordinateReferenceSystemKeyword {
 	ELLIPSOID("SPHEROID"),
 
 	/**
-	 * Angle Unit
+	 * Datum ensemble
 	 */
-	ANGLEUNIT("UNIT"),
+	ENSEMBLE(),
+
+	/**
+	 * Geodetic CRS
+	 */
+	GEODCRS("GEODETICCRS", "GEOCCS"),
+
+	/**
+	 * Geographic CRS
+	 */
+	GEOGCRS("GEOGRAPHICCRS", "GEOGCS"),
+
+	/**
+	 * Identifier
+	 */
+	ID("AUTHORITY"),
 
 	/**
 	 * Length Unit
@@ -63,6 +83,11 @@ public enum CoordinateReferenceSystemKeyword {
 	PARAMETRICUNIT(),
 
 	/**
+	 * Prime meridian
+	 */
+	PRIMEM("PRIMEMERIDIAN"),
+
+	/**
 	 * Scale Unit
 	 */
 	SCALEUNIT("UNIT"),
@@ -73,29 +98,9 @@ public enum CoordinateReferenceSystemKeyword {
 	TIMEUNIT("TEMPORALQUANTITY"),
 
 	/**
-	 * Identifier
-	 */
-	ID("AUTHORITY"),
-
-	/**
-	 * Citation
-	 */
-	CITATION(),
-
-	/**
 	 * URI
 	 */
-	URI(),
-
-	/**
-	 * 
-	 */
-	ANCHOR(),
-
-	/**
-	 * 
-	 */
-	PRIMEM("PRIMEMERIDIAN");
+	URI();
 
 	/**
 	 * Keyword to type mapping
