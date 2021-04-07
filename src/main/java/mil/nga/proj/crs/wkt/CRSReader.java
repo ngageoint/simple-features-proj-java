@@ -9,12 +9,15 @@ import java.util.Set;
 
 import mil.nga.proj.PrimeMeridian;
 import mil.nga.proj.ProjectionException;
+import mil.nga.proj.crs.Axis;
+import mil.nga.proj.crs.AxisDirectionType;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateSystem;
 import mil.nga.proj.crs.CoordinateSystemType;
 import mil.nga.proj.crs.Ellipsoid;
 import mil.nga.proj.crs.GeodeticReferenceFrame;
 import mil.nga.proj.crs.Identifier;
+import mil.nga.proj.crs.ScopeExtentIdentifierRemark;
 import mil.nga.proj.crs.Unit;
 import mil.nga.proj.crs.UnitType;
 
@@ -347,19 +350,26 @@ public class CRSReader {
 	/**
 	 * Check if the keyword is next following an immediate next separator
 	 * 
-	 * @param keyword
-	 *            keyword
+	 * @param keywords
+	 *            keywords
 	 * @return true if next
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	private boolean isKeywordNext(CoordinateReferenceSystemKeyword keyword)
+	private boolean isKeywordNext(CoordinateReferenceSystemKeyword... keywords)
 			throws IOException {
 		boolean next = false;
 		if (peekSeparator()) {
 			Set<CoordinateReferenceSystemKeyword> nextKeywords = peekOptionalKeywords(
 					2);
-			next = nextKeywords != null && nextKeywords.contains(keyword);
+			if (nextKeywords != null && !nextKeywords.isEmpty()) {
+				for (CoordinateReferenceSystemKeyword keyword : keywords) {
+					next = nextKeywords.contains(keyword);
+					if (next) {
+						break;
+					}
+				}
+			}
 		}
 		return next;
 	}
@@ -381,6 +391,46 @@ public class CRSReader {
 			next = nextKeywords == null || nextKeywords.isEmpty();
 		}
 		return next;
+	}
+
+	/**
+	 * Is a unit next following an immediate next separator
+	 * 
+	 * @return true if next
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	private boolean isUnitNext() throws IOException {
+		return isKeywordNext(CoordinateReferenceSystemKeyword.ANGLEUNIT,
+				CoordinateReferenceSystemKeyword.LENGTHUNIT,
+				CoordinateReferenceSystemKeyword.PARAMETRICUNIT,
+				CoordinateReferenceSystemKeyword.SCALEUNIT,
+				CoordinateReferenceSystemKeyword.TIMEUNIT);
+	}
+
+	/**
+	 * Is a spatial unit next following an immediate next separator
+	 * 
+	 * @return true if next
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	private boolean isSpatialUnitNext() throws IOException {
+		return isKeywordNext(CoordinateReferenceSystemKeyword.ANGLEUNIT,
+				CoordinateReferenceSystemKeyword.LENGTHUNIT,
+				CoordinateReferenceSystemKeyword.PARAMETRICUNIT,
+				CoordinateReferenceSystemKeyword.SCALEUNIT);
+	}
+
+	/**
+	 * Is a time unit next following an immediate next separator
+	 * 
+	 * @return true if next
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	private boolean isTimeUnitNext() throws IOException {
+		return isKeywordNext(CoordinateReferenceSystemKeyword.TIMEUNIT);
 	}
 
 	/**
@@ -426,7 +476,7 @@ public class CRSReader {
 
 		CoordinateSystem coordinateSystem = readCoordinateSystem();
 
-		// TODO <scope extent identifier remark>
+		ScopeExtentIdentifierRemark scopeExtentIdentifierRemark = readScopeExtentIdentifierRemark();
 
 		readRightDelimiter();
 
@@ -551,14 +601,14 @@ public class CRSReader {
 	}
 
 	/**
-	 * Read a Length Unit
+	 * Read a Unit
 	 * 
-	 * @return length unit
+	 * @return unit
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public Unit readLengthUnit() throws IOException {
-		return readUnit(UnitType.LENGTHUNIT);
+	public Unit readUnit() throws IOException {
+		return readUnit(UnitType.UNIT);
 	}
 
 	/**
@@ -570,6 +620,50 @@ public class CRSReader {
 	 */
 	public Unit readAngleUnit() throws IOException {
 		return readUnit(UnitType.ANGLEUNIT);
+	}
+
+	/**
+	 * Read a Length Unit
+	 * 
+	 * @return length unit
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Unit readLengthUnit() throws IOException {
+		return readUnit(UnitType.LENGTHUNIT);
+	}
+
+	/**
+	 * Read a Parametric Unit
+	 * 
+	 * @return parametric unit
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Unit readParametricUnit() throws IOException {
+		return readUnit(UnitType.PARAMETRICUNIT);
+	}
+
+	/**
+	 * Read a Scale Unit
+	 * 
+	 * @return scale unit
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Unit readScaleUnit() throws IOException {
+		return readUnit(UnitType.SCALEUNIT);
+	}
+
+	/**
+	 * Read a Time Unit
+	 * 
+	 * @return time unit
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Unit readTimeUnit() throws IOException {
+		return readUnit(UnitType.TIMEUNIT);
 	}
 
 	/**
@@ -586,9 +680,13 @@ public class CRSReader {
 		Unit unit = null; // TODO
 
 		Set<CoordinateReferenceSystemKeyword> keywords = readKeywords();
-		CoordinateReferenceSystemKeyword crsType = CoordinateReferenceSystemKeyword
-				.getType(type.name());
-		validateKeywords(keywords, crsType);
+		if (type != UnitType.UNIT) {
+			CoordinateReferenceSystemKeyword crsType = CoordinateReferenceSystemKeyword
+					.getType(type.name());
+			validateKeywords(keywords, crsType);
+		} else if (keywords.size() == 1) {
+			type = CRSUtils.getUnitType(keywords.iterator().next());
+		}
 
 		readLeftDelimiter();
 
@@ -705,9 +803,190 @@ public class CRSReader {
 
 		readRightDelimiter();
 
-		// TODO
+		boolean isTemporalCountMeasure = CRSUtils
+				.isTemporalCountMeasure(csType);
+
+		do {
+
+			readSeparator();
+
+			Axis axis = readAxis(csType);
+			// TODO
+
+			if (isTemporalCountMeasure) {
+				break;
+			}
+
+		} while (isKeywordNext(CoordinateReferenceSystemKeyword.AXIS));
+
+		if (CRSUtils.isSpatial(csType)) {
+
+			if (isUnitNext()) {
+
+				readSeparator();
+
+				Unit unit = readUnit();
+
+				// TODO
+			}
+
+		}
 
 		return coordinateSystem;
+	}
+
+	/**
+	 * Read an Axis
+	 * 
+	 * @param type
+	 *            coordinate system type
+	 * @return axis
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Axis readAxis(CoordinateSystemType type) throws IOException {
+
+		Axis axis = null; // TODO
+
+		CoordinateReferenceSystemKeyword keyword = readKeyword();
+		validateKeyword(keyword, CoordinateReferenceSystemKeyword.AXIS);
+
+		readLeftDelimiter();
+
+		String name = reader.readQuotedText();
+		String abbreviation = null;
+		if (name.matches("((.+ )|^)\\([a-zA-Z]+\\)$")) {
+			int abbrevIndex = name.lastIndexOf("(");
+			abbreviation = name.substring(abbrevIndex + 1, name.length() - 1);
+			if (abbrevIndex > 0) {
+				name = name.substring(0, abbrevIndex - 1);
+			} else {
+				name = null;
+			}
+		}
+
+		readSeparator();
+
+		String axisDirectionTypeName = reader.readToken();
+		AxisDirectionType axisDirectionType = AxisDirectionType
+				.getType(axisDirectionTypeName);
+		if (axisDirectionType == null) {
+			throw new ProjectionException(
+					"Unexpected axis direction type. found: "
+							+ axisDirectionTypeName);
+		}
+
+		switch (axisDirectionType) {
+
+		case NORTH:
+		case SOUTH:
+
+			if (isKeywordNext(CoordinateReferenceSystemKeyword.MERIDIAN)) {
+
+				readSeparator();
+				readKeyword();
+
+				readLeftDelimiter();
+
+				double meridian = reader.readNumber();
+
+				readSeparator();
+
+				Unit angleUnit = readAngleUnit();
+
+				readRightDelimiter();
+
+				// TODO
+			}
+
+			break;
+
+		case CLOCKWISE:
+		case COUNTER_CLOCKWISE:
+
+			readSeparator();
+
+			CoordinateReferenceSystemKeyword bearingKeyword = readKeyword();
+			validateKeyword(bearingKeyword,
+					CoordinateReferenceSystemKeyword.BEARING);
+
+			readLeftDelimiter();
+
+			double bearing = reader.readNumber();
+
+			readRightDelimiter();
+
+			// TODO
+
+			break;
+
+		default:
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ORDER)) {
+
+			readSeparator();
+			readKeyword();
+
+			readLeftDelimiter();
+
+			int axisOrder = reader.readUnsignedInteger();
+
+			readRightDelimiter();
+
+			// TODO
+		}
+
+		if (CRSUtils.isSpatial(type)) {
+
+			if (isSpatialUnitNext()) {
+
+				readSeparator();
+
+				Unit unit = readUnit();
+
+				// TODO
+			}
+
+		} else if (CRSUtils.isTemporalCountMeasure(type)) {
+
+			if (isTimeUnitNext()) {
+
+				readSeparator();
+
+				Unit unit = readTimeUnit();
+
+				// TODO
+			}
+
+		}
+
+		List<Identifier> identifiers = readIdentifiers();
+
+		readRightDelimiter();
+
+		return axis;
+	}
+
+	/**
+	 * Read a Scope extent identifier remark
+	 * 
+	 * @return scope extent identifier remark
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ScopeExtentIdentifierRemark readScopeExtentIdentifierRemark()
+			throws IOException {
+
+		ScopeExtentIdentifierRemark scopeExtentIdentifierRemark = null; // TODO
+
+		// TODO usage
+
+		List<Identifier> identifiers = readIdentifiers();
+
+		// TODO remark
+
+		return scopeExtentIdentifierRemark;
 	}
 
 }

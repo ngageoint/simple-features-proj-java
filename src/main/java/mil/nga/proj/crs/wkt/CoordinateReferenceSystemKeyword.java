@@ -28,6 +28,16 @@ public enum CoordinateReferenceSystemKeyword {
 	ANGLEUNIT("UNIT"),
 
 	/**
+	 * Axis
+	 */
+	AXIS(),
+
+	/**
+	 * Bearing
+	 */
+	BEARING(),
+
+	/**
 	 * Citation
 	 */
 	CITATION(),
@@ -76,6 +86,16 @@ public enum CoordinateReferenceSystemKeyword {
 	 * Length Unit
 	 */
 	LENGTHUNIT("UNIT"),
+
+	/**
+	 * Meridian
+	 */
+	MERIDIAN(),
+
+	/**
+	 * Axis order
+	 */
+	ORDER(),
 
 	/**
 	 * Parametric Unit

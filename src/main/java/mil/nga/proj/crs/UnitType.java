@@ -30,6 +30,11 @@ public enum UnitType {
 	/**
 	 * Time
 	 */
-	TIMEUNIT;
+	TIMEUNIT,
+
+	/**
+	 * Generic
+	 */
+	UNIT;
 
 }
