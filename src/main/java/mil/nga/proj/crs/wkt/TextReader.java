@@ -379,6 +379,23 @@ public class TextReader {
 	}
 
 	/**
+	 * Read text or quoted text
+	 * 
+	 * @return text value
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public String readTextOrQuotedText() throws IOException {
+		String token = peekExpectedToken();
+		if (token.startsWith("\"")) {
+			token = readQuotedText();
+		} else {
+			token = readExpectedToken();
+		}
+		return token;
+	}
+
+	/**
 	 * Check if the character is a contiguous block token character: ( [a-z] |
 	 * [A-Z] | [0-9] | - | . | + )
 	 * 

@@ -28,9 +28,19 @@ public enum CoordinateReferenceSystemKeyword {
 	ANGLEUNIT("UNIT"),
 
 	/**
+	 * Area description
+	 */
+	AREA(),
+
+	/**
 	 * Axis
 	 */
 	AXIS(),
+
+	/**
+	 * Geographic bounding box
+	 */
+	BBOX(),
 
 	/**
 	 * Bearing
@@ -108,9 +118,24 @@ public enum CoordinateReferenceSystemKeyword {
 	PRIMEM("PRIMEMERIDIAN"),
 
 	/**
+	 * Remark
+	 */
+	REMARK(),
+
+	/**
 	 * Scale Unit
 	 */
 	SCALEUNIT("UNIT"),
+
+	/**
+	 * Scope
+	 */
+	SCOPE(),
+
+	/**
+	 * Temporal extent
+	 */
+	TIMEEXTENT(),
 
 	/**
 	 * Time Unit
@@ -118,9 +143,19 @@ public enum CoordinateReferenceSystemKeyword {
 	TIMEUNIT("TEMPORALQUANTITY"),
 
 	/**
+	 * Usage
+	 */
+	USAGE(),
+
+	/**
 	 * URI
 	 */
-	URI();
+	URI(),
+
+	/**
+	 * Vertical extent
+	 */
+	VERTICALEXTENT();
 
 	/**
 	 * Keyword to type mapping

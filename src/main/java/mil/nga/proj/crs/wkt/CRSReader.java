@@ -15,11 +15,15 @@ import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateSystem;
 import mil.nga.proj.crs.CoordinateSystemType;
 import mil.nga.proj.crs.Ellipsoid;
+import mil.nga.proj.crs.Extent;
 import mil.nga.proj.crs.GeodeticReferenceFrame;
+import mil.nga.proj.crs.GeographicBoundingBox;
 import mil.nga.proj.crs.Identifier;
-import mil.nga.proj.crs.ScopeExtentIdentifierRemark;
+import mil.nga.proj.crs.TemporalExtent;
 import mil.nga.proj.crs.Unit;
 import mil.nga.proj.crs.UnitType;
+import mil.nga.proj.crs.Usage;
+import mil.nga.proj.crs.VerticalExtent;
 
 /**
  * Well Known Text reader
@@ -476,7 +480,11 @@ public class CRSReader {
 
 		CoordinateSystem coordinateSystem = readCoordinateSystem();
 
-		ScopeExtentIdentifierRemark scopeExtentIdentifierRemark = readScopeExtentIdentifierRemark();
+		List<Usage> usages = readUsages();
+
+		List<Identifier> identifiers = readIdentifiers();
+
+		List<String> remarks = readRemarks();
 
 		readRightDelimiter();
 
@@ -706,7 +714,7 @@ public class CRSReader {
 	/**
 	 * Read Identifiers
 	 * 
-	 * @return identifier
+	 * @return identifiers
 	 * @throws IOException
 	 *             upon failure to read
 	 */
@@ -734,37 +742,34 @@ public class CRSReader {
 	 */
 	public Identifier readIdentifier() throws IOException {
 
-		Identifier identifier = null; // TODO
+		Identifier identifier = new Identifier();
 
 		CoordinateReferenceSystemKeyword keyword = readKeyword();
 		validateKeyword(keyword, CoordinateReferenceSystemKeyword.ID);
 
 		readLeftDelimiter();
 
-		String authorityName = reader.readQuotedText();
+		identifier.setName(reader.readQuotedText());
 
 		readSeparator();
 
-		String authorityUniqueIdentifier = reader.readNumberOrQuotedText();
+		identifier.setUniqueIdentifier(reader.readNumberOrQuotedText());
 
 		if (isNonKeywordNext()) {
 			readSeparator();
-			String version = reader.readNumberOrQuotedText();
-			// TODO
+			identifier.setVersion(reader.readNumberOrQuotedText());
 		}
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.CITATION)) {
 			readSeparator();
-			String authorityCitation = readKeywordDelimitedQuotedText(
-					CoordinateReferenceSystemKeyword.CITATION);
-			// TODO
+			identifier.setCitation(readKeywordDelimitedQuotedText(
+					CoordinateReferenceSystemKeyword.CITATION));
 		}
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.URI)) {
 			readSeparator();
-			String idUri = readKeywordDelimitedQuotedText(
-					CoordinateReferenceSystemKeyword.URI);
-			// TODO
+			identifier.setUri(readKeywordDelimitedQuotedText(
+					CoordinateReferenceSystemKeyword.URI));
 		}
 
 		readRightDelimiter();
@@ -781,7 +786,7 @@ public class CRSReader {
 	 */
 	public CoordinateSystem readCoordinateSystem() throws IOException {
 
-		CoordinateSystem coordinateSystem = null; // TODO
+		CoordinateSystem coordinateSystem = new CoordinateSystem();
 
 		CoordinateReferenceSystemKeyword keyword = readKeyword();
 		validateKeyword(keyword, CoordinateReferenceSystemKeyword.CS);
@@ -794,24 +799,25 @@ public class CRSReader {
 			throw new ProjectionException(
 					"Unexpected coordinate system type. found: " + csTypeName);
 		}
+		coordinateSystem.setType(csType);
 
 		readSeparator();
 
-		int dimension = reader.readUnsignedInteger();
+		coordinateSystem.setDimension(reader.readUnsignedInteger());
 
-		List<Identifier> identifiers = readIdentifiers();
+		coordinateSystem.setIdentifiers(readIdentifiers());
 
 		readRightDelimiter();
 
 		boolean isTemporalCountMeasure = CRSUtils
 				.isTemporalCountMeasure(csType);
+		List<Axis> axes = new ArrayList<>();
 
 		do {
 
 			readSeparator();
 
-			Axis axis = readAxis(csType);
-			// TODO
+			axes.add(readAxis(csType));
 
 			if (isTemporalCountMeasure) {
 				break;
@@ -819,15 +825,16 @@ public class CRSReader {
 
 		} while (isKeywordNext(CoordinateReferenceSystemKeyword.AXIS));
 
+		coordinateSystem.setAxes(axes);
+
 		if (CRSUtils.isSpatial(csType)) {
 
 			if (isUnitNext()) {
 
 				readSeparator();
 
-				Unit unit = readUnit();
+				coordinateSystem.setUnit(readUnit());
 
-				// TODO
 			}
 
 		}
@@ -846,23 +853,23 @@ public class CRSReader {
 	 */
 	public Axis readAxis(CoordinateSystemType type) throws IOException {
 
-		Axis axis = null; // TODO
+		Axis axis = new Axis();
 
 		CoordinateReferenceSystemKeyword keyword = readKeyword();
 		validateKeyword(keyword, CoordinateReferenceSystemKeyword.AXIS);
 
 		readLeftDelimiter();
 
-		String name = reader.readQuotedText();
-		String abbreviation = null;
-		if (name.matches("((.+ )|^)\\([a-zA-Z]+\\)$")) {
-			int abbrevIndex = name.lastIndexOf("(");
-			abbreviation = name.substring(abbrevIndex + 1, name.length() - 1);
+		String nameAbbrev = reader.readQuotedText();
+		if (nameAbbrev.matches("((.+ )|^)\\([a-zA-Z]+\\)$")) {
+			int abbrevIndex = nameAbbrev.lastIndexOf("(");
+			axis.setAbbreviation(nameAbbrev.substring(abbrevIndex + 1,
+					nameAbbrev.length() - 1));
 			if (abbrevIndex > 0) {
-				name = name.substring(0, abbrevIndex - 1);
-			} else {
-				name = null;
+				axis.setName(nameAbbrev.substring(0, abbrevIndex - 1));
 			}
+		} else {
+			axis.setName(nameAbbrev);
 		}
 
 		readSeparator();
@@ -875,6 +882,7 @@ public class CRSReader {
 					"Unexpected axis direction type. found: "
 							+ axisDirectionTypeName);
 		}
+		axis.setDirection(axisDirectionType);
 
 		switch (axisDirectionType) {
 
@@ -888,15 +896,14 @@ public class CRSReader {
 
 				readLeftDelimiter();
 
-				double meridian = reader.readNumber();
+				axis.setMeridian(reader.readNumber());
 
 				readSeparator();
 
-				Unit angleUnit = readAngleUnit();
+				axis.setMeridianUnit(readAngleUnit());
 
 				readRightDelimiter();
 
-				// TODO
 			}
 
 			break;
@@ -912,11 +919,9 @@ public class CRSReader {
 
 			readLeftDelimiter();
 
-			double bearing = reader.readNumber();
+			axis.setBearing(reader.readNumber());
 
 			readRightDelimiter();
-
-			// TODO
 
 			break;
 
@@ -930,11 +935,10 @@ public class CRSReader {
 
 			readLeftDelimiter();
 
-			int axisOrder = reader.readUnsignedInteger();
+			axis.setOrder(reader.readUnsignedInteger());
 
 			readRightDelimiter();
 
-			// TODO
 		}
 
 		if (CRSUtils.isSpatial(type)) {
@@ -943,9 +947,8 @@ public class CRSReader {
 
 				readSeparator();
 
-				Unit unit = readUnit();
+				axis.setUnit(readUnit());
 
-				// TODO
 			}
 
 		} else if (CRSUtils.isTemporalCountMeasure(type)) {
@@ -954,14 +957,13 @@ public class CRSReader {
 
 				readSeparator();
 
-				Unit unit = readTimeUnit();
+				axis.setUnit(readTimeUnit());
 
-				// TODO
 			}
 
 		}
 
-		List<Identifier> identifiers = readIdentifiers();
+		axis.setIdentifiers(readIdentifiers());
 
 		readRightDelimiter();
 
@@ -969,24 +971,231 @@ public class CRSReader {
 	}
 
 	/**
-	 * Read a Scope extent identifier remark
+	 * Read Remarks
 	 * 
-	 * @return scope extent identifier remark
+	 * @return remarks
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public ScopeExtentIdentifierRemark readScopeExtentIdentifierRemark()
+	public List<String> readRemarks() throws IOException {
+
+		List<String> remarks = new ArrayList<>();
+
+		while (isKeywordNext(CoordinateReferenceSystemKeyword.REMARK)) {
+
+			readSeparator();
+
+			remarks.add(readKeywordDelimitedQuotedText(
+					CoordinateReferenceSystemKeyword.REMARK));
+
+		}
+
+		return remarks;
+	}
+
+	/**
+	 * Read Usages
+	 * 
+	 * @return usages
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public List<Usage> readUsages() throws IOException {
+
+		List<Usage> usages = new ArrayList<>();
+
+		while (isKeywordNext(CoordinateReferenceSystemKeyword.USAGE)) {
+
+			readSeparator();
+
+			usages.add(readUsage());
+
+		}
+
+		return usages;
+	}
+
+	/**
+	 * Read a Usage
+	 * 
+	 * @return usage
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Usage readUsage() throws IOException {
+
+		Usage usage = new Usage();
+
+		CoordinateReferenceSystemKeyword keyword = readKeyword();
+		validateKeyword(keyword, CoordinateReferenceSystemKeyword.USAGE);
+
+		readLeftDelimiter();
+
+		usage.setScope(readKeywordDelimitedQuotedText(
+				CoordinateReferenceSystemKeyword.SCOPE));
+
+		usage.setExtent(readExtent());
+
+		readRightDelimiter();
+
+		return usage;
+	}
+
+	/**
+	 * Read an Extent
+	 * 
+	 * @return extent
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Extent readExtent() throws IOException {
+
+		Extent extent = new Extent();
+
+		boolean valid = false;
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.AREA)) {
+
+			readSeparator();
+
+			extent.setAreaDescription(readKeywordDelimitedQuotedText(
+					CoordinateReferenceSystemKeyword.AREA));
+			valid = true;
+
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.BBOX)) {
+
+			readSeparator();
+
+			extent.setGeographicBoundingBox(readGeographicBoundingBox());
+			valid = true;
+
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.VERTICALEXTENT)) {
+
+			readSeparator();
+
+			extent.setVerticalExtent(readVerticalExtent());
+			valid = true;
+
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.TIMEEXTENT)) {
+
+			readSeparator();
+
+			extent.setTemporalExtent(readTemporalExtent());
+			valid = true;
+
+		}
+
+		if (!valid) {
+			throw new ProjectionException("Missing extent type of ["
+					+ CoordinateReferenceSystemKeyword.AREA + ", "
+					+ CoordinateReferenceSystemKeyword.BBOX + ", "
+					+ CoordinateReferenceSystemKeyword.VERTICALEXTENT + ", "
+					+ CoordinateReferenceSystemKeyword.TIMEEXTENT + "]");
+		}
+
+		return extent;
+	}
+
+	/**
+	 * Read a Geographic bounding box
+	 * 
+	 * @return geographic bounding box
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public GeographicBoundingBox readGeographicBoundingBox()
 			throws IOException {
 
-		ScopeExtentIdentifierRemark scopeExtentIdentifierRemark = null; // TODO
+		GeographicBoundingBox boundingBox = new GeographicBoundingBox();
 
-		// TODO usage
+		CoordinateReferenceSystemKeyword keyword = readKeyword();
+		validateKeyword(keyword, CoordinateReferenceSystemKeyword.BBOX);
 
-		List<Identifier> identifiers = readIdentifiers();
+		readLeftDelimiter();
 
-		// TODO remark
+		boundingBox.setLowerLeftLatitude(reader.readNumber());
 
-		return scopeExtentIdentifierRemark;
+		readSeparator();
+
+		boundingBox.setLowerLeftLongitude(reader.readNumber());
+
+		readSeparator();
+
+		boundingBox.setUpperRightLatitude(reader.readNumber());
+
+		readSeparator();
+
+		boundingBox.setUpperRightLongitude(reader.readNumber());
+
+		readRightDelimiter();
+
+		return boundingBox;
+	}
+
+	/**
+	 * Read a Vertical extent
+	 * 
+	 * @return vertical extent
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public VerticalExtent readVerticalExtent() throws IOException {
+
+		VerticalExtent verticalExtent = new VerticalExtent();
+
+		CoordinateReferenceSystemKeyword keyword = readKeyword();
+		validateKeyword(keyword,
+				CoordinateReferenceSystemKeyword.VERTICALEXTENT);
+
+		readLeftDelimiter();
+
+		verticalExtent.setMinimumHeight(reader.readNumber());
+
+		readSeparator();
+
+		verticalExtent.setMaximumHeight(reader.readNumber());
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.LENGTHUNIT)) {
+			readSeparator();
+			verticalExtent.setLengthUnit(readLengthUnit());
+		}
+
+		readRightDelimiter();
+
+		return verticalExtent;
+	}
+
+	/**
+	 * Read a Temporal extent
+	 * 
+	 * @return temporal extent
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public TemporalExtent readTemporalExtent() throws IOException {
+
+		TemporalExtent temporalExtent = new TemporalExtent();
+
+		CoordinateReferenceSystemKeyword keyword = readKeyword();
+		validateKeyword(keyword, CoordinateReferenceSystemKeyword.TIMEEXTENT);
+
+		readLeftDelimiter();
+
+		temporalExtent.setStart(reader.readTextOrQuotedText());
+
+		readSeparator();
+
+		temporalExtent.setEnd(reader.readTextOrQuotedText());
+
+		readRightDelimiter();
+
+		return temporalExtent;
 	}
 
 }
