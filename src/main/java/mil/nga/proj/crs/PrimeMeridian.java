@@ -99,6 +99,15 @@ public class PrimeMeridian {
 	}
 
 	/**
+	 * Has an IRM longitude angle unit
+	 * 
+	 * @return true if has IRM longitude angle unit
+	 */
+	public boolean hasIrmLongitudeAngleUnit() {
+		return getIrmLongitudeAngleUnit() != null;
+	}
+
+	/**
 	 * Set the IRM longitude angle unit
 	 * 
 	 * @param irmLongitudeAngleUnit
@@ -115,6 +124,15 @@ public class PrimeMeridian {
 	 */
 	public List<Identifier> getIdentifiers() {
 		return identifiers;
+	}
+
+	/**
+	 * Has identifiers
+	 * 
+	 * @return true if has identifiers
+	 */
+	public boolean hasIdentifiers() {
+		return identifiers != null && !identifiers.isEmpty();
 	}
 
 	/**

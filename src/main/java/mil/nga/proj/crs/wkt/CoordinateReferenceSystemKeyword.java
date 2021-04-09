@@ -78,6 +78,11 @@ public enum CoordinateReferenceSystemKeyword {
 	ENSEMBLE(),
 
 	/**
+	 * Frame reference epoch
+	 */
+	FRAMEEPOCH(),
+
+	/**
 	 * Geodetic CRS
 	 */
 	GEODCRS("GEODETICCRS", "GEOCCS"),

@@ -106,6 +106,15 @@ public class VerticalExtent {
 	}
 
 	/**
+	 * Has a length unit
+	 * 
+	 * @return true if has length unit
+	 */
+	public boolean hasLengthUnit() {
+		return getLengthUnit() != null;
+	}
+
+	/**
 	 * Set the length unit
 	 * 
 	 * @param lengthUnit

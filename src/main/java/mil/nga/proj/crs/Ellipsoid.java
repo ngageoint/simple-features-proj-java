@@ -126,6 +126,15 @@ public class Ellipsoid {
 	}
 
 	/**
+	 * Has a length unit
+	 * 
+	 * @return true if has length unit
+	 */
+	public boolean hasLengthUnit() {
+		return getLengthUnit() != null;
+	}
+
+	/**
 	 * Set the length unit
 	 * 
 	 * @param lengthUnit
@@ -142,6 +151,15 @@ public class Ellipsoid {
 	 */
 	public List<Identifier> getIdentifiers() {
 		return identifiers;
+	}
+
+	/**
+	 * Has identifiers
+	 * 
+	 * @return true if has identifiers
+	 */
+	public boolean hasIdentifiers() {
+		return identifiers != null && !identifiers.isEmpty();
 	}
 
 	/**

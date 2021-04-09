@@ -120,6 +120,15 @@ public class Unit {
 	}
 
 	/**
+	 * Has identifiers
+	 * 
+	 * @return true if has identifiers
+	 */
+	public boolean hasIdentifiers() {
+		return identifiers != null && !identifiers.isEmpty();
+	}
+
+	/**
 	 * Set the identifiers
 	 * 
 	 * @param identifiers

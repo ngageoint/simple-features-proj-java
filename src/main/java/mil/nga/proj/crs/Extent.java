@@ -44,6 +44,15 @@ public class Extent {
 	}
 
 	/**
+	 * Has an area description
+	 * 
+	 * @return true if has area description
+	 */
+	public boolean hasAreaDescription() {
+		return getAreaDescription() != null;
+	}
+
+	/**
 	 * Set the area description
 	 * 
 	 * @param areaDescription
@@ -60,6 +69,15 @@ public class Extent {
 	 */
 	public GeographicBoundingBox getGeographicBoundingBox() {
 		return geographicBoundingBox;
+	}
+
+	/**
+	 * Has a geographic bounding box
+	 * 
+	 * @return true if has geographic bounding box
+	 */
+	public boolean hasGeographicBoundingBox() {
+		return getGeographicBoundingBox() != null;
 	}
 
 	/**
@@ -83,6 +101,15 @@ public class Extent {
 	}
 
 	/**
+	 * Has a vertical extent
+	 * 
+	 * @return true if has vertical extent
+	 */
+	public boolean hasVerticalExtent() {
+		return getVerticalExtent() != null;
+	}
+
+	/**
 	 * Set the vertical extent
 	 * 
 	 * @param verticalExtent
@@ -99,6 +126,15 @@ public class Extent {
 	 */
 	public TemporalExtent getTemporalExtent() {
 		return temporalExtent;
+	}
+
+	/**
+	 * Has a temporal extent
+	 * 
+	 * @return true if has temporal extent
+	 */
+	public boolean hasTemporalExtent() {
+		return getTemporalExtent() != null;
 	}
 
 	/**

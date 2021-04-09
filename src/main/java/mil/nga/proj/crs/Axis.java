@@ -72,6 +72,15 @@ public class Axis {
 	}
 
 	/**
+	 * Has a name
+	 * 
+	 * @return true if has name
+	 */
+	public boolean hasName() {
+		return getName() != null;
+	}
+
+	/**
 	 * Set the name
 	 * 
 	 * @param name
@@ -88,6 +97,15 @@ public class Axis {
 	 */
 	public String getAbbreviation() {
 		return abbreviation;
+	}
+
+	/**
+	 * Has an abbreviation
+	 * 
+	 * @return true if has abbreviation
+	 */
+	public boolean hasAbbreviation() {
+		return getAbbreviation() != null;
 	}
 
 	/**
@@ -129,6 +147,15 @@ public class Axis {
 	}
 
 	/**
+	 * Has a meridian
+	 * 
+	 * @return true if has meridian
+	 */
+	public boolean hastMeridian() {
+		return getMeridian() != null;
+	}
+
+	/**
 	 * Set the meridian
 	 * 
 	 * @param meridian
@@ -167,6 +194,15 @@ public class Axis {
 	}
 
 	/**
+	 * Has a bearing
+	 * 
+	 * @return true if has bearing
+	 */
+	public boolean hasBearing() {
+		return getBearing() != null;
+	}
+
+	/**
 	 * Set the bearing
 	 * 
 	 * @param bearing
@@ -183,6 +219,15 @@ public class Axis {
 	 */
 	public Integer getOrder() {
 		return order;
+	}
+
+	/**
+	 * Has an order
+	 * 
+	 * @return true if has order
+	 */
+	public boolean hasOrder() {
+		return getOrder() != null;
 	}
 
 	/**
@@ -205,6 +250,15 @@ public class Axis {
 	}
 
 	/**
+	 * Has a unit
+	 * 
+	 * @return true if has unit
+	 */
+	public boolean hasUnit() {
+		return getUnit() != null;
+	}
+
+	/**
 	 * Set the unit
 	 * 
 	 * @param unit
@@ -221,6 +275,15 @@ public class Axis {
 	 */
 	public List<Identifier> getIdentifiers() {
 		return identifiers;
+	}
+
+	/**
+	 * Has identifiers
+	 * 
+	 * @return true if has identifiers
+	 */
+	public boolean hasIdentifiers() {
+		return identifiers != null && !identifiers.isEmpty();
 	}
 
 	/**

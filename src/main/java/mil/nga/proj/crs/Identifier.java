@@ -101,6 +101,15 @@ public class Identifier {
 	}
 
 	/**
+	 * Has a version
+	 * 
+	 * @return true if has version
+	 */
+	public boolean hasVersion() {
+		return getVersion() != null;
+	}
+
+	/**
 	 * Set the version
 	 * 
 	 * @param version
@@ -120,6 +129,15 @@ public class Identifier {
 	}
 
 	/**
+	 * Has an authority citation
+	 * 
+	 * @return true if has authority citation
+	 */
+	public boolean hasCitation() {
+		return getCitation() != null;
+	}
+
+	/**
 	 * Set the authority citation
 	 * 
 	 * @param citation
@@ -136,6 +154,15 @@ public class Identifier {
 	 */
 	public String getUri() {
 		return uri;
+	}
+
+	/**
+	 * Has a, id uri
+	 * 
+	 * @return true if has id uri
+	 */
+	public boolean hasUri() {
+		return getUri() != null;
 	}
 
 	/**

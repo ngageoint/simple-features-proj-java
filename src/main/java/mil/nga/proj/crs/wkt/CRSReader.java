@@ -15,6 +15,7 @@ import mil.nga.proj.crs.CoordinateSystem;
 import mil.nga.proj.crs.CoordinateSystemType;
 import mil.nga.proj.crs.Ellipsoid;
 import mil.nga.proj.crs.Extent;
+import mil.nga.proj.crs.GeodeticCoordinateReferenceSystem;
 import mil.nga.proj.crs.GeodeticReferenceFrame;
 import mil.nga.proj.crs.GeographicBoundingBox;
 import mil.nga.proj.crs.Identifier;
@@ -444,51 +445,48 @@ public class CRSReader {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public CoordinateReferenceSystem readGeodeticOrGeographic()
+	public GeodeticCoordinateReferenceSystem readGeodeticOrGeographic()
 			throws IOException {
 
-		CoordinateReferenceSystem crs = null;
+		GeodeticCoordinateReferenceSystem crs = new GeodeticCoordinateReferenceSystem();
 
 		CoordinateReferenceSystemKeyword type = readKeyword();
 		validateKeyword(type, CoordinateReferenceSystemKeyword.GEODCRS,
 				CoordinateReferenceSystemKeyword.GEOGCRS);
+		crs.setGeographic(type == CoordinateReferenceSystemKeyword.GEOGCRS);
 
 		readLeftDelimiter();
 
-		String crsName = reader.readQuotedText();
+		crs.setName(reader.readQuotedText());
 
-		readSeparator();
+		boolean isDynamic = isKeywordNext(
+				CoordinateReferenceSystemKeyword.DYNAMIC);
+		if (isDynamic) {
+			readSeparator();
+			// TODO DYNAMIC crs
+		}
 
-		CoordinateReferenceSystemKeyword keyword = peekKeyword();
-		switch (keyword) {
-		case DATUM:
-			GeodeticReferenceFrame geodeticReferenceFrame = readGeodeticReferenceFrame();
-			// TODO
-			break;
-		case ENSEMBLE:
-			// TODO
-			break;
-		case DYNAMIC:
-			// TODO
-			break;
-		default:
-			throw new ProjectionException(
-					"Unsupported WKT CRS keyword: " + keyword);
+		if (isDynamic
+				|| isKeywordNext(CoordinateReferenceSystemKeyword.DATUM)) {
+			readSeparator();
+			crs.setGeodeticReferenceFrame(readGeodeticReferenceFrame());
+		} else {
+			// TODO ENSEMBLE crs
 		}
 
 		readSeparator();
 
-		CoordinateSystem coordinateSystem = readCoordinateSystem();
+		crs.setCoordinateSystem(readCoordinateSystem());
 
-		List<Usage> usages = readUsages();
+		crs.setUsages(readUsages());
 
-		List<Identifier> identifiers = readIdentifiers();
+		crs.setIdentifiers(readIdentifiers());
 
-		List<String> remarks = readRemarks();
+		crs.setRemarkss(readRemarks());
 
 		readRightDelimiter();
 
-		return crs; // TODO
+		return crs;
 	}
 
 	/**
@@ -501,34 +499,32 @@ public class CRSReader {
 	public GeodeticReferenceFrame readGeodeticReferenceFrame()
 			throws IOException {
 
-		GeodeticReferenceFrame geodeticReferenceFrame = null; // TODO
+		GeodeticReferenceFrame geodeticReferenceFrame = new GeodeticReferenceFrame();
 
 		CoordinateReferenceSystemKeyword keyword = readKeyword();
 		validateKeyword(keyword, CoordinateReferenceSystemKeyword.DATUM);
 
 		readLeftDelimiter();
 
-		String name = reader.readQuotedText();
+		geodeticReferenceFrame.setName(reader.readQuotedText());
 
 		readSeparator();
 
-		Ellipsoid ellipsoid = readEllipsoid();
+		geodeticReferenceFrame.setEllipsoid(readEllipsoid());
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.ANCHOR)) {
 			readSeparator();
-			String datumAnchor = readKeywordDelimitedQuotedText(
-					CoordinateReferenceSystemKeyword.ANCHOR);
-			// TODO
+			geodeticReferenceFrame.setAnchor(readKeywordDelimitedQuotedText(
+					CoordinateReferenceSystemKeyword.ANCHOR));
 		}
 
-		List<Identifier> identifiers = readIdentifiers();
+		geodeticReferenceFrame.setIdentifiers(readIdentifiers());
 
 		readRightDelimiter();
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.PRIMEM)) {
 			readSeparator();
-			PrimeMeridian primeMeridian = readPrimeMeridian();
-			// TODO
+			geodeticReferenceFrame.setPrimeMeridian(readPrimeMeridian());
 		}
 
 		return geodeticReferenceFrame;
@@ -722,9 +718,13 @@ public class CRSReader {
 	 */
 	public List<Identifier> readIdentifiers() throws IOException {
 
-		List<Identifier> identifiers = new ArrayList<>();
+		List<Identifier> identifiers = null;
 
 		while (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+
+			if (identifiers == null) {
+				identifiers = new ArrayList<>();
+			}
 
 			readSeparator();
 
@@ -981,9 +981,13 @@ public class CRSReader {
 	 */
 	public List<String> readRemarks() throws IOException {
 
-		List<String> remarks = new ArrayList<>();
+		List<String> remarks = null;
 
 		while (isKeywordNext(CoordinateReferenceSystemKeyword.REMARK)) {
+
+			if (remarks == null) {
+				remarks = new ArrayList<>();
+			}
 
 			readSeparator();
 
@@ -1004,9 +1008,13 @@ public class CRSReader {
 	 */
 	public List<Usage> readUsages() throws IOException {
 
-		List<Usage> usages = new ArrayList<>();
+		List<Usage> usages = null;
 
 		while (isKeywordNext(CoordinateReferenceSystemKeyword.USAGE)) {
+
+			if (usages == null) {
+				usages = new ArrayList<>();
+			}
 
 			readSeparator();
 

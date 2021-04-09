@@ -124,6 +124,15 @@ public class CoordinateSystem {
 	}
 
 	/**
+	 * Has identifiers
+	 * 
+	 * @return true if has identifiers
+	 */
+	public boolean hasIdentifiers() {
+		return identifiers != null && !identifiers.isEmpty();
+	}
+
+	/**
 	 * Set the identifiers
 	 * 
 	 * @param identifiers
@@ -211,6 +220,15 @@ public class CoordinateSystem {
 	 */
 	public Unit getUnit() {
 		return unit;
+	}
+
+	/**
+	 * Has a unit
+	 * 
+	 * @return true if has unit
+	 */
+	public boolean hasUnit() {
+		return getUnit() != null;
 	}
 
 	/**
