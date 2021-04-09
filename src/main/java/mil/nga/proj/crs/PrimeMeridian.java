@@ -4,31 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Ellipsoid
+ * Prime Meridian
  * 
  * @author osbornb
+ *
  */
-public class Ellipsoid {
+public class PrimeMeridian {
 
 	/**
 	 * Name
 	 */
-	private String name = null;
+	private String name = null;;
 
 	/**
-	 * Semi Major Axis
+	 * IRM longitude
 	 */
-	private double semiMajorAxis;
+	private double irmLongitude;
 
 	/**
-	 * Inverse Flattening
+	 * IRM longitude angle unit
 	 */
-	private double inverseFlattening;
-
-	/**
-	 * Length Unit
-	 */
-	private Unit lengthUnit = null;
+	private Unit irmLongitudeAngleUnit;
 
 	/**
 	 * Identifiers
@@ -38,7 +34,7 @@ public class Ellipsoid {
 	/**
 	 * Constructor
 	 */
-	public Ellipsoid() {
+	public PrimeMeridian() {
 
 	}
 
@@ -47,16 +43,12 @@ public class Ellipsoid {
 	 * 
 	 * @param name
 	 *            name
-	 * @param semiMajorAxis
-	 *            semi major axis
-	 * @param inverseFlattening
-	 *            inverse flattening
+	 * @param irmLongitude
+	 *            IRM longitude
 	 */
-	public Ellipsoid(String name, double semiMajorAxis,
-			double inverseFlattening) {
+	public PrimeMeridian(String name, double irmLongitude) {
 		setName(name);
-		setSemiMajorAxis(semiMajorAxis);
-		setInverseFlattening(inverseFlattening);
+		setIrmLongitude(irmLongitude);
 	}
 
 	/**
@@ -79,60 +71,41 @@ public class Ellipsoid {
 	}
 
 	/**
-	 * Get the semi major axis
+	 * Get the IRM longitude
 	 * 
-	 * @return semi major axis
+	 * @return IRM longitude
 	 */
-	public double getSemiMajorAxis() {
-		return semiMajorAxis;
+	public double getIrmLongitude() {
+		return irmLongitude;
 	}
 
 	/**
-	 * Set the semi major axis
+	 * Set the IRM longitude
 	 * 
-	 * @param semiMajorAxis
-	 *            semi major axis
+	 * @param irmLongitude
+	 *            IRM longitude
 	 */
-	public void setSemiMajorAxis(double semiMajorAxis) {
-		this.semiMajorAxis = semiMajorAxis;
+	public void setIrmLongitude(double irmLongitude) {
+		this.irmLongitude = irmLongitude;
 	}
 
 	/**
-	 * Get the inverse flattening
+	 * Get the IRM longitude angle unit
 	 * 
-	 * @return inverse flattening
+	 * @return IRM longitude angle unit
 	 */
-	public double getInverseFlattening() {
-		return inverseFlattening;
+	public Unit getIrmLongitudeAngleUnit() {
+		return irmLongitudeAngleUnit;
 	}
 
 	/**
-	 * Set the inverse flattening
+	 * Set the IRM longitude angle unit
 	 * 
-	 * @param inverseFlattening
-	 *            inverse flattening
+	 * @param irmLongitudeAngleUnit
+	 *            IRM longitude angle unit
 	 */
-	public void setInverseFlattening(double inverseFlattening) {
-		this.inverseFlattening = inverseFlattening;
-	}
-
-	/**
-	 * Get the length unit
-	 * 
-	 * @return length unit
-	 */
-	public Unit getLengthUnit() {
-		return lengthUnit;
-	}
-
-	/**
-	 * Set the length unit
-	 * 
-	 * @param lengthUnit
-	 *            length unit
-	 */
-	public void setLengthUnit(Unit lengthUnit) {
-		this.lengthUnit = lengthUnit;
+	public void setIrmLongitudeAngleUnit(Unit irmLongitudeAngleUnit) {
+		this.irmLongitudeAngleUnit = irmLongitudeAngleUnit;
 	}
 
 	/**

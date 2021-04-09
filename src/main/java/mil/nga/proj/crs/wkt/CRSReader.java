@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import mil.nga.proj.PrimeMeridian;
 import mil.nga.proj.ProjectionException;
 import mil.nga.proj.crs.Axis;
 import mil.nga.proj.crs.AxisDirectionType;
@@ -19,6 +18,7 @@ import mil.nga.proj.crs.Extent;
 import mil.nga.proj.crs.GeodeticReferenceFrame;
 import mil.nga.proj.crs.GeographicBoundingBox;
 import mil.nga.proj.crs.Identifier;
+import mil.nga.proj.crs.PrimeMeridian;
 import mil.nga.proj.crs.TemporalExtent;
 import mil.nga.proj.crs.Unit;
 import mil.nga.proj.crs.UnitType;
@@ -543,26 +543,25 @@ public class CRSReader {
 	 */
 	public PrimeMeridian readPrimeMeridian() throws IOException {
 
-		PrimeMeridian primeMeridian = null; // TODO
+		PrimeMeridian primeMeridian = new PrimeMeridian();
 
 		CoordinateReferenceSystemKeyword keyword = readKeyword();
 		validateKeyword(keyword, CoordinateReferenceSystemKeyword.PRIMEM);
 
 		readLeftDelimiter();
 
-		String name = reader.readQuotedText();
+		primeMeridian.setName(reader.readQuotedText());
 
 		readSeparator();
 
-		double irmLongitude = reader.readNumber();
+		primeMeridian.setIrmLongitude(reader.readNumber());
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.ANGLEUNIT)) {
 			readSeparator();
-			Unit angleUnit = readAngleUnit();
-			// TODO
+			primeMeridian.setIrmLongitudeAngleUnit(readAngleUnit());
 		}
 
-		List<Identifier> identifiers = readIdentifiers();
+		primeMeridian.setIdentifiers(readIdentifiers());
 
 		readRightDelimiter();
 
@@ -578,30 +577,29 @@ public class CRSReader {
 	 */
 	public Ellipsoid readEllipsoid() throws IOException {
 
-		Ellipsoid ellipsoid = null; // TODO
+		Ellipsoid ellipsoid = new Ellipsoid();
 
 		CoordinateReferenceSystemKeyword keyword = readKeyword();
 		validateKeyword(keyword, CoordinateReferenceSystemKeyword.ELLIPSOID);
 
 		readLeftDelimiter();
 
-		String name = reader.readQuotedText();
+		ellipsoid.setName(reader.readQuotedText());
 
 		readSeparator();
 
-		double semiMajorAxis = reader.readUnsignedNumber();
+		ellipsoid.setSemiMajorAxis(reader.readUnsignedNumber());
 
 		readSeparator();
 
-		double inverseFlattening = reader.readUnsignedNumber();
+		ellipsoid.setInverseFlattening(reader.readUnsignedNumber());
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.LENGTHUNIT)) {
 			readSeparator();
-			Unit lengthUnit = readLengthUnit();
-			// TODO
+			ellipsoid.setLengthUnit(readLengthUnit());
 		}
 
-		List<Identifier> identifiers = readIdentifiers();
+		ellipsoid.setIdentifiers(readIdentifiers());
 
 		readRightDelimiter();
 
@@ -685,7 +683,7 @@ public class CRSReader {
 	 */
 	public Unit readUnit(UnitType type) throws IOException {
 
-		Unit unit = null; // TODO
+		Unit unit = new Unit();
 
 		Set<CoordinateReferenceSystemKeyword> keywords = readKeywords();
 		if (type != UnitType.UNIT) {
@@ -694,17 +692,21 @@ public class CRSReader {
 			validateKeywords(keywords, crsType);
 		} else if (keywords.size() == 1) {
 			type = CRSUtils.getUnitType(keywords.iterator().next());
+		} else if (keywords.isEmpty()) {
+			throw new ProjectionException(
+					"Unexpected unit keyword. found: " + keywords);
 		}
+		unit.setType(type);
 
 		readLeftDelimiter();
 
-		String name = reader.readQuotedText();
+		unit.setName(reader.readQuotedText());
 
 		readSeparator();
 
-		double conversationFactor = reader.readUnsignedNumber();
+		unit.setConversionFactor(reader.readUnsignedNumber());
 
-		List<Identifier> identifiers = readIdentifiers();
+		unit.setIdentifiers(readIdentifiers());
 
 		readRightDelimiter();
 
@@ -900,7 +902,7 @@ public class CRSReader {
 
 				readSeparator();
 
-				axis.setMeridianUnit(readAngleUnit());
+				axis.setMeridianAngleUnit(readAngleUnit());
 
 				readRightDelimiter();
 

@@ -49,8 +49,8 @@ public class Identifier {
 	 *            authority unique identifier
 	 */
 	public Identifier(String name, String uniqueIdentifier) {
-		this.name = name;
-		this.uniqueIdentifier = uniqueIdentifier;
+		setName(name);
+		setUniqueIdentifier(uniqueIdentifier);
 	}
 
 	/**

@@ -33,7 +33,7 @@ public class Axis {
 	/**
 	 * Meridian Angle Unit
 	 */
-	private Unit meridianUnit = null;
+	private Unit meridianAngleUnit = null;
 
 	/**
 	 * Bearing
@@ -139,22 +139,22 @@ public class Axis {
 	}
 
 	/**
-	 * Get the meridian unit
+	 * Get the meridian angle unit
 	 * 
-	 * @return meridian unit
+	 * @return meridian angle unit
 	 */
-	public Unit getMeridianUnit() {
-		return meridianUnit;
+	public Unit getMeridianAngleUnit() {
+		return meridianAngleUnit;
 	}
 
 	/**
-	 * Set the meridian unit
+	 * Set the meridian angle unit
 	 * 
-	 * @param meridianUnit
-	 *            meridian unit
+	 * @param meridianAngleUnit
+	 *            meridian angle unit
 	 */
-	public void setMeridianUnit(Unit meridianUnit) {
-		this.meridianUnit = meridianUnit;
+	public void setMeridianAngleUnit(Unit meridianAngleUnit) {
+		this.meridianAngleUnit = meridianAngleUnit;
 	}
 
 	/**
