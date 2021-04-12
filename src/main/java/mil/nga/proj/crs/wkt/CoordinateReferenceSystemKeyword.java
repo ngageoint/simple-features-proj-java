@@ -78,6 +78,11 @@ public enum CoordinateReferenceSystemKeyword {
 	ENSEMBLE(),
 
 	/**
+	 * Datum ensemble accuracy
+	 */
+	ENSEMBLEACCURACY(),
+
+	/**
 	 * Frame reference epoch
 	 */
 	FRAMEEPOCH(),
@@ -103,9 +108,19 @@ public enum CoordinateReferenceSystemKeyword {
 	LENGTHUNIT("UNIT"),
 
 	/**
+	 * Member
+	 */
+	MEMBER(),
+
+	/**
 	 * Meridian
 	 */
 	MERIDIAN(),
+
+	/**
+	 * Model
+	 */
+	MODEL("VELOCITYGRID"),
 
 	/**
 	 * Axis order

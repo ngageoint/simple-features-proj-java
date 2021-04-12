@@ -19,6 +19,16 @@ public class GeodeticCoordinateReferenceSystem
 	private GeodeticReferenceFrame geodeticReferenceFrame = null;
 
 	/**
+	 * Geodetic Datum Ensemble
+	 */
+	private GeodeticDatumEnsemble geodeticDatumEnsemble = null;
+
+	/**
+	 * Dynamic coordinate reference system
+	 */
+	private Dynamic dynamic = null;
+
+	/**
 	 * Constructor
 	 */
 	public GeodeticCoordinateReferenceSystem() {
@@ -30,12 +40,53 @@ public class GeodeticCoordinateReferenceSystem
 	 * 
 	 * @param name
 	 *            name
+	 * @param geodeticReferenceFrame
+	 *            geodetic reference frame
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
 	public GeodeticCoordinateReferenceSystem(String name,
+			GeodeticReferenceFrame geodeticReferenceFrame,
 			CoordinateSystem coordinateSystem) {
 		super(name, coordinateSystem);
+		setGeodeticReferenceFrame(geodeticReferenceFrame);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param name
+	 *            name
+	 * @param geodeticDatumEnsemble
+	 *            geodetic datum ensemble
+	 * @param coordinateSystem
+	 *            coordinate system
+	 */
+	public GeodeticCoordinateReferenceSystem(String name,
+			GeodeticDatumEnsemble geodeticDatumEnsemble,
+			CoordinateSystem coordinateSystem) {
+		super(name, coordinateSystem);
+		setGeodeticDatumEnsemble(geodeticDatumEnsemble);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param name
+	 *            name
+	 * @param dynamic
+	 *            dynamic
+	 * @param geodeticReferenceFrame
+	 *            geodetic reference frame
+	 * @param coordinateSystem
+	 *            coordinate system
+	 */
+	public GeodeticCoordinateReferenceSystem(String name, Dynamic dynamic,
+			GeodeticReferenceFrame geodeticReferenceFrame,
+			CoordinateSystem coordinateSystem) {
+		super(name, coordinateSystem);
+		setDynamic(dynamic);
+		setGeodeticReferenceFrame(geodeticReferenceFrame);
 	}
 
 	/**
@@ -67,11 +118,11 @@ public class GeodeticCoordinateReferenceSystem
 	}
 
 	/**
-	 * Determine if has a geodetic reference frame
+	 * Determine if a geodetic reference frame
 	 * 
-	 * @return true if has geodetic reference frame
+	 * @return true if a geodetic reference frame
 	 */
-	public boolean hasGeodeticReferenceFrame() {
+	public boolean isGeodeticReferenceFrame() {
 		return getGeodeticReferenceFrame() != null;
 	}
 
@@ -84,6 +135,63 @@ public class GeodeticCoordinateReferenceSystem
 	public void setGeodeticReferenceFrame(
 			GeodeticReferenceFrame geodeticReferenceFrame) {
 		this.geodeticReferenceFrame = geodeticReferenceFrame;
+	}
+
+	/**
+	 * Get the geodetic datum ensemble
+	 * 
+	 * @return geodetic datum ensemble
+	 */
+	public GeodeticDatumEnsemble getGeodeticDatumEnsemble() {
+		return geodeticDatumEnsemble;
+	}
+
+	/**
+	 * Determine if a geodetic datum ensemble
+	 * 
+	 * @return true if a geodetic datum ensemble
+	 */
+	public boolean isGeodeticDatumEnsemble() {
+		return getGeodeticDatumEnsemble() != null;
+	}
+
+	/**
+	 * Set the geodetic datum ensemble
+	 * 
+	 * @param geodeticDatumEnsemble
+	 *            geodetic datum ensemble
+	 */
+	public void setGeodeticDatumEnsemble(
+			GeodeticDatumEnsemble geodeticDatumEnsemble) {
+		this.geodeticDatumEnsemble = geodeticDatumEnsemble;
+	}
+
+	/**
+	 * Get the dynamic coordinate reference system
+	 * 
+	 * @return dynamic coordinate reference system
+	 */
+	public Dynamic getDynamic() {
+		return dynamic;
+	}
+
+	/**
+	 * Determine if dynamic
+	 * 
+	 * @return true if dynamic
+	 */
+	public boolean isDynamic() {
+		return getDynamic() != null;
+	}
+
+	/**
+	 * Set the dynamic coordinate reference system
+	 * 
+	 * @param dynamic
+	 *            dynamic coordinate reference system
+	 */
+	public void setDynamic(Dynamic dynamic) {
+		this.dynamic = dynamic;
 	}
 
 }

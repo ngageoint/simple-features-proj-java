@@ -31,9 +31,9 @@ public abstract class CoordinateReferenceSystem {
 	private List<Identifier> identifiers = null;
 
 	/**
-	 * Remarks
+	 * Remark
 	 */
-	private List<String> remarks = null;
+	private String remark = null;
 
 	/**
 	 * Constructor
@@ -203,57 +203,31 @@ public abstract class CoordinateReferenceSystem {
 	}
 
 	/**
-	 * Get the remarks
+	 * Get the remark
 	 * 
-	 * @return remarks
+	 * @return remark
 	 */
-	public List<String> getRemarks() {
-		return remarks;
+	public String getRemark() {
+		return remark;
 	}
 
 	/**
-	 * Has remarks
+	 * Has remark
 	 * 
-	 * @return true if has remarks
+	 * @return true if has remark
 	 */
-	public boolean hasRemarks() {
-		return remarks != null && !remarks.isEmpty();
+	public boolean hasRemark() {
+		return getRemark() != null;
 	}
 
 	/**
-	 * Set the remarks
-	 * 
-	 * @param remarks
-	 *            remarks
-	 */
-	public void setRemarkss(List<String> remarks) {
-		this.remarks = remarks;
-	}
-
-	/**
-	 * Add the remark
+	 * Set the remark
 	 * 
 	 * @param remark
 	 *            remark
 	 */
-	public void addRemark(String remark) {
-		if (this.remarks == null) {
-			this.remarks = new ArrayList<>();
-		}
-		this.remarks.add(remark);
-	}
-
-	/**
-	 * Add the remarks
-	 * 
-	 * @param remarks
-	 *            remarks
-	 */
-	public void addRemarks(List<String> remarks) {
-		if (this.remarks == null) {
-			this.remarks = new ArrayList<>();
-		}
-		this.remarks.addAll(remarks);
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
 }

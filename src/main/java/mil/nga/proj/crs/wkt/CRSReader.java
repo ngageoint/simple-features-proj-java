@@ -13,9 +13,13 @@ import mil.nga.proj.crs.AxisDirectionType;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateSystem;
 import mil.nga.proj.crs.CoordinateSystemType;
+import mil.nga.proj.crs.DatumEnsemble;
+import mil.nga.proj.crs.DatumEnsembleMember;
+import mil.nga.proj.crs.Dynamic;
 import mil.nga.proj.crs.Ellipsoid;
 import mil.nga.proj.crs.Extent;
 import mil.nga.proj.crs.GeodeticCoordinateReferenceSystem;
+import mil.nga.proj.crs.GeodeticDatumEnsemble;
 import mil.nga.proj.crs.GeodeticReferenceFrame;
 import mil.nga.proj.crs.GeographicBoundingBox;
 import mil.nga.proj.crs.Identifier;
@@ -275,30 +279,35 @@ public class CRSReader {
 	 *             upon failure to read
 	 */
 	public boolean peekSeparator() throws IOException {
-		return reader.peekExpectedToken().equals(",");
+		boolean separator = false;
+		String token = reader.peekToken();
+		if (token != null) {
+			separator = token.equals(",");
+		}
+		return separator;
 	}
 
 	/**
-	 * Read a keyword for the quoted text within delimiters
+	 * Read a keyword delimited token
 	 * 
 	 * @param keyword
 	 *            expected keyword
-	 * @return text
+	 * @return token
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public String readKeywordDelimitedQuotedText(
+	public String readKeywordDelimitedToken(
 			CoordinateReferenceSystemKeyword keyword) throws IOException {
 
 		validateKeyword(readKeyword(), keyword);
 
 		readLeftDelimiter();
 
-		String text = reader.readQuotedText();
+		String token = reader.readExpectedToken();
 
 		readRightDelimiter();
 
-		return text;
+		return token;
 	}
 
 	/**
@@ -457,32 +466,47 @@ public class CRSReader {
 
 		readLeftDelimiter();
 
-		crs.setName(reader.readQuotedText());
+		crs.setName(reader.readExpectedToken());
 
 		boolean isDynamic = isKeywordNext(
 				CoordinateReferenceSystemKeyword.DYNAMIC);
 		if (isDynamic) {
 			readSeparator();
-			// TODO DYNAMIC crs
+			crs.setDynamic(readDynamic());
 		}
 
 		if (isDynamic
 				|| isKeywordNext(CoordinateReferenceSystemKeyword.DATUM)) {
 			readSeparator();
 			crs.setGeodeticReferenceFrame(readGeodeticReferenceFrame());
+		} else if (isKeywordNext(CoordinateReferenceSystemKeyword.ENSEMBLE)) {
+			readSeparator();
+			crs.setGeodeticDatumEnsemble(readGeodeticDatumEnsemble());
 		} else {
-			// TODO ENSEMBLE crs
+			// Validation error
+			readSeparator();
+			validateKeyword(type, CoordinateReferenceSystemKeyword.DATUM,
+					CoordinateReferenceSystemKeyword.ENSEMBLE);
 		}
 
 		readSeparator();
 
 		crs.setCoordinateSystem(readCoordinateSystem());
 
-		crs.setUsages(readUsages());
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.USAGE)) {
+			readSeparator();
+			crs.setUsages(readUsages());
+		}
 
-		crs.setIdentifiers(readIdentifiers());
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			crs.setIdentifiers(readIdentifiers());
+		}
 
-		crs.setRemarkss(readRemarks());
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.REMARK)) {
+			readSeparator();
+			crs.setRemark(readRemark());
+		}
 
 		readRightDelimiter();
 
@@ -501,12 +525,11 @@ public class CRSReader {
 
 		GeodeticReferenceFrame geodeticReferenceFrame = new GeodeticReferenceFrame();
 
-		CoordinateReferenceSystemKeyword keyword = readKeyword();
-		validateKeyword(keyword, CoordinateReferenceSystemKeyword.DATUM);
+		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.DATUM);
 
 		readLeftDelimiter();
 
-		geodeticReferenceFrame.setName(reader.readQuotedText());
+		geodeticReferenceFrame.setName(reader.readExpectedToken());
 
 		readSeparator();
 
@@ -514,11 +537,14 @@ public class CRSReader {
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.ANCHOR)) {
 			readSeparator();
-			geodeticReferenceFrame.setAnchor(readKeywordDelimitedQuotedText(
+			geodeticReferenceFrame.setAnchor(readKeywordDelimitedToken(
 					CoordinateReferenceSystemKeyword.ANCHOR));
 		}
 
-		geodeticReferenceFrame.setIdentifiers(readIdentifiers());
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			geodeticReferenceFrame.setIdentifiers(readIdentifiers());
+		}
 
 		readRightDelimiter();
 
@@ -528,6 +554,165 @@ public class CRSReader {
 		}
 
 		return geodeticReferenceFrame;
+	}
+
+	/**
+	 * Read a Geodetic datum ensemble
+	 * 
+	 * @return geodetic datum ensemble
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public GeodeticDatumEnsemble readGeodeticDatumEnsemble()
+			throws IOException {
+		GeodeticDatumEnsemble geodeticDatumEnsemble = new GeodeticDatumEnsemble();
+		readDatumEnsemble(geodeticDatumEnsemble);
+		return geodeticDatumEnsemble;
+	}
+
+	/**
+	 * Read a Vertical datum ensemble
+	 * 
+	 * @return vertical datum ensemble
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public DatumEnsemble readVerticalDatumEnsemble() throws IOException {
+		DatumEnsemble datumEnsemble = new DatumEnsemble();
+		readDatumEnsemble(datumEnsemble);
+		return datumEnsemble;
+	}
+
+	/**
+	 * Read a Datum ensemble
+	 * 
+	 * @param datumEnsemble
+	 *            datum ensemble
+	 * 
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	private void readDatumEnsemble(DatumEnsemble datumEnsemble)
+			throws IOException {
+
+		GeodeticDatumEnsemble geodeticDatumEnsemble = null;
+		if (datumEnsemble instanceof GeodeticDatumEnsemble) {
+			geodeticDatumEnsemble = (GeodeticDatumEnsemble) datumEnsemble;
+		}
+
+		validateKeyword(readKeyword(),
+				CoordinateReferenceSystemKeyword.ENSEMBLE);
+
+		readLeftDelimiter();
+
+		datumEnsemble.setName(reader.readExpectedToken());
+
+		List<DatumEnsembleMember> members = new ArrayList<>();
+		do {
+
+			readSeparator();
+
+			members.add(readDatumEnsembleMember());
+
+		} while (isKeywordNext(CoordinateReferenceSystemKeyword.MEMBER));
+
+		if (geodeticDatumEnsemble != null) {
+			readSeparator();
+			geodeticDatumEnsemble.setEllipsoid(readEllipsoid());
+		}
+
+		validateKeyword(readKeyword(),
+				CoordinateReferenceSystemKeyword.ENSEMBLEACCURACY);
+
+		readLeftDelimiter();
+
+		datumEnsemble.setAccuracy(reader.readNumber());
+
+		readRightDelimiter();
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			datumEnsemble.setIdentifiers(readIdentifiers());
+		}
+
+		readRightDelimiter();
+
+		if (geodeticDatumEnsemble != null) {
+			readSeparator();
+			geodeticDatumEnsemble.setPrimeMeridian(readPrimeMeridian());
+		}
+	}
+
+	/**
+	 * Read a Datum ensemble member
+	 * 
+	 * @return datum ensemble member
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public DatumEnsembleMember readDatumEnsembleMember() throws IOException {
+
+		DatumEnsembleMember member = new DatumEnsembleMember();
+
+		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.MEMBER);
+
+		readLeftDelimiter();
+
+		member.setName(reader.readExpectedToken());
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			member.setIdentifiers(readIdentifiers());
+		}
+
+		readRightDelimiter();
+
+		return member;
+	}
+
+	/**
+	 * Read a Dynamic coordinate reference system
+	 * 
+	 * @return dynamic
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Dynamic readDynamic() throws IOException {
+
+		Dynamic dynamic = new Dynamic();
+
+		validateKeyword(readKeyword(),
+				CoordinateReferenceSystemKeyword.DYNAMIC);
+
+		readLeftDelimiter();
+
+		validateKeyword(readKeyword(),
+				CoordinateReferenceSystemKeyword.FRAMEEPOCH);
+
+		readLeftDelimiter();
+
+		dynamic.setReferenceEpoch(reader.readUnsignedNumber());
+
+		readRightDelimiter();
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.MODEL)) {
+			readSeparator();
+
+			readLeftDelimiter();
+
+			dynamic.setDeformationModelName(reader.readExpectedToken());
+
+			if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+				readSeparator();
+				dynamic.setDeformationModelIdentifiers(readIdentifiers());
+			}
+
+			readRightDelimiter();
+		}
+
+		readRightDelimiter();
+
+		return dynamic;
 	}
 
 	/**
@@ -541,12 +726,11 @@ public class CRSReader {
 
 		PrimeMeridian primeMeridian = new PrimeMeridian();
 
-		CoordinateReferenceSystemKeyword keyword = readKeyword();
-		validateKeyword(keyword, CoordinateReferenceSystemKeyword.PRIMEM);
+		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.PRIMEM);
 
 		readLeftDelimiter();
 
-		primeMeridian.setName(reader.readQuotedText());
+		primeMeridian.setName(reader.readExpectedToken());
 
 		readSeparator();
 
@@ -557,7 +741,10 @@ public class CRSReader {
 			primeMeridian.setIrmLongitudeAngleUnit(readAngleUnit());
 		}
 
-		primeMeridian.setIdentifiers(readIdentifiers());
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			primeMeridian.setIdentifiers(readIdentifiers());
+		}
 
 		readRightDelimiter();
 
@@ -575,12 +762,12 @@ public class CRSReader {
 
 		Ellipsoid ellipsoid = new Ellipsoid();
 
-		CoordinateReferenceSystemKeyword keyword = readKeyword();
-		validateKeyword(keyword, CoordinateReferenceSystemKeyword.ELLIPSOID);
+		validateKeyword(readKeyword(),
+				CoordinateReferenceSystemKeyword.ELLIPSOID);
 
 		readLeftDelimiter();
 
-		ellipsoid.setName(reader.readQuotedText());
+		ellipsoid.setName(reader.readExpectedToken());
 
 		readSeparator();
 
@@ -595,7 +782,10 @@ public class CRSReader {
 			ellipsoid.setLengthUnit(readLengthUnit());
 		}
 
-		ellipsoid.setIdentifiers(readIdentifiers());
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			ellipsoid.setIdentifiers(readIdentifiers());
+		}
 
 		readRightDelimiter();
 
@@ -696,13 +886,16 @@ public class CRSReader {
 
 		readLeftDelimiter();
 
-		unit.setName(reader.readQuotedText());
+		unit.setName(reader.readExpectedToken());
 
 		readSeparator();
 
 		unit.setConversionFactor(reader.readUnsignedNumber());
 
-		unit.setIdentifiers(readIdentifiers());
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			unit.setIdentifiers(readIdentifiers());
+		}
 
 		readRightDelimiter();
 
@@ -718,19 +911,17 @@ public class CRSReader {
 	 */
 	public List<Identifier> readIdentifiers() throws IOException {
 
-		List<Identifier> identifiers = null;
+		List<Identifier> identifiers = new ArrayList<>();
 
-		while (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+		do {
 
-			if (identifiers == null) {
-				identifiers = new ArrayList<>();
+			if (!identifiers.isEmpty()) {
+				readSeparator();
 			}
-
-			readSeparator();
 
 			identifiers.add(readIdentifier());
 
-		}
+		} while (isKeywordNext(CoordinateReferenceSystemKeyword.ID));
 
 		return identifiers;
 	}
@@ -746,31 +937,30 @@ public class CRSReader {
 
 		Identifier identifier = new Identifier();
 
-		CoordinateReferenceSystemKeyword keyword = readKeyword();
-		validateKeyword(keyword, CoordinateReferenceSystemKeyword.ID);
+		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.ID);
 
 		readLeftDelimiter();
 
-		identifier.setName(reader.readQuotedText());
+		identifier.setName(reader.readExpectedToken());
 
 		readSeparator();
 
-		identifier.setUniqueIdentifier(reader.readNumberOrQuotedText());
+		identifier.setUniqueIdentifier(reader.readExpectedToken());
 
 		if (isNonKeywordNext()) {
 			readSeparator();
-			identifier.setVersion(reader.readNumberOrQuotedText());
+			identifier.setVersion(reader.readExpectedToken());
 		}
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.CITATION)) {
 			readSeparator();
-			identifier.setCitation(readKeywordDelimitedQuotedText(
+			identifier.setCitation(readKeywordDelimitedToken(
 					CoordinateReferenceSystemKeyword.CITATION));
 		}
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.URI)) {
 			readSeparator();
-			identifier.setUri(readKeywordDelimitedQuotedText(
+			identifier.setUri(readKeywordDelimitedToken(
 					CoordinateReferenceSystemKeyword.URI));
 		}
 
@@ -790,8 +980,7 @@ public class CRSReader {
 
 		CoordinateSystem coordinateSystem = new CoordinateSystem();
 
-		CoordinateReferenceSystemKeyword keyword = readKeyword();
-		validateKeyword(keyword, CoordinateReferenceSystemKeyword.CS);
+		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.CS);
 
 		readLeftDelimiter();
 
@@ -807,7 +996,10 @@ public class CRSReader {
 
 		coordinateSystem.setDimension(reader.readUnsignedInteger());
 
-		coordinateSystem.setIdentifiers(readIdentifiers());
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			coordinateSystem.setIdentifiers(readIdentifiers());
+		}
 
 		readRightDelimiter();
 
@@ -857,12 +1049,11 @@ public class CRSReader {
 
 		Axis axis = new Axis();
 
-		CoordinateReferenceSystemKeyword keyword = readKeyword();
-		validateKeyword(keyword, CoordinateReferenceSystemKeyword.AXIS);
+		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.AXIS);
 
 		readLeftDelimiter();
 
-		String nameAbbrev = reader.readQuotedText();
+		String nameAbbrev = reader.readExpectedToken();
 		if (nameAbbrev.matches("((.+ )|^)\\([a-zA-Z]+\\)$")) {
 			int abbrevIndex = nameAbbrev.lastIndexOf("(");
 			axis.setAbbreviation(nameAbbrev.substring(abbrevIndex + 1,
@@ -915,8 +1106,7 @@ public class CRSReader {
 
 			readSeparator();
 
-			CoordinateReferenceSystemKeyword bearingKeyword = readKeyword();
-			validateKeyword(bearingKeyword,
+			validateKeyword(readKeyword(),
 					CoordinateReferenceSystemKeyword.BEARING);
 
 			readLeftDelimiter();
@@ -965,7 +1155,10 @@ public class CRSReader {
 
 		}
 
-		axis.setIdentifiers(readIdentifiers());
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			axis.setIdentifiers(readIdentifiers());
+		}
 
 		readRightDelimiter();
 
@@ -973,30 +1166,15 @@ public class CRSReader {
 	}
 
 	/**
-	 * Read Remarks
+	 * Read Remark
 	 * 
-	 * @return remarks
+	 * @return remark
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public List<String> readRemarks() throws IOException {
-
-		List<String> remarks = null;
-
-		while (isKeywordNext(CoordinateReferenceSystemKeyword.REMARK)) {
-
-			if (remarks == null) {
-				remarks = new ArrayList<>();
-			}
-
-			readSeparator();
-
-			remarks.add(readKeywordDelimitedQuotedText(
-					CoordinateReferenceSystemKeyword.REMARK));
-
-		}
-
-		return remarks;
+	public String readRemark() throws IOException {
+		return readKeywordDelimitedToken(
+				CoordinateReferenceSystemKeyword.REMARK);
 	}
 
 	/**
@@ -1008,19 +1186,17 @@ public class CRSReader {
 	 */
 	public List<Usage> readUsages() throws IOException {
 
-		List<Usage> usages = null;
+		List<Usage> usages = new ArrayList<>();
 
-		while (isKeywordNext(CoordinateReferenceSystemKeyword.USAGE)) {
+		do {
 
-			if (usages == null) {
-				usages = new ArrayList<>();
+			if (!usages.isEmpty()) {
+				readSeparator();
 			}
-
-			readSeparator();
 
 			usages.add(readUsage());
 
-		}
+		} while (isKeywordNext(CoordinateReferenceSystemKeyword.USAGE));
 
 		return usages;
 	}
@@ -1036,19 +1212,29 @@ public class CRSReader {
 
 		Usage usage = new Usage();
 
-		CoordinateReferenceSystemKeyword keyword = readKeyword();
-		validateKeyword(keyword, CoordinateReferenceSystemKeyword.USAGE);
+		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.USAGE);
 
 		readLeftDelimiter();
 
-		usage.setScope(readKeywordDelimitedQuotedText(
-				CoordinateReferenceSystemKeyword.SCOPE));
+		usage.setScope(readScope());
 
 		usage.setExtent(readExtent());
 
 		readRightDelimiter();
 
 		return usage;
+	}
+
+	/**
+	 * Read a Scope
+	 * 
+	 * @return scope
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public String readScope() throws IOException {
+		return readKeywordDelimitedToken(
+				CoordinateReferenceSystemKeyword.SCOPE);
 	}
 
 	/**
@@ -1068,8 +1254,7 @@ public class CRSReader {
 
 			readSeparator();
 
-			extent.setAreaDescription(readKeywordDelimitedQuotedText(
-					CoordinateReferenceSystemKeyword.AREA));
+			extent.setAreaDescription(readAreaDescription());
 			valid = true;
 
 		}
@@ -1113,6 +1298,17 @@ public class CRSReader {
 	}
 
 	/**
+	 * Read an Area description
+	 * 
+	 * @return area description
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public String readAreaDescription() throws IOException {
+		return readKeywordDelimitedToken(CoordinateReferenceSystemKeyword.AREA);
+	}
+
+	/**
 	 * Read a Geographic bounding box
 	 * 
 	 * @return geographic bounding box
@@ -1124,8 +1320,7 @@ public class CRSReader {
 
 		GeographicBoundingBox boundingBox = new GeographicBoundingBox();
 
-		CoordinateReferenceSystemKeyword keyword = readKeyword();
-		validateKeyword(keyword, CoordinateReferenceSystemKeyword.BBOX);
+		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.BBOX);
 
 		readLeftDelimiter();
 
@@ -1159,8 +1354,7 @@ public class CRSReader {
 
 		VerticalExtent verticalExtent = new VerticalExtent();
 
-		CoordinateReferenceSystemKeyword keyword = readKeyword();
-		validateKeyword(keyword,
+		validateKeyword(readKeyword(),
 				CoordinateReferenceSystemKeyword.VERTICALEXTENT);
 
 		readLeftDelimiter();
@@ -1192,16 +1386,16 @@ public class CRSReader {
 
 		TemporalExtent temporalExtent = new TemporalExtent();
 
-		CoordinateReferenceSystemKeyword keyword = readKeyword();
-		validateKeyword(keyword, CoordinateReferenceSystemKeyword.TIMEEXTENT);
+		validateKeyword(readKeyword(),
+				CoordinateReferenceSystemKeyword.TIMEEXTENT);
 
 		readLeftDelimiter();
 
-		temporalExtent.setStart(reader.readTextOrQuotedText());
+		temporalExtent.setStart(reader.readExpectedToken());
 
 		readSeparator();
 
-		temporalExtent.setEnd(reader.readTextOrQuotedText());
+		temporalExtent.setEnd(reader.readExpectedToken());
 
 		readRightDelimiter();
 

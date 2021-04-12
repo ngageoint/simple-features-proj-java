@@ -136,19 +136,21 @@ public class TextReader {
 					// If in a quoted string
 					if (isQuote) {
 						boolean charQuote = character == '"';
-						if (!previousCharQuote || charQuote) {
-							builder.append(character);
-						}
 						if (previousCharQuote) {
-							previousCharQuote = false;
-							if (!charQuote) {
+							if (charQuote) {
+								builder.append(character);
+								previousCharQuote = false;
+							} else {
 								// End of quoted string found at previous
 								// character
 								nextCharacterNum = characterNum;
 								break;
 							}
+						} else if (charQuote) {
+							previousCharQuote = true;
+						} else {
+							builder.append(character);
 						}
-						previousCharQuote = charQuote;
 					} else if (isTokenCharacter(character)) {
 						// Append token characters
 						builder.append(character);
@@ -165,14 +167,16 @@ public class TextReader {
 
 					// First non whitespace character in the token
 					builder = new StringBuilder();
-					builder.append(character);
-
-					// Start of a quoted string
 					if (character == '"') {
 						isQuote = true;
-					} else if (!isTokenCharacter(character)) {
-						// Complete token if a single character token
-						break;
+					} else {
+
+						builder.append(character);
+
+						if (!isTokenCharacter(character)) {
+							// Complete token if a single character token
+							break;
+						}
 					}
 
 				}
@@ -271,22 +275,6 @@ public class TextReader {
 	}
 
 	/**
-	 * Read quoted text
-	 * 
-	 * @return text
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public String readQuotedText() throws IOException {
-		String token = readExpectedToken();
-		if (!token.startsWith("\"") || !token.endsWith("\"")) {
-			throw new ProjectionException(
-					"Invalid double quoted text token. found: '" + token + "'");
-		}
-		return token.substring(1, token.length() - 1);
-	}
-
-	/**
 	 * Read a signed number as a double
 	 * 
 	 * @return signed double
@@ -358,41 +346,6 @@ public class TextReader {
 					e);
 		}
 		return number;
-	}
-
-	/**
-	 * Read number or quoted text
-	 * 
-	 * @return number or text value
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public String readNumberOrQuotedText() throws IOException {
-		String token = peekExpectedToken();
-		if (token.startsWith("\"")) {
-			token = readQuotedText();
-		} else {
-			double number = readNumber();
-			token = Double.toString(number);
-		}
-		return token;
-	}
-
-	/**
-	 * Read text or quoted text
-	 * 
-	 * @return text value
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public String readTextOrQuotedText() throws IOException {
-		String token = peekExpectedToken();
-		if (token.startsWith("\"")) {
-			token = readQuotedText();
-		} else {
-			token = readExpectedToken();
-		}
-		return token;
 	}
 
 	/**
