@@ -565,9 +565,12 @@ public class CRSReader {
 	 */
 	public GeodeticDatumEnsemble readGeodeticDatumEnsemble()
 			throws IOException {
-		GeodeticDatumEnsemble geodeticDatumEnsemble = new GeodeticDatumEnsemble();
-		readDatumEnsemble(geodeticDatumEnsemble);
-		return geodeticDatumEnsemble;
+		DatumEnsemble datumEnsemble = readDatumEnsemble();
+		if (!(datumEnsemble instanceof GeodeticDatumEnsemble)) {
+			throw new ProjectionException(
+					"Datum ensemble was not an expected Geodetic Datum Ensemble");
+		}
+		return (GeodeticDatumEnsemble) datumEnsemble;
 	}
 
 	/**
@@ -578,34 +581,29 @@ public class CRSReader {
 	 *             upon failure to read
 	 */
 	public DatumEnsemble readVerticalDatumEnsemble() throws IOException {
-		DatumEnsemble datumEnsemble = new DatumEnsemble();
-		readDatumEnsemble(datumEnsemble);
+		DatumEnsemble datumEnsemble = readDatumEnsemble();
+		if (!datumEnsemble.getClass().equals(DatumEnsemble.class)) {
+			throw new ProjectionException(
+					"Datum ensemble was not an expected Vertical Datum Ensemble");
+		}
 		return datumEnsemble;
 	}
 
 	/**
 	 * Read a Datum ensemble
 	 * 
-	 * @param datumEnsemble
-	 *            datum ensemble
-	 * 
+	 * @return datum ensemble
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	private void readDatumEnsemble(DatumEnsemble datumEnsemble)
-			throws IOException {
-
-		GeodeticDatumEnsemble geodeticDatumEnsemble = null;
-		if (datumEnsemble instanceof GeodeticDatumEnsemble) {
-			geodeticDatumEnsemble = (GeodeticDatumEnsemble) datumEnsemble;
-		}
+	public DatumEnsemble readDatumEnsemble() throws IOException {
 
 		validateKeyword(readKeyword(),
 				CoordinateReferenceSystemKeyword.ENSEMBLE);
 
 		readLeftDelimiter();
 
-		datumEnsemble.setName(reader.readExpectedToken());
+		String name = reader.readExpectedToken();
 
 		List<DatumEnsembleMember> members = new ArrayList<>();
 		do {
@@ -616,11 +614,25 @@ public class CRSReader {
 
 		} while (isKeywordNext(CoordinateReferenceSystemKeyword.MEMBER));
 
+		DatumEnsemble datumEnsemble = null;
+		GeodeticDatumEnsemble geodeticDatumEnsemble = null;
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ELLIPSOID)) {
+			geodeticDatumEnsemble = new GeodeticDatumEnsemble();
+			datumEnsemble = geodeticDatumEnsemble;
+		} else {
+			datumEnsemble = new DatumEnsemble();
+		}
+
+		datumEnsemble.setName(name);
+		datumEnsemble.setMembers(members);
+
 		if (geodeticDatumEnsemble != null) {
 			readSeparator();
 			geodeticDatumEnsemble.setEllipsoid(readEllipsoid());
 		}
 
+		readSeparator();
 		validateKeyword(readKeyword(),
 				CoordinateReferenceSystemKeyword.ENSEMBLEACCURACY);
 
@@ -637,10 +649,14 @@ public class CRSReader {
 
 		readRightDelimiter();
 
-		if (geodeticDatumEnsemble != null) {
+		if (geodeticDatumEnsemble != null
+				&& isKeywordNext(CoordinateReferenceSystemKeyword.PRIMEM)) {
+			// TODO http://ogc.standardstracker.org/show_request.cgi?id=672
 			readSeparator();
 			geodeticDatumEnsemble.setPrimeMeridian(readPrimeMeridian());
 		}
+
+		return datumEnsemble;
 	}
 
 	/**
@@ -696,7 +712,9 @@ public class CRSReader {
 		readRightDelimiter();
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.MODEL)) {
+
 			readSeparator();
+			readKeyword();
 
 			readLeftDelimiter();
 
@@ -888,9 +906,14 @@ public class CRSReader {
 
 		unit.setName(reader.readExpectedToken());
 
-		readSeparator();
+		if (type != UnitType.TIMEUNIT
+				|| (peekSeparator() && isNonKeywordNext())) {
 
-		unit.setConversionFactor(reader.readUnsignedNumber());
+			readSeparator();
+
+			unit.setConversionFactor(reader.readUnsignedNumber());
+
+		}
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
 			readSeparator();
