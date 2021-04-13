@@ -59,6 +59,28 @@ public class CRSReader {
 	}
 
 	/**
+	 * Read a Geodetic or Geographic Coordinate Reference System from the
+	 * well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Geodetic or Geographic Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static GeodeticCoordinateReferenceSystem readGeodeticOrGeographic(
+			String text) throws IOException {
+		GeodeticCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readGeodeticOrGeographic();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
 	 * Text Reader
 	 */
 	private TextReader reader;

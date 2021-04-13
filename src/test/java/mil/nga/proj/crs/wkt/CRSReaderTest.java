@@ -1,8 +1,10 @@
 package mil.nga.proj.crs.wkt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,6 +20,7 @@ import mil.nga.proj.crs.DatumEnsemble;
 import mil.nga.proj.crs.Dynamic;
 import mil.nga.proj.crs.Ellipsoid;
 import mil.nga.proj.crs.Extent;
+import mil.nga.proj.crs.GeodeticCoordinateReferenceSystem;
 import mil.nga.proj.crs.GeodeticDatumEnsemble;
 import mil.nga.proj.crs.GeodeticReferenceFrame;
 import mil.nga.proj.crs.GeographicBoundingBox;
@@ -1299,7 +1302,194 @@ public class CRSReaderTest {
 				+ "REMARK[\"注：JGD2000ジオセントリックは現在JGD2011に代わりました。\"]]";
 
 		CoordinateReferenceSystem crs = CRSReader.readCRS(text);
-		assertNotNull(crs);
+		GeodeticCoordinateReferenceSystem geodeticCrs = CRSReader
+				.readGeodeticOrGeographic(text);
+		// assertEquals(crs, geodeticCrs); TODO
+		assertFalse(geodeticCrs.isGeographic());
+		assertEquals("JGD2000", geodeticCrs.getName());
+		assertEquals("Japanese Geodetic Datum 2000",
+				geodeticCrs.getGeodeticReferenceFrame().getName());
+		assertEquals("GRS 1980", geodeticCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getName());
+		assertEquals(6378137, geodeticCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(298.257222101, geodeticCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getInverseFlattening(), 0);
+		assertEquals(CoordinateSystemType.CARTESIAN,
+				geodeticCrs.getCoordinateSystem().getType());
+		assertEquals(3, geodeticCrs.getCoordinateSystem().getDimension());
+		assertEquals("X", geodeticCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.GEOCENTRIC_X, geodeticCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals("Y", geodeticCrs.getCoordinateSystem().getAxes().get(1)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.GEOCENTRIC_Y, geodeticCrs
+				.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals("Z", geodeticCrs.getCoordinateSystem().getAxes().get(2)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.GEOCENTRIC_Z, geodeticCrs
+				.getCoordinateSystem().getAxes().get(2).getDirection());
+		assertEquals(UnitType.LENGTHUNIT,
+				geodeticCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("metre",
+				geodeticCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(1.0, geodeticCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+		assertEquals("Geodesy, topographic mapping and cadastre",
+				geodeticCrs.getUsages().get(0).getScope());
+		assertEquals("Japan", geodeticCrs.getUsages().get(0).getExtent()
+				.getAreaDescription());
+		assertEquals(17.09, geodeticCrs.getUsages().get(0).getExtent()
+				.getGeographicBoundingBox().getLowerLeftLatitude(), 0);
+		assertEquals(122.38, geodeticCrs.getUsages().get(0).getExtent()
+				.getGeographicBoundingBox().getLowerLeftLongitude(), 0);
+		assertEquals(46.05, geodeticCrs.getUsages().get(0).getExtent()
+				.getGeographicBoundingBox().getUpperRightLatitude(), 0);
+		assertEquals(157.64,
+				geodeticCrs.getUsages().get(0).getExtent()
+						.getGeographicBoundingBox().getUpperRightLongitude(),
+				0);
+		assertEquals("2002-04-01", geodeticCrs.getUsages().get(0).getExtent()
+				.getTemporalExtent().getStart());
+		assertEquals("2011-10-21", geodeticCrs.getUsages().get(0).getExtent()
+				.getTemporalExtent().getEnd());
+		assertEquals("EPSG", geodeticCrs.getIdentifiers().get(0).getName());
+		assertEquals("4946",
+				geodeticCrs.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("urn:ogc:def:crs:EPSG::4946",
+				geodeticCrs.getIdentifiers().get(0).getUri());
+		assertEquals("注：JGD2000ジオセントリックは現在JGD2011に代わりました。",
+				geodeticCrs.getRemark());
+
+	}
+
+	/**
+	 * Test geographic coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testGeographicCoordinateReferenceSystem() throws IOException {
+
+		String text = "GEOGCRS[\"WGS 84 (G1762)\","
+				+ "DYNAMIC[FRAMEEPOCH[2005.0]],"
+				+ "TRF[\"World Geodetic System 1984 (G1762)\","
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1.0]]],"
+				+ "CS[ellipsoidal,3],"
+				+ "AXIS[\"(lat)\",north,ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "AXIS[\"(lon)\",east,ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "AXIS[\"ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1.0]]]";
+
+		CoordinateReferenceSystem crs = CRSReader.readCRS(text);
+		GeodeticCoordinateReferenceSystem geographicCrs = CRSReader
+				.readGeodeticOrGeographic(text);
+		// assertEquals(crs, geographicCrs); TODO
+		assertTrue(geographicCrs.isGeographic());
+		assertEquals("WGS 84 (G1762)", geographicCrs.getName());
+		assertEquals(2005.0, geographicCrs.getDynamic().getReferenceEpoch(), 0);
+		assertEquals("World Geodetic System 1984 (G1762)",
+				geographicCrs.getGeodeticReferenceFrame().getName());
+		assertEquals("WGS 84", geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getName());
+		assertEquals(6378137, geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(298.257223563, geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getInverseFlattening(), 0);
+		assertEquals(UnitType.LENGTHUNIT,
+				geographicCrs.getGeodeticReferenceFrame().getEllipsoid()
+						.getLengthUnit().getType());
+		assertEquals("metre", geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getLengthUnit().getName());
+		assertEquals(1.0, geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getLengthUnit().getConversionFactor(), 0);
+		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
+				geographicCrs.getCoordinateSystem().getType());
+		assertEquals(3, geographicCrs.getCoordinateSystem().getDimension());
+		assertEquals("lat", geographicCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.NORTH, geographicCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals(UnitType.ANGLEUNIT, geographicCrs.getCoordinateSystem()
+				.getAxes().get(0).getUnit().getType());
+		assertEquals("degree", geographicCrs.getCoordinateSystem().getAxes()
+				.get(0).getUnit().getName());
+		assertEquals(0.0174532925199433, geographicCrs.getCoordinateSystem()
+				.getAxes().get(0).getUnit().getConversionFactor(), 0);
+		assertEquals("lon", geographicCrs.getCoordinateSystem().getAxes().get(1)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.EAST, geographicCrs.getCoordinateSystem()
+				.getAxes().get(1).getDirection());
+		assertEquals(UnitType.ANGLEUNIT, geographicCrs.getCoordinateSystem()
+				.getAxes().get(1).getUnit().getType());
+		assertEquals("degree", geographicCrs.getCoordinateSystem().getAxes()
+				.get(1).getUnit().getName());
+		assertEquals(0.0174532925199433, geographicCrs.getCoordinateSystem()
+				.getAxes().get(1).getUnit().getConversionFactor(), 0);
+		assertEquals("ellipsoidal height",
+				geographicCrs.getCoordinateSystem().getAxes().get(2).getName());
+		assertEquals("h", geographicCrs.getCoordinateSystem().getAxes().get(2)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.UP, geographicCrs.getCoordinateSystem()
+				.getAxes().get(2).getDirection());
+		assertEquals(UnitType.LENGTHUNIT, geographicCrs.getCoordinateSystem()
+				.getAxes().get(2).getUnit().getType());
+		assertEquals("metre", geographicCrs.getCoordinateSystem().getAxes()
+				.get(2).getUnit().getName());
+		assertEquals(1.0, geographicCrs.getCoordinateSystem().getAxes().get(2)
+				.getUnit().getConversionFactor(), 0);
+
+		text = "GEOGRAPHICCRS[\"NAD83\","
+				+ "DATUM[\"North American Datum 1983\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137,298.257222101,LENGTHUNIT[\"metre\",1.0]]],"
+				+ "CS[ellipsoidal,2],AXIS[\"latitude\",north],"
+				+ "AXIS[\"longitude\",east],"
+				+ "ANGLEUNIT[\"degree\",0.017453292519943],"
+				+ "ID[\"EPSG\",4269],REMARK[\"1986 realisation\"]]";
+
+		crs = CRSReader.readCRS(text);
+		geographicCrs = CRSReader.readGeodeticOrGeographic(text);
+		// assertEquals(crs, geographicCrs); TODO
+		assertTrue(geographicCrs.isGeographic());
+		assertEquals("NAD83", geographicCrs.getName());
+		assertEquals("North American Datum 1983",
+				geographicCrs.getGeodeticReferenceFrame().getName());
+		assertEquals("GRS 1980", geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getName());
+		assertEquals(6378137, geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(298.257222101, geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getInverseFlattening(), 0);
+		assertEquals(UnitType.LENGTHUNIT,
+				geographicCrs.getGeodeticReferenceFrame().getEllipsoid()
+						.getLengthUnit().getType());
+		assertEquals("metre", geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getLengthUnit().getName());
+		assertEquals(1.0, geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getLengthUnit().getConversionFactor(), 0);
+		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
+				geographicCrs.getCoordinateSystem().getType());
+		assertEquals(2, geographicCrs.getCoordinateSystem().getDimension());
+		assertEquals("latitude",
+				geographicCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals(AxisDirectionType.NORTH, geographicCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals("longitude",
+				geographicCrs.getCoordinateSystem().getAxes().get(1).getName());
+		assertEquals(AxisDirectionType.EAST, geographicCrs.getCoordinateSystem()
+				.getAxes().get(1).getDirection());
+		assertEquals(UnitType.ANGLEUNIT,
+				geographicCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("degree",
+				geographicCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(0.017453292519943, geographicCrs.getCoordinateSystem()
+				.getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", geographicCrs.getIdentifiers().get(0).getName());
+		assertEquals("4269",
+				geographicCrs.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("1986 realisation", geographicCrs.getRemark());
+
 		// TODO
 
 	}
