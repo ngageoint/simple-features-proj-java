@@ -9,11 +9,6 @@ public class GeodeticCoordinateReferenceSystem
 		extends CoordinateReferenceSystem {
 
 	/**
-	 * Geographic flag
-	 */
-	private boolean geographic = false;
-
-	/**
 	 * Geodetic Reference Frame
 	 */
 	private GeodeticReferenceFrame geodeticReferenceFrame = null;
@@ -40,15 +35,18 @@ public class GeodeticCoordinateReferenceSystem
 	 * 
 	 * @param name
 	 *            name
+	 * @param type
+	 *            coordinate reference system type
 	 * @param geodeticReferenceFrame
 	 *            geodetic reference frame
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
 	public GeodeticCoordinateReferenceSystem(String name,
+			CoordinateReferenceSystemType type,
 			GeodeticReferenceFrame geodeticReferenceFrame,
 			CoordinateSystem coordinateSystem) {
-		super(name, coordinateSystem);
+		super(name, type, coordinateSystem);
 		setGeodeticReferenceFrame(geodeticReferenceFrame);
 	}
 
@@ -57,15 +55,18 @@ public class GeodeticCoordinateReferenceSystem
 	 * 
 	 * @param name
 	 *            name
+	 * @param type
+	 *            coordinate reference system type
 	 * @param geodeticDatumEnsemble
 	 *            geodetic datum ensemble
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
 	public GeodeticCoordinateReferenceSystem(String name,
+			CoordinateReferenceSystemType type,
 			GeodeticDatumEnsemble geodeticDatumEnsemble,
 			CoordinateSystem coordinateSystem) {
-		super(name, coordinateSystem);
+		super(name, type, coordinateSystem);
 		setGeodeticDatumEnsemble(geodeticDatumEnsemble);
 	}
 
@@ -74,6 +75,8 @@ public class GeodeticCoordinateReferenceSystem
 	 * 
 	 * @param name
 	 *            name
+	 * @param type
+	 *            coordinate reference system type
 	 * @param dynamic
 	 *            dynamic
 	 * @param geodeticReferenceFrame
@@ -81,31 +84,13 @@ public class GeodeticCoordinateReferenceSystem
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
-	public GeodeticCoordinateReferenceSystem(String name, Dynamic dynamic,
+	public GeodeticCoordinateReferenceSystem(String name,
+			CoordinateReferenceSystemType type, Dynamic dynamic,
 			GeodeticReferenceFrame geodeticReferenceFrame,
 			CoordinateSystem coordinateSystem) {
-		super(name, coordinateSystem);
+		super(name, type, coordinateSystem);
 		setDynamic(dynamic);
 		setGeodeticReferenceFrame(geodeticReferenceFrame);
-	}
-
-	/**
-	 * Is a Geographic Coordinate Reference System
-	 * 
-	 * @return true if geographic, false if geodetic
-	 */
-	public boolean isGeographic() {
-		return geographic;
-	}
-
-	/**
-	 * Set if a Geographic Coordinate Reference System
-	 * 
-	 * @param geographic
-	 *            true if geographic, false if geodetic
-	 */
-	public void setGeographic(boolean geographic) {
-		this.geographic = geographic;
 	}
 
 	/**
@@ -192,6 +177,51 @@ public class GeodeticCoordinateReferenceSystem
 	 */
 	public void setDynamic(Dynamic dynamic) {
 		this.dynamic = dynamic;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((dynamic == null) ? 0 : dynamic.hashCode());
+		result = prime * result + ((geodeticDatumEnsemble == null) ? 0
+				: geodeticDatumEnsemble.hashCode());
+		result = prime * result + ((geodeticReferenceFrame == null) ? 0
+				: geodeticReferenceFrame.hashCode());
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GeodeticCoordinateReferenceSystem other = (GeodeticCoordinateReferenceSystem) obj;
+		if (dynamic == null) {
+			if (other.dynamic != null)
+				return false;
+		} else if (!dynamic.equals(other.dynamic))
+			return false;
+		if (geodeticDatumEnsemble == null) {
+			if (other.geodeticDatumEnsemble != null)
+				return false;
+		} else if (!geodeticDatumEnsemble.equals(other.geodeticDatumEnsemble))
+			return false;
+		if (geodeticReferenceFrame == null) {
+			if (other.geodeticReferenceFrame != null)
+				return false;
+		} else if (!geodeticReferenceFrame.equals(other.geodeticReferenceFrame))
+			return false;
+		return true;
 	}
 
 }

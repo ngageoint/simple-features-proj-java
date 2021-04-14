@@ -203,4 +203,62 @@ public class GeodeticReferenceFrame {
 		this.primeMeridian = primeMeridian;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((anchor == null) ? 0 : anchor.hashCode());
+		result = prime * result
+				+ ((ellipsoid == null) ? 0 : ellipsoid.hashCode());
+		result = prime * result
+				+ ((identifiers == null) ? 0 : identifiers.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((primeMeridian == null) ? 0 : primeMeridian.hashCode());
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GeodeticReferenceFrame other = (GeodeticReferenceFrame) obj;
+		if (anchor == null) {
+			if (other.anchor != null)
+				return false;
+		} else if (!anchor.equals(other.anchor))
+			return false;
+		if (ellipsoid == null) {
+			if (other.ellipsoid != null)
+				return false;
+		} else if (!ellipsoid.equals(other.ellipsoid))
+			return false;
+		if (identifiers == null) {
+			if (other.identifiers != null)
+				return false;
+		} else if (!identifiers.equals(other.identifiers))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (primeMeridian == null) {
+			if (other.primeMeridian != null)
+				return false;
+		} else if (!primeMeridian.equals(other.primeMeridian))
+			return false;
+		return true;
+	}
+
 }

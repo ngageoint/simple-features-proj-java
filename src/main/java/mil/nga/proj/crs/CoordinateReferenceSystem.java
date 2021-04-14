@@ -16,6 +16,11 @@ public abstract class CoordinateReferenceSystem {
 	private String name = null;
 
 	/**
+	 * Type
+	 */
+	private CoordinateReferenceSystemType type = null;
+
+	/**
 	 * Coordinate System
 	 */
 	private CoordinateSystem coordinateSystem = null;
@@ -47,12 +52,16 @@ public abstract class CoordinateReferenceSystem {
 	 * 
 	 * @param name
 	 *            name
+	 * @param type
+	 *            coordinate reference system type
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
 	public CoordinateReferenceSystem(String name,
+			CoordinateReferenceSystemType type,
 			CoordinateSystem coordinateSystem) {
 		setName(name);
+		setType(type);
 		setCoordinateSystem(coordinateSystem);
 	}
 
@@ -73,6 +82,25 @@ public abstract class CoordinateReferenceSystem {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * Get the type
+	 * 
+	 * @return type
+	 */
+	public CoordinateReferenceSystemType getType() {
+		return type;
+	}
+
+	/**
+	 * Set the type
+	 * 
+	 * @param type
+	 *            type
+	 */
+	public void setType(CoordinateReferenceSystemType type) {
+		this.type = type;
 	}
 
 	/**
@@ -228,6 +256,66 @@ public abstract class CoordinateReferenceSystem {
 	 */
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((coordinateSystem == null) ? 0
+				: coordinateSystem.hashCode());
+		result = prime * result
+				+ ((identifiers == null) ? 0 : identifiers.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((remark == null) ? 0 : remark.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((usages == null) ? 0 : usages.hashCode());
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CoordinateReferenceSystem other = (CoordinateReferenceSystem) obj;
+		if (coordinateSystem == null) {
+			if (other.coordinateSystem != null)
+				return false;
+		} else if (!coordinateSystem.equals(other.coordinateSystem))
+			return false;
+		if (identifiers == null) {
+			if (other.identifiers != null)
+				return false;
+		} else if (!identifiers.equals(other.identifiers))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (remark == null) {
+			if (other.remark != null)
+				return false;
+		} else if (!remark.equals(other.remark))
+			return false;
+		if (type != other.type)
+			return false;
+		if (usages == null) {
+			if (other.usages != null)
+				return false;
+		} else if (!usages.equals(other.usages))
+			return false;
+		return true;
 	}
 
 }

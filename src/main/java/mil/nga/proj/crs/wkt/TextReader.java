@@ -68,6 +68,18 @@ public class TextReader {
 	}
 
 	/**
+	 * Reset the reader
+	 * 
+	 * @throws IOException
+	 *             upon reset error
+	 */
+	public void reset() throws IOException {
+		reader.reset();
+		nextTokens.clear();
+		nextCharacterNum = null;
+	}
+
+	/**
 	 * Close the text reader
 	 */
 	public void close() {

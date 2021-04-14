@@ -249,7 +249,7 @@ public enum CoordinateReferenceSystemKeyword {
 		CoordinateReferenceSystemKeyword type = getType(keyword);
 		if (type == null) {
 			throw new ProjectionException(
-					"No Coordinate Reference System Type for keyword: "
+					"No Coordinate Reference System Keyword for value: "
 							+ keyword);
 		}
 		return type;
@@ -283,7 +283,7 @@ public enum CoordinateReferenceSystemKeyword {
 		Set<CoordinateReferenceSystemKeyword> types = getTypes(keyword);
 		if (types == null || types.isEmpty()) {
 			throw new ProjectionException(
-					"No Coordinate Reference System Types for keyword: "
+					"No Coordinate Reference System Keywords for value: "
 							+ keyword);
 		}
 		return types;

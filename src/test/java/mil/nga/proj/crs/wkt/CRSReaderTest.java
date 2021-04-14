@@ -1,10 +1,8 @@
 package mil.nga.proj.crs.wkt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,6 +12,7 @@ import org.junit.Test;
 import mil.nga.proj.crs.Axis;
 import mil.nga.proj.crs.AxisDirectionType;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
+import mil.nga.proj.crs.CoordinateReferenceSystemType;
 import mil.nga.proj.crs.CoordinateSystem;
 import mil.nga.proj.crs.CoordinateSystemType;
 import mil.nga.proj.crs.DatumEnsemble;
@@ -332,13 +331,8 @@ public class CRSReaderTest {
 
 		CRSReader reader = new CRSReader("LENGTHUNIT[\"metre\",1]");
 		Unit unit = reader.readLengthUnit();
-		assertEquals(UnitType.LENGTHUNIT, unit.getType());
-		assertEquals("metre", unit.getName());
-		assertEquals(1, unit.getConversionFactor(), 0);
-		reader.close();
-
-		reader = new CRSReader("LENGTHUNIT[\"metre\",1]");
-		unit = reader.readUnit();
+		reader.reset();
+		assertEquals(unit, reader.readUnit());
 		assertEquals(UnitType.LENGTHUNIT, unit.getType());
 		assertEquals("metre", unit.getName());
 		assertEquals(1, unit.getConversionFactor(), 0);
@@ -347,14 +341,8 @@ public class CRSReaderTest {
 		reader = new CRSReader(
 				"LENGTHUNIT[\"German legal metre\",1.0000135965]");
 		unit = reader.readLengthUnit();
-		assertEquals(UnitType.LENGTHUNIT, unit.getType());
-		assertEquals("German legal metre", unit.getName());
-		assertEquals(1.0000135965, unit.getConversionFactor(), 0);
-		reader.close();
-
-		reader = new CRSReader(
-				"LENGTHUNIT[\"German legal metre\",1.0000135965]");
-		unit = reader.readUnit();
+		reader.reset();
+		assertEquals(unit, reader.readUnit());
 		assertEquals(UnitType.LENGTHUNIT, unit.getType());
 		assertEquals("German legal metre", unit.getName());
 		assertEquals(1.0000135965, unit.getConversionFactor(), 0);
@@ -374,13 +362,8 @@ public class CRSReaderTest {
 		CRSReader reader = new CRSReader(
 				"ANGLEUNIT[\"degree\",0.0174532925199433]");
 		Unit unit = reader.readAngleUnit();
-		assertEquals(UnitType.ANGLEUNIT, unit.getType());
-		assertEquals("degree", unit.getName());
-		assertEquals(0.0174532925199433, unit.getConversionFactor(), 0);
-		reader.close();
-
-		reader = new CRSReader("ANGLEUNIT[\"degree\",0.0174532925199433]");
-		unit = reader.readUnit();
+		reader.reset();
+		assertEquals(unit, reader.readUnit());
 		assertEquals(UnitType.ANGLEUNIT, unit.getType());
 		assertEquals("degree", unit.getName());
 		assertEquals(0.0174532925199433, unit.getConversionFactor(), 0);
@@ -400,13 +383,8 @@ public class CRSReaderTest {
 		CRSReader reader = new CRSReader(
 				"SCALEUNIT[\"parts per million\",1E-06]");
 		Unit unit = reader.readScaleUnit();
-		assertEquals(UnitType.SCALEUNIT, unit.getType());
-		assertEquals("parts per million", unit.getName());
-		assertEquals(1E-06, unit.getConversionFactor(), 0);
-		reader.close();
-
-		reader = new CRSReader("SCALEUNIT[\"parts per million\",1E-06]");
-		unit = reader.readUnit();
+		reader.reset();
+		assertEquals(unit, reader.readUnit());
 		assertEquals(UnitType.SCALEUNIT, unit.getType());
 		assertEquals("parts per million", unit.getName());
 		assertEquals(1E-06, unit.getConversionFactor(), 0);
@@ -425,13 +403,8 @@ public class CRSReaderTest {
 
 		CRSReader reader = new CRSReader("PARAMETRICUNIT[\"hectopascal\",100]");
 		Unit unit = reader.readParametricUnit();
-		assertEquals(UnitType.PARAMETRICUNIT, unit.getType());
-		assertEquals("hectopascal", unit.getName());
-		assertEquals(100, unit.getConversionFactor(), 0);
-		reader.close();
-
-		reader = new CRSReader("PARAMETRICUNIT[\"hectopascal\",100]");
-		unit = reader.readUnit();
+		reader.reset();
+		assertEquals(unit, reader.readUnit());
 		assertEquals(UnitType.PARAMETRICUNIT, unit.getType());
 		assertEquals("hectopascal", unit.getName());
 		assertEquals(100, unit.getConversionFactor(), 0);
@@ -450,13 +423,8 @@ public class CRSReaderTest {
 
 		CRSReader reader = new CRSReader("TIMEUNIT[\"millisecond\",0.001]");
 		Unit unit = reader.readTimeUnit();
-		assertEquals(UnitType.TIMEUNIT, unit.getType());
-		assertEquals("millisecond", unit.getName());
-		assertEquals(0.001, unit.getConversionFactor(), 0);
-		reader.close();
-
-		reader = new CRSReader("TIMEUNIT[\"millisecond\",0.001]");
-		unit = reader.readUnit();
+		reader.reset();
+		assertEquals(unit, reader.readUnit());
 		assertEquals(UnitType.TIMEUNIT, unit.getType());
 		assertEquals("millisecond", unit.getName());
 		assertEquals(0.001, unit.getConversionFactor(), 0);
@@ -464,37 +432,24 @@ public class CRSReaderTest {
 
 		reader = new CRSReader("TIMEUNIT[\"calendar month\"]");
 		unit = reader.readTimeUnit();
-		assertEquals(UnitType.TIMEUNIT, unit.getType());
-		assertEquals("calendar month", unit.getName());
-		reader.close();
-
-		reader = new CRSReader("TIMEUNIT[\"calendar month\"]");
-		unit = reader.readUnit();
+		reader.reset();
+		assertEquals(unit, reader.readUnit());
 		assertEquals(UnitType.TIMEUNIT, unit.getType());
 		assertEquals("calendar month", unit.getName());
 		reader.close();
 
 		reader = new CRSReader("TIMEUNIT[\"calendar second\"]");
 		unit = reader.readTimeUnit();
-		assertEquals(UnitType.TIMEUNIT, unit.getType());
-		assertEquals("calendar second", unit.getName());
-		reader.close();
-
-		reader = new CRSReader("TIMEUNIT[\"calendar second\"]");
-		unit = reader.readUnit();
+		reader.reset();
+		assertEquals(unit, reader.readUnit());
 		assertEquals(UnitType.TIMEUNIT, unit.getType());
 		assertEquals("calendar second", unit.getName());
 		reader.close();
 
 		reader = new CRSReader("TIMEUNIT[\"day\",86400.0]");
 		unit = reader.readTimeUnit();
-		assertEquals(UnitType.TIMEUNIT, unit.getType());
-		assertEquals("day", unit.getName());
-		assertEquals(86400.0, unit.getConversionFactor(), 0);
-		reader.close();
-
-		reader = new CRSReader("TIMEUNIT[\"day\",86400.0]");
-		unit = reader.readUnit();
+		reader.reset();
+		assertEquals(unit, reader.readUnit());
 		assertEquals(UnitType.TIMEUNIT, unit.getType());
 		assertEquals("day", unit.getName());
 		assertEquals(86400.0, unit.getConversionFactor(), 0);
@@ -1302,10 +1257,14 @@ public class CRSReaderTest {
 				+ "REMARK[\"注：JGD2000ジオセントリックは現在JGD2011に代わりました。\"]]";
 
 		CoordinateReferenceSystem crs = CRSReader.readCRS(text);
-		GeodeticCoordinateReferenceSystem geodeticCrs = CRSReader
+		GeodeticCoordinateReferenceSystem geodeticOrGeographicCrs = CRSReader
 				.readGeodeticOrGeographic(text);
-		// assertEquals(crs, geodeticCrs); TODO
-		assertFalse(geodeticCrs.isGeographic());
+		assertEquals(crs, geodeticOrGeographicCrs);
+		GeodeticCoordinateReferenceSystem geodeticCrs = CRSReader
+				.readGeodetic(text);
+		assertEquals(crs, geodeticCrs);
+		assertEquals(CoordinateReferenceSystemType.GEODETIC,
+				geodeticCrs.getType());
 		assertEquals("JGD2000", geodeticCrs.getName());
 		assertEquals("Japanese Geodetic Datum 2000",
 				geodeticCrs.getGeodeticReferenceFrame().getName());
@@ -1383,10 +1342,14 @@ public class CRSReaderTest {
 				+ "AXIS[\"ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1.0]]]";
 
 		CoordinateReferenceSystem crs = CRSReader.readCRS(text);
-		GeodeticCoordinateReferenceSystem geographicCrs = CRSReader
+		GeodeticCoordinateReferenceSystem geodeticOrGeographicCrs = CRSReader
 				.readGeodeticOrGeographic(text);
-		// assertEquals(crs, geographicCrs); TODO
-		assertTrue(geographicCrs.isGeographic());
+		assertEquals(crs, geodeticOrGeographicCrs);
+		GeodeticCoordinateReferenceSystem geographicCrs = CRSReader
+				.readGeographic(text);
+		assertEquals(crs, geographicCrs);
+		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
+				geographicCrs.getType());
 		assertEquals("WGS 84 (G1762)", geographicCrs.getName());
 		assertEquals(2005.0, geographicCrs.getDynamic().getReferenceEpoch(), 0);
 		assertEquals("World Geodetic System 1984 (G1762)",
@@ -1449,9 +1412,12 @@ public class CRSReaderTest {
 				+ "ID[\"EPSG\",4269],REMARK[\"1986 realisation\"]]";
 
 		crs = CRSReader.readCRS(text);
-		geographicCrs = CRSReader.readGeodeticOrGeographic(text);
-		// assertEquals(crs, geographicCrs); TODO
-		assertTrue(geographicCrs.isGeographic());
+		geodeticOrGeographicCrs = CRSReader.readGeodeticOrGeographic(text);
+		assertEquals(crs, geodeticOrGeographicCrs);
+		geographicCrs = CRSReader.readGeographic(text);
+		assertEquals(crs, geographicCrs);
+		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
+				geographicCrs.getType());
 		assertEquals("NAD83", geographicCrs.getName());
 		assertEquals("North American Datum 1983",
 				geographicCrs.getGeodeticReferenceFrame().getName());
@@ -1490,7 +1456,58 @@ public class CRSReaderTest {
 				geographicCrs.getIdentifiers().get(0).getUniqueIdentifier());
 		assertEquals("1986 realisation", geographicCrs.getRemark());
 
-		// TODO
+		text = "GEOGCRS[\"NTF (Paris)\","
+				+ "DATUM[\"Nouvelle Triangulation Francaise\","
+				+ "ELLIPSOID[\"Clarke 1880 (IGN)\",6378249.2,293.4660213]],"
+				+ "PRIMEM[\"Paris\",2.5969213],CS[ellipsoidal,2],"
+				+ "AXIS[\"latitude\",north,ORDER[1]],"
+				+ "AXIS[\"longitude\",east,ORDER[2]],"
+				+ "ANGLEUNIT[\"grad\",0.015707963267949],"
+				+ "REMARK[\"Nouvelle Triangulation Française\"]]";
+
+		crs = CRSReader.readCRS(text);
+		geodeticOrGeographicCrs = CRSReader.readGeodeticOrGeographic(text);
+		assertEquals(crs, geodeticOrGeographicCrs);
+		geographicCrs = CRSReader.readGeographic(text);
+		assertEquals(crs, geographicCrs);
+		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
+				geographicCrs.getType());
+		assertEquals("NTF (Paris)", geographicCrs.getName());
+		assertEquals("Nouvelle Triangulation Francaise",
+				geographicCrs.getGeodeticReferenceFrame().getName());
+		assertEquals("Clarke 1880 (IGN)", geographicCrs
+				.getGeodeticReferenceFrame().getEllipsoid().getName());
+		assertEquals(6378249.2, geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(293.4660213, geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getInverseFlattening(), 0);
+		assertEquals("Paris", geographicCrs.getGeodeticReferenceFrame()
+				.getPrimeMeridian().getName());
+		assertEquals(2.5969213, geographicCrs.getGeodeticReferenceFrame()
+				.getPrimeMeridian().getIrmLongitude(), 0);
+		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
+				geographicCrs.getCoordinateSystem().getType());
+		assertEquals(2, geographicCrs.getCoordinateSystem().getDimension());
+		assertEquals("latitude",
+				geographicCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals(AxisDirectionType.NORTH, geographicCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals(1, geographicCrs.getCoordinateSystem().getAxes().get(0)
+				.getOrder().intValue());
+		assertEquals("longitude",
+				geographicCrs.getCoordinateSystem().getAxes().get(1).getName());
+		assertEquals(AxisDirectionType.EAST, geographicCrs.getCoordinateSystem()
+				.getAxes().get(1).getDirection());
+		assertEquals(2, geographicCrs.getCoordinateSystem().getAxes().get(1)
+				.getOrder().intValue());
+		assertEquals(UnitType.ANGLEUNIT,
+				geographicCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("grad",
+				geographicCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(0.015707963267949, geographicCrs.getCoordinateSystem()
+				.getUnit().getConversionFactor(), 0);
+		assertEquals("Nouvelle Triangulation Française",
+				geographicCrs.getRemark());
 
 	}
 

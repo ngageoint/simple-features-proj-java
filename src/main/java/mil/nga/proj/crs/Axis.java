@@ -322,4 +322,85 @@ public class Axis {
 		this.identifiers.addAll(identifiers);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((abbreviation == null) ? 0 : abbreviation.hashCode());
+		result = prime * result + ((bearing == null) ? 0 : bearing.hashCode());
+		result = prime * result
+				+ ((direction == null) ? 0 : direction.hashCode());
+		result = prime * result
+				+ ((identifiers == null) ? 0 : identifiers.hashCode());
+		result = prime * result
+				+ ((meridian == null) ? 0 : meridian.hashCode());
+		result = prime * result + ((meridianAngleUnit == null) ? 0
+				: meridianAngleUnit.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((order == null) ? 0 : order.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Axis other = (Axis) obj;
+		if (abbreviation == null) {
+			if (other.abbreviation != null)
+				return false;
+		} else if (!abbreviation.equals(other.abbreviation))
+			return false;
+		if (bearing == null) {
+			if (other.bearing != null)
+				return false;
+		} else if (!bearing.equals(other.bearing))
+			return false;
+		if (direction != other.direction)
+			return false;
+		if (identifiers == null) {
+			if (other.identifiers != null)
+				return false;
+		} else if (!identifiers.equals(other.identifiers))
+			return false;
+		if (meridian == null) {
+			if (other.meridian != null)
+				return false;
+		} else if (!meridian.equals(other.meridian))
+			return false;
+		if (meridianAngleUnit == null) {
+			if (other.meridianAngleUnit != null)
+				return false;
+		} else if (!meridianAngleUnit.equals(other.meridianAngleUnit))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (order == null) {
+			if (other.order != null)
+				return false;
+		} else if (!order.equals(other.order))
+			return false;
+		if (unit == null) {
+			if (other.unit != null)
+				return false;
+		} else if (!unit.equals(other.unit))
+			return false;
+		return true;
+	}
+
 }

@@ -241,4 +241,54 @@ public class CoordinateSystem {
 		this.unit = unit;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((axes == null) ? 0 : axes.hashCode());
+		result = prime * result + dimension;
+		result = prime * result
+				+ ((identifiers == null) ? 0 : identifiers.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CoordinateSystem other = (CoordinateSystem) obj;
+		if (axes == null) {
+			if (other.axes != null)
+				return false;
+		} else if (!axes.equals(other.axes))
+			return false;
+		if (dimension != other.dimension)
+			return false;
+		if (identifiers == null) {
+			if (other.identifiers != null)
+				return false;
+		} else if (!identifiers.equals(other.identifiers))
+			return false;
+		if (type != other.type)
+			return false;
+		if (unit == null) {
+			if (other.unit != null)
+				return false;
+		} else if (!unit.equals(other.unit))
+			return false;
+		return true;
+	}
+
 }

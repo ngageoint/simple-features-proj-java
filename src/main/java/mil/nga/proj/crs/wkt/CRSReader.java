@@ -11,6 +11,7 @@ import mil.nga.proj.ProjectionException;
 import mil.nga.proj.crs.Axis;
 import mil.nga.proj.crs.AxisDirectionType;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
+import mil.nga.proj.crs.CoordinateReferenceSystemType;
 import mil.nga.proj.crs.CoordinateSystem;
 import mil.nga.proj.crs.CoordinateSystemType;
 import mil.nga.proj.crs.DatumEnsemble;
@@ -81,6 +82,48 @@ public class CRSReader {
 	}
 
 	/**
+	 * Read a Geodetic Coordinate Reference System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Geodetic Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static GeodeticCoordinateReferenceSystem readGeodetic(String text)
+			throws IOException {
+		GeodeticCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readGeodetic();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
+	 * Read a Geographic Coordinate Reference System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Geographic Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static GeodeticCoordinateReferenceSystem readGeographic(String text)
+			throws IOException {
+		GeodeticCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readGeographic();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
 	 * Text Reader
 	 */
 	private TextReader reader;
@@ -112,6 +155,16 @@ public class CRSReader {
 	 */
 	public TextReader getTextReader() {
 		return reader;
+	}
+
+	/**
+	 * Reset the reader
+	 * 
+	 * @throws IOException
+	 *             upon reset error
+	 */
+	public void reset() throws IOException {
+		reader.reset();
 	}
 
 	/**
@@ -472,19 +525,66 @@ public class CRSReader {
 	/**
 	 * Read a Geodetic or Geographic CRS
 	 * 
-	 * @return crs
+	 * @return geodetic or geographic coordinate reference system
 	 * @throws IOException
 	 *             upon failure to read
 	 */
 	public GeodeticCoordinateReferenceSystem readGeodeticOrGeographic()
 			throws IOException {
+		CoordinateReferenceSystemType expectedType = null;
+		return readGeodeticOrGeographic(expectedType);
+	}
+
+	/**
+	 * Read a Geodetic CRS
+	 * 
+	 * @return geodetic coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public GeodeticCoordinateReferenceSystem readGeodetic() throws IOException {
+		return readGeodeticOrGeographic(CoordinateReferenceSystemType.GEODETIC);
+	}
+
+	/**
+	 * Read a Geographic CRS
+	 * 
+	 * @return geographic coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public GeodeticCoordinateReferenceSystem readGeographic()
+			throws IOException {
+		return readGeodeticOrGeographic(
+				CoordinateReferenceSystemType.GEOGRAPHIC);
+	}
+
+	/**
+	 * Read a Geodetic or Geographic CRS
+	 * 
+	 * @param expectedType
+	 *            expected coordinate reference system type
+	 * 
+	 * @return geodetic or geographic coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public GeodeticCoordinateReferenceSystem readGeodeticOrGeographic(
+			CoordinateReferenceSystemType expectedType) throws IOException {
 
 		GeodeticCoordinateReferenceSystem crs = new GeodeticCoordinateReferenceSystem();
 
 		CoordinateReferenceSystemKeyword type = readKeyword();
 		validateKeyword(type, CoordinateReferenceSystemKeyword.GEODCRS,
 				CoordinateReferenceSystemKeyword.GEOGCRS);
-		crs.setGeographic(type == CoordinateReferenceSystemKeyword.GEOGCRS);
+		CoordinateReferenceSystemType crsType = WKTUtils
+				.getCoordinateReferenceSystemType(type);
+		if (expectedType != null && crsType != expectedType) {
+			throw new ProjectionException(
+					"Unexpected Coordinate Reference System Type. expected: "
+							+ expectedType + ", found: " + crsType);
+		}
+		crs.setType(crsType);
 
 		readLeftDelimiter();
 
@@ -507,7 +607,8 @@ public class CRSReader {
 		} else {
 			// Validation error
 			readSeparator();
-			validateKeyword(type, CoordinateReferenceSystemKeyword.DATUM,
+			validateKeyword(readKeyword(),
+					CoordinateReferenceSystemKeyword.DATUM,
 					CoordinateReferenceSystemKeyword.ENSEMBLE);
 		}
 
@@ -917,7 +1018,7 @@ public class CRSReader {
 					.getType(type.name());
 			validateKeywords(keywords, crsType);
 		} else if (keywords.size() == 1) {
-			type = CRSUtils.getUnitType(keywords.iterator().next());
+			type = WKTUtils.getUnitType(keywords.iterator().next());
 		} else if (keywords.isEmpty()) {
 			throw new ProjectionException(
 					"Unexpected unit keyword. found: " + keywords);
@@ -1048,7 +1149,7 @@ public class CRSReader {
 
 		readRightDelimiter();
 
-		boolean isTemporalCountMeasure = CRSUtils
+		boolean isTemporalCountMeasure = WKTUtils
 				.isTemporalCountMeasure(csType);
 		List<Axis> axes = new ArrayList<>();
 
@@ -1066,7 +1167,7 @@ public class CRSReader {
 
 		coordinateSystem.setAxes(axes);
 
-		if (CRSUtils.isSpatial(csType)) {
+		if (WKTUtils.isSpatial(csType)) {
 
 			if (isUnitNext()) {
 
@@ -1178,7 +1279,7 @@ public class CRSReader {
 
 		}
 
-		if (CRSUtils.isSpatial(type)) {
+		if (WKTUtils.isSpatial(type)) {
 
 			if (isSpatialUnitNext()) {
 
@@ -1188,7 +1289,7 @@ public class CRSReader {
 
 			}
 
-		} else if (CRSUtils.isTemporalCountMeasure(type)) {
+		} else if (WKTUtils.isTemporalCountMeasure(type)) {
 
 			if (isTimeUnitNext()) {
 

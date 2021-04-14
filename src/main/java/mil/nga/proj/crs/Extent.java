@@ -147,4 +147,57 @@ public class Extent {
 		this.temporalExtent = temporalExtent;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((areaDescription == null) ? 0 : areaDescription.hashCode());
+		result = prime * result + ((geographicBoundingBox == null) ? 0
+				: geographicBoundingBox.hashCode());
+		result = prime * result
+				+ ((temporalExtent == null) ? 0 : temporalExtent.hashCode());
+		result = prime * result
+				+ ((verticalExtent == null) ? 0 : verticalExtent.hashCode());
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Extent other = (Extent) obj;
+		if (areaDescription == null) {
+			if (other.areaDescription != null)
+				return false;
+		} else if (!areaDescription.equals(other.areaDescription))
+			return false;
+		if (geographicBoundingBox == null) {
+			if (other.geographicBoundingBox != null)
+				return false;
+		} else if (!geographicBoundingBox.equals(other.geographicBoundingBox))
+			return false;
+		if (temporalExtent == null) {
+			if (other.temporalExtent != null)
+				return false;
+		} else if (!temporalExtent.equals(other.temporalExtent))
+			return false;
+		if (verticalExtent == null) {
+			if (other.verticalExtent != null)
+				return false;
+		} else if (!verticalExtent.equals(other.verticalExtent))
+			return false;
+		return true;
+	}
+
 }

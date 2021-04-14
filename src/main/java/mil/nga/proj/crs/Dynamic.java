@@ -144,4 +144,50 @@ public class Dynamic {
 		this.deformationModelIdentifiers.addAll(identifiers);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((deformationModelIdentifiers == null) ? 0
+				: deformationModelIdentifiers.hashCode());
+		result = prime * result + ((deformationModelName == null) ? 0
+				: deformationModelName.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(referenceEpoch);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Dynamic other = (Dynamic) obj;
+		if (deformationModelIdentifiers == null) {
+			if (other.deformationModelIdentifiers != null)
+				return false;
+		} else if (!deformationModelIdentifiers
+				.equals(other.deformationModelIdentifiers))
+			return false;
+		if (deformationModelName == null) {
+			if (other.deformationModelName != null)
+				return false;
+		} else if (!deformationModelName.equals(other.deformationModelName))
+			return false;
+		if (Double.doubleToLongBits(referenceEpoch) != Double
+				.doubleToLongBits(other.referenceEpoch))
+			return false;
+		return true;
+	}
+
 }

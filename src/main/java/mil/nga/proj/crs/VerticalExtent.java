@@ -124,4 +124,47 @@ public class VerticalExtent {
 		this.lengthUnit = lengthUnit;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((lengthUnit == null) ? 0 : lengthUnit.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(maximumHeight);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(minimumHeight);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		VerticalExtent other = (VerticalExtent) obj;
+		if (lengthUnit == null) {
+			if (other.lengthUnit != null)
+				return false;
+		} else if (!lengthUnit.equals(other.lengthUnit))
+			return false;
+		if (Double.doubleToLongBits(maximumHeight) != Double
+				.doubleToLongBits(other.maximumHeight))
+			return false;
+		if (Double.doubleToLongBits(minimumHeight) != Double
+				.doubleToLongBits(other.minimumHeight))
+			return false;
+		return true;
+	}
+
 }

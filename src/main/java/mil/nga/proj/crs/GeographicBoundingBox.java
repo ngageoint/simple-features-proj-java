@@ -131,4 +131,50 @@ public class GeographicBoundingBox {
 		this.upperRightLongitude = upperRightLongitude;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(lowerLeftLatitude);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(lowerLeftLongitude);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(upperRightLatitude);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(upperRightLongitude);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GeographicBoundingBox other = (GeographicBoundingBox) obj;
+		if (Double.doubleToLongBits(lowerLeftLatitude) != Double
+				.doubleToLongBits(other.lowerLeftLatitude))
+			return false;
+		if (Double.doubleToLongBits(lowerLeftLongitude) != Double
+				.doubleToLongBits(other.lowerLeftLongitude))
+			return false;
+		if (Double.doubleToLongBits(upperRightLatitude) != Double
+				.doubleToLongBits(other.upperRightLatitude))
+			return false;
+		if (Double.doubleToLongBits(upperRightLongitude) != Double
+				.doubleToLongBits(other.upperRightLongitude))
+			return false;
+		return true;
+	}
+
 }
