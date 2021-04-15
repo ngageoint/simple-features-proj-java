@@ -64,12 +64,16 @@ public class CRSReaderTest {
 	@Test
 	public void testScope() throws IOException {
 
-		CRSReader reader = new CRSReader(
-				"SCOPE[\"Large scale topographic mapping and cadastre.\"]");
+		String text = "SCOPE[\"Large scale topographic mapping and cadastre.\"]";
+		CRSReader reader = new CRSReader(text);
 		String scope = reader.readScope();
 		assertNotNull(scope);
 		assertEquals("Large scale topographic mapping and cadastre.", scope);
 		reader.close();
+		CRSWriter writer = new CRSWriter();
+		writer.writeScope(scope);
+		assertEquals(text, writer.toString());
+		writer.close();
 
 	}
 
@@ -82,11 +86,16 @@ public class CRSReaderTest {
 	@Test
 	public void testAreaDescription() throws IOException {
 
-		CRSReader reader = new CRSReader("AREA[\"Netherlands offshore.\"]");
+		String text = "AREA[\"Netherlands offshore.\"]";
+		CRSReader reader = new CRSReader(text);
 		String areaDescription = reader.readAreaDescription();
 		assertNotNull(areaDescription);
 		assertEquals("Netherlands offshore.", areaDescription);
 		reader.close();
+		CRSWriter writer = new CRSWriter();
+		writer.writeAreaDescription(areaDescription);
+		assertEquals(text, writer.toString());
+		writer.close();
 
 	}
 
@@ -99,7 +108,8 @@ public class CRSReaderTest {
 	@Test
 	public void testGeographicBoundingBox() throws IOException {
 
-		CRSReader reader = new CRSReader("BBOX[51.43,2.54,55.77,6.40]");
+		String text = "BBOX[51.43,2.54,55.77,6.40]";
+		CRSReader reader = new CRSReader(text);
 		GeographicBoundingBox boundingBox = reader.readGeographicBoundingBox();
 		assertNotNull(boundingBox);
 		assertEquals(51.43, boundingBox.getLowerLeftLatitude(), 0);
@@ -107,8 +117,10 @@ public class CRSReaderTest {
 		assertEquals(55.77, boundingBox.getUpperRightLatitude(), 0);
 		assertEquals(6.40, boundingBox.getUpperRightLongitude(), 0);
 		reader.close();
+		assertEquals(text.replaceAll("\\.40", ".4"), boundingBox.toString());
 
-		reader = new CRSReader("BBOX[-55.95,160.60,-25.88,-171.20]");
+		text = "BBOX[-55.95,160.60,-25.88,-171.20]";
+		reader = new CRSReader(text);
 		boundingBox = reader.readGeographicBoundingBox();
 		assertNotNull(boundingBox);
 		assertEquals(-55.95, boundingBox.getLowerLeftLatitude(), 0);
@@ -116,6 +128,8 @@ public class CRSReaderTest {
 		assertEquals(-25.88, boundingBox.getUpperRightLatitude(), 0);
 		assertEquals(-171.20, boundingBox.getUpperRightLongitude(), 0);
 		reader.close();
+		assertEquals(text.replaceAll("\\.60", ".6").replaceAll("\\.20", ".2"),
+				boundingBox.toString());
 
 	}
 
@@ -128,8 +142,8 @@ public class CRSReaderTest {
 	@Test
 	public void testVerticalExtent() throws IOException {
 
-		CRSReader reader = new CRSReader(
-				"VERTICALEXTENT[-1000,0,LENGTHUNIT[\"metre\",1.0]]");
+		String text = "VERTICALEXTENT[-1000,0,LENGTHUNIT[\"metre\",1.0]]";
+		CRSReader reader = new CRSReader(text);
 		VerticalExtent verticalExtent = reader.readVerticalExtent();
 		assertNotNull(verticalExtent);
 		assertEquals(-1000, verticalExtent.getMinimumHeight(), 0);
@@ -140,8 +154,11 @@ public class CRSReaderTest {
 		assertEquals("metre", lengthUnit.getName());
 		assertEquals(1.0, lengthUnit.getConversionFactor(), 0);
 		reader.close();
+		text = text.replaceAll("-1000,0", "-1000.0,0.0");
+		assertEquals(text, verticalExtent.toString());
 
-		reader = new CRSReader("VERTICALEXTENT[-1000,0]");
+		text = "VERTICALEXTENT[-1000,0]";
+		reader = new CRSReader(text);
 		verticalExtent = reader.readVerticalExtent();
 		assertNotNull(verticalExtent);
 		assertEquals(-1000, verticalExtent.getMinimumHeight(), 0);
@@ -149,6 +166,8 @@ public class CRSReaderTest {
 		lengthUnit = verticalExtent.getLengthUnit();
 		assertNull(lengthUnit);
 		reader.close();
+		text = text.replaceAll("-1000,0", "-1000.0,0.0");
+		assertEquals(text, verticalExtent.toString());
 
 	}
 
@@ -161,19 +180,23 @@ public class CRSReaderTest {
 	@Test
 	public void testTemporalExtent() throws IOException {
 
-		CRSReader reader = new CRSReader("TIMEEXTENT[2013-01-01,2013-12-31]");
+		String text = "TIMEEXTENT[2013-01-01,2013-12-31]";
+		CRSReader reader = new CRSReader(text);
 		TemporalExtent temporalExtent = reader.readTemporalExtent();
 		assertNotNull(temporalExtent);
 		assertEquals("2013-01-01", temporalExtent.getStart());
 		assertEquals("2013-12-31", temporalExtent.getEnd());
 		reader.close();
+		// assertEquals(text, temporalExtent.toString()); // TODO
 
-		reader = new CRSReader("TIMEEXTENT[\"Jurassic\",\"Quaternary\"]");
+		text = "TIMEEXTENT[\"Jurassic\",\"Quaternary\"]";
+		reader = new CRSReader(text);
 		temporalExtent = reader.readTemporalExtent();
 		assertNotNull(temporalExtent);
 		assertEquals("Jurassic", temporalExtent.getStart());
 		assertEquals("Quaternary", temporalExtent.getEnd());
 		reader.close();
+		assertEquals(text, temporalExtent.toString());
 
 	}
 
@@ -186,9 +209,9 @@ public class CRSReaderTest {
 	@Test
 	public void testUsage() throws IOException {
 
-		CRSReader reader = new CRSReader(
-				"USAGE[SCOPE[\"Spatial referencing.\"],"
-						+ "AREA[\"Netherlands offshore.\"],TIMEEXTENT[1976-01,2001-04]]");
+		String text = "USAGE[SCOPE[\"Spatial referencing.\"],"
+				+ "AREA[\"Netherlands offshore.\"],TIMEEXTENT[1976-01,2001-04]]";
+		CRSReader reader = new CRSReader(text);
 		Usage usage = reader.readUsage();
 		assertNotNull(usage);
 		assertEquals("Spatial referencing.", usage.getScope());
@@ -200,6 +223,7 @@ public class CRSReaderTest {
 		assertEquals("1976-01", temporalExtent.getStart());
 		assertEquals("2001-04", temporalExtent.getEnd());
 		reader.close();
+		// assertEquals(text, usage.toString()); // TODO
 
 	}
 
@@ -212,12 +236,12 @@ public class CRSReaderTest {
 	@Test
 	public void testUsages() throws IOException {
 
-		CRSReader reader = new CRSReader(
-				"USAGE[SCOPE[\"Small scale topographic mapping.\"],"
-						+ "AREA[\"Finland - onshore and offshore.\"]],"
-						+ "USAGE[SCOPE[\"Cadastre.\"],"
-						+ "AREA[\"Finland - onshore between 26°30'E and 27°30'E.\"],"
-						+ "BBOX[60.36,26.5,70.05,27.5]]");
+		String text = "USAGE[SCOPE[\"Small scale topographic mapping.\"],"
+				+ "AREA[\"Finland - onshore and offshore.\"]],"
+				+ "USAGE[SCOPE[\"Cadastre.\"],"
+				+ "AREA[\"Finland - onshore between 26°30'E and 27°30'E.\"],"
+				+ "BBOX[60.36,26.5,70.05,27.5]]";
+		CRSReader reader = new CRSReader(text);
 		List<Usage> usages = reader.readUsages();
 		assertNotNull(usages);
 		assertEquals(2, usages.size());
@@ -240,6 +264,10 @@ public class CRSReaderTest {
 		assertEquals(70.05, boundingBox.getUpperRightLatitude(), 0);
 		assertEquals(27.5, boundingBox.getUpperRightLongitude(), 0);
 		reader.close();
+		CRSWriter writer = new CRSWriter();
+		writer.writeUsages(usages);
+		assertEquals(text, writer.toString());
+		writer.close();
 
 	}
 
@@ -252,33 +280,37 @@ public class CRSReaderTest {
 	@Test
 	public void testIdentifier() throws IOException {
 
-		CRSReader reader = new CRSReader(
-				"ID[\"Authority name\",\"Abcd_Ef\",7.1]");
+		String text = "ID[\"Authority name\",\"Abcd_Ef\",7.1]";
+		CRSReader reader = new CRSReader(text);
 		Identifier identifier = reader.readIdentifier();
 		assertNotNull(identifier);
 		assertEquals("Authority name", identifier.getName());
 		assertEquals("Abcd_Ef", identifier.getUniqueIdentifier());
 		assertEquals("7.1", identifier.getVersion());
 		reader.close();
+		assertEquals(text, identifier.toString());
 
-		reader = new CRSReader("ID[\"EPSG\",4326]");
+		text = "ID[\"EPSG\",4326]";
+		reader = new CRSReader(text);
 		identifier = reader.readIdentifier();
 		assertNotNull(identifier);
 		assertEquals("EPSG", identifier.getName());
 		assertEquals("4326", identifier.getUniqueIdentifier());
 		reader.close();
+		assertEquals(text, identifier.toString());
 
-		reader = new CRSReader(
-				"ID[\"EPSG\",4326,URI[\"urn:ogc:def:crs:EPSG::4326\"]]");
+		text = "ID[\"EPSG\",4326,URI[\"urn:ogc:def:crs:EPSG::4326\"]]";
+		reader = new CRSReader(text);
 		identifier = reader.readIdentifier();
 		assertNotNull(identifier);
 		assertEquals("EPSG", identifier.getName());
 		assertEquals("4326", identifier.getUniqueIdentifier());
 		assertEquals("urn:ogc:def:crs:EPSG::4326", identifier.getUri());
 		reader.close();
+		assertEquals(text, identifier.toString());
 
-		reader = new CRSReader(
-				"ID[\"EuroGeographics\",\"ES_ED50 (BAL99) to ETRS89\",\"2001-04-20\"]");
+		text = "ID[\"EuroGeographics\",\"ES_ED50 (BAL99) to ETRS89\",\"2001-04-20\"]";
+		reader = new CRSReader(text);
 		identifier = reader.readIdentifier();
 		assertNotNull(identifier);
 		assertEquals("EuroGeographics", identifier.getName());
@@ -286,6 +318,7 @@ public class CRSReaderTest {
 				identifier.getUniqueIdentifier());
 		assertEquals("2001-04-20", identifier.getVersion());
 		reader.close();
+		assertEquals(text, identifier.toString());
 
 	}
 
@@ -298,25 +331,42 @@ public class CRSReaderTest {
 	@Test
 	public void testRemark() throws IOException {
 
-		CRSReader reader = new CRSReader("REMARK[\"A remark in ASCII\"]");
-		assertEquals("A remark in ASCII", reader.readRemark());
+		String text = "REMARK[\"A remark in ASCII\"]";
+		String remark = "A remark in ASCII";
+		CRSReader reader = new CRSReader(text);
+		assertEquals(remark, reader.readRemark());
 		reader.close();
+		CRSWriter writer = new CRSWriter();
+		writer.writeRemark(remark);
+		assertEquals(text, writer.toString());
+		writer.close();
 
-		reader = new CRSReader("REMARK[\"Замечание на русском языке\"]");
-		assertEquals("Замечание на русском языке", reader.readRemark());
+		text = "REMARK[\"Замечание на русском языке\"]";
+		remark = "Замечание на русском языке";
+		reader = new CRSReader(text);
+		assertEquals(remark, reader.readRemark());
 		reader.close();
+		writer = new CRSWriter();
+		writer.writeRemark(remark);
+		assertEquals(text, writer.toString());
+		writer.close();
 
-		CoordinateReferenceSystem crs = CRSReader.readCRS("GEOGCRS[\"S-95\","
-				+ "DATUM[\"Pulkovo 1995\","
+		text = "GEOGCRS[\"S-95\"," + "DATUM[\"Pulkovo 1995\","
 				+ "ELLIPSOID[\"Krassowsky 1940\",6378245,298.3,"
 				+ "LENGTHUNIT[\"metre\",1.0]]],CS[ellipsoidal,2],"
 				+ "AXIS[\"latitude\",north,ORDER[1]],"
 				+ "AXIS[\"longitude\",east,ORDER[2]],"
 				+ "ANGLEUNIT[\"degree\",0.0174532925199433],"
 				+ "REMARK[\"Система Геодеэических Координвт года 1995(СК-95)\"]"
-				+ "]");
-		assertEquals("Система Геодеэических Координвт года 1995(СК-95)",
-				crs.getRemark());
+				+ "]";
+		String remarkText = "REMARK[\"Система Геодеэических Координвт года 1995(СК-95)\"]";
+		remark = "Система Геодеэических Координвт года 1995(СК-95)";
+		CoordinateReferenceSystem crs = CRSReader.readCRS(text);
+		assertEquals(remark, crs.getRemark());
+		writer = new CRSWriter();
+		writer.writeRemark(crs.getRemark());
+		assertEquals(remarkText, writer.toString());
+		writer.close();
 
 	}
 
@@ -329,7 +379,8 @@ public class CRSReaderTest {
 	@Test
 	public void testLengthUnit() throws IOException {
 
-		CRSReader reader = new CRSReader("LENGTHUNIT[\"metre\",1]");
+		String text = "LENGTHUNIT[\"metre\",1]";
+		CRSReader reader = new CRSReader(text);
 		Unit unit = reader.readLengthUnit();
 		reader.reset();
 		assertEquals(unit, reader.readUnit());
@@ -337,9 +388,13 @@ public class CRSReaderTest {
 		assertEquals("metre", unit.getName());
 		assertEquals(1, unit.getConversionFactor(), 0);
 		reader.close();
+		text = text.replaceAll("1", "1.0");
+		assertEquals(text, unit.toString());
+		unit.setType(UnitType.UNIT);
+		assertEquals(text.replaceAll("LENGTHUNIT", "UNIT"), unit.toString());
 
-		reader = new CRSReader(
-				"LENGTHUNIT[\"German legal metre\",1.0000135965]");
+		text = "LENGTHUNIT[\"German legal metre\",1.0000135965]";
+		reader = new CRSReader(text);
 		unit = reader.readLengthUnit();
 		reader.reset();
 		assertEquals(unit, reader.readUnit());
@@ -347,6 +402,9 @@ public class CRSReaderTest {
 		assertEquals("German legal metre", unit.getName());
 		assertEquals(1.0000135965, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, unit.toString());
+		unit.setType(UnitType.UNIT);
+		assertEquals(text.replaceAll("LENGTHUNIT", "UNIT"), unit.toString());
 
 	}
 
@@ -359,8 +417,8 @@ public class CRSReaderTest {
 	@Test
 	public void testAngleUnit() throws IOException {
 
-		CRSReader reader = new CRSReader(
-				"ANGLEUNIT[\"degree\",0.0174532925199433]");
+		String text = "ANGLEUNIT[\"degree\",0.0174532925199433]";
+		CRSReader reader = new CRSReader(text);
 		Unit unit = reader.readAngleUnit();
 		reader.reset();
 		assertEquals(unit, reader.readUnit());
@@ -368,6 +426,9 @@ public class CRSReaderTest {
 		assertEquals("degree", unit.getName());
 		assertEquals(0.0174532925199433, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, unit.toString());
+		unit.setType(UnitType.UNIT);
+		assertEquals(text.replaceAll("ANGLEUNIT", "UNIT"), unit.toString());
 
 	}
 
@@ -380,8 +441,8 @@ public class CRSReaderTest {
 	@Test
 	public void testScaleUnit() throws IOException {
 
-		CRSReader reader = new CRSReader(
-				"SCALEUNIT[\"parts per million\",1E-06]");
+		String text = "SCALEUNIT[\"parts per million\",1E-06]";
+		CRSReader reader = new CRSReader(text);
 		Unit unit = reader.readScaleUnit();
 		reader.reset();
 		assertEquals(unit, reader.readUnit());
@@ -389,6 +450,10 @@ public class CRSReaderTest {
 		assertEquals("parts per million", unit.getName());
 		assertEquals(1E-06, unit.getConversionFactor(), 0);
 		reader.close();
+		text = text.replaceAll("1E-06", "1.0E-6");
+		assertEquals(text, unit.toString());
+		unit.setType(UnitType.UNIT);
+		assertEquals(text.replaceAll("SCALEUNIT", "UNIT"), unit.toString());
 
 	}
 
@@ -401,7 +466,8 @@ public class CRSReaderTest {
 	@Test
 	public void testParametricUnit() throws IOException {
 
-		CRSReader reader = new CRSReader("PARAMETRICUNIT[\"hectopascal\",100]");
+		String text = "PARAMETRICUNIT[\"hectopascal\",100]";
+		CRSReader reader = new CRSReader(text);
 		Unit unit = reader.readParametricUnit();
 		reader.reset();
 		assertEquals(unit, reader.readUnit());
@@ -409,6 +475,7 @@ public class CRSReaderTest {
 		assertEquals("hectopascal", unit.getName());
 		assertEquals(100, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text.replaceAll("100", "100.0"), unit.toString());
 
 	}
 
@@ -421,7 +488,8 @@ public class CRSReaderTest {
 	@Test
 	public void testTimeUnit() throws IOException {
 
-		CRSReader reader = new CRSReader("TIMEUNIT[\"millisecond\",0.001]");
+		String text = "TIMEUNIT[\"millisecond\",0.001]";
+		CRSReader reader = new CRSReader(text);
 		Unit unit = reader.readTimeUnit();
 		reader.reset();
 		assertEquals(unit, reader.readUnit());
@@ -429,24 +497,30 @@ public class CRSReaderTest {
 		assertEquals("millisecond", unit.getName());
 		assertEquals(0.001, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, unit.toString());
 
-		reader = new CRSReader("TIMEUNIT[\"calendar month\"]");
+		text = "TIMEUNIT[\"calendar month\"]";
+		reader = new CRSReader(text);
 		unit = reader.readTimeUnit();
 		reader.reset();
 		assertEquals(unit, reader.readUnit());
 		assertEquals(UnitType.TIMEUNIT, unit.getType());
 		assertEquals("calendar month", unit.getName());
 		reader.close();
+		assertEquals(text, unit.toString());
 
-		reader = new CRSReader("TIMEUNIT[\"calendar second\"]");
+		text = "TIMEUNIT[\"calendar second\"]";
+		reader = new CRSReader(text);
 		unit = reader.readTimeUnit();
 		reader.reset();
 		assertEquals(unit, reader.readUnit());
 		assertEquals(UnitType.TIMEUNIT, unit.getType());
 		assertEquals("calendar second", unit.getName());
 		reader.close();
+		assertEquals(text, unit.toString());
 
-		reader = new CRSReader("TIMEUNIT[\"day\",86400.0]");
+		text = "TIMEUNIT[\"day\",86400.0]";
+		reader = new CRSReader(text);
 		unit = reader.readTimeUnit();
 		reader.reset();
 		assertEquals(unit, reader.readUnit());
@@ -454,6 +528,7 @@ public class CRSReaderTest {
 		assertEquals("day", unit.getName());
 		assertEquals(86400.0, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, unit.toString());
 
 	}
 
@@ -466,10 +541,10 @@ public class CRSReaderTest {
 	@Test
 	public void testGeodeticCoordinateSystem() throws IOException {
 
-		CRSReader reader = new CRSReader(
-				"CS[Cartesian,3],AXIS[\"(X)\",geocentricX],"
-						+ "AXIS[\"(Y)\",geocentricY],AXIS[\"(Z)\",geocentricZ],"
-						+ "LENGTHUNIT[\"metre\",1.0]");
+		String text = "CS[Cartesian,3],AXIS[\"(X)\",geocentricX],"
+				+ "AXIS[\"(Y)\",geocentricY],AXIS[\"(Z)\",geocentricZ],"
+				+ "LENGTHUNIT[\"metre\",1.0]";
+		CRSReader reader = new CRSReader(text);
 		CoordinateSystem coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				coordinateSystem.getType());
@@ -490,10 +565,12 @@ public class CRSReaderTest {
 		assertEquals("metre", unit.getName());
 		assertEquals(1.0, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, coordinateSystem.toString());
 
-		reader = new CRSReader("CS[Cartesian,3],"
+		text = "CS[Cartesian,3],"
 				+ "AXIS[\"(X)\",east],AXIS[\"(Y)\",north],AXIS[\"(Z)\",up],"
-				+ "LENGTHUNIT[\"metre\",1.0]");
+				+ "LENGTHUNIT[\"metre\",1.0]";
+		reader = new CRSReader(text);
 		coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				coordinateSystem.getType());
@@ -511,13 +588,15 @@ public class CRSReaderTest {
 		assertEquals("metre", unit.getName());
 		assertEquals(1.0, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, coordinateSystem.toString());
 
-		reader = new CRSReader("CS[spherical,3],"
+		text = "CS[spherical,3],"
 				+ "AXIS[\"distance (r)\",awayFrom,ORDER[1],LENGTHUNIT[\"kilometre\",1000]],"
 				+ "AXIS[\"longitude (U)\",counterClockwise,BEARING[0],ORDER[2],"
 				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
 				+ "AXIS[\"elevation (V)\",up,ORDER[3],"
-				+ "ANGLEUNIT[\"degree\",0.0174532925199433]]");
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]]";
+		reader = new CRSReader(text);
 		coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.SPHERICAL,
 				coordinateSystem.getType());
@@ -549,6 +628,8 @@ public class CRSReaderTest {
 		assertEquals(0.0174532925199433,
 				axes.get(2).getUnit().getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text.replaceAll("0]", "0.0]"),
+				coordinateSystem.toString());
 
 	}
 
@@ -561,10 +642,11 @@ public class CRSReaderTest {
 	@Test
 	public void testGeographicCoordinateSystem() throws IOException {
 
-		CRSReader reader = new CRSReader("CS[ellipsoidal,3],"
+		String text = "CS[ellipsoidal,3],"
 				+ "AXIS[\"latitude\",north,ORDER[1],ANGLEUNIT[\"degree\",0.0174532925199433]],"
 				+ "AXIS[\"longitude\",east,ORDER[2],ANGLEUNIT[\"degree\",0.0174532925199433]],"
-				+ "AXIS[\"ellipsoidal height (h)\",up,ORDER[3],LENGTHUNIT[\"metre\",1.0]]");
+				+ "AXIS[\"ellipsoidal height (h)\",up,ORDER[3],LENGTHUNIT[\"metre\",1.0]]";
+		CRSReader reader = new CRSReader(text);
 		CoordinateSystem coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
 				coordinateSystem.getType());
@@ -593,10 +675,12 @@ public class CRSReaderTest {
 		assertEquals("metre", axes.get(2).getUnit().getName());
 		assertEquals(1.0, axes.get(2).getUnit().getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, coordinateSystem.toString());
 
-		reader = new CRSReader("CS[ellipsoidal,2],AXIS[\"(lat)\",north],"
+		text = "CS[ellipsoidal,2],AXIS[\"(lat)\",north],"
 				+ "AXIS[\"(lon)\",east],"
-				+ "ANGLEUNIT[\"degree\",0.0174532925199433]");
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]";
+		reader = new CRSReader(text);
 		coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
 				coordinateSystem.getType());
@@ -612,6 +696,7 @@ public class CRSReaderTest {
 		assertEquals("degree", unit.getName());
 		assertEquals(0.0174532925199433, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, coordinateSystem.toString());
 
 	}
 
@@ -624,9 +709,10 @@ public class CRSReaderTest {
 	@Test
 	public void testProjectedCoordinateSystem() throws IOException {
 
-		CRSReader reader = new CRSReader("CS[Cartesian,2],"
+		String text = "CS[Cartesian,2],"
 				+ "AXIS[\"(E)\",east,ORDER[1],LENGTHUNIT[\"metre\",1.0]],"
-				+ "AXIS[\"(N)\",north,ORDER[2],LENGTHUNIT[\"metre\",1.0]]");
+				+ "AXIS[\"(N)\",north,ORDER[2],LENGTHUNIT[\"metre\",1.0]]";
+		CRSReader reader = new CRSReader(text);
 		CoordinateSystem coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				coordinateSystem.getType());
@@ -646,9 +732,11 @@ public class CRSReaderTest {
 		assertEquals("metre", axes.get(1).getUnit().getName());
 		assertEquals(1.0, axes.get(1).getUnit().getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, coordinateSystem.toString());
 
-		reader = new CRSReader("CS[Cartesian,2],AXIS[\"(E)\",east],"
-				+ "AXIS[\"(N)\",north],LENGTHUNIT[\"metre\",1.0]");
+		text = "CS[Cartesian,2],AXIS[\"(E)\",east],"
+				+ "AXIS[\"(N)\",north],LENGTHUNIT[\"metre\",1.0]";
+		reader = new CRSReader(text);
 		coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				coordinateSystem.getType());
@@ -664,11 +752,12 @@ public class CRSReaderTest {
 		assertEquals("metre", unit.getName());
 		assertEquals(1.0, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, coordinateSystem.toString());
 
-		reader = new CRSReader(
-				"CS[Cartesian,2],AXIS[\"northing (X)\",north,ORDER[1]],"
-						+ "AXIS[\"easting (Y)\",east,ORDER[2]],"
-						+ "LENGTHUNIT[\"German legal metre\",1.0000135965]");
+		text = "CS[Cartesian,2],AXIS[\"northing (X)\",north,ORDER[1]],"
+				+ "AXIS[\"easting (Y)\",east,ORDER[2]],"
+				+ "LENGTHUNIT[\"German legal metre\",1.0000135965]";
+		reader = new CRSReader(text);
 		coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				coordinateSystem.getType());
@@ -688,13 +777,14 @@ public class CRSReaderTest {
 		assertEquals("German legal metre", unit.getName());
 		assertEquals(1.0000135965, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, coordinateSystem.toString());
 
-		reader = new CRSReader("CS[Cartesian,2],"
-				+ "AXIS[\"easting (X)\",south,"
+		text = "CS[Cartesian,2]," + "AXIS[\"easting (X)\",south,"
 				+ "MERIDIAN[90,ANGLEUNIT[\"degree\",0.0174532925199433]],ORDER[1]"
 				+ "],AXIS[\"northing (Y)\",south,"
 				+ "MERIDIAN[180,ANGLEUNIT[\"degree\",0.0174532925199433]],ORDER[2]"
-				+ "],LENGTHUNIT[\"metre\",1.0]");
+				+ "],LENGTHUNIT[\"metre\",1.0]";
+		reader = new CRSReader(text);
 		coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				coordinateSystem.getType());
@@ -726,10 +816,13 @@ public class CRSReaderTest {
 		assertEquals("metre", unit.getName());
 		assertEquals(1.0, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text.replaceAll(",ANGLEUNIT", ".0,ANGLEUNIT"),
+				coordinateSystem.toString());
 
-		reader = new CRSReader("CS[Cartesian,3],AXIS[\"(E)\",east],"
+		text = "CS[Cartesian,3],AXIS[\"(E)\",east],"
 				+ "AXIS[\"(N)\",north],AXIS[\"ellipsoid height (h)\",up],"
-				+ "LENGTHUNIT[\"metre\",1.0]");
+				+ "LENGTHUNIT[\"metre\",1.0]";
+		reader = new CRSReader(text);
 		coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				coordinateSystem.getType());
@@ -748,6 +841,7 @@ public class CRSReaderTest {
 		assertEquals("metre", unit.getName());
 		assertEquals(1.0, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, coordinateSystem.toString());
 
 	}
 
@@ -760,9 +854,9 @@ public class CRSReaderTest {
 	@Test
 	public void testVerticalCoordinateSystem() throws IOException {
 
-		CRSReader reader = new CRSReader(
-				"CS[vertical,1],AXIS[\"gravity-related height (H)\",up],"
-						+ "LENGTHUNIT[\"metre\",1.0]");
+		String text = "CS[vertical,1],AXIS[\"gravity-related height (H)\",up],"
+				+ "LENGTHUNIT[\"metre\",1.0]";
+		CRSReader reader = new CRSReader(text);
 		CoordinateSystem coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.VERTICAL, coordinateSystem.getType());
 		assertEquals(1, coordinateSystem.getDimension());
@@ -776,9 +870,11 @@ public class CRSReaderTest {
 		assertEquals("metre", unit.getName());
 		assertEquals(1.0, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, coordinateSystem.toString());
 
-		reader = new CRSReader("CS[vertical,1],AXIS[\"depth (D)\",down,"
-				+ "LENGTHUNIT[\"metre\",1.0]]");
+		text = "CS[vertical,1],AXIS[\"depth (D)\",down,"
+				+ "LENGTHUNIT[\"metre\",1.0]]";
+		reader = new CRSReader(text);
 		coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.VERTICAL, coordinateSystem.getType());
 		assertEquals(1, coordinateSystem.getDimension());
@@ -791,6 +887,7 @@ public class CRSReaderTest {
 		assertEquals("metre", axes.get(0).getUnit().getName());
 		assertEquals(1.0, axes.get(0).getUnit().getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, coordinateSystem.toString());
 
 	}
 
@@ -803,10 +900,11 @@ public class CRSReaderTest {
 	@Test
 	public void testEngineeringCoordinateSystem() throws IOException {
 
-		CRSReader reader = new CRSReader("CS[Cartesian,2],"
+		String text = "CS[Cartesian,2],"
 				+ "AXIS[\"site north (x)\",southeast,ORDER[1]],"
 				+ "AXIS[\"site east (y)\",southwest,ORDER[2]],"
-				+ "LENGTHUNIT[\"metre\",1.0]");
+				+ "LENGTHUNIT[\"metre\",1.0]";
+		CRSReader reader = new CRSReader(text);
 		CoordinateSystem coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				coordinateSystem.getType());
@@ -826,11 +924,14 @@ public class CRSReaderTest {
 		assertEquals("metre", unit.getName());
 		assertEquals(1.0, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text.replaceAll("southeast", "southEast").replaceAll(
+				"southwest", "southWest"), coordinateSystem.toString());
 
-		reader = new CRSReader("CS[polar,2],"
+		text = "CS[polar,2],"
 				+ "AXIS[\"distance (r)\",awayFrom,ORDER[1],LENGTHUNIT[\"metre\",1.0]],"
 				+ "AXIS[\"bearing (U)\",clockwise,BEARING[234],ORDER[2],"
-				+ "ANGLEUNIT[\"degree\",0.0174532925199433]]");
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]]";
+		reader = new CRSReader(text);
 		coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.POLAR, coordinateSystem.getType());
 		assertEquals(2, coordinateSystem.getDimension());
@@ -853,12 +954,14 @@ public class CRSReaderTest {
 		assertEquals(0.0174532925199433,
 				axes.get(1).getUnit().getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text.replaceAll("234]", "234.0]"),
+				coordinateSystem.toString());
 
-		reader = new CRSReader(
-				"CS[Cartesian,3],AXIS[\"ahead (x)\",forward,ORDER[1]],"
-						+ "AXIS[\"right (y)\",starboard,ORDER[2]],"
-						+ "AXIS[\"down (z)\",down,ORDER[3]],"
-						+ "LENGTHUNIT[\"metre\",1.0]");
+		text = "CS[Cartesian,3],AXIS[\"ahead (x)\",forward,ORDER[1]],"
+				+ "AXIS[\"right (y)\",starboard,ORDER[2]],"
+				+ "AXIS[\"down (z)\",down,ORDER[3]],"
+				+ "LENGTHUNIT[\"metre\",1.0]";
+		reader = new CRSReader(text);
 		coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				coordinateSystem.getType());
@@ -882,10 +985,11 @@ public class CRSReaderTest {
 		assertEquals("metre", unit.getName());
 		assertEquals(1.0, unit.getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text, coordinateSystem.toString());
 
-		reader = new CRSReader(
-				"CS[ordinal,2],AXIS[\"Inline (I)\",northEast,ORDER[1]],"
-						+ "AXIS[\"Crossline (J)\",northwest,ORDER[2]]");
+		text = "CS[ordinal,2],AXIS[\"Inline (I)\",northEast,ORDER[1]],"
+				+ "AXIS[\"Crossline (J)\",northwest,ORDER[2]]";
+		reader = new CRSReader(text);
 		coordinateSystem = reader.readCoordinateSystem();
 		assertEquals(CoordinateSystemType.ORDINAL, coordinateSystem.getType());
 		assertEquals(2, coordinateSystem.getDimension());
@@ -900,6 +1004,8 @@ public class CRSReaderTest {
 		assertEquals(AxisDirectionType.NORTH_WEST, axes.get(1).getDirection());
 		assertEquals(2, axes.get(1).getOrder().intValue());
 		reader.close();
+		assertEquals(text.replaceAll("northwest", "northWest"),
+				coordinateSystem.toString());
 
 	}
 
@@ -1046,18 +1152,21 @@ public class CRSReaderTest {
 	@Test
 	public void testDynamic() throws IOException {
 
-		CRSReader reader = new CRSReader("DYNAMIC[FRAMEEPOCH[2010.0]]");
+		String text = "DYNAMIC[FRAMEEPOCH[2010.0]]";
+		CRSReader reader = new CRSReader(text);
 		Dynamic dynamic = reader.readDynamic();
 		assertEquals(2010.0, dynamic.getReferenceEpoch(), 0);
 		reader.close();
+		assertEquals(text, dynamic.toString());
 
-		reader = new CRSReader(
-				"DYNAMIC[FRAMEEPOCH[2010.0],MODEL[\"NAD83(CSRS)v6 velocity grid\"]]");
+		text = "DYNAMIC[FRAMEEPOCH[2010.0],MODEL[\"NAD83(CSRS)v6 velocity grid\"]]";
+		reader = new CRSReader(text);
 		dynamic = reader.readDynamic();
 		assertEquals(2010.0, dynamic.getReferenceEpoch(), 0);
 		assertEquals("NAD83(CSRS)v6 velocity grid",
 				dynamic.getDeformationModelName());
 		reader.close();
+		assertEquals(text, dynamic.toString());
 
 	}
 
@@ -1070,8 +1179,8 @@ public class CRSReaderTest {
 	@Test
 	public void testEllipsoid() throws IOException {
 
-		CRSReader reader = new CRSReader(
-				"ELLIPSOID[\"GRS 1980\",6378137,298.257222101,LENGTHUNIT[\"metre\",1.0]]");
+		String text = "ELLIPSOID[\"GRS 1980\",6378137,298.257222101,LENGTHUNIT[\"metre\",1.0]]";
+		CRSReader reader = new CRSReader(text);
 		Ellipsoid ellipsoid = reader.readEllipsoid();
 		assertEquals("GRS 1980", ellipsoid.getName());
 		assertEquals(6378137, ellipsoid.getSemiMajorAxis(), 0);
@@ -1080,18 +1189,22 @@ public class CRSReaderTest {
 		assertEquals("metre", ellipsoid.getLengthUnit().getName());
 		assertEquals(1.0, ellipsoid.getLengthUnit().getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text.replaceAll("6378137", "6378137.0"),
+				ellipsoid.toString());
 
-		reader = new CRSReader(
-				"SPHEROID[\"GRS 1980\",6378137.0,298.257222101]");
+		text = "SPHEROID[\"GRS 1980\",6378137.0,298.257222101]";
+		reader = new CRSReader(text);
 		ellipsoid = reader.readEllipsoid();
 		assertEquals("GRS 1980", ellipsoid.getName());
 		assertEquals(6378137, ellipsoid.getSemiMajorAxis(), 0);
 		assertEquals(298.257222101, ellipsoid.getInverseFlattening(), 0);
 		reader.close();
+		assertEquals(text.replaceAll("SPHEROID", "ELLIPSOID"),
+				ellipsoid.toString());
 
-		reader = new CRSReader(
-				"ELLIPSOID[\"Clark 1866\",20925832.164,294.97869821,"
-						+ "LENGTHUNIT[\"US survey foot\",0.304800609601219]]");
+		text = "ELLIPSOID[\"Clark 1866\",20925832.164,294.97869821,"
+				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219]]";
+		reader = new CRSReader(text);
 		ellipsoid = reader.readEllipsoid();
 		assertEquals("Clark 1866", ellipsoid.getName());
 		assertEquals(20925832.164, ellipsoid.getSemiMajorAxis(), 0);
@@ -1101,9 +1214,11 @@ public class CRSReaderTest {
 		assertEquals(0.304800609601219,
 				ellipsoid.getLengthUnit().getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text.replaceAll("20925832.164", "2.0925832164E7"),
+				ellipsoid.toString());
 
-		reader = new CRSReader(
-				"ELLIPSOID[\"Sphere\",6371000,0,LENGTHUNIT[\"metre\",1.0]]");
+		text = "ELLIPSOID[\"Sphere\",6371000,0,LENGTHUNIT[\"metre\",1.0]]";
+		reader = new CRSReader(text);
 		ellipsoid = reader.readEllipsoid();
 		assertEquals("Sphere", ellipsoid.getName());
 		assertEquals(6371000, ellipsoid.getSemiMajorAxis(), 0);
@@ -1112,6 +1227,8 @@ public class CRSReaderTest {
 		assertEquals("metre", ellipsoid.getLengthUnit().getName());
 		assertEquals(1.0, ellipsoid.getLengthUnit().getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text.replaceAll("6371000,0", "6371000.0,0.0"),
+				ellipsoid.toString());
 
 	}
 
@@ -1124,8 +1241,8 @@ public class CRSReaderTest {
 	@Test
 	public void testPrimeMeridian() throws IOException {
 
-		CRSReader reader = new CRSReader(
-				"PRIMEM[\"Paris\",2.5969213,ANGLEUNIT[\"grad\",0.015707963267949]]");
+		String text = "PRIMEM[\"Paris\",2.5969213,ANGLEUNIT[\"grad\",0.015707963267949]]";
+		CRSReader reader = new CRSReader(text);
 		PrimeMeridian primeMeridian = reader.readPrimeMeridian();
 		assertEquals("Paris", primeMeridian.getName());
 		assertEquals(2.5969213, primeMeridian.getIrmLongitude(), 0);
@@ -1137,15 +1254,18 @@ public class CRSReaderTest {
 				primeMeridian.getIrmLongitudeAngleUnit().getConversionFactor(),
 				0);
 		reader.close();
+		assertEquals(text, primeMeridian.toString());
 
-		reader = new CRSReader("PRIMEM[\"Ferro\",-17.6666667]");
+		text = "PRIMEM[\"Ferro\",-17.6666667]";
+		reader = new CRSReader(text);
 		primeMeridian = reader.readPrimeMeridian();
 		assertEquals("Ferro", primeMeridian.getName());
 		assertEquals(-17.6666667, primeMeridian.getIrmLongitude(), 0);
 		reader.close();
+		assertEquals(text, primeMeridian.toString());
 
-		reader = new CRSReader(
-				"PRIMEM[\"Greenwich\",0.0, ANGLEUNIT[\"degree\",0.0174532925199433]]");
+		text = "PRIMEM[\"Greenwich\",0.0,ANGLEUNIT[\"degree\",0.0174532925199433]]";
+		reader = new CRSReader(text);
 		primeMeridian = reader.readPrimeMeridian();
 		assertEquals("Greenwich", primeMeridian.getName());
 		assertEquals(0.0, primeMeridian.getIrmLongitude(), 0);
@@ -1157,6 +1277,7 @@ public class CRSReaderTest {
 				primeMeridian.getIrmLongitudeAngleUnit().getConversionFactor(),
 				0);
 		reader.close();
+		assertEquals(text, primeMeridian.toString());
 
 	}
 

@@ -1,5 +1,6 @@
 package mil.nga.proj.crs.wkt;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +37,7 @@ import mil.nga.proj.crs.VerticalExtent;
  * 
  * @author osbornb
  */
-public class CRSReader {
+public class CRSReader implements Closeable {
 
 	/**
 	 * Read a Coordinate Reference System from the well-known text
@@ -168,8 +169,9 @@ public class CRSReader {
 	}
 
 	/**
-	 * Close the text reader
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void close() {
 		reader.close();
 	}
@@ -1031,11 +1033,8 @@ public class CRSReader {
 
 		if (type != UnitType.TIMEUNIT
 				|| (peekSeparator() && isNonKeywordNext())) {
-
 			readSeparator();
-
 			unit.setConversionFactor(reader.readUnsignedNumber());
-
 		}
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {

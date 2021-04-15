@@ -1,11 +1,23 @@
 package mil.nga.proj.crs;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import mil.nga.proj.crs.wkt.CRSWriter;
+
 /**
  * Vertical Extent
  * 
  * @author osbornb
  */
 public class VerticalExtent {
+
+	/**
+	 * Logger
+	 */
+	private static final Logger logger = Logger
+			.getLogger(VerticalExtent.class.getName());
 
 	/**
 	 * Minimum Height
@@ -165,6 +177,25 @@ public class VerticalExtent {
 				.doubleToLongBits(other.minimumHeight))
 			return false;
 		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		String value = null;
+		CRSWriter writer = new CRSWriter();
+		try {
+			writer.write(this);
+			value = writer.toString();
+		} catch (IOException e) {
+			logger.log(Level.WARNING,
+					"Failed to write vertical extent as a string", e);
+			value = super.toString();
+		}
+		writer.close();
+		return value;
 	}
 
 }

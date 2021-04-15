@@ -1,7 +1,12 @@
 package mil.nga.proj.crs;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
  * Unit
@@ -9,6 +14,11 @@ import java.util.List;
  * @author osbornb
  */
 public class Unit {
+
+	/**
+	 * Logger
+	 */
+	private static final Logger logger = Logger.getLogger(Unit.class.getName());
 
 	/**
 	 * Unit Type
@@ -23,7 +33,7 @@ public class Unit {
 	/**
 	 * Conversion Factor
 	 */
-	private double conversionFactor;
+	private Double conversionFactor;
 
 	/**
 	 * Identifiers
@@ -35,6 +45,19 @@ public class Unit {
 	 */
 	public Unit() {
 
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param type
+	 *            unit type
+	 * @param name
+	 *            name
+	 */
+	public Unit(UnitType type, String name) {
+		setType(type);
+		setName(name);
 	}
 
 	/**
@@ -96,8 +119,17 @@ public class Unit {
 	 * 
 	 * @return conversion factor
 	 */
-	public double getConversionFactor() {
+	public Double getConversionFactor() {
 		return conversionFactor;
+	}
+
+	/**
+	 * Has a conversion factor
+	 * 
+	 * @return true if has conversion factor
+	 */
+	public boolean hasConversionFactor() {
+		return getConversionFactor() != null;
 	}
 
 	/**
@@ -106,7 +138,7 @@ public class Unit {
 	 * @param conversionFactor
 	 *            conversion factor
 	 */
-	public void setConversionFactor(double conversionFactor) {
+	public void setConversionFactor(Double conversionFactor) {
 		this.conversionFactor = conversionFactor;
 	}
 
@@ -171,9 +203,8 @@ public class Unit {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		long temp;
-		temp = Double.doubleToLongBits(conversionFactor);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((conversionFactor == null) ? 0
+				: conversionFactor.hashCode());
 		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -193,8 +224,10 @@ public class Unit {
 		if (getClass() != obj.getClass())
 			return false;
 		Unit other = (Unit) obj;
-		if (Double.doubleToLongBits(conversionFactor) != Double
-				.doubleToLongBits(other.conversionFactor))
+		if (conversionFactor == null) {
+			if (other.conversionFactor != null)
+				return false;
+		} else if (!conversionFactor.equals(other.conversionFactor))
 			return false;
 		if (identifiers == null) {
 			if (other.identifiers != null)
@@ -209,6 +242,24 @@ public class Unit {
 		if (type != other.type)
 			return false;
 		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		String value = null;
+		CRSWriter writer = new CRSWriter();
+		try {
+			writer.write(this);
+			value = writer.toString();
+		} catch (IOException e) {
+			logger.log(Level.WARNING, "Failed to write unit as a string", e);
+			value = super.toString();
+		}
+		writer.close();
+		return value;
 	}
 
 }
