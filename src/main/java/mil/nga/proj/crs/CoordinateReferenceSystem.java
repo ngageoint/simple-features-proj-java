@@ -1,7 +1,12 @@
 package mil.nga.proj.crs;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
  * Coordinate Reference System
@@ -9,6 +14,12 @@ import java.util.List;
  * @author osbornb
  */
 public abstract class CoordinateReferenceSystem {
+
+	/**
+	 * Logger
+	 */
+	private static final Logger logger = Logger
+			.getLogger(CoordinateReferenceSystem.class.getName());
 
 	/**
 	 * Name
@@ -316,6 +327,27 @@ public abstract class CoordinateReferenceSystem {
 		} else if (!usages.equals(other.usages))
 			return false;
 		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		String value = null;
+		CRSWriter writer = new CRSWriter();
+		try {
+			writer.write(this);
+			value = writer.toString();
+		} catch (IOException e) {
+			logger.log(Level.WARNING,
+					"Failed to write coordinate reference system as a string",
+					e);
+			value = super.toString();
+		} finally {
+			writer.close();
+		}
+		return value;
 	}
 
 }

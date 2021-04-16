@@ -214,8 +214,9 @@ public class Dynamic {
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to write dynamic as a string", e);
 			value = super.toString();
+		} finally {
+			writer.close();
 		}
-		writer.close();
 		return value;
 	}
 

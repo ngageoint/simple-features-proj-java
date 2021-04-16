@@ -8,12 +8,18 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mil.nga.proj.ProjectionException;
 import mil.nga.proj.crs.Axis;
+import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateSystem;
+import mil.nga.proj.crs.DatumEnsemble;
 import mil.nga.proj.crs.DatumEnsembleMember;
 import mil.nga.proj.crs.Dynamic;
 import mil.nga.proj.crs.Ellipsoid;
 import mil.nga.proj.crs.Extent;
+import mil.nga.proj.crs.GeodeticCoordinateReferenceSystem;
+import mil.nga.proj.crs.GeodeticDatumEnsemble;
+import mil.nga.proj.crs.GeodeticReferenceFrame;
 import mil.nga.proj.crs.GeographicBoundingBox;
 import mil.nga.proj.crs.Identifier;
 import mil.nga.proj.crs.PrimeMeridian;
@@ -35,6 +41,28 @@ public class CRSWriter implements Closeable {
 	 */
 	private static final Logger logger = Logger
 			.getLogger(CRSWriter.class.getName());
+
+	/**
+	 * Write a coordinate reference system to well-known text
+	 * 
+	 * @param crs
+	 *            coordinate reference system
+	 * @return well-known text
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public static String writeCRS(CoordinateReferenceSystem crs)
+			throws IOException {
+		String value = null;
+		CRSWriter writer = new CRSWriter();
+		try {
+			writer.write(crs);
+			value = writer.toString();
+		} finally {
+			writer.close();
+		}
+		return value;
+	}
 
 	/**
 	 * Writer
@@ -88,6 +116,28 @@ public class CRSWriter implements Closeable {
 	}
 
 	/**
+	 * Write a CRS to well-known text
+	 * 
+	 * @param crs
+	 *            coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(CoordinateReferenceSystem crs) throws IOException {
+
+		switch (crs.getType()) {
+		case GEODETIC:
+		case GEOGRAPHIC:
+			write((GeodeticCoordinateReferenceSystem) crs);
+			break;
+		default:
+			throw new ProjectionException(
+					"Unsupported CRS type: " + crs.getType());
+		}
+
+	}
+
+	/**
 	 * Write a keyword
 	 * 
 	 * @param keyword
@@ -95,7 +145,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeKeyword(CoordinateReferenceSystemKeyword keyword)
+	public void write(CoordinateReferenceSystemKeyword keyword)
 			throws IOException {
 		writer.write(keyword.name());
 	}
@@ -187,7 +237,7 @@ public class CRSWriter implements Closeable {
 			CoordinateReferenceSystemKeyword keyword, String text)
 			throws IOException {
 
-		writeKeyword(keyword);
+		write(keyword);
 
 		writeLeftDelimiter();
 
@@ -196,7 +246,163 @@ public class CRSWriter implements Closeable {
 		writeRightDelimiter();
 	}
 
-	// TODO
+	/**
+	 * Write a geodetic or geographic CRS to well-known text
+	 * 
+	 * @param crs
+	 *            geodetic or geographic coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(GeodeticCoordinateReferenceSystem crs)
+			throws IOException {
+
+		CoordinateReferenceSystemKeyword keyword = null;
+		switch (crs.getType()) {
+		case GEODETIC:
+			keyword = CoordinateReferenceSystemKeyword.GEODCRS;
+			break;
+		case GEOGRAPHIC:
+			keyword = CoordinateReferenceSystemKeyword.GEOGCRS;
+			break;
+		default:
+			throw new ProjectionException(
+					"Invalid Geodetic or Geographic Coordinate Reference System Type: "
+							+ crs.getType());
+		}
+		write(keyword);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(crs.getName());
+
+		if (crs.hasDynamic()) {
+			writeSeparator();
+			write(crs.getDynamic());
+		}
+
+		writeSeparator();
+		if (crs.hasDynamic() || crs.hasGeodeticReferenceFrame()) {
+			write(crs.getGeodeticReferenceFrame());
+		} else {
+			write(crs.getGeodeticDatumEnsemble());
+		}
+
+		writeSeparator();
+		write(crs.getCoordinateSystem());
+
+		if (crs.hasUsages()) {
+			writeSeparator();
+			writeUsages(crs.getUsages());
+		}
+
+		if (crs.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(crs.getIdentifiers());
+		}
+
+		if (crs.hasRemark()) {
+			writeSeparator();
+			writeRemark(crs.getRemark());
+		}
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write a geodetic reference frame to well-known text
+	 * 
+	 * @param geodeticReferenceFrame
+	 *            geodetic reference frame
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(GeodeticReferenceFrame geodeticReferenceFrame)
+			throws IOException {
+
+		write(CoordinateReferenceSystemKeyword.DATUM);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(geodeticReferenceFrame.getName());
+
+		writeSeparator();
+
+		write(geodeticReferenceFrame.getEllipsoid());
+
+		if (geodeticReferenceFrame.hasAnchor()) {
+			writeSeparator();
+			writeKeywordDelimitedQuotedText(
+					CoordinateReferenceSystemKeyword.ANCHOR,
+					geodeticReferenceFrame.getAnchor());
+		}
+
+		if (geodeticReferenceFrame.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(geodeticReferenceFrame.getIdentifiers());
+		}
+
+		writeRightDelimiter();
+
+		if (geodeticReferenceFrame.hasPrimeMeridian()) {
+			writeSeparator();
+			write(geodeticReferenceFrame.getPrimeMeridian());
+		}
+
+	}
+
+	/**
+	 * Write a datum ensemble to well-known text
+	 * 
+	 * @param datumEnsemble
+	 *            datum ensemble
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(DatumEnsemble datumEnsemble) throws IOException {
+
+		GeodeticDatumEnsemble geodeticDatumEnsemble = null;
+		if (datumEnsemble instanceof GeodeticDatumEnsemble) {
+			geodeticDatumEnsemble = (GeodeticDatumEnsemble) datumEnsemble;
+		}
+
+		write(CoordinateReferenceSystemKeyword.ENSEMBLE);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(datumEnsemble.getName());
+
+		for (DatumEnsembleMember member : datumEnsemble.getMembers()) {
+			writeSeparator();
+			write(member);
+		}
+
+		if (geodeticDatumEnsemble != null) {
+			writeSeparator();
+			write(geodeticDatumEnsemble.getEllipsoid());
+		}
+
+		writeSeparator();
+		write(CoordinateReferenceSystemKeyword.ENSEMBLEACCURACY);
+		writeLeftDelimiter();
+		write(datumEnsemble.getAccuracy());
+		writeRightDelimiter();
+
+		if (datumEnsemble.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(datumEnsemble.getIdentifiers());
+		}
+
+		writeRightDelimiter();
+
+		if (geodeticDatumEnsemble != null
+				&& geodeticDatumEnsemble.hasPrimeMeridian()) {
+			// TODO http://ogc.standardstracker.org/show_request.cgi?id=672
+			writeSeparator();
+			write(geodeticDatumEnsemble.getPrimeMeridian());
+		}
+
+	}
 
 	/**
 	 * Write a datum ensemble member to well-known text
@@ -209,7 +415,7 @@ public class CRSWriter implements Closeable {
 	public void write(DatumEnsembleMember datumEnsembleMember)
 			throws IOException {
 
-		writeKeyword(CoordinateReferenceSystemKeyword.MEMBER);
+		write(CoordinateReferenceSystemKeyword.MEMBER);
 
 		writeLeftDelimiter();
 
@@ -233,11 +439,11 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(Dynamic dynamic) throws IOException {
 
-		writeKeyword(CoordinateReferenceSystemKeyword.DYNAMIC);
+		write(CoordinateReferenceSystemKeyword.DYNAMIC);
 
 		writeLeftDelimiter();
 
-		writeKeyword(CoordinateReferenceSystemKeyword.FRAMEEPOCH);
+		write(CoordinateReferenceSystemKeyword.FRAMEEPOCH);
 
 		writeLeftDelimiter();
 
@@ -248,7 +454,7 @@ public class CRSWriter implements Closeable {
 		if (dynamic.hasDeformationModelName()) {
 
 			writeSeparator();
-			writeKeyword(CoordinateReferenceSystemKeyword.MODEL);
+			write(CoordinateReferenceSystemKeyword.MODEL);
 
 			writeLeftDelimiter();
 
@@ -275,7 +481,7 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(PrimeMeridian primeMeridian) throws IOException {
 
-		writeKeyword(CoordinateReferenceSystemKeyword.PRIMEM);
+		write(CoordinateReferenceSystemKeyword.PRIMEM);
 
 		writeLeftDelimiter();
 
@@ -308,7 +514,7 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(Ellipsoid ellipsoid) throws IOException {
 
-		writeKeyword(CoordinateReferenceSystemKeyword.ELLIPSOID);
+		write(CoordinateReferenceSystemKeyword.ELLIPSOID);
 
 		writeLeftDelimiter();
 
@@ -396,7 +602,7 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(Identifier identifier) throws IOException {
 
-		writeKeyword(CoordinateReferenceSystemKeyword.ID);
+		write(CoordinateReferenceSystemKeyword.ID);
 
 		writeLeftDelimiter();
 
@@ -437,7 +643,7 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(CoordinateSystem coordinateSystem) throws IOException {
 
-		writeKeyword(CoordinateReferenceSystemKeyword.CS);
+		write(CoordinateReferenceSystemKeyword.CS);
 
 		writeLeftDelimiter();
 
@@ -476,7 +682,7 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(Axis axis) throws IOException {
 
-		writeKeyword(CoordinateReferenceSystemKeyword.AXIS);
+		write(CoordinateReferenceSystemKeyword.AXIS);
 
 		writeLeftDelimiter();
 
@@ -506,7 +712,7 @@ public class CRSWriter implements Closeable {
 			if (axis.hasMeridian()) {
 
 				writeSeparator();
-				writeKeyword(CoordinateReferenceSystemKeyword.MERIDIAN);
+				write(CoordinateReferenceSystemKeyword.MERIDIAN);
 
 				writeLeftDelimiter();
 
@@ -525,7 +731,7 @@ public class CRSWriter implements Closeable {
 		case COUNTER_CLOCKWISE:
 
 			writeSeparator();
-			writeKeyword(CoordinateReferenceSystemKeyword.BEARING);
+			write(CoordinateReferenceSystemKeyword.BEARING);
 
 			writeLeftDelimiter();
 
@@ -541,7 +747,7 @@ public class CRSWriter implements Closeable {
 		if (axis.hasOrder()) {
 
 			writeSeparator();
-			writeKeyword(CoordinateReferenceSystemKeyword.ORDER);
+			write(CoordinateReferenceSystemKeyword.ORDER);
 
 			writeLeftDelimiter();
 
@@ -607,7 +813,7 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(Usage usage) throws IOException {
 
-		writeKeyword(CoordinateReferenceSystemKeyword.USAGE);
+		write(CoordinateReferenceSystemKeyword.USAGE);
 
 		writeLeftDelimiter();
 
@@ -688,7 +894,7 @@ public class CRSWriter implements Closeable {
 	public void write(GeographicBoundingBox geographicBoundingBox)
 			throws IOException {
 
-		writeKeyword(CoordinateReferenceSystemKeyword.BBOX);
+		write(CoordinateReferenceSystemKeyword.BBOX);
 
 		writeLeftDelimiter();
 
@@ -719,7 +925,7 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(VerticalExtent verticalExtent) throws IOException {
 
-		writeKeyword(CoordinateReferenceSystemKeyword.VERTICALEXTENT);
+		write(CoordinateReferenceSystemKeyword.VERTICALEXTENT);
 
 		writeLeftDelimiter();
 
@@ -747,7 +953,7 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(TemporalExtent temporalExtent) throws IOException {
 
-		writeKeyword(CoordinateReferenceSystemKeyword.TIMEEXTENT);
+		write(CoordinateReferenceSystemKeyword.TIMEEXTENT);
 
 		writeLeftDelimiter();
 

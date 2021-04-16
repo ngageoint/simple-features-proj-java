@@ -187,7 +187,7 @@ public class CRSReaderTest {
 		assertEquals("2013-01-01", temporalExtent.getStart());
 		assertEquals("2013-12-31", temporalExtent.getEnd());
 		reader.close();
-		// assertEquals(text, temporalExtent.toString()); // TODO
+		// assertEquals(text, temporalExtent.toString()); // TODO date vs quoted text
 
 		text = "TIMEEXTENT[\"Jurassic\",\"Quaternary\"]";
 		reader = new CRSReader(text);
@@ -223,7 +223,7 @@ public class CRSReaderTest {
 		assertEquals("1976-01", temporalExtent.getStart());
 		assertEquals("2001-04", temporalExtent.getEnd());
 		reader.close();
-		// assertEquals(text, usage.toString()); // TODO
+		// assertEquals(text, usage.toString()); // TODO date vs quoted text
 
 	}
 
@@ -1018,12 +1018,13 @@ public class CRSReaderTest {
 	@Test
 	public void testGeodeticDatumEnsemble() throws IOException {
 
-		CRSReader reader = new CRSReader("ENSEMBLE[\"WGS 84 ensemble\","
+		String text = "ENSEMBLE[\"WGS 84 ensemble\","
 				+ "MEMBER[\"WGS 84 (TRANSIT)\"],MEMBER[\"WGS 84 (G730)\"],"
 				+ "MEMBER[\"WGS 84 (G834)\"],MEMBER[\"WGS 84 (G1150)\"],"
 				+ "MEMBER[\"WGS 84 (G1674)\"],MEMBER[\"WGS 84 (G1762)\"],"
 				+ "ELLIPSOID[\"WGS 84\",6378137,298.2572236,LENGTHUNIT[\"metre\",1.0]],"
-				+ "ENSEMBLEACCURACY[2]]");
+				+ "ENSEMBLEACCURACY[2]]";
+		CRSReader reader = new CRSReader(text);
 		GeodeticDatumEnsemble datumEnsemble = reader
 				.readGeodeticDatumEnsemble();
 		assertNotNull(datumEnsemble);
@@ -1054,8 +1055,11 @@ public class CRSReaderTest {
 				.getConversionFactor(), 0);
 		assertEquals(2, datumEnsemble.getAccuracy(), 0);
 		reader.close();
+		assertEquals(
+				text.replaceAll("6378137", "6378137.0").replace("[2]", "[2.0]"),
+				datumEnsemble.toString());
 
-		reader = new CRSReader("ENSEMBLE[\"WGS 84 ensemble\","
+		text = "ENSEMBLE[\"WGS 84 ensemble\","
 				+ "MEMBER[\"WGS 84 (TRANSIT)\",ID[\"EPSG\",1166]],"
 				+ "MEMBER[\"WGS 84 (G730)\",ID[\"EPSG\",1152]],"
 				+ "MEMBER[\"WGS 84 (G834)\",ID[\"EPSG\",1153]],"
@@ -1063,7 +1067,8 @@ public class CRSReaderTest {
 				+ "MEMBER[\"WGS 84 (G1674)\",ID[\"EPSG\",1155]],"
 				+ "MEMBER[\"WGS 84 (G1762)\",ID[\"EPSG\",1156]],"
 				+ "ELLIPSOID[\"WGS 84\",6378137,298.2572236,LENGTHUNIT[\"metre\",1.0]],"
-				+ "ENSEMBLEACCURACY[2]]");
+				+ "ENSEMBLEACCURACY[2]]";
+		reader = new CRSReader(text);
 		datumEnsemble = reader.readGeodeticDatumEnsemble();
 		assertNotNull(datumEnsemble);
 		assertEquals("WGS 84 ensemble", datumEnsemble.getName());
@@ -1117,6 +1122,9 @@ public class CRSReaderTest {
 				.getConversionFactor(), 0);
 		assertEquals(2, datumEnsemble.getAccuracy(), 0);
 		reader.close();
+		assertEquals(
+				text.replaceAll("6378137", "6378137.0").replace("[2]", "[2.0]"),
+				datumEnsemble.toString());
 
 	}
 
@@ -1129,9 +1137,10 @@ public class CRSReaderTest {
 	@Test
 	public void testVerticalDatumEnsemble() throws IOException {
 
-		CRSReader reader = new CRSReader("ENSEMBLE[\"EVRS ensemble\","
+		String text = "ENSEMBLE[\"EVRS ensemble\","
 				+ "MEMBER[\"EVRF2000\"],MEMBER[\"EVRF2007\"],"
-				+ "ENSEMBLEACCURACY[0.01]]");
+				+ "ENSEMBLEACCURACY[0.01]]";
+		CRSReader reader = new CRSReader(text);
 		DatumEnsemble datumEnsemble = reader.readVerticalDatumEnsemble();
 		assertNotNull(datumEnsemble);
 		assertEquals("EVRS ensemble", datumEnsemble.getName());
@@ -1140,6 +1149,7 @@ public class CRSReaderTest {
 		assertEquals("EVRF2007", datumEnsemble.getMembers().get(1).getName());
 		assertEquals(0.01, datumEnsemble.getAccuracy(), 0);
 		reader.close();
+		assertEquals(text, datumEnsemble.toString());
 
 	}
 
@@ -1290,8 +1300,9 @@ public class CRSReaderTest {
 	@Test
 	public void testGeodeticReferenceFrame() throws IOException {
 
-		CRSReader reader = new CRSReader("DATUM[\"North American Datum 1983\","
-				+ "ELLIPSOID[\"GRS 1980\",6378137,298.257222101,LENGTHUNIT[\"metre\",1.0]]]");
+		String text = "DATUM[\"North American Datum 1983\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137,298.257222101,LENGTHUNIT[\"metre\",1.0]]]";
+		CRSReader reader = new CRSReader(text);
 		GeodeticReferenceFrame geodeticReferenceFrame = reader
 				.readGeodeticReferenceFrame();
 		assertEquals("North American Datum 1983",
@@ -1304,10 +1315,13 @@ public class CRSReaderTest {
 		assertEquals("metre", ellipsoid.getLengthUnit().getName());
 		assertEquals(1.0, ellipsoid.getLengthUnit().getConversionFactor(), 0);
 		reader.close();
+		assertEquals(text.replaceAll("6378137", "6378137.0"),
+				geodeticReferenceFrame.toString());
 
-		reader = new CRSReader("TRF[\"World Geodetic System 1984\","
+		text = "TRF[\"World Geodetic System 1984\","
 				+ "ELLIPSOID[\"WGS 84\",6378388.0,298.257223563,LENGTHUNIT[\"metre\",1.0]]"
-				+ "],PRIMEM[\"Greenwich\",0.0]");
+				+ "],PRIMEM[\"Greenwich\",0.0]";
+		reader = new CRSReader(text);
 		geodeticReferenceFrame = reader.readGeodeticReferenceFrame();
 		assertEquals("World Geodetic System 1984",
 				geodeticReferenceFrame.getName());
@@ -1323,11 +1337,14 @@ public class CRSReaderTest {
 		assertEquals(0.0,
 				geodeticReferenceFrame.getPrimeMeridian().getIrmLongitude(), 0);
 		reader.close();
+		assertEquals(text.replaceAll("TRF", "DATUM"),
+				geodeticReferenceFrame.toString());
 
-		reader = new CRSReader("GEODETICDATUM[\"Tananarive 1925\","
+		text = "GEODETICDATUM[\"Tananarive 1925\","
 				+ "ELLIPSOID[\"International 1924\",6378388.0,297.0,LENGTHUNIT[\"metre\",1.0]],"
 				+ "ANCHOR[\"Tananarive observatory:21.0191667gS, 50.23849537gE of Paris\"]],"
-				+ "PRIMEM[\"Paris\",2.5969213,ANGLEUNIT[\"grad\",0.015707963267949]]");
+				+ "PRIMEM[\"Paris\",2.5969213,ANGLEUNIT[\"grad\",0.015707963267949]]";
+		reader = new CRSReader(text);
 		geodeticReferenceFrame = reader.readGeodeticReferenceFrame();
 		assertEquals("Tananarive 1925", geodeticReferenceFrame.getName());
 		ellipsoid = geodeticReferenceFrame.getEllipsoid();
@@ -1353,6 +1370,8 @@ public class CRSReaderTest {
 						.getIrmLongitudeAngleUnit().getConversionFactor(),
 				0);
 		reader.close();
+		assertEquals(text.replaceAll("GEODETICDATUM", "DATUM"),
+				geodeticReferenceFrame.toString());
 
 	}
 
@@ -1441,6 +1460,9 @@ public class CRSReaderTest {
 				geodeticCrs.getIdentifiers().get(0).getUri());
 		assertEquals("注：JGD2000ジオセントリックは現在JGD2011に代わりました。",
 				geodeticCrs.getRemark());
+		text = text.replaceAll("6378137", "6378137.0");
+		// assertEquals(text, geodeticCrs.toString()); // TODO date vs quoted text
+		// assertEquals(text, CRSWriter.writeCRS(geodeticCrs)); // TODO date vs quoted text
 
 	}
 
@@ -1523,6 +1545,10 @@ public class CRSReaderTest {
 				.get(2).getUnit().getName());
 		assertEquals(1.0, geographicCrs.getCoordinateSystem().getAxes().get(2)
 				.getUnit().getConversionFactor(), 0);
+		text = text.replaceAll("TRF", "DATUM").replaceAll("6378137",
+				"6378137.0");
+		assertEquals(text, geographicCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(geographicCrs));
 
 		text = "GEOGRAPHICCRS[\"NAD83\","
 				+ "DATUM[\"North American Datum 1983\","
@@ -1576,6 +1602,10 @@ public class CRSReaderTest {
 		assertEquals("4269",
 				geographicCrs.getIdentifiers().get(0).getUniqueIdentifier());
 		assertEquals("1986 realisation", geographicCrs.getRemark());
+		text = text.replaceAll("GEOGRAPHICCRS", "GEOGCRS").replaceAll("6378137",
+				"6378137.0");
+		assertEquals(text, geographicCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(geographicCrs));
 
 		text = "GEOGCRS[\"NTF (Paris)\","
 				+ "DATUM[\"Nouvelle Triangulation Francaise\","
@@ -1629,6 +1659,8 @@ public class CRSReaderTest {
 				.getUnit().getConversionFactor(), 0);
 		assertEquals("Nouvelle Triangulation Française",
 				geographicCrs.getRemark());
+		assertEquals(text, geographicCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(geographicCrs));
 
 	}
 

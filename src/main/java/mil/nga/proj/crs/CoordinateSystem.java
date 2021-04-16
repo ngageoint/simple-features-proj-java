@@ -316,8 +316,9 @@ public class CoordinateSystem {
 			logger.log(Level.WARNING,
 					"Failed to write coordinate system as a string", e);
 			value = super.toString();
+		} finally {
+			writer.close();
 		}
-		writer.close();
 		return value;
 	}
 

@@ -173,8 +173,9 @@ public class DatumEnsembleMember {
 			logger.log(Level.WARNING,
 					"Failed to write datum ensemble member as a string", e);
 			value = super.toString();
+		} finally {
+			writer.close();
 		}
-		writer.close();
 		return value;
 	}
 

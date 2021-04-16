@@ -193,8 +193,9 @@ public class VerticalExtent {
 			logger.log(Level.WARNING,
 					"Failed to write vertical extent as a string", e);
 			value = super.toString();
+		} finally {
+			writer.close();
 		}
-		writer.close();
 		return value;
 	}
 

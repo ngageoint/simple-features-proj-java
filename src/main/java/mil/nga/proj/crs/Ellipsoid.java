@@ -279,8 +279,9 @@ public class Ellipsoid {
 			logger.log(Level.WARNING, "Failed to write ellipsoid as a string",
 					e);
 			value = super.toString();
+		} finally {
+			writer.close();
 		}
-		writer.close();
 		return value;
 	}
 

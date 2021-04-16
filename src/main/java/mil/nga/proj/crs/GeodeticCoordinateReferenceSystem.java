@@ -1,5 +1,11 @@
 package mil.nga.proj.crs;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import mil.nga.proj.crs.wkt.CRSWriter;
+
 /**
  * Geodetic and Geographic Coordinate Reference System
  * 
@@ -7,6 +13,12 @@ package mil.nga.proj.crs;
  */
 public class GeodeticCoordinateReferenceSystem
 		extends CoordinateReferenceSystem {
+
+	/**
+	 * Logger
+	 */
+	private static final Logger logger = Logger
+			.getLogger(GeodeticCoordinateReferenceSystem.class.getName());
 
 	/**
 	 * Geodetic Reference Frame
@@ -103,11 +115,11 @@ public class GeodeticCoordinateReferenceSystem
 	}
 
 	/**
-	 * Determine if a geodetic reference frame
+	 * Determine if has a geodetic reference frame
 	 * 
-	 * @return true if a geodetic reference frame
+	 * @return true if has geodetic reference frame
 	 */
-	public boolean isGeodeticReferenceFrame() {
+	public boolean hasGeodeticReferenceFrame() {
 		return getGeodeticReferenceFrame() != null;
 	}
 
@@ -132,11 +144,11 @@ public class GeodeticCoordinateReferenceSystem
 	}
 
 	/**
-	 * Determine if a geodetic datum ensemble
+	 * Determine if has a geodetic datum ensemble
 	 * 
-	 * @return true if a geodetic datum ensemble
+	 * @return true if has geodetic datum ensemble
 	 */
-	public boolean isGeodeticDatumEnsemble() {
+	public boolean hasGeodeticDatumEnsemble() {
 		return getGeodeticDatumEnsemble() != null;
 	}
 
@@ -161,11 +173,11 @@ public class GeodeticCoordinateReferenceSystem
 	}
 
 	/**
-	 * Determine if dynamic
+	 * Determine if has a dynamic
 	 * 
-	 * @return true if dynamic
+	 * @return true if has dynamic
 	 */
-	public boolean isDynamic() {
+	public boolean hasDynamic() {
 		return getDynamic() != null;
 	}
 
@@ -222,6 +234,27 @@ public class GeodeticCoordinateReferenceSystem
 		} else if (!geodeticReferenceFrame.equals(other.geodeticReferenceFrame))
 			return false;
 		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		String value = null;
+		CRSWriter writer = new CRSWriter();
+		try {
+			writer.write(this);
+			value = writer.toString();
+		} catch (IOException e) {
+			logger.log(Level.WARNING,
+					"Failed to write geodetic coordinate reference system as a string",
+					e);
+			value = super.toString();
+		} finally {
+			writer.close();
+		}
+		return value;
 	}
 
 }

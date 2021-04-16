@@ -247,8 +247,9 @@ public class PrimeMeridian {
 			logger.log(Level.WARNING,
 					"Failed to write prime meridian as a string", e);
 			value = super.toString();
+		} finally {
+			writer.close();
 		}
-		writer.close();
 		return value;
 	}
 

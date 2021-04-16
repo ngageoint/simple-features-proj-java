@@ -257,8 +257,9 @@ public class Unit {
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Failed to write unit as a string", e);
 			value = super.toString();
+		} finally {
+			writer.close();
 		}
-		writer.close();
 		return value;
 	}
 
