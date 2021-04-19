@@ -25,9 +25,19 @@ public class TemporalExtent {
 	private String start = null;
 
 	/**
+	 * Start date time
+	 */
+	private DateTime startDateTime = null;
+
+	/**
 	 * End
 	 */
 	private String end = null;
+
+	/**
+	 * End date time
+	 */
+	private DateTime endDateTime = null;
 
 	/**
 	 * Constructor
@@ -50,6 +60,19 @@ public class TemporalExtent {
 	}
 
 	/**
+	 * Constructor
+	 * 
+	 * @param start
+	 *            start date tiem
+	 * @param end
+	 *            end date time
+	 */
+	public TemporalExtent(DateTime start, DateTime end) {
+		setStartDateTime(start);
+		setEndDateTime(end);
+	}
+
+	/**
 	 * Get the start
 	 * 
 	 * @return start
@@ -66,6 +89,50 @@ public class TemporalExtent {
 	 */
 	public void setStart(String start) {
 		this.start = start;
+		DateTime dateTime = DateTime.tryParse(start);
+		if (dateTime != null) {
+			this.startDateTime = dateTime;
+		}
+	}
+
+	/**
+	 * Get the start date time
+	 * 
+	 * @return start date time
+	 */
+	public DateTime getStartDateTime() {
+		return startDateTime;
+	}
+
+	/**
+	 * Has a start date time
+	 * 
+	 * @return true if has start date time
+	 */
+	public boolean hasStartDateTime() {
+		return getStartDateTime() != null;
+	}
+
+	/**
+	 * Set the start date time
+	 * 
+	 * @param startDateTime
+	 *            start date time
+	 */
+	public void setStartDateTime(DateTime startDateTime) {
+		this.startDateTime = startDateTime;
+		this.start = startDateTime.toString();
+	}
+
+	/**
+	 * Set the start date time
+	 * 
+	 * @param start
+	 *            start date time
+	 */
+	public void setStartDateTime(String start) {
+		this.start = start;
+		this.startDateTime = DateTime.parse(start);
 	}
 
 	/**
@@ -85,6 +152,50 @@ public class TemporalExtent {
 	 */
 	public void setEnd(String end) {
 		this.end = end;
+		DateTime dateTime = DateTime.tryParse(end);
+		if (dateTime != null) {
+			this.endDateTime = dateTime;
+		}
+	}
+
+	/**
+	 * Get the end date time
+	 * 
+	 * @return end date time
+	 */
+	public DateTime getEndDateTime() {
+		return endDateTime;
+	}
+
+	/**
+	 * Has an end date time
+	 * 
+	 * @return true if has end date time
+	 */
+	public boolean hasEndDateTime() {
+		return getEndDateTime() != null;
+	}
+
+	/**
+	 * Set the end date time
+	 * 
+	 * @param endDateTime
+	 *            end date time
+	 */
+	public void setEndDateTime(DateTime endDateTime) {
+		this.endDateTime = endDateTime;
+		this.end = endDateTime.toString();
+	}
+
+	/**
+	 * Set the end date time
+	 * 
+	 * @param end
+	 *            end date time
+	 */
+	public void setEndDateTime(String end) {
+		this.end = end;
+		this.endDateTime = DateTime.parse(end);
 	}
 
 	/**

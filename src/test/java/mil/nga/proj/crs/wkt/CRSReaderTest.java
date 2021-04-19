@@ -1,8 +1,10 @@
 package mil.nga.proj.crs.wkt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -185,16 +187,23 @@ public class CRSReaderTest {
 		TemporalExtent temporalExtent = reader.readTemporalExtent();
 		assertNotNull(temporalExtent);
 		assertEquals("2013-01-01", temporalExtent.getStart());
+		assertTrue(temporalExtent.hasStartDateTime());
+		assertEquals("2013-01-01",
+				temporalExtent.getStartDateTime().toString());
 		assertEquals("2013-12-31", temporalExtent.getEnd());
+		assertTrue(temporalExtent.hasEndDateTime());
+		assertEquals("2013-12-31", temporalExtent.getEndDateTime().toString());
 		reader.close();
-		// assertEquals(text, temporalExtent.toString()); // TODO date vs quoted text
+		assertEquals(text, temporalExtent.toString());
 
 		text = "TIMEEXTENT[\"Jurassic\",\"Quaternary\"]";
 		reader = new CRSReader(text);
 		temporalExtent = reader.readTemporalExtent();
 		assertNotNull(temporalExtent);
 		assertEquals("Jurassic", temporalExtent.getStart());
+		assertFalse(temporalExtent.hasStartDateTime());
 		assertEquals("Quaternary", temporalExtent.getEnd());
+		assertFalse(temporalExtent.hasEndDateTime());
 		reader.close();
 		assertEquals(text, temporalExtent.toString());
 
@@ -221,9 +230,13 @@ public class CRSReaderTest {
 		TemporalExtent temporalExtent = extent.getTemporalExtent();
 		assertNotNull(temporalExtent);
 		assertEquals("1976-01", temporalExtent.getStart());
+		assertTrue(temporalExtent.hasStartDateTime());
+		assertEquals("1976-01", temporalExtent.getStartDateTime().toString());
 		assertEquals("2001-04", temporalExtent.getEnd());
+		assertTrue(temporalExtent.hasEndDateTime());
+		assertEquals("2001-04", temporalExtent.getEndDateTime().toString());
 		reader.close();
-		// assertEquals(text, usage.toString()); // TODO date vs quoted text
+		assertEquals(text, usage.toString());
 
 	}
 
@@ -1451,8 +1464,16 @@ public class CRSReaderTest {
 				0);
 		assertEquals("2002-04-01", geodeticCrs.getUsages().get(0).getExtent()
 				.getTemporalExtent().getStart());
+		assertTrue(geodeticCrs.getUsages().get(0).getExtent()
+				.getTemporalExtent().hasStartDateTime());
+		assertEquals("2002-04-01", geodeticCrs.getUsages().get(0).getExtent()
+				.getTemporalExtent().getStartDateTime().toString());
 		assertEquals("2011-10-21", geodeticCrs.getUsages().get(0).getExtent()
 				.getTemporalExtent().getEnd());
+		assertTrue(geodeticCrs.getUsages().get(0).getExtent()
+				.getTemporalExtent().hasEndDateTime());
+		assertEquals("2011-10-21", geodeticCrs.getUsages().get(0).getExtent()
+				.getTemporalExtent().getEndDateTime().toString());
 		assertEquals("EPSG", geodeticCrs.getIdentifiers().get(0).getName());
 		assertEquals("4946",
 				geodeticCrs.getIdentifiers().get(0).getUniqueIdentifier());
@@ -1461,8 +1482,8 @@ public class CRSReaderTest {
 		assertEquals("注：JGD2000ジオセントリックは現在JGD2011に代わりました。",
 				geodeticCrs.getRemark());
 		text = text.replaceAll("6378137", "6378137.0");
-		// assertEquals(text, geodeticCrs.toString()); // TODO date vs quoted text
-		// assertEquals(text, CRSWriter.writeCRS(geodeticCrs)); // TODO date vs quoted text
+		assertEquals(text, geodeticCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(geodeticCrs));
 
 	}
 

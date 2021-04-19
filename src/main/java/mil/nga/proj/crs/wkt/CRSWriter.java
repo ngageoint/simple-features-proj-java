@@ -957,11 +957,19 @@ public class CRSWriter implements Closeable {
 
 		writeLeftDelimiter();
 
-		writeQuotedText(temporalExtent.getStart()); // TODO date vs quoted text
+		if (temporalExtent.hasStartDateTime()) {
+			writer.write(temporalExtent.getStartDateTime().toString());
+		} else {
+			writeQuotedText(temporalExtent.getStart());
+		}
 
 		writeSeparator();
 
-		writeQuotedText(temporalExtent.getEnd());
+		if (temporalExtent.hasEndDateTime()) {
+			writer.write(temporalExtent.getEndDateTime().toString());
+		} else {
+			writeQuotedText(temporalExtent.getEnd());
+		}
 
 		writeRightDelimiter();
 	}
