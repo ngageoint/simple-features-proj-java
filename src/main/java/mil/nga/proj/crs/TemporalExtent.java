@@ -206,7 +206,11 @@ public class TemporalExtent {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((end == null) ? 0 : end.hashCode());
+		result = prime * result
+				+ ((endDateTime == null) ? 0 : endDateTime.hashCode());
 		result = prime * result + ((start == null) ? 0 : start.hashCode());
+		result = prime * result
+				+ ((startDateTime == null) ? 0 : startDateTime.hashCode());
 		return result;
 	}
 
@@ -227,10 +231,20 @@ public class TemporalExtent {
 				return false;
 		} else if (!end.equals(other.end))
 			return false;
+		if (endDateTime == null) {
+			if (other.endDateTime != null)
+				return false;
+		} else if (!endDateTime.equals(other.endDateTime))
+			return false;
 		if (start == null) {
 			if (other.start != null)
 				return false;
 		} else if (!start.equals(other.start))
+			return false;
+		if (startDateTime == null) {
+			if (other.startDateTime != null)
+				return false;
+		} else if (!startDateTime.equals(other.startDateTime))
 			return false;
 		return true;
 	}
