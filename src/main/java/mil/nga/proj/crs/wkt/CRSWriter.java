@@ -22,7 +22,10 @@ import mil.nga.proj.crs.GeodeticDatumEnsemble;
 import mil.nga.proj.crs.GeodeticReferenceFrame;
 import mil.nga.proj.crs.GeographicBoundingBox;
 import mil.nga.proj.crs.Identifier;
+import mil.nga.proj.crs.MapProjection;
+import mil.nga.proj.crs.MapProjectionParameter;
 import mil.nga.proj.crs.PrimeMeridian;
+import mil.nga.proj.crs.ProjectedCoordinateReferenceSystem;
 import mil.nga.proj.crs.TemporalExtent;
 import mil.nga.proj.crs.Unit;
 import mil.nga.proj.crs.Usage;
@@ -287,6 +290,92 @@ public class CRSWriter implements Closeable {
 		} else {
 			write(crs.getGeodeticDatumEnsemble());
 		}
+
+		writeSeparator();
+		write(crs.getCoordinateSystem());
+
+		if (crs.hasUsages()) {
+			writeSeparator();
+			writeUsages(crs.getUsages());
+		}
+
+		if (crs.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(crs.getIdentifiers());
+		}
+
+		if (crs.hasRemark()) {
+			writeSeparator();
+			writeRemark(crs.getRemark());
+		}
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write a projected CRS to well-known text
+	 * 
+	 * @param crs
+	 *            projected coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(ProjectedCoordinateReferenceSystem crs)
+			throws IOException {
+
+		write(CoordinateReferenceSystemKeyword.PROJCRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(crs.getName());
+
+		writeSeparator();
+
+		CoordinateReferenceSystemKeyword baseKeyword = null;
+		switch (crs.getBaseType()) {
+		case GEODETIC:
+			baseKeyword = CoordinateReferenceSystemKeyword.BASEGEODCRS;
+			break;
+		case GEOGRAPHIC:
+			baseKeyword = CoordinateReferenceSystemKeyword.BASEGEOGCRS;
+			break;
+		default:
+			throw new ProjectionException(
+					"Invalid Geodetic or Geographic Base Coordinate Reference System Type: "
+							+ crs.getBaseType());
+		}
+		write(baseKeyword);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(crs.getBaseName());
+
+		if (crs.hasDynamic()) {
+			writeSeparator();
+			write(crs.getDynamic());
+		}
+
+		writeSeparator();
+		if (crs.hasDynamic() || crs.hasGeodeticReferenceFrame()) {
+			write(crs.getGeodeticReferenceFrame());
+		} else {
+			write(crs.getGeodeticDatumEnsemble());
+		}
+
+		if (crs.hasEllipsoidalAngleUnit()) {
+			writeSeparator();
+			write(crs.getEllipsoidalAngleUnit());
+		}
+
+		if (crs.hasBaseIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(crs.getBaseIdentifiers());
+		}
+
+		writeRightDelimiter();
+
+		writeSeparator();
+		write(crs.getMapProjection());
 
 		writeSeparator();
 		write(crs.getCoordinateSystem());
@@ -969,6 +1058,105 @@ public class CRSWriter implements Closeable {
 			writer.write(temporalExtent.getEndDateTime().toString());
 		} else {
 			writeQuotedText(temporalExtent.getEnd());
+		}
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write a map projection to well-known text
+	 * 
+	 * @param mapProjection
+	 *            map projection
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(MapProjection mapProjection) throws IOException {
+
+		write(CoordinateReferenceSystemKeyword.CONVERSION);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(mapProjection.getName());
+
+		writeSeparator();
+
+		write(CoordinateReferenceSystemKeyword.METHOD);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(mapProjection.getMethodName());
+
+		if (mapProjection.hasMethodIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(mapProjection.getMethodIdentifiers());
+		}
+
+		writeRightDelimiter();
+
+		if (mapProjection.hasParameters()) {
+			writeSeparator();
+			writeMapProjectionParameters(mapProjection.getParameters());
+		}
+
+		if (mapProjection.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(mapProjection.getIdentifiers());
+		}
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write map projection parameters to well-known text
+	 * 
+	 * @param parameters
+	 *            map projection parameters
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeMapProjectionParameters(
+			List<MapProjectionParameter> parameters) throws IOException {
+
+		for (int i = 0; i < parameters.size(); i++) {
+
+			if (i > 0) {
+				writeSeparator();
+			}
+
+			write(parameters.get(i));
+		}
+
+	}
+
+	/**
+	 * Write a map projection parameter to well-known text
+	 * 
+	 * @param parameter
+	 *            map projection parameter
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(MapProjectionParameter parameter) throws IOException {
+
+		write(CoordinateReferenceSystemKeyword.PARAMETER);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(parameter.getName());
+
+		writeSeparator();
+
+		write(parameter.getValue());
+
+		if (parameter.hasUnit()) {
+			writeSeparator();
+			write(parameter.getUnit());
+		}
+
+		if (parameter.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(parameter.getIdentifiers());
 		}
 
 		writeRightDelimiter();

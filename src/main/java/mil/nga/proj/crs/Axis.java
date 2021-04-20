@@ -66,7 +66,7 @@ public class Axis {
 	private List<Identifier> identifiers = null;
 
 	/**
-	 * Axis
+	 * Constructor
 	 */
 	public Axis() {
 

@@ -15,6 +15,11 @@ public enum CoordinateReferenceSystemType {
 	/**
 	 * Geographic
 	 */
-	GEOGRAPHIC;
+	GEOGRAPHIC,
+
+	/**
+	 * Projected
+	 */
+	PROJECTED;
 
 }

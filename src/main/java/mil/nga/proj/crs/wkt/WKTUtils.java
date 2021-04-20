@@ -113,10 +113,12 @@ public class WKTUtils {
 		switch (keyword) {
 
 		case GEODCRS:
+		case BASEGEODCRS:
 			crsType = CoordinateReferenceSystemType.GEODETIC;
 			break;
 
 		case GEOGCRS:
+		case BASEGEOGCRS:
 			crsType = CoordinateReferenceSystemType.GEOGRAPHIC;
 			break;
 

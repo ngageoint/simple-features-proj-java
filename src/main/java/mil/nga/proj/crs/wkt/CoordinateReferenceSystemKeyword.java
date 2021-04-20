@@ -38,6 +38,16 @@ public enum CoordinateReferenceSystemKeyword {
 	AXIS(),
 
 	/**
+	 * Base Geodetic CRS
+	 */
+	BASEGEODCRS(),
+
+	/**
+	 * Base Geographic CRS
+	 */
+	BASEGEOGCRS(),
+
+	/**
 	 * Geographic bounding box
 	 */
 	BBOX(),
@@ -51,6 +61,11 @@ public enum CoordinateReferenceSystemKeyword {
 	 * Citation
 	 */
 	CITATION(),
+
+	/**
+	 * Map Projection Conversion
+	 */
+	CONVERSION(),
 
 	/**
 	 * Coordinate system
@@ -118,6 +133,11 @@ public enum CoordinateReferenceSystemKeyword {
 	MERIDIAN(),
 
 	/**
+	 * Map Projection Method
+	 */
+	METHOD("PROJECTION"),
+
+	/**
 	 * Model
 	 */
 	MODEL("VELOCITYGRID"),
@@ -128,6 +148,11 @@ public enum CoordinateReferenceSystemKeyword {
 	ORDER(),
 
 	/**
+	 * Parameter
+	 */
+	PARAMETER(),
+
+	/**
 	 * Parametric Unit
 	 */
 	PARAMETRICUNIT(),
@@ -136,6 +161,11 @@ public enum CoordinateReferenceSystemKeyword {
 	 * Prime meridian
 	 */
 	PRIMEM("PRIMEMERIDIAN"),
+
+	/**
+	 * Projected CRS
+	 */
+	PROJCRS("PROJECTEDCRS"),
 
 	/**
 	 * Remark

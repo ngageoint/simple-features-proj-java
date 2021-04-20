@@ -25,7 +25,10 @@ import mil.nga.proj.crs.GeodeticDatumEnsemble;
 import mil.nga.proj.crs.GeodeticReferenceFrame;
 import mil.nga.proj.crs.GeographicBoundingBox;
 import mil.nga.proj.crs.Identifier;
+import mil.nga.proj.crs.MapProjection;
+import mil.nga.proj.crs.MapProjectionParameter;
 import mil.nga.proj.crs.PrimeMeridian;
+import mil.nga.proj.crs.ProjectedCoordinateReferenceSystem;
 import mil.nga.proj.crs.TemporalExtent;
 import mil.nga.proj.crs.Unit;
 import mil.nga.proj.crs.UnitType;
@@ -192,6 +195,9 @@ public class CRSReader implements Closeable {
 		case GEODCRS:
 		case GEOGCRS:
 			crs = readGeodeticOrGeographic();
+			break;
+		case PROJCRS:
+			crs = readProjected();
 			break;
 		default:
 			throw new ProjectionException(
@@ -613,6 +619,145 @@ public class CRSReader implements Closeable {
 					CoordinateReferenceSystemKeyword.DATUM,
 					CoordinateReferenceSystemKeyword.ENSEMBLE);
 		}
+
+		readSeparator();
+
+		crs.setCoordinateSystem(readCoordinateSystem());
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.USAGE)) {
+			readSeparator();
+			crs.setUsages(readUsages());
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			crs.setIdentifiers(readIdentifiers());
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.REMARK)) {
+			readSeparator();
+			crs.setRemark(readRemark());
+		}
+
+		readRightDelimiter();
+
+		return crs;
+	}
+
+	/**
+	 * Read a Projected CRS
+	 * 
+	 * @return projected coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ProjectedCoordinateReferenceSystem readProjected()
+			throws IOException {
+		CoordinateReferenceSystemType expectedType = null;
+		return readProjected(expectedType);
+	}
+
+	/**
+	 * Read a Projected Geodetic CRS
+	 * 
+	 * @return projected geodetic coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ProjectedCoordinateReferenceSystem readProjectedGeodetic()
+			throws IOException {
+		return readProjected(CoordinateReferenceSystemType.GEODETIC);
+	}
+
+	/**
+	 * Read a Projected Geographic CRS
+	 * 
+	 * @return projected geographic coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ProjectedCoordinateReferenceSystem readProjectedGeographic()
+			throws IOException {
+		return readProjected(CoordinateReferenceSystemType.GEOGRAPHIC);
+	}
+
+	/**
+	 * Read a Projected CRS
+	 * 
+	 * @param expectedBaseType
+	 *            expected base coordinate reference system type
+	 * 
+	 * @return projected coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ProjectedCoordinateReferenceSystem readProjected(
+			CoordinateReferenceSystemType expectedBaseType) throws IOException {
+
+		ProjectedCoordinateReferenceSystem crs = new ProjectedCoordinateReferenceSystem();
+
+		validateKeyword(readKeyword(),
+				CoordinateReferenceSystemKeyword.PROJCRS);
+
+		readLeftDelimiter();
+
+		crs.setName(reader.readExpectedToken());
+
+		readSeparator();
+
+		CoordinateReferenceSystemKeyword type = readKeyword();
+		validateKeyword(type, CoordinateReferenceSystemKeyword.BASEGEODCRS,
+				CoordinateReferenceSystemKeyword.BASEGEOGCRS);
+		CoordinateReferenceSystemType crsType = WKTUtils
+				.getCoordinateReferenceSystemType(type);
+		if (expectedBaseType != null && crsType != expectedBaseType) {
+			throw new ProjectionException(
+					"Unexpected Base Coordinate Reference System Type. expected: "
+							+ expectedBaseType + ", found: " + crsType);
+		}
+		crs.setBaseType(crsType);
+
+		readLeftDelimiter();
+
+		crs.setBaseName(reader.readExpectedToken());
+
+		boolean isDynamic = isKeywordNext(
+				CoordinateReferenceSystemKeyword.DYNAMIC);
+		if (isDynamic) {
+			readSeparator();
+			crs.setDynamic(readDynamic());
+		}
+
+		if (isDynamic
+				|| isKeywordNext(CoordinateReferenceSystemKeyword.DATUM)) {
+			readSeparator();
+			crs.setGeodeticReferenceFrame(readGeodeticReferenceFrame());
+		} else if (isKeywordNext(CoordinateReferenceSystemKeyword.ENSEMBLE)) {
+			readSeparator();
+			crs.setGeodeticDatumEnsemble(readGeodeticDatumEnsemble());
+		} else {
+			// Validation error
+			readSeparator();
+			validateKeyword(readKeyword(),
+					CoordinateReferenceSystemKeyword.DATUM,
+					CoordinateReferenceSystemKeyword.ENSEMBLE);
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ANGLEUNIT)) {
+			readSeparator();
+			crs.setEllipsoidalAngleUnit(readAngleUnit());
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			crs.setBaseIdentifiers(readIdentifiers());
+		}
+
+		readRightDelimiter();
+
+		readSeparator();
+
+		crs.setMapProjection(readMapProjection());
 
 		readSeparator();
 
@@ -1545,6 +1690,119 @@ public class CRSReader implements Closeable {
 		readRightDelimiter();
 
 		return temporalExtent;
+	}
+
+	/**
+	 * Read a Map projection
+	 * 
+	 * @return map projection
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public MapProjection readMapProjection() throws IOException {
+
+		MapProjection mapProjection = new MapProjection();
+
+		validateKeyword(readKeyword(),
+				CoordinateReferenceSystemKeyword.CONVERSION);
+
+		readLeftDelimiter();
+
+		mapProjection.setName(reader.readExpectedToken());
+
+		readSeparator();
+
+		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.METHOD);
+
+		readLeftDelimiter();
+
+		mapProjection.setMethodName(reader.readExpectedToken());
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			mapProjection.setMethodIdentifiers(readIdentifiers());
+		}
+
+		readRightDelimiter();
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.PARAMETER)) {
+			readSeparator();
+			mapProjection.setParameters(readMapProjectionParameters());
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			mapProjection.setIdentifiers(readIdentifiers());
+		}
+
+		readRightDelimiter();
+
+		return mapProjection;
+	}
+
+	/**
+	 * Read Map projection parameters
+	 * 
+	 * @return map projection parameters
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public List<MapProjectionParameter> readMapProjectionParameters()
+			throws IOException {
+
+		List<MapProjectionParameter> parameters = new ArrayList<>();
+
+		do {
+
+			if (!parameters.isEmpty()) {
+				readSeparator();
+			}
+
+			parameters.add(readMapProjectionParameter());
+
+		} while (isKeywordNext(CoordinateReferenceSystemKeyword.PARAMETER));
+
+		return parameters;
+	}
+
+	/**
+	 * Read a Map projection parameter
+	 * 
+	 * @return map projection parameter
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public MapProjectionParameter readMapProjectionParameter()
+			throws IOException {
+
+		MapProjectionParameter parameter = new MapProjectionParameter();
+
+		validateKeyword(readKeyword(),
+				CoordinateReferenceSystemKeyword.PARAMETER);
+
+		readLeftDelimiter();
+
+		parameter.setName(reader.readExpectedToken());
+
+		readSeparator();
+
+		parameter.setValue(reader.readNumber());
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.LENGTHUNIT,
+				CoordinateReferenceSystemKeyword.ANGLEUNIT,
+				CoordinateReferenceSystemKeyword.SCALEUNIT)) {
+			readSeparator();
+			parameter.setUnit(readUnit());
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			parameter.setIdentifiers(readIdentifiers());
+		}
+
+		readRightDelimiter();
+
+		return parameter;
 	}
 
 }

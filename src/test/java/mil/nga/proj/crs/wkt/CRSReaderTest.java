@@ -26,6 +26,7 @@ import mil.nga.proj.crs.GeodeticDatumEnsemble;
 import mil.nga.proj.crs.GeodeticReferenceFrame;
 import mil.nga.proj.crs.GeographicBoundingBox;
 import mil.nga.proj.crs.Identifier;
+import mil.nga.proj.crs.MapProjection;
 import mil.nga.proj.crs.PrimeMeridian;
 import mil.nga.proj.crs.TemporalExtent;
 import mil.nga.proj.crs.Unit;
@@ -1683,6 +1684,193 @@ public class CRSReaderTest {
 		assertEquals(text, geographicCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(geographicCrs));
 
+	}
+
+	/**
+	 * Test map projection
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testMapProjection() throws IOException {
+
+		String text = "CONVERSION[\"UTM zone 10N\","
+				+ "METHOD[\"Transverse Mercator\",ID[\"EPSG\",9807]],"
+				+ "PARAMETER[\"Latitude of natural origin\",0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],"
+				+ "ID[\"EPSG\",8801]],"
+				+ "PARAMETER[\"Longitude of natural origin\",-123,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8802]],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.9996,"
+				+ "SCALEUNIT[\"unity\",1.0],ID[\"EPSG\",8805]],"
+				+ "PARAMETER[\"False easting\",500000,"
+				+ "LENGTHUNIT[\"metre\",1.0],ID[\"EPSG\",8806]],"
+				+ "PARAMETER[\"False northing\",0,LENGTHUNIT[\"metre\",1.0],ID[\"EPSG\",8807]]]";
+		CRSReader reader = new CRSReader(text);
+		MapProjection mapProjection = reader.readMapProjection();
+		assertEquals("UTM zone 10N", mapProjection.getName());
+		assertEquals("Transverse Mercator", mapProjection.getMethodName());
+		assertEquals("EPSG",
+				mapProjection.getMethodIdentifiers().get(0).getName());
+		assertEquals("9807", mapProjection.getMethodIdentifiers().get(0)
+				.getUniqueIdentifier());
+		assertEquals("Latitude of natural origin",
+				mapProjection.getParameters().get(0).getName());
+		assertEquals(0, mapProjection.getParameters().get(0).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT,
+				mapProjection.getParameters().get(0).getUnit().getType());
+		assertEquals("degree",
+				mapProjection.getParameters().get(0).getUnit().getName());
+		assertEquals(0.0174532925199433, mapProjection.getParameters().get(0)
+				.getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", mapProjection.getParameters().get(0)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8801", mapProjection.getParameters().get(0)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Longitude of natural origin",
+				mapProjection.getParameters().get(1).getName());
+		assertEquals(-123, mapProjection.getParameters().get(1).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT,
+				mapProjection.getParameters().get(1).getUnit().getType());
+		assertEquals("degree",
+				mapProjection.getParameters().get(1).getUnit().getName());
+		assertEquals(0.0174532925199433, mapProjection.getParameters().get(1)
+				.getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", mapProjection.getParameters().get(1)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8802", mapProjection.getParameters().get(1)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Scale factor at natural origin",
+				mapProjection.getParameters().get(2).getName());
+		assertEquals(0.9996, mapProjection.getParameters().get(2).getValue(),
+				0);
+		assertEquals(UnitType.SCALEUNIT,
+				mapProjection.getParameters().get(2).getUnit().getType());
+		assertEquals("unity",
+				mapProjection.getParameters().get(2).getUnit().getName());
+		assertEquals(1.0, mapProjection.getParameters().get(2).getUnit()
+				.getConversionFactor(), 0);
+		assertEquals("EPSG", mapProjection.getParameters().get(2)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8805", mapProjection.getParameters().get(2)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("False easting",
+				mapProjection.getParameters().get(3).getName());
+		assertEquals(500000, mapProjection.getParameters().get(3).getValue(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				mapProjection.getParameters().get(3).getUnit().getType());
+		assertEquals("metre",
+				mapProjection.getParameters().get(3).getUnit().getName());
+		assertEquals(1.0, mapProjection.getParameters().get(3).getUnit()
+				.getConversionFactor(), 0);
+		assertEquals("EPSG", mapProjection.getParameters().get(3)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8806", mapProjection.getParameters().get(3)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("False northing",
+				mapProjection.getParameters().get(4).getName());
+		assertEquals(0, mapProjection.getParameters().get(4).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT,
+				mapProjection.getParameters().get(4).getUnit().getType());
+		assertEquals("metre",
+				mapProjection.getParameters().get(4).getUnit().getName());
+		assertEquals(1.0, mapProjection.getParameters().get(4).getUnit()
+				.getConversionFactor(), 0);
+		assertEquals("EPSG", mapProjection.getParameters().get(4)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8807", mapProjection.getParameters().get(4)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		reader.close();
+		assertEquals(
+				text.replaceAll(",0,", ",0.0,").replaceAll("-123", "-123.0")
+						.replaceAll("500000", "500000.0"),
+				mapProjection.toString());
+
+		text = "CONVERSION[\"UTM zone 10N\","
+				+ "METHOD[\"Transverse Mercator\"],"
+				+ "PARAMETER[\"Latitude of natural origin\",0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"Longitude of natural origin\",-123,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.9996,"
+				+ "SCALEUNIT[\"unity\",1.0]],"
+				+ "PARAMETER[\"False easting\",500000,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"False northing\",0,LENGTHUNIT[\"metre\",1.0]],"
+				+ "ID[\"EPSG\",16010]]";
+		reader = new CRSReader(text);
+		mapProjection = reader.readMapProjection();
+		assertEquals("UTM zone 10N", mapProjection.getName());
+		assertEquals("Transverse Mercator", mapProjection.getMethodName());
+		assertEquals("Latitude of natural origin",
+				mapProjection.getParameters().get(0).getName());
+		assertEquals(0, mapProjection.getParameters().get(0).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT,
+				mapProjection.getParameters().get(0).getUnit().getType());
+		assertEquals("degree",
+				mapProjection.getParameters().get(0).getUnit().getName());
+		assertEquals(0.0174532925199433, mapProjection.getParameters().get(0)
+				.getUnit().getConversionFactor(), 0);
+		assertEquals("Longitude of natural origin",
+				mapProjection.getParameters().get(1).getName());
+		assertEquals(-123, mapProjection.getParameters().get(1).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT,
+				mapProjection.getParameters().get(1).getUnit().getType());
+		assertEquals("degree",
+				mapProjection.getParameters().get(1).getUnit().getName());
+		assertEquals(0.0174532925199433, mapProjection.getParameters().get(1)
+				.getUnit().getConversionFactor(), 0);
+		assertEquals("Scale factor at natural origin",
+				mapProjection.getParameters().get(2).getName());
+		assertEquals(0.9996, mapProjection.getParameters().get(2).getValue(),
+				0);
+		assertEquals(UnitType.SCALEUNIT,
+				mapProjection.getParameters().get(2).getUnit().getType());
+		assertEquals("unity",
+				mapProjection.getParameters().get(2).getUnit().getName());
+		assertEquals(1.0, mapProjection.getParameters().get(2).getUnit()
+				.getConversionFactor(), 0);
+		assertEquals("False easting",
+				mapProjection.getParameters().get(3).getName());
+		assertEquals(500000, mapProjection.getParameters().get(3).getValue(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				mapProjection.getParameters().get(3).getUnit().getType());
+		assertEquals("metre",
+				mapProjection.getParameters().get(3).getUnit().getName());
+		assertEquals(1.0, mapProjection.getParameters().get(3).getUnit()
+				.getConversionFactor(), 0);
+		assertEquals("False northing",
+				mapProjection.getParameters().get(4).getName());
+		assertEquals(0, mapProjection.getParameters().get(4).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT,
+				mapProjection.getParameters().get(4).getUnit().getType());
+		assertEquals("metre",
+				mapProjection.getParameters().get(4).getUnit().getName());
+		assertEquals(1.0, mapProjection.getParameters().get(4).getUnit()
+				.getConversionFactor(), 0);
+		assertEquals("EPSG", mapProjection.getIdentifiers().get(0).getName());
+		assertEquals("16010",
+				mapProjection.getIdentifiers().get(0).getUniqueIdentifier());
+		reader.close();
+		assertEquals(
+				text.replaceAll(",0,", ",0.0,").replaceAll("-123", "-123.0")
+						.replaceAll("500000", "500000.0"),
+				mapProjection.toString());
+
+	}
+
+	/**
+	 * Test projected geographic coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testProjectedGeographicCoordinateReferenceSystem()
+			throws IOException {
+		// TODO
 	}
 
 }
