@@ -35,6 +35,16 @@ public class DateTime {
 	public static final String UTC = "Z";
 
 	/**
+	 * Plus Sign
+	 */
+	public static final String PLUS_SIGN = "+";
+
+	/**
+	 * Minus Sign
+	 */
+	public static final String MINUS_SIGN = "-";
+
+	/**
 	 * Parse the text into a Date Time
 	 * 
 	 * @param text
@@ -88,9 +98,9 @@ public class DateTime {
 
 				int zoneIndex = timeWithZone.indexOf(UTC);
 				if (zoneIndex == -1) {
-					zoneIndex = timeWithZone.indexOf("+");
+					zoneIndex = timeWithZone.indexOf(PLUS_SIGN);
 					if (zoneIndex == -1) {
-						zoneIndex = timeWithZone.indexOf("-");
+						zoneIndex = timeWithZone.indexOf(MINUS_SIGN);
 					}
 				}
 				if (zoneIndex != -1) {
@@ -620,9 +630,9 @@ public class DateTime {
 			} else {
 				int timeZoneHour = getTimeZoneHour();
 				if (timeZoneHour >= 0) {
-					text.append("+");
+					text.append(PLUS_SIGN);
 				} else {
-					text.append("-");
+					text.append(MINUS_SIGN);
 					timeZoneHour *= -1;
 				}
 				text.append(String.format("%02d", timeZoneHour));
