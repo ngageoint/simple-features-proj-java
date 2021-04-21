@@ -128,6 +128,71 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read a Projected Coordinate Reference System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Projected Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static ProjectedCoordinateReferenceSystem readProjected(String text)
+			throws IOException {
+		ProjectedCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readProjected();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
+	 * Read a Projected Geodetic Coordinate Reference System from the well-known
+	 * text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Projected Geodetic Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static ProjectedCoordinateReferenceSystem readProjectedGeodetic(
+			String text) throws IOException {
+		ProjectedCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readProjectedGeodetic();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
+	 * Read a Projected Geographic Coordinate Reference System from the
+	 * well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Projected Geographic Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static ProjectedCoordinateReferenceSystem readProjectedGeographic(
+			String text) throws IOException {
+		ProjectedCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readProjectedGeographic();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
 	 * Text Reader
 	 */
 	private TextReader reader;

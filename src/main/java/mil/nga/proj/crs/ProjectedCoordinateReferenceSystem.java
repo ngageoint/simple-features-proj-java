@@ -66,7 +66,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * Constructor
 	 */
 	public ProjectedCoordinateReferenceSystem() {
-
+		setType(CoordinateReferenceSystemType.PROJECTED);
 	}
 
 	/**

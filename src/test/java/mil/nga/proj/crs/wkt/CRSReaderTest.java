@@ -28,6 +28,7 @@ import mil.nga.proj.crs.GeographicBoundingBox;
 import mil.nga.proj.crs.Identifier;
 import mil.nga.proj.crs.MapProjection;
 import mil.nga.proj.crs.PrimeMeridian;
+import mil.nga.proj.crs.ProjectedCoordinateReferenceSystem;
 import mil.nga.proj.crs.TemporalExtent;
 import mil.nga.proj.crs.Unit;
 import mil.nga.proj.crs.UnitType;
@@ -1870,7 +1871,576 @@ public class CRSReaderTest {
 	@Test
 	public void testProjectedGeographicCoordinateReferenceSystem()
 			throws IOException {
-		// TODO
+
+		String text = "PROJCRS[\"ETRS89 Lambert Azimuthal Equal Area CRS\",BASEGEOGCRS[\"ETRS89\","
+				+ "DATUM[\"ETRS89\","
+				+ "ELLIPSOID[\"GRS 80\",6378137,298.257222101,LENGTHUNIT[\"metre\",1.0]]"
+				+ "],ID[\"EuroGeographics\",\"ETRS89-LatLon\"]],"
+				+ "CONVERSION[\"LAEA\","
+				+ "METHOD[\"Lambert Azimuthal Equal Area\",ID[\"EPSG\",9820]],"
+				+ "PARAMETER[\"Latitude of origin\",52.0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"Longitude of origin\",10.0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"False easting\",4321000.0,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"False northing\",3210000.0,LENGTHUNIT[\"metre\",1.0]]"
+				+ "],CS[Cartesian,2],AXIS[\"(Y)\",north,ORDER[1]],"
+				+ "AXIS[\"(X)\",east,ORDER[2]],LENGTHUNIT[\"metre\",1.0],"
+				+ "USAGE[SCOPE[\"Description of a purpose\"],AREA[\"An area description\"]],"
+				+ "ID[\"EuroGeographics\",\"ETRS-LAEA\"]]";
+
+		CoordinateReferenceSystem crs = CRSReader.readCRS(text);
+		ProjectedCoordinateReferenceSystem projectedCrs = CRSReader
+				.readProjected(text);
+		assertEquals(crs, projectedCrs);
+		ProjectedCoordinateReferenceSystem projectedGeographicCrs = CRSReader
+				.readProjectedGeographic(text);
+		assertEquals(crs, projectedGeographicCrs);
+		assertEquals(CoordinateReferenceSystemType.PROJECTED,
+				projectedGeographicCrs.getType());
+		assertEquals("ETRS89 Lambert Azimuthal Equal Area CRS",
+				projectedGeographicCrs.getName());
+		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
+				projectedGeographicCrs.getBaseType());
+		assertEquals("ETRS89", projectedGeographicCrs.getBaseName());
+		assertEquals("ETRS89",
+				projectedGeographicCrs.getGeodeticReferenceFrame().getName());
+		assertEquals("GRS 80", projectedGeographicCrs
+				.getGeodeticReferenceFrame().getEllipsoid().getName());
+		assertEquals(6378137, projectedGeographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(298.257222101,
+				projectedGeographicCrs.getGeodeticReferenceFrame()
+						.getEllipsoid().getInverseFlattening(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				projectedGeographicCrs.getGeodeticReferenceFrame()
+						.getEllipsoid().getLengthUnit().getType());
+		assertEquals("metre", projectedGeographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getLengthUnit().getName());
+		assertEquals(1.0,
+				projectedGeographicCrs.getGeodeticReferenceFrame()
+						.getEllipsoid().getLengthUnit().getConversionFactor(),
+				0);
+		assertEquals("EuroGeographics",
+				projectedGeographicCrs.getBaseIdentifiers().get(0).getName());
+		assertEquals("ETRS89-LatLon", projectedGeographicCrs
+				.getBaseIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("LAEA",
+				projectedGeographicCrs.getMapProjection().getName());
+		assertEquals("Lambert Azimuthal Equal Area",
+				projectedGeographicCrs.getMapProjection().getMethodName());
+		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
+				.getMethodIdentifiers().get(0).getName());
+		assertEquals("9820", projectedGeographicCrs.getMapProjection()
+				.getMethodIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Latitude of origin", projectedGeographicCrs
+				.getMapProjection().getParameters().get(0).getName());
+		assertEquals(52.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(0).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(0).getUnit().getType());
+		assertEquals("degree", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(0).getUnit().getName());
+		assertEquals(
+				0.0174532925199433, projectedGeographicCrs.getMapProjection()
+						.getParameters().get(0).getUnit().getConversionFactor(),
+				0);
+		assertEquals("Longitude of origin", projectedGeographicCrs
+				.getMapProjection().getParameters().get(1).getName());
+		assertEquals(10.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(1).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(1).getUnit().getType());
+		assertEquals("degree", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(1).getUnit().getName());
+		assertEquals(
+				0.0174532925199433, projectedGeographicCrs.getMapProjection()
+						.getParameters().get(1).getUnit().getConversionFactor(),
+				0);
+		assertEquals("False easting", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(2).getName());
+		assertEquals(4321000.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(2).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(2).getUnit().getType());
+		assertEquals("metre", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(2).getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(2).getUnit().getConversionFactor(), 0);
+		assertEquals("False northing", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(3).getName());
+		assertEquals(3210000.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(3).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(3).getUnit().getType());
+		assertEquals("metre", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(3).getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(3).getUnit().getConversionFactor(), 0);
+		assertEquals(CoordinateSystemType.CARTESIAN,
+				projectedGeographicCrs.getCoordinateSystem().getType());
+		assertEquals(2,
+				projectedGeographicCrs.getCoordinateSystem().getDimension());
+		assertEquals("Y", projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(0).getAbbreviation());
+		assertEquals(AxisDirectionType.NORTH, projectedGeographicCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals(1, projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(0).getOrder().intValue());
+		assertEquals("X", projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(1).getAbbreviation());
+		assertEquals(AxisDirectionType.EAST, projectedGeographicCrs
+				.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals(2, projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(1).getOrder().intValue());
+		assertEquals(UnitType.LENGTHUNIT, projectedGeographicCrs
+				.getCoordinateSystem().getUnit().getType());
+		assertEquals("metre", projectedGeographicCrs.getCoordinateSystem()
+				.getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+		assertEquals("Description of a purpose",
+				projectedGeographicCrs.getUsages().get(0).getScope());
+		assertEquals("An area description", projectedGeographicCrs.getUsages()
+				.get(0).getExtent().getAreaDescription());
+		assertEquals("EuroGeographics",
+				projectedGeographicCrs.getIdentifiers().get(0).getName());
+		assertEquals("ETRS-LAEA", projectedGeographicCrs.getIdentifiers().get(0)
+				.getUniqueIdentifier());
+		text = text.replaceAll("6378137", "6378137.0");
+		assertEquals(text, projectedGeographicCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(projectedGeographicCrs));
+
+		text = "PROJCRS[\"NAD27 / Texas South Central\","
+				+ "BASEGEOGCRS[\"NAD27\","
+				+ "DATUM[\"North American Datum 1927\","
+				+ "ELLIPSOID[\"Clarke 1866\",20925832.164,294.97869821,"
+				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219]]]],"
+				+ "CONVERSION[\"Texas South Central SPCS27\","
+				+ "METHOD[\"Lambert Conic Conformal (2SP)\",ID[\"EPSG\",9802]],"
+				+ "PARAMETER[\"Latitude of false origin\",27.83333333333333,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8821]],"
+				+ "PARAMETER[\"Longitude of false origin\",-99.0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8822]],"
+				+ "PARAMETER[\"Latitude of 1st standard parallel\",28.383333333333,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8823]],"
+				+ "PARAMETER[\"Latitude of 2nd standard parallel\",30.283333333333,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8824]],"
+				+ "PARAMETER[\"Easting at false origin\",2000000.0,"
+				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219],ID[\"EPSG\",8826]],"
+				+ "PARAMETER[\"Northing at false origin\",0.0,"
+				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219],ID[\"EPSG\",8827]]],"
+				+ "CS[Cartesian,2]," + "AXIS[\"(X)\",east],"
+				+ "AXIS[\"(Y)\",north],"
+				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219],"
+				+ "REMARK[\"Fundamental point: Meade's Ranch KS, latitude 39°13'26.686\"\"N,"
+				+ "longitude 98°32'30.506\"\"W.\"]]";
+
+		crs = CRSReader.readCRS(text);
+		projectedCrs = CRSReader.readProjected(text);
+		assertEquals(crs, projectedCrs);
+		projectedGeographicCrs = CRSReader.readProjectedGeographic(text);
+		assertEquals(crs, projectedGeographicCrs);
+		assertEquals(CoordinateReferenceSystemType.PROJECTED,
+				projectedGeographicCrs.getType());
+		assertEquals("NAD27 / Texas South Central",
+				projectedGeographicCrs.getName());
+		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
+				projectedGeographicCrs.getBaseType());
+		assertEquals("NAD27", projectedGeographicCrs.getBaseName());
+		assertEquals("North American Datum 1927",
+				projectedGeographicCrs.getGeodeticReferenceFrame().getName());
+		assertEquals("Clarke 1866", projectedGeographicCrs
+				.getGeodeticReferenceFrame().getEllipsoid().getName());
+		assertEquals(20925832.164, projectedGeographicCrs
+				.getGeodeticReferenceFrame().getEllipsoid().getSemiMajorAxis(),
+				0);
+		assertEquals(294.97869821,
+				projectedGeographicCrs.getGeodeticReferenceFrame()
+						.getEllipsoid().getInverseFlattening(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				projectedGeographicCrs.getGeodeticReferenceFrame()
+						.getEllipsoid().getLengthUnit().getType());
+		assertEquals("US survey foot",
+				projectedGeographicCrs.getGeodeticReferenceFrame()
+						.getEllipsoid().getLengthUnit().getName());
+		assertEquals(0.304800609601219,
+				projectedGeographicCrs.getGeodeticReferenceFrame()
+						.getEllipsoid().getLengthUnit().getConversionFactor(),
+				0);
+		assertEquals("Texas South Central SPCS27",
+				projectedGeographicCrs.getMapProjection().getName());
+		assertEquals("Lambert Conic Conformal (2SP)",
+				projectedGeographicCrs.getMapProjection().getMethodName());
+		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
+				.getMethodIdentifiers().get(0).getName());
+		assertEquals("9802", projectedGeographicCrs.getMapProjection()
+				.getMethodIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Latitude of false origin", projectedGeographicCrs
+				.getMapProjection().getParameters().get(0).getName());
+		assertEquals(27.83333333333333, projectedGeographicCrs
+				.getMapProjection().getParameters().get(0).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(0).getUnit().getType());
+		assertEquals("degree", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(0).getUnit().getName());
+		assertEquals(
+				0.0174532925199433, projectedGeographicCrs.getMapProjection()
+						.getParameters().get(0).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(0).getIdentifiers().get(0).getName());
+		assertEquals("8821",
+				projectedGeographicCrs.getMapProjection().getParameters().get(0)
+						.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Longitude of false origin", projectedGeographicCrs
+				.getMapProjection().getParameters().get(1).getName());
+		assertEquals(-99.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(1).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(1).getUnit().getType());
+		assertEquals("degree", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(1).getUnit().getName());
+		assertEquals(
+				0.0174532925199433, projectedGeographicCrs.getMapProjection()
+						.getParameters().get(1).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(1).getIdentifiers().get(0).getName());
+		assertEquals("8822",
+				projectedGeographicCrs.getMapProjection().getParameters().get(1)
+						.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Latitude of 1st standard parallel", projectedGeographicCrs
+				.getMapProjection().getParameters().get(2).getName());
+		assertEquals(28.383333333333, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(2).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(2).getUnit().getType());
+		assertEquals("degree", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(2).getUnit().getName());
+		assertEquals(
+				0.0174532925199433, projectedGeographicCrs.getMapProjection()
+						.getParameters().get(2).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(2).getIdentifiers().get(0).getName());
+		assertEquals("8823",
+				projectedGeographicCrs.getMapProjection().getParameters().get(2)
+						.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Latitude of 2nd standard parallel", projectedGeographicCrs
+				.getMapProjection().getParameters().get(3).getName());
+		assertEquals(30.283333333333, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(3).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(3).getUnit().getType());
+		assertEquals("degree", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(3).getUnit().getName());
+		assertEquals(
+				0.0174532925199433, projectedGeographicCrs.getMapProjection()
+						.getParameters().get(3).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(3).getIdentifiers().get(0).getName());
+		assertEquals("8824",
+				projectedGeographicCrs.getMapProjection().getParameters().get(3)
+						.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Easting at false origin", projectedGeographicCrs
+				.getMapProjection().getParameters().get(4).getName());
+		assertEquals(2000000.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(4).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(4).getUnit().getType());
+		assertEquals("US survey foot", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(4).getUnit().getName());
+		assertEquals(
+				0.304800609601219, projectedGeographicCrs.getMapProjection()
+						.getParameters().get(4).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(4).getIdentifiers().get(0).getName());
+		assertEquals("8826",
+				projectedGeographicCrs.getMapProjection().getParameters().get(4)
+						.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Northing at false origin", projectedGeographicCrs
+				.getMapProjection().getParameters().get(5).getName());
+		assertEquals(0.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(5).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(5).getUnit().getType());
+		assertEquals("US survey foot", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(5).getUnit().getName());
+		assertEquals(
+				0.304800609601219, projectedGeographicCrs.getMapProjection()
+						.getParameters().get(5).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(5).getIdentifiers().get(0).getName());
+		assertEquals("8827",
+				projectedGeographicCrs.getMapProjection().getParameters().get(5)
+						.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals(CoordinateSystemType.CARTESIAN,
+				projectedGeographicCrs.getCoordinateSystem().getType());
+		assertEquals(2,
+				projectedGeographicCrs.getCoordinateSystem().getDimension());
+		assertEquals("X", projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(0).getAbbreviation());
+		assertEquals(AxisDirectionType.EAST, projectedGeographicCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals("Y", projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(1).getAbbreviation());
+		assertEquals(AxisDirectionType.NORTH, projectedGeographicCrs
+				.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals(UnitType.LENGTHUNIT, projectedGeographicCrs
+				.getCoordinateSystem().getUnit().getType());
+		assertEquals("US survey foot", projectedGeographicCrs
+				.getCoordinateSystem().getUnit().getName());
+		assertEquals(0.304800609601219, projectedGeographicCrs
+				.getCoordinateSystem().getUnit().getConversionFactor(), 0);
+		assertEquals(
+				"Fundamental point: Meade's Ranch KS, latitude 39°13'26.686\"N,longitude 98°32'30.506\"W.",
+				projectedGeographicCrs.getRemark());
+		text = text.replaceAll("20925832.164", "2.0925832164E7");
+		assertEquals(text, projectedGeographicCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(projectedGeographicCrs));
+
+		text = "PROJCRS[\"NAD83 UTM 10\"," + "BASEGEOGCRS[\"NAD83(86)\","
+				+ "DATUM[\"North American Datum 1983\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137,298.257222101]],"
+				+ "PRIMEM[\"Greenwich\",0]]," + "CONVERSION[\"UTM zone 10N\","
+				+ "METHOD[\"Transverse Mercator\"],"
+				+ "PARAMETER[\"Latitude of natural origin\",0.0],"
+				+ "PARAMETER[\"Longitude of natural origin\",-123.0],"
+				+ "PARAMETER[\"Scale factor\",0.9996],"
+				+ "PARAMETER[\"False easting\",500000.0],"
+				+ "PARAMETER[\"False northing\",0.0]," + "ID[\"EPSG\",16010]],"
+				+ "CS[Cartesian,2]," + "AXIS[\"(E)\",east,ORDER[1]],"
+				+ "AXIS[\"(N)\",north,ORDER[2]]," + "LENGTHUNIT[\"metre\",1.0],"
+				+ "REMARK[\"In this example parameter value units are not given. This is allowed for backward compatibility. However it is strongly recommended that units are explicitly given in the string, as in the previous two examples.\"]]";
+
+		crs = CRSReader.readCRS(text);
+		projectedCrs = CRSReader.readProjected(text);
+		assertEquals(crs, projectedCrs);
+		projectedGeographicCrs = CRSReader.readProjectedGeographic(text);
+		assertEquals(crs, projectedGeographicCrs);
+		assertEquals(CoordinateReferenceSystemType.PROJECTED,
+				projectedGeographicCrs.getType());
+		assertEquals("NAD83 UTM 10", projectedGeographicCrs.getName());
+		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
+				projectedGeographicCrs.getBaseType());
+		assertEquals("NAD83(86)", projectedGeographicCrs.getBaseName());
+		assertEquals("North American Datum 1983",
+				projectedGeographicCrs.getGeodeticReferenceFrame().getName());
+		assertEquals("GRS 1980", projectedGeographicCrs
+				.getGeodeticReferenceFrame().getEllipsoid().getName());
+		assertEquals(6378137, projectedGeographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(298.257222101,
+				projectedGeographicCrs.getGeodeticReferenceFrame()
+						.getEllipsoid().getInverseFlattening(),
+				0);
+		assertEquals("Greenwich", projectedGeographicCrs
+				.getGeodeticReferenceFrame().getPrimeMeridian().getName());
+		assertEquals(0, projectedGeographicCrs.getGeodeticReferenceFrame()
+				.getPrimeMeridian().getIrmLongitude(), 0);
+		assertEquals("UTM zone 10N",
+				projectedGeographicCrs.getMapProjection().getName());
+		assertEquals("Transverse Mercator",
+				projectedGeographicCrs.getMapProjection().getMethodName());
+		assertEquals("Latitude of natural origin", projectedGeographicCrs
+				.getMapProjection().getParameters().get(0).getName());
+		assertEquals(0.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(0).getValue(), 0);
+		assertEquals("Longitude of natural origin", projectedGeographicCrs
+				.getMapProjection().getParameters().get(1).getName());
+		assertEquals(-123.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(1).getValue(), 0);
+		assertEquals("Scale factor", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(2).getName());
+		assertEquals(0.9996, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(2).getValue(), 0);
+		assertEquals("False easting", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(3).getName());
+		assertEquals(500000.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(3).getValue(), 0);
+		assertEquals("False northing", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(4).getName());
+		assertEquals(0.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(4).getValue(), 0);
+		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
+				.getIdentifiers().get(0).getName());
+		assertEquals("16010", projectedGeographicCrs.getMapProjection()
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals(CoordinateSystemType.CARTESIAN,
+				projectedGeographicCrs.getCoordinateSystem().getType());
+		assertEquals(2,
+				projectedGeographicCrs.getCoordinateSystem().getDimension());
+		assertEquals("E", projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(0).getAbbreviation());
+		assertEquals(AxisDirectionType.EAST, projectedGeographicCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals(1, projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(0).getOrder().intValue());
+		assertEquals("N", projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(1).getAbbreviation());
+		assertEquals(AxisDirectionType.NORTH, projectedGeographicCrs
+				.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals(2, projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(1).getOrder().intValue());
+		assertEquals(UnitType.LENGTHUNIT, projectedGeographicCrs
+				.getCoordinateSystem().getUnit().getType());
+		assertEquals("metre", projectedGeographicCrs.getCoordinateSystem()
+				.getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+		assertEquals(
+				"In this example parameter value units are not given. This is allowed for backward compatibility. However it is strongly recommended that units are explicitly given in the string, as in the previous two examples.",
+				projectedGeographicCrs.getRemark());
+		text = text.replaceAll("6378137", "6378137.0").replace(",0]", ",0.0]");
+		assertEquals(text, projectedGeographicCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(projectedGeographicCrs));
+
+		text = "PROJCRS[\"WGS 84 (G1762) / UTM zone 31N 3D\",BASEGEOGCRS[\"WGS 84\","
+				+ "DATUM[\"World Geodetic System of 1984 (G1762)\","
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1.0]]]],"
+				+ "CONVERSION[\"UTM zone 31N 3D\","
+				+ "METHOD[\"Transverse Mercator (3D)\"],"
+				+ "PARAMETER[\"Latitude of origin\",0.0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"Longitude of origin\",3.0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"Scale factor\",0.9996,SCALEUNIT[\"unity\",1.0]],"
+				+ "PARAMETER[\"False easting\",500000.0,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"False northing\",0.0,LENGTHUNIT[\"metre\",1.0]]],"
+				+ "CS[Cartesian,3]," + "AXIS[\"(E)\",east,ORDER[1]],"
+				+ "AXIS[\"(N)\",north,ORDER[2]],"
+				+ "AXIS[\"ellipsoidal height (h)\",up,ORDER[3]],"
+				+ "LENGTHUNIT[\"metre\",1.0]]";
+
+		crs = CRSReader.readCRS(text);
+		projectedCrs = CRSReader.readProjected(text);
+		assertEquals(crs, projectedCrs);
+		projectedGeographicCrs = CRSReader.readProjectedGeographic(text);
+		assertEquals(crs, projectedGeographicCrs);
+		assertEquals(CoordinateReferenceSystemType.PROJECTED,
+				projectedGeographicCrs.getType());
+		assertEquals("WGS 84 (G1762) / UTM zone 31N 3D",
+				projectedGeographicCrs.getName());
+		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
+				projectedGeographicCrs.getBaseType());
+		assertEquals("WGS 84", projectedGeographicCrs.getBaseName());
+		assertEquals("World Geodetic System of 1984 (G1762)",
+				projectedGeographicCrs.getGeodeticReferenceFrame().getName());
+		assertEquals("WGS 84", projectedGeographicCrs
+				.getGeodeticReferenceFrame().getEllipsoid().getName());
+		assertEquals(6378137, projectedGeographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(298.257223563,
+				projectedGeographicCrs.getGeodeticReferenceFrame()
+						.getEllipsoid().getInverseFlattening(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				projectedGeographicCrs.getGeodeticReferenceFrame()
+						.getEllipsoid().getLengthUnit().getType());
+		assertEquals("metre", projectedGeographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getLengthUnit().getName());
+		assertEquals(1.0,
+				projectedGeographicCrs.getGeodeticReferenceFrame()
+						.getEllipsoid().getLengthUnit().getConversionFactor(),
+				0);
+		assertEquals("UTM zone 31N 3D",
+				projectedGeographicCrs.getMapProjection().getName());
+		assertEquals("Transverse Mercator (3D)",
+				projectedGeographicCrs.getMapProjection().getMethodName());
+		assertEquals("Latitude of origin", projectedGeographicCrs
+				.getMapProjection().getParameters().get(0).getName());
+		assertEquals(0.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(0).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(0).getUnit().getType());
+		assertEquals("degree", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(0).getUnit().getName());
+		assertEquals(
+				0.0174532925199433, projectedGeographicCrs.getMapProjection()
+						.getParameters().get(0).getUnit().getConversionFactor(),
+				0);
+		assertEquals("Longitude of origin", projectedGeographicCrs
+				.getMapProjection().getParameters().get(1).getName());
+		assertEquals(3.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(1).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(1).getUnit().getType());
+		assertEquals("degree", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(1).getUnit().getName());
+		assertEquals(
+				0.0174532925199433, projectedGeographicCrs.getMapProjection()
+						.getParameters().get(1).getUnit().getConversionFactor(),
+				0);
+		assertEquals("Scale factor", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(2).getName());
+		assertEquals(0.9996, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(2).getValue(), 0);
+		assertEquals(UnitType.SCALEUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(2).getUnit().getType());
+		assertEquals("unity", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(2).getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(2).getUnit().getConversionFactor(), 0);
+		assertEquals("False easting", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(3).getName());
+		assertEquals(500000.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(3).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(3).getUnit().getType());
+		assertEquals("metre", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(3).getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(3).getUnit().getConversionFactor(), 0);
+		assertEquals("False northing", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(4).getName());
+		assertEquals(0.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(4).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT, projectedGeographicCrs
+				.getMapProjection().getParameters().get(4).getUnit().getType());
+		assertEquals("metre", projectedGeographicCrs.getMapProjection()
+				.getParameters().get(4).getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getMapProjection()
+				.getParameters().get(4).getUnit().getConversionFactor(), 0);
+		assertEquals(CoordinateSystemType.CARTESIAN,
+				projectedGeographicCrs.getCoordinateSystem().getType());
+		assertEquals(3,
+				projectedGeographicCrs.getCoordinateSystem().getDimension());
+		assertEquals("E", projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(0).getAbbreviation());
+		assertEquals(AxisDirectionType.EAST, projectedGeographicCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals(1, projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(0).getOrder().intValue());
+		assertEquals("N", projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(1).getAbbreviation());
+		assertEquals(AxisDirectionType.NORTH, projectedGeographicCrs
+				.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals(2, projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(1).getOrder().intValue());
+		assertEquals("ellipsoidal height", projectedGeographicCrs
+				.getCoordinateSystem().getAxes().get(2).getName());
+		assertEquals("h", projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(2).getAbbreviation());
+		assertEquals(AxisDirectionType.UP, projectedGeographicCrs
+				.getCoordinateSystem().getAxes().get(2).getDirection());
+		assertEquals(3, projectedGeographicCrs.getCoordinateSystem().getAxes()
+				.get(2).getOrder().intValue());
+		assertEquals(UnitType.LENGTHUNIT, projectedGeographicCrs
+				.getCoordinateSystem().getUnit().getType());
+		assertEquals("metre", projectedGeographicCrs.getCoordinateSystem()
+				.getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+		text = text.replaceAll("6378137", "6378137.0");
+		assertEquals(text, projectedGeographicCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(projectedGeographicCrs));
+
 	}
 
 }

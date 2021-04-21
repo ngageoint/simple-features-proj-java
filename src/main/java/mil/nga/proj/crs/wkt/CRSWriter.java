@@ -133,6 +133,9 @@ public class CRSWriter implements Closeable {
 		case GEOGRAPHIC:
 			write((GeodeticCoordinateReferenceSystem) crs);
 			break;
+		case PROJECTED:
+			write((ProjectedCoordinateReferenceSystem) crs);
+			break;
 		default:
 			throw new ProjectionException(
 					"Unsupported CRS type: " + crs.getType());
@@ -193,7 +196,7 @@ public class CRSWriter implements Closeable {
 	 */
 	public void writeQuotedText(String text) throws IOException {
 		writer.write("\"");
-		writer.write(text);
+		writer.write(text.replaceAll("\"", "\"\""));
 		writer.write("\"");
 	}
 
