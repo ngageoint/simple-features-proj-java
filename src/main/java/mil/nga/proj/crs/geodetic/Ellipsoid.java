@@ -1,4 +1,4 @@
-package mil.nga.proj.crs;
+package mil.nga.proj.crs.geodetic;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,35 +6,42 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mil.nga.proj.crs.common.Identifier;
+import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
- * Geodetic Reference Frame (datum)
+ * Ellipsoid
  * 
  * @author osbornb
  */
-public class GeodeticReferenceFrame {
+public class Ellipsoid {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger logger = Logger
-			.getLogger(GeodeticReferenceFrame.class.getName());
+			.getLogger(Ellipsoid.class.getName());
 
 	/**
-	 * Datum Name
+	 * Name
 	 */
 	private String name = null;
 
 	/**
-	 * Ellipsoid
+	 * Semi Major Axis
 	 */
-	private Ellipsoid ellipsoid = null;
+	private double semiMajorAxis;
 
 	/**
-	 * Datum anchor description
+	 * Inverse Flattening
 	 */
-	private String anchor = null;
+	private double inverseFlattening;
+
+	/**
+	 * Length Unit
+	 */
+	private Unit lengthUnit = null;
 
 	/**
 	 * Identifiers
@@ -42,14 +49,9 @@ public class GeodeticReferenceFrame {
 	private List<Identifier> identifiers = null;
 
 	/**
-	 * Prime Meridian
-	 */
-	private PrimeMeridian primeMeridian = null;
-
-	/**
 	 * Constructor
 	 */
-	public GeodeticReferenceFrame() {
+	public Ellipsoid() {
 
 	}
 
@@ -58,78 +60,101 @@ public class GeodeticReferenceFrame {
 	 * 
 	 * @param name
 	 *            name
-	 * @param ellipsoid
-	 *            ellipsoid
+	 * @param semiMajorAxis
+	 *            semi major axis
+	 * @param inverseFlattening
+	 *            inverse flattening
 	 */
-	public GeodeticReferenceFrame(String name, Ellipsoid ellipsoid) {
+	public Ellipsoid(String name, double semiMajorAxis,
+			double inverseFlattening) {
 		setName(name);
-		setEllipsoid(ellipsoid);
+		setSemiMajorAxis(semiMajorAxis);
+		setInverseFlattening(inverseFlattening);
 	}
 
 	/**
-	 * Get the datum name
+	 * Get the name
 	 * 
-	 * @return datum name
+	 * @return name
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * Set the datum name
+	 * Set the name
 	 * 
 	 * @param name
-	 *            datum name
+	 *            name
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/**
-	 * Get the ellipsoid
+	 * Get the semi major axis
 	 * 
-	 * @return ellipsoid
+	 * @return semi major axis
 	 */
-	public Ellipsoid getEllipsoid() {
-		return ellipsoid;
+	public double getSemiMajorAxis() {
+		return semiMajorAxis;
 	}
 
 	/**
-	 * Set the ellipsoid
+	 * Set the semi major axis
 	 * 
-	 * @param ellipsoid
-	 *            ellipsoid
+	 * @param semiMajorAxis
+	 *            semi major axis
 	 */
-	public void setEllipsoid(Ellipsoid ellipsoid) {
-		this.ellipsoid = ellipsoid;
+	public void setSemiMajorAxis(double semiMajorAxis) {
+		this.semiMajorAxis = semiMajorAxis;
 	}
 
 	/**
-	 * Get the datum anchor description
+	 * Get the inverse flattening
 	 * 
-	 * @return datum anchor description
+	 * @return inverse flattening
 	 */
-	public String getAnchor() {
-		return anchor;
+	public double getInverseFlattening() {
+		return inverseFlattening;
 	}
 
 	/**
-	 * Has a datum anchor description
+	 * Set the inverse flattening
 	 * 
-	 * @return true if has datum anchor description
+	 * @param inverseFlattening
+	 *            inverse flattening
 	 */
-	public boolean hasAnchor() {
-		return getAnchor() != null;
+	public void setInverseFlattening(double inverseFlattening) {
+		this.inverseFlattening = inverseFlattening;
 	}
 
 	/**
-	 * Set the datum anchor description
+	 * Get the length unit
 	 * 
-	 * @param anchor
-	 *            datum anchor description
+	 * @return length unit
 	 */
-	public void setAnchor(String anchor) {
-		this.anchor = anchor;
+	public Unit getLengthUnit() {
+		return lengthUnit;
+	}
+
+	/**
+	 * Has a length unit
+	 * 
+	 * @return true if has length unit
+	 */
+	public boolean hasLengthUnit() {
+		return getLengthUnit() != null;
+	}
+
+	/**
+	 * Set the length unit
+	 * 
+	 * @param lengthUnit
+	 *            length unit
+	 */
+	public void setLengthUnit(Unit lengthUnit) {
+		this.lengthUnit = lengthUnit;
 	}
 
 	/**
@@ -187,48 +212,22 @@ public class GeodeticReferenceFrame {
 	}
 
 	/**
-	 * Get the prime meridian
-	 * 
-	 * @return prime meridian
-	 */
-	public PrimeMeridian getPrimeMeridian() {
-		return primeMeridian;
-	}
-
-	/**
-	 * Has a prime meridian
-	 * 
-	 * @return true if has prime meridian
-	 */
-	public boolean hasPrimeMeridian() {
-		return getPrimeMeridian() != null;
-	}
-
-	/**
-	 * Set the prime meridian
-	 * 
-	 * @param primeMeridian
-	 *            prime meridian
-	 */
-	public void setPrimeMeridian(PrimeMeridian primeMeridian) {
-		this.primeMeridian = primeMeridian;
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((anchor == null) ? 0 : anchor.hashCode());
-		result = prime * result
-				+ ((ellipsoid == null) ? 0 : ellipsoid.hashCode());
 		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(inverseFlattening);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
-				+ ((primeMeridian == null) ? 0 : primeMeridian.hashCode());
+				+ ((lengthUnit == null) ? 0 : lengthUnit.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		temp = Double.doubleToLongBits(semiMajorAxis);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -243,31 +242,27 @@ public class GeodeticReferenceFrame {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GeodeticReferenceFrame other = (GeodeticReferenceFrame) obj;
-		if (anchor == null) {
-			if (other.anchor != null)
-				return false;
-		} else if (!anchor.equals(other.anchor))
-			return false;
-		if (ellipsoid == null) {
-			if (other.ellipsoid != null)
-				return false;
-		} else if (!ellipsoid.equals(other.ellipsoid))
-			return false;
+		Ellipsoid other = (Ellipsoid) obj;
 		if (identifiers == null) {
 			if (other.identifiers != null)
 				return false;
 		} else if (!identifiers.equals(other.identifiers))
+			return false;
+		if (Double.doubleToLongBits(inverseFlattening) != Double
+				.doubleToLongBits(other.inverseFlattening))
+			return false;
+		if (lengthUnit == null) {
+			if (other.lengthUnit != null)
+				return false;
+		} else if (!lengthUnit.equals(other.lengthUnit))
 			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (primeMeridian == null) {
-			if (other.primeMeridian != null)
-				return false;
-		} else if (!primeMeridian.equals(other.primeMeridian))
+		if (Double.doubleToLongBits(semiMajorAxis) != Double
+				.doubleToLongBits(other.semiMajorAxis))
 			return false;
 		return true;
 	}
@@ -283,8 +278,8 @@ public class GeodeticReferenceFrame {
 			writer.write(this);
 			value = writer.toString();
 		} catch (IOException e) {
-			logger.log(Level.WARNING,
-					"Failed to write geodetic reference frame as a string", e);
+			logger.log(Level.WARNING, "Failed to write ellipsoid as a string",
+					e);
 			value = super.toString();
 		} finally {
 			writer.close();

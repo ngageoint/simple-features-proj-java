@@ -9,31 +9,35 @@ import java.util.List;
 import java.util.Set;
 
 import mil.nga.proj.ProjectionException;
-import mil.nga.proj.crs.Axis;
-import mil.nga.proj.crs.AxisDirectionType;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystemType;
-import mil.nga.proj.crs.CoordinateSystem;
-import mil.nga.proj.crs.CoordinateSystemType;
-import mil.nga.proj.crs.DatumEnsemble;
-import mil.nga.proj.crs.DatumEnsembleMember;
-import mil.nga.proj.crs.Dynamic;
-import mil.nga.proj.crs.Ellipsoid;
-import mil.nga.proj.crs.Extent;
-import mil.nga.proj.crs.GeodeticCoordinateReferenceSystem;
-import mil.nga.proj.crs.GeodeticDatumEnsemble;
-import mil.nga.proj.crs.GeodeticReferenceFrame;
-import mil.nga.proj.crs.GeographicBoundingBox;
-import mil.nga.proj.crs.Identifier;
-import mil.nga.proj.crs.MapProjection;
-import mil.nga.proj.crs.MapProjectionParameter;
-import mil.nga.proj.crs.PrimeMeridian;
-import mil.nga.proj.crs.ProjectedCoordinateReferenceSystem;
-import mil.nga.proj.crs.TemporalExtent;
-import mil.nga.proj.crs.Unit;
-import mil.nga.proj.crs.UnitType;
-import mil.nga.proj.crs.Usage;
-import mil.nga.proj.crs.VerticalExtent;
+import mil.nga.proj.crs.common.Axis;
+import mil.nga.proj.crs.common.AxisDirectionType;
+import mil.nga.proj.crs.common.CoordinateSystem;
+import mil.nga.proj.crs.common.CoordinateSystemType;
+import mil.nga.proj.crs.common.DatumEnsemble;
+import mil.nga.proj.crs.common.DatumEnsembleMember;
+import mil.nga.proj.crs.common.Dynamic;
+import mil.nga.proj.crs.common.Extent;
+import mil.nga.proj.crs.common.GeographicBoundingBox;
+import mil.nga.proj.crs.common.Identifier;
+import mil.nga.proj.crs.common.ReferenceFrame;
+import mil.nga.proj.crs.common.TemporalExtent;
+import mil.nga.proj.crs.common.Unit;
+import mil.nga.proj.crs.common.UnitType;
+import mil.nga.proj.crs.common.Usage;
+import mil.nga.proj.crs.common.VerticalExtent;
+import mil.nga.proj.crs.geodetic.Ellipsoid;
+import mil.nga.proj.crs.geodetic.GeodeticCoordinateReferenceSystem;
+import mil.nga.proj.crs.geodetic.GeodeticDatumEnsemble;
+import mil.nga.proj.crs.geodetic.GeodeticReferenceFrame;
+import mil.nga.proj.crs.geodetic.PrimeMeridian;
+import mil.nga.proj.crs.projected.MapProjection;
+import mil.nga.proj.crs.projected.MapProjectionParameter;
+import mil.nga.proj.crs.projected.ProjectedCoordinateReferenceSystem;
+import mil.nga.proj.crs.vertical.VerticalCoordinateReferenceSystem;
+import mil.nga.proj.crs.vertical.VerticalDatumEnsemble;
+import mil.nga.proj.crs.vertical.VerticalReferenceFrame;
 
 /**
  * Well Known Text reader
@@ -186,6 +190,27 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readProjectedGeographic();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
+	 * Read a Vertical Coordinate Reference System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Vertical Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static VerticalCoordinateReferenceSystem readVertical(String text)
+			throws IOException {
+		VerticalCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readVertical();
 		} finally {
 			reader.close();
 		}
@@ -849,7 +874,23 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
-	 * Read a Geodetic reference frame (datum)
+	 * Read a Vertical CRS
+	 * 
+	 * @return vertical coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public VerticalCoordinateReferenceSystem readVertical() throws IOException {
+
+		VerticalCoordinateReferenceSystem crs = new VerticalCoordinateReferenceSystem();
+
+		// TODO
+
+		return crs;
+	}
+
+	/**
+	 * Read a Geodetic reference frame
 	 * 
 	 * @return geodetic reference frame
 	 * @throws IOException
@@ -857,33 +898,83 @@ public class CRSReader implements Closeable {
 	 */
 	public GeodeticReferenceFrame readGeodeticReferenceFrame()
 			throws IOException {
+		ReferenceFrame referenceFrame = readReferenceFrame();
+		if (!(referenceFrame instanceof GeodeticReferenceFrame)) {
+			throw new ProjectionException(
+					"Reference frame was not an expected Geodetic Reference Frame");
+		}
+		return (GeodeticReferenceFrame) referenceFrame;
+	}
 
-		GeodeticReferenceFrame geodeticReferenceFrame = new GeodeticReferenceFrame();
+	/**
+	 * Read a Vertical reference frame
+	 * 
+	 * @return vertical reference frame
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public VerticalReferenceFrame readVerticalReferenceFrame()
+			throws IOException {
+		ReferenceFrame referenceFrame = readReferenceFrame();
+		if (!(referenceFrame instanceof VerticalReferenceFrame)) {
+			throw new ProjectionException(
+					"Reference frame was not an expected Vertical Reference Frame");
+		}
+		return (VerticalReferenceFrame) referenceFrame;
+	}
 
-		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.DATUM);
+	/**
+	 * Read a Reference frame (datum)
+	 * 
+	 * @return reference frame
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ReferenceFrame readReferenceFrame() throws IOException {
+
+		ReferenceFrame referenceFrame = null;
+		GeodeticReferenceFrame geodeticReferenceFrame = null;
+
+		CoordinateReferenceSystemKeyword type = readKeyword();
+		validateKeyword(type, CoordinateReferenceSystemKeyword.DATUM,
+				CoordinateReferenceSystemKeyword.VDATUM);
+		switch (type) {
+		case DATUM:
+			geodeticReferenceFrame = new GeodeticReferenceFrame();
+			referenceFrame = geodeticReferenceFrame;
+			break;
+		case VDATUM:
+			referenceFrame = new VerticalReferenceFrame();
+			break;
+		default:
+			throw new ProjectionException(
+					"Unexpected Reference Frame type: " + type);
+		}
 
 		readLeftDelimiter();
 
-		geodeticReferenceFrame.setName(reader.readExpectedToken());
+		referenceFrame.setName(reader.readExpectedToken());
 
-		readSeparator();
-
-		geodeticReferenceFrame.setEllipsoid(readEllipsoid());
+		if (geodeticReferenceFrame != null) {
+			readSeparator();
+			geodeticReferenceFrame.setEllipsoid(readEllipsoid());
+		}
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.ANCHOR)) {
 			readSeparator();
-			geodeticReferenceFrame.setAnchor(readKeywordDelimitedToken(
+			referenceFrame.setAnchor(readKeywordDelimitedToken(
 					CoordinateReferenceSystemKeyword.ANCHOR));
 		}
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
 			readSeparator();
-			geodeticReferenceFrame.setIdentifiers(readIdentifiers());
+			referenceFrame.setIdentifiers(readIdentifiers());
 		}
 
 		readRightDelimiter();
 
-		if (isKeywordNext(CoordinateReferenceSystemKeyword.PRIMEM)) {
+		if (geodeticReferenceFrame != null
+				&& isKeywordNext(CoordinateReferenceSystemKeyword.PRIMEM)) {
 			readSeparator();
 			geodeticReferenceFrame.setPrimeMeridian(readPrimeMeridian());
 		}
@@ -915,13 +1006,14 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public DatumEnsemble readVerticalDatumEnsemble() throws IOException {
+	public VerticalDatumEnsemble readVerticalDatumEnsemble()
+			throws IOException {
 		DatumEnsemble datumEnsemble = readDatumEnsemble();
-		if (!datumEnsemble.getClass().equals(DatumEnsemble.class)) {
+		if (!(datumEnsemble instanceof VerticalDatumEnsemble)) {
 			throw new ProjectionException(
 					"Datum ensemble was not an expected Vertical Datum Ensemble");
 		}
-		return datumEnsemble;
+		return (VerticalDatumEnsemble) datumEnsemble;
 	}
 
 	/**
@@ -956,7 +1048,7 @@ public class CRSReader implements Closeable {
 			geodeticDatumEnsemble = new GeodeticDatumEnsemble();
 			datumEnsemble = geodeticDatumEnsemble;
 		} else {
-			datumEnsemble = new DatumEnsemble();
+			datumEnsemble = new VerticalDatumEnsemble();
 		}
 
 		datumEnsemble.setName(name);

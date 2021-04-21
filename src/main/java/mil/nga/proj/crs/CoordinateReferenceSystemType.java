@@ -20,6 +20,11 @@ public enum CoordinateReferenceSystemType {
 	/**
 	 * Projected
 	 */
-	PROJECTED;
+	PROJECTED,
+
+	/**
+	 * Vertical
+	 */
+	VERTICAL;
 
 }

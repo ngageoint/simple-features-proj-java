@@ -1,4 +1,4 @@
-package mil.nga.proj.crs;
+package mil.nga.proj.crs.projected;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,25 +6,37 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mil.nga.proj.crs.common.Identifier;
+import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
- * Datum Ensemble Member
+ * Map Projection Parameter
  * 
  * @author osbornb
  */
-public class DatumEnsembleMember {
+public class MapProjectionParameter {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger logger = Logger
-			.getLogger(DatumEnsembleMember.class.getName());
+			.getLogger(MapProjectionParameter.class.getName());
 
 	/**
 	 * Name
 	 */
 	private String name = null;
+
+	/**
+	 * Value
+	 */
+	private double value;
+
+	/**
+	 * Unit
+	 */
+	private Unit unit;
 
 	/**
 	 * Identifiers
@@ -34,7 +46,7 @@ public class DatumEnsembleMember {
 	/**
 	 * Constructor
 	 */
-	public DatumEnsembleMember() {
+	public MapProjectionParameter() {
 
 	}
 
@@ -43,9 +55,12 @@ public class DatumEnsembleMember {
 	 * 
 	 * @param name
 	 *            name
+	 * @param value
+	 *            value
 	 */
-	public DatumEnsembleMember(String name) {
+	public MapProjectionParameter(String name, double value) {
 		setName(name);
+		setValue(value);
 	}
 
 	/**
@@ -65,6 +80,53 @@ public class DatumEnsembleMember {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * Get the value
+	 * 
+	 * @return value
+	 */
+	public double getValue() {
+		return value;
+	}
+
+	/**
+	 * Set the value
+	 * 
+	 * @param value
+	 *            value
+	 */
+	public void setValue(double value) {
+		this.value = value;
+	}
+
+	/**
+	 * Get the unit
+	 * 
+	 * @return unit
+	 */
+	public Unit getUnit() {
+		return unit;
+	}
+
+	/**
+	 * Has a unit
+	 * 
+	 * @return true if has unit
+	 */
+	public boolean hasUnit() {
+		return getUnit() != null;
+	}
+
+	/**
+	 * Set the unit
+	 * 
+	 * @param unit
+	 *            unit
+	 */
+	public void setUnit(Unit unit) {
+		this.unit = unit;
 	}
 
 	/**
@@ -131,6 +193,10 @@ public class DatumEnsembleMember {
 		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(value);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -145,7 +211,7 @@ public class DatumEnsembleMember {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		DatumEnsembleMember other = (DatumEnsembleMember) obj;
+		MapProjectionParameter other = (MapProjectionParameter) obj;
 		if (identifiers == null) {
 			if (other.identifiers != null)
 				return false;
@@ -155,6 +221,14 @@ public class DatumEnsembleMember {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
+			return false;
+		if (unit == null) {
+			if (other.unit != null)
+				return false;
+		} else if (!unit.equals(other.unit))
+			return false;
+		if (Double.doubleToLongBits(value) != Double
+				.doubleToLongBits(other.value))
 			return false;
 		return true;
 	}
@@ -171,7 +245,7 @@ public class DatumEnsembleMember {
 			value = writer.toString();
 		} catch (IOException e) {
 			logger.log(Level.WARNING,
-					"Failed to write datum ensemble member as a string", e);
+					"Failed to write map projection parameter as a string", e);
 			value = super.toString();
 		} finally {
 			writer.close();

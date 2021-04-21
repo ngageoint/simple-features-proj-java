@@ -2,8 +2,8 @@ package mil.nga.proj.crs.wkt;
 
 import mil.nga.proj.ProjectionException;
 import mil.nga.proj.crs.CoordinateReferenceSystemType;
-import mil.nga.proj.crs.CoordinateSystemType;
-import mil.nga.proj.crs.UnitType;
+import mil.nga.proj.crs.common.CoordinateSystemType;
+import mil.nga.proj.crs.common.UnitType;
 
 /**
  * CRS Well-Known Text Utilities

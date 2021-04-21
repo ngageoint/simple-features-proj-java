@@ -1,4 +1,4 @@
-package mil.nga.proj.crs;
+package mil.nga.proj.crs.projected;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,6 +6,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mil.nga.proj.crs.CoordinateReferenceSystem;
+import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.common.CoordinateSystem;
+import mil.nga.proj.crs.common.Dynamic;
+import mil.nga.proj.crs.common.Identifier;
+import mil.nga.proj.crs.common.Unit;
+import mil.nga.proj.crs.geodetic.GeodeticDatumEnsemble;
+import mil.nga.proj.crs.geodetic.GeodeticReferenceFrame;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
@@ -352,7 +360,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * @param baseIdentifiers
 	 *            base identifiers
 	 */
-	public void addIdentifiers(List<Identifier> baseIdentifiers) {
+	public void addBaseIdentifiers(List<Identifier> baseIdentifiers) {
 		if (this.baseIdentifiers == null) {
 			this.baseIdentifiers = new ArrayList<>();
 		}
@@ -461,17 +469,13 @@ public class ProjectedCoordinateReferenceSystem
 	@Override
 	public String toString() {
 		String value = null;
-		CRSWriter writer = new CRSWriter();
 		try {
-			writer.write(this);
-			value = writer.toString();
+			value = CRSWriter.writeCRS(this);
 		} catch (IOException e) {
 			logger.log(Level.WARNING,
-					"Failed to projected coordinate reference system as a string",
+					"Failed to write projected coordinate reference system as a string",
 					e);
 			value = super.toString();
-		} finally {
-			writer.close();
 		}
 		return value;
 	}

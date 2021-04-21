@@ -1,4 +1,4 @@
-package mil.nga.proj.crs;
+package mil.nga.proj.crs.common;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,32 +9,27 @@ import java.util.logging.Logger;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
- * Map Projection Parameter
+ * Reference Frame (datum)
  * 
  * @author osbornb
  */
-public class MapProjectionParameter {
+public abstract class ReferenceFrame {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger logger = Logger
-			.getLogger(MapProjectionParameter.class.getName());
+			.getLogger(ReferenceFrame.class.getName());
 
 	/**
-	 * Name
+	 * Datum Name
 	 */
 	private String name = null;
 
 	/**
-	 * Value
+	 * Datum anchor description
 	 */
-	private double value;
-
-	/**
-	 * Unit
-	 */
-	private Unit unit;
+	private String anchor = null;
 
 	/**
 	 * Identifiers
@@ -44,7 +39,7 @@ public class MapProjectionParameter {
 	/**
 	 * Constructor
 	 */
-	public MapProjectionParameter() {
+	public ReferenceFrame() {
 
 	}
 
@@ -53,78 +48,56 @@ public class MapProjectionParameter {
 	 * 
 	 * @param name
 	 *            name
-	 * @param value
-	 *            value
 	 */
-	public MapProjectionParameter(String name, double value) {
+	public ReferenceFrame(String name) {
 		setName(name);
-		setValue(value);
 	}
 
 	/**
-	 * Get the name
+	 * Get the datum name
 	 * 
-	 * @return name
+	 * @return datum name
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * Set the name
+	 * Set the datum name
 	 * 
 	 * @param name
-	 *            name
+	 *            datum name
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/**
-	 * Get the value
+	 * Get the datum anchor description
 	 * 
-	 * @return value
+	 * @return datum anchor description
 	 */
-	public double getValue() {
-		return value;
+	public String getAnchor() {
+		return anchor;
 	}
 
 	/**
-	 * Set the value
+	 * Has a datum anchor description
 	 * 
-	 * @param value
-	 *            value
+	 * @return true if has datum anchor description
 	 */
-	public void setValue(double value) {
-		this.value = value;
+	public boolean hasAnchor() {
+		return getAnchor() != null;
 	}
 
 	/**
-	 * Get the unit
+	 * Set the datum anchor description
 	 * 
-	 * @return unit
+	 * @param anchor
+	 *            datum anchor description
 	 */
-	public Unit getUnit() {
-		return unit;
-	}
-
-	/**
-	 * Has a unit
-	 * 
-	 * @return true if has unit
-	 */
-	public boolean hasUnit() {
-		return getUnit() != null;
-	}
-
-	/**
-	 * Set the unit
-	 * 
-	 * @param unit
-	 *            unit
-	 */
-	public void setUnit(Unit unit) {
-		this.unit = unit;
+	public void setAnchor(String anchor) {
+		this.anchor = anchor;
 	}
 
 	/**
@@ -188,13 +161,10 @@ public class MapProjectionParameter {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((anchor == null) ? 0 : anchor.hashCode());
 		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
-		long temp;
-		temp = Double.doubleToLongBits(value);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -209,7 +179,12 @@ public class MapProjectionParameter {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MapProjectionParameter other = (MapProjectionParameter) obj;
+		ReferenceFrame other = (ReferenceFrame) obj;
+		if (anchor == null) {
+			if (other.anchor != null)
+				return false;
+		} else if (!anchor.equals(other.anchor))
+			return false;
 		if (identifiers == null) {
 			if (other.identifiers != null)
 				return false;
@@ -219,14 +194,6 @@ public class MapProjectionParameter {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
-			return false;
-		if (unit == null) {
-			if (other.unit != null)
-				return false;
-		} else if (!unit.equals(other.unit))
-			return false;
-		if (Double.doubleToLongBits(value) != Double
-				.doubleToLongBits(other.value))
 			return false;
 		return true;
 	}
@@ -243,7 +210,7 @@ public class MapProjectionParameter {
 			value = writer.toString();
 		} catch (IOException e) {
 			logger.log(Level.WARNING,
-					"Failed to write map projection parameter as a string", e);
+					"Failed to write reference frame as a string", e);
 			value = super.toString();
 		} finally {
 			writer.close();

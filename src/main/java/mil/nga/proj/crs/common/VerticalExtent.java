@@ -1,4 +1,4 @@
-package mil.nga.proj.crs;
+package mil.nga.proj.crs.common;
 
 import java.io.IOException;
 import java.util.logging.Level;

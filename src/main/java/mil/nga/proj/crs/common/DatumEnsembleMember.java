@@ -1,4 +1,4 @@
-package mil.nga.proj.crs;
+package mil.nga.proj.crs.common;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,37 +9,22 @@ import java.util.logging.Logger;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
- * Ellipsoid
+ * Datum Ensemble Member
  * 
  * @author osbornb
  */
-public class Ellipsoid {
+public class DatumEnsembleMember {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger logger = Logger
-			.getLogger(Ellipsoid.class.getName());
+			.getLogger(DatumEnsembleMember.class.getName());
 
 	/**
 	 * Name
 	 */
 	private String name = null;
-
-	/**
-	 * Semi Major Axis
-	 */
-	private double semiMajorAxis;
-
-	/**
-	 * Inverse Flattening
-	 */
-	private double inverseFlattening;
-
-	/**
-	 * Length Unit
-	 */
-	private Unit lengthUnit = null;
 
 	/**
 	 * Identifiers
@@ -49,7 +34,7 @@ public class Ellipsoid {
 	/**
 	 * Constructor
 	 */
-	public Ellipsoid() {
+	public DatumEnsembleMember() {
 
 	}
 
@@ -58,16 +43,9 @@ public class Ellipsoid {
 	 * 
 	 * @param name
 	 *            name
-	 * @param semiMajorAxis
-	 *            semi major axis
-	 * @param inverseFlattening
-	 *            inverse flattening
 	 */
-	public Ellipsoid(String name, double semiMajorAxis,
-			double inverseFlattening) {
+	public DatumEnsembleMember(String name) {
 		setName(name);
-		setSemiMajorAxis(semiMajorAxis);
-		setInverseFlattening(inverseFlattening);
 	}
 
 	/**
@@ -87,72 +65,6 @@ public class Ellipsoid {
 	 */
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	/**
-	 * Get the semi major axis
-	 * 
-	 * @return semi major axis
-	 */
-	public double getSemiMajorAxis() {
-		return semiMajorAxis;
-	}
-
-	/**
-	 * Set the semi major axis
-	 * 
-	 * @param semiMajorAxis
-	 *            semi major axis
-	 */
-	public void setSemiMajorAxis(double semiMajorAxis) {
-		this.semiMajorAxis = semiMajorAxis;
-	}
-
-	/**
-	 * Get the inverse flattening
-	 * 
-	 * @return inverse flattening
-	 */
-	public double getInverseFlattening() {
-		return inverseFlattening;
-	}
-
-	/**
-	 * Set the inverse flattening
-	 * 
-	 * @param inverseFlattening
-	 *            inverse flattening
-	 */
-	public void setInverseFlattening(double inverseFlattening) {
-		this.inverseFlattening = inverseFlattening;
-	}
-
-	/**
-	 * Get the length unit
-	 * 
-	 * @return length unit
-	 */
-	public Unit getLengthUnit() {
-		return lengthUnit;
-	}
-
-	/**
-	 * Has a length unit
-	 * 
-	 * @return true if has length unit
-	 */
-	public boolean hasLengthUnit() {
-		return getLengthUnit() != null;
-	}
-
-	/**
-	 * Set the length unit
-	 * 
-	 * @param lengthUnit
-	 *            length unit
-	 */
-	public void setLengthUnit(Unit lengthUnit) {
-		this.lengthUnit = lengthUnit;
 	}
 
 	/**
@@ -218,14 +130,7 @@ public class Ellipsoid {
 		int result = 1;
 		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
-		long temp;
-		temp = Double.doubleToLongBits(inverseFlattening);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result
-				+ ((lengthUnit == null) ? 0 : lengthUnit.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		temp = Double.doubleToLongBits(semiMajorAxis);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -240,27 +145,16 @@ public class Ellipsoid {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Ellipsoid other = (Ellipsoid) obj;
+		DatumEnsembleMember other = (DatumEnsembleMember) obj;
 		if (identifiers == null) {
 			if (other.identifiers != null)
 				return false;
 		} else if (!identifiers.equals(other.identifiers))
 			return false;
-		if (Double.doubleToLongBits(inverseFlattening) != Double
-				.doubleToLongBits(other.inverseFlattening))
-			return false;
-		if (lengthUnit == null) {
-			if (other.lengthUnit != null)
-				return false;
-		} else if (!lengthUnit.equals(other.lengthUnit))
-			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
-			return false;
-		if (Double.doubleToLongBits(semiMajorAxis) != Double
-				.doubleToLongBits(other.semiMajorAxis))
 			return false;
 		return true;
 	}
@@ -276,8 +170,8 @@ public class Ellipsoid {
 			writer.write(this);
 			value = writer.toString();
 		} catch (IOException e) {
-			logger.log(Level.WARNING, "Failed to write ellipsoid as a string",
-					e);
+			logger.log(Level.WARNING,
+					"Failed to write datum ensemble member as a string", e);
 			value = super.toString();
 		} finally {
 			writer.close();

@@ -1,24 +1,24 @@
-package mil.nga.proj.crs;
+package mil.nga.proj.crs.geodetic;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mil.nga.proj.crs.common.ReferenceFrame;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
- * Geodetic Datum Ensemble
+ * Geodetic Reference Frame (datum)
  * 
  * @author osbornb
  */
-public class GeodeticDatumEnsemble extends DatumEnsemble {
+public class GeodeticReferenceFrame extends ReferenceFrame {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger logger = Logger
-			.getLogger(GeodeticDatumEnsemble.class.getName());
+			.getLogger(GeodeticReferenceFrame.class.getName());
 
 	/**
 	 * Ellipsoid
@@ -33,7 +33,7 @@ public class GeodeticDatumEnsemble extends DatumEnsemble {
 	/**
 	 * Constructor
 	 */
-	public GeodeticDatumEnsemble() {
+	public GeodeticReferenceFrame() {
 
 	}
 
@@ -42,41 +42,12 @@ public class GeodeticDatumEnsemble extends DatumEnsemble {
 	 * 
 	 * @param name
 	 *            name
-	 * @param member
-	 *            member
 	 * @param ellipsoid
 	 *            ellipsoid
-	 * @param accuracy
-	 *            accuracy
-	 * @param primeMeridian
-	 *            prime meridian
 	 */
-	public GeodeticDatumEnsemble(String name, DatumEnsembleMember member,
-			Ellipsoid ellipsoid, double accuracy, PrimeMeridian primeMeridian) {
-		super(name, member, accuracy);
+	public GeodeticReferenceFrame(String name, Ellipsoid ellipsoid) {
+		super(name);
 		setEllipsoid(ellipsoid);
-		setPrimeMeridian(primeMeridian);
-	}
-
-	/**
-	 * Constructor
-	 * 
-	 * @param name
-	 *            name
-	 * @param members
-	 *            members
-	 * @param ellipsoid
-	 *            ellipsoid
-	 * @param accuracy
-	 *            accuracy
-	 * @param primeMeridian
-	 *            prime meridian
-	 */
-	public GeodeticDatumEnsemble(String name, List<DatumEnsembleMember> members,
-			Ellipsoid ellipsoid, double accuracy, PrimeMeridian primeMeridian) {
-		super(name, members, accuracy);
-		setEllipsoid(ellipsoid);
-		setPrimeMeridian(primeMeridian);
 	}
 
 	/**
@@ -109,8 +80,6 @@ public class GeodeticDatumEnsemble extends DatumEnsemble {
 
 	/**
 	 * Has a prime meridian
-	 * 
-	 * TODO http://ogc.standardstracker.org/show_request.cgi?id=672
 	 * 
 	 * @return true if has prime meridian
 	 */
@@ -153,7 +122,7 @@ public class GeodeticDatumEnsemble extends DatumEnsemble {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GeodeticDatumEnsemble other = (GeodeticDatumEnsemble) obj;
+		GeodeticReferenceFrame other = (GeodeticReferenceFrame) obj;
 		if (ellipsoid == null) {
 			if (other.ellipsoid != null)
 				return false;
@@ -179,7 +148,7 @@ public class GeodeticDatumEnsemble extends DatumEnsemble {
 			value = writer.toString();
 		} catch (IOException e) {
 			logger.log(Level.WARNING,
-					"Failed to write geodetic datum ensemble as a string", e);
+					"Failed to write geodetic reference frame as a string", e);
 			value = super.toString();
 		} finally {
 			writer.close();

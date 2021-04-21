@@ -11,36 +11,36 @@ import java.util.List;
 
 import org.junit.Test;
 
-import mil.nga.proj.crs.Axis;
-import mil.nga.proj.crs.AxisDirectionType;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystemType;
-import mil.nga.proj.crs.CoordinateSystem;
-import mil.nga.proj.crs.CoordinateSystemType;
-import mil.nga.proj.crs.DatumEnsemble;
-import mil.nga.proj.crs.Dynamic;
-import mil.nga.proj.crs.Ellipsoid;
-import mil.nga.proj.crs.Extent;
-import mil.nga.proj.crs.GeodeticCoordinateReferenceSystem;
-import mil.nga.proj.crs.GeodeticDatumEnsemble;
-import mil.nga.proj.crs.GeodeticReferenceFrame;
-import mil.nga.proj.crs.GeographicBoundingBox;
-import mil.nga.proj.crs.Identifier;
-import mil.nga.proj.crs.MapProjection;
-import mil.nga.proj.crs.PrimeMeridian;
-import mil.nga.proj.crs.ProjectedCoordinateReferenceSystem;
-import mil.nga.proj.crs.TemporalExtent;
-import mil.nga.proj.crs.Unit;
-import mil.nga.proj.crs.UnitType;
-import mil.nga.proj.crs.Usage;
-import mil.nga.proj.crs.VerticalExtent;
+import mil.nga.proj.crs.common.Axis;
+import mil.nga.proj.crs.common.AxisDirectionType;
+import mil.nga.proj.crs.common.CoordinateSystem;
+import mil.nga.proj.crs.common.CoordinateSystemType;
+import mil.nga.proj.crs.common.DatumEnsemble;
+import mil.nga.proj.crs.common.Dynamic;
+import mil.nga.proj.crs.common.Extent;
+import mil.nga.proj.crs.common.GeographicBoundingBox;
+import mil.nga.proj.crs.common.Identifier;
+import mil.nga.proj.crs.common.TemporalExtent;
+import mil.nga.proj.crs.common.Unit;
+import mil.nga.proj.crs.common.UnitType;
+import mil.nga.proj.crs.common.Usage;
+import mil.nga.proj.crs.common.VerticalExtent;
+import mil.nga.proj.crs.geodetic.Ellipsoid;
+import mil.nga.proj.crs.geodetic.GeodeticCoordinateReferenceSystem;
+import mil.nga.proj.crs.geodetic.GeodeticDatumEnsemble;
+import mil.nga.proj.crs.geodetic.GeodeticReferenceFrame;
+import mil.nga.proj.crs.geodetic.PrimeMeridian;
+import mil.nga.proj.crs.projected.MapProjection;
+import mil.nga.proj.crs.projected.ProjectedCoordinateReferenceSystem;
 
 /**
  * CRS Reader tests
  * 
  * @author osbornb
  */
-public class CRSReaderTest {
+public class CRSReaderWriterTest {
 
 	/**
 	 * Test EPSG 4979

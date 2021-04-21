@@ -113,6 +113,11 @@ public enum CoordinateReferenceSystemKeyword {
 	GEOGCRS("GEOGRAPHICCRS", "GEOGCS"),
 
 	/**
+	 * Geoid Model ID
+	 */
+	GEOIDMODEL,
+
+	/**
 	 * Identifier
 	 */
 	ID("AUTHORITY"),
@@ -201,6 +206,16 @@ public enum CoordinateReferenceSystemKeyword {
 	 * URI
 	 */
 	URI(),
+
+	/**
+	 * Vertical Reference Frame
+	 */
+	VDATUM("VRF", "VERTICALDATUM"),
+
+	/**
+	 * Vertical CRS
+	 */
+	VERTCRS("VERTICALCRS"),
 
 	/**
 	 * Vertical extent

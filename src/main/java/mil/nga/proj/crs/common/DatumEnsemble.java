@@ -1,4 +1,4 @@
-package mil.nga.proj.crs;
+package mil.nga.proj.crs.common;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import mil.nga.proj.crs.wkt.CRSWriter;
  * 
  * @author osbornb
  */
-public class DatumEnsemble {
+public abstract class DatumEnsemble {
 
 	/**
 	 * Logger

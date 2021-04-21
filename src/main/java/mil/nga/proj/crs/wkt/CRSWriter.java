@@ -9,27 +9,29 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.ProjectionException;
-import mil.nga.proj.crs.Axis;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
-import mil.nga.proj.crs.CoordinateSystem;
-import mil.nga.proj.crs.DatumEnsemble;
-import mil.nga.proj.crs.DatumEnsembleMember;
-import mil.nga.proj.crs.Dynamic;
-import mil.nga.proj.crs.Ellipsoid;
-import mil.nga.proj.crs.Extent;
-import mil.nga.proj.crs.GeodeticCoordinateReferenceSystem;
-import mil.nga.proj.crs.GeodeticDatumEnsemble;
-import mil.nga.proj.crs.GeodeticReferenceFrame;
-import mil.nga.proj.crs.GeographicBoundingBox;
-import mil.nga.proj.crs.Identifier;
-import mil.nga.proj.crs.MapProjection;
-import mil.nga.proj.crs.MapProjectionParameter;
-import mil.nga.proj.crs.PrimeMeridian;
-import mil.nga.proj.crs.ProjectedCoordinateReferenceSystem;
-import mil.nga.proj.crs.TemporalExtent;
-import mil.nga.proj.crs.Unit;
-import mil.nga.proj.crs.Usage;
-import mil.nga.proj.crs.VerticalExtent;
+import mil.nga.proj.crs.common.Axis;
+import mil.nga.proj.crs.common.CoordinateSystem;
+import mil.nga.proj.crs.common.DatumEnsemble;
+import mil.nga.proj.crs.common.DatumEnsembleMember;
+import mil.nga.proj.crs.common.Dynamic;
+import mil.nga.proj.crs.common.Extent;
+import mil.nga.proj.crs.common.GeographicBoundingBox;
+import mil.nga.proj.crs.common.Identifier;
+import mil.nga.proj.crs.common.ReferenceFrame;
+import mil.nga.proj.crs.common.TemporalExtent;
+import mil.nga.proj.crs.common.Unit;
+import mil.nga.proj.crs.common.Usage;
+import mil.nga.proj.crs.common.VerticalExtent;
+import mil.nga.proj.crs.geodetic.Ellipsoid;
+import mil.nga.proj.crs.geodetic.GeodeticCoordinateReferenceSystem;
+import mil.nga.proj.crs.geodetic.GeodeticDatumEnsemble;
+import mil.nga.proj.crs.geodetic.GeodeticReferenceFrame;
+import mil.nga.proj.crs.geodetic.PrimeMeridian;
+import mil.nga.proj.crs.projected.MapProjection;
+import mil.nga.proj.crs.projected.MapProjectionParameter;
+import mil.nga.proj.crs.projected.ProjectedCoordinateReferenceSystem;
+import mil.nga.proj.crs.vertical.VerticalCoordinateReferenceSystem;
 
 /**
  * 
@@ -135,6 +137,9 @@ public class CRSWriter implements Closeable {
 			break;
 		case PROJECTED:
 			write((ProjectedCoordinateReferenceSystem) crs);
+			break;
+		case VERTICAL:
+			write((VerticalCoordinateReferenceSystem) crs);
 			break;
 		default:
 			throw new ProjectionException(
@@ -402,41 +407,64 @@ public class CRSWriter implements Closeable {
 	}
 
 	/**
-	 * Write a geodetic reference frame to well-known text
+	 * Write a vertical CRS to well-known text
 	 * 
-	 * @param geodeticReferenceFrame
-	 *            geodetic reference frame
+	 * @param crs
+	 *            vertical coordinate reference system
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void write(GeodeticReferenceFrame geodeticReferenceFrame)
+	public void write(VerticalCoordinateReferenceSystem crs)
 			throws IOException {
+		// TODO
+	}
 
-		write(CoordinateReferenceSystemKeyword.DATUM);
+	/**
+	 * Write a reference frame to well-known text
+	 * 
+	 * @param referenceFrame
+	 *            reference frame
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(ReferenceFrame referenceFrame) throws IOException {
+
+		GeodeticReferenceFrame geodeticReferenceFrame = null;
+		if (referenceFrame instanceof GeodeticReferenceFrame) {
+			geodeticReferenceFrame = (GeodeticReferenceFrame) referenceFrame;
+		}
+
+		if (geodeticReferenceFrame != null) {
+			write(CoordinateReferenceSystemKeyword.DATUM);
+		} else {
+			write(CoordinateReferenceSystemKeyword.VDATUM);
+		}
 
 		writeLeftDelimiter();
 
-		writeQuotedText(geodeticReferenceFrame.getName());
+		writeQuotedText(referenceFrame.getName());
 
-		writeSeparator();
+		if (geodeticReferenceFrame != null) {
+			writeSeparator();
+			write(geodeticReferenceFrame.getEllipsoid());
+		}
 
-		write(geodeticReferenceFrame.getEllipsoid());
-
-		if (geodeticReferenceFrame.hasAnchor()) {
+		if (referenceFrame.hasAnchor()) {
 			writeSeparator();
 			writeKeywordDelimitedQuotedText(
 					CoordinateReferenceSystemKeyword.ANCHOR,
-					geodeticReferenceFrame.getAnchor());
+					referenceFrame.getAnchor());
 		}
 
-		if (geodeticReferenceFrame.hasIdentifiers()) {
+		if (referenceFrame.hasIdentifiers()) {
 			writeSeparator();
-			writeIdentifiers(geodeticReferenceFrame.getIdentifiers());
+			writeIdentifiers(referenceFrame.getIdentifiers());
 		}
 
 		writeRightDelimiter();
 
-		if (geodeticReferenceFrame.hasPrimeMeridian()) {
+		if (geodeticReferenceFrame != null
+				&& geodeticReferenceFrame.hasPrimeMeridian()) {
 			writeSeparator();
 			write(geodeticReferenceFrame.getPrimeMeridian());
 		}

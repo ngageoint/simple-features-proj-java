@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mil.nga.proj.crs.common.CoordinateSystem;
+import mil.nga.proj.crs.common.Identifier;
+import mil.nga.proj.crs.common.Usage;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
