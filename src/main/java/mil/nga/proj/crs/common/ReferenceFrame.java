@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mil.nga.proj.crs.CoordinateReferenceSystemType;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
@@ -27,6 +28,11 @@ public abstract class ReferenceFrame {
 	private String name = null;
 
 	/**
+	 * Type
+	 */
+	private CoordinateReferenceSystemType type = null;
+
+	/**
 	 * Datum anchor description
 	 */
 	private String anchor = null;
@@ -38,9 +44,12 @@ public abstract class ReferenceFrame {
 
 	/**
 	 * Constructor
+	 * 
+	 * @param type
+	 *            type
 	 */
-	public ReferenceFrame() {
-
+	public ReferenceFrame(CoordinateReferenceSystemType type) {
+		setType(type);
 	}
 
 	/**
@@ -48,9 +57,12 @@ public abstract class ReferenceFrame {
 	 * 
 	 * @param name
 	 *            name
+	 * @param type
+	 *            type
 	 */
-	public ReferenceFrame(String name) {
+	public ReferenceFrame(String name, CoordinateReferenceSystemType type) {
 		setName(name);
+		setType(type);
 	}
 
 	/**
@@ -70,6 +82,25 @@ public abstract class ReferenceFrame {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * Get the type
+	 * 
+	 * @return type
+	 */
+	public CoordinateReferenceSystemType getType() {
+		return type;
+	}
+
+	/**
+	 * Set the type
+	 * 
+	 * @param type
+	 *            type
+	 */
+	public void setType(CoordinateReferenceSystemType type) {
+		this.type = type;
 	}
 
 	/**
@@ -165,6 +196,7 @@ public abstract class ReferenceFrame {
 		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
@@ -194,6 +226,8 @@ public abstract class ReferenceFrame {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
+			return false;
+		if (type != other.type)
 			return false;
 		return true;
 	}

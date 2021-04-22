@@ -27,6 +27,8 @@ import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.common.UnitType;
 import mil.nga.proj.crs.common.Usage;
 import mil.nga.proj.crs.common.VerticalExtent;
+import mil.nga.proj.crs.engineering.EngineeringCoordinateReferenceSystem;
+import mil.nga.proj.crs.engineering.EngineeringDatum;
 import mil.nga.proj.crs.geodetic.Ellipsoid;
 import mil.nga.proj.crs.geodetic.GeodeticCoordinateReferenceSystem;
 import mil.nga.proj.crs.geodetic.GeodeticDatumEnsemble;
@@ -218,6 +220,27 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read an Engineering Coordinate Reference System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Engineering Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static EngineeringCoordinateReferenceSystem readEngineering(
+			String text) throws IOException {
+		EngineeringCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readEngineering();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
 	 * Text Reader
 	 */
 	private TextReader reader;
@@ -291,6 +314,9 @@ public class CRSReader implements Closeable {
 			break;
 		case VERTCRS:
 			crs = readVertical();
+			break;
+		case ENGCRS:
+			crs = readEngineering();
 			break;
 		default:
 			throw new ProjectionException(
@@ -953,6 +979,52 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read an Engineering CRS
+	 * 
+	 * @return engineering coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public EngineeringCoordinateReferenceSystem readEngineering()
+			throws IOException {
+
+		EngineeringCoordinateReferenceSystem crs = new EngineeringCoordinateReferenceSystem();
+
+		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.ENGCRS);
+
+		readLeftDelimiter();
+
+		crs.setName(reader.readExpectedToken());
+
+		readSeparator();
+
+		crs.setEngineeringDatum(readEngineeringDatum());
+
+		readSeparator();
+
+		crs.setCoordinateSystem(readCoordinateSystem());
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.USAGE)) {
+			readSeparator();
+			crs.setUsages(readUsages());
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			crs.setIdentifiers(readIdentifiers());
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.REMARK)) {
+			readSeparator();
+			crs.setRemark(readRemark());
+		}
+
+		readRightDelimiter();
+
+		return crs;
+	}
+
+	/**
 	 * Read a Geodetic reference frame
 	 * 
 	 * @return geodetic reference frame
@@ -987,6 +1059,22 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read an Engineering datum
+	 * 
+	 * @return engineering datum
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public EngineeringDatum readEngineeringDatum() throws IOException {
+		ReferenceFrame referenceFrame = readReferenceFrame();
+		if (!(referenceFrame instanceof EngineeringDatum)) {
+			throw new ProjectionException(
+					"Reference frame was not an expected Engineering Datum");
+		}
+		return (EngineeringDatum) referenceFrame;
+	}
+
+	/**
 	 * Read a Reference frame (datum)
 	 * 
 	 * @return reference frame
@@ -1000,7 +1088,8 @@ public class CRSReader implements Closeable {
 
 		CoordinateReferenceSystemKeyword type = readKeyword();
 		validateKeyword(type, CoordinateReferenceSystemKeyword.DATUM,
-				CoordinateReferenceSystemKeyword.VDATUM);
+				CoordinateReferenceSystemKeyword.VDATUM,
+				CoordinateReferenceSystemKeyword.EDATUM);
 		switch (type) {
 		case DATUM:
 			geodeticReferenceFrame = new GeodeticReferenceFrame();
@@ -1008,6 +1097,9 @@ public class CRSReader implements Closeable {
 			break;
 		case VDATUM:
 			referenceFrame = new VerticalReferenceFrame();
+			break;
+		case EDATUM:
+			referenceFrame = new EngineeringDatum();
 			break;
 		default:
 			throw new ProjectionException(

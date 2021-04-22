@@ -83,9 +83,19 @@ public enum CoordinateReferenceSystemKeyword {
 	DYNAMIC(),
 
 	/**
+	 * Engineering datum
+	 */
+	EDATUM("ENGINEERINGDATUM"),
+
+	/**
 	 * Ellipsoid
 	 */
 	ELLIPSOID("SPHEROID"),
+
+	/**
+	 * Engineering CRS
+	 */
+	ENGCRS("ENGINEERINGCRS"),
 
 	/**
 	 * Datum ensemble

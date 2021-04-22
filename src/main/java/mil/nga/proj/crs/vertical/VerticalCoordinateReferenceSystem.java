@@ -54,7 +54,7 @@ public class VerticalCoordinateReferenceSystem
 	 * Constructor
 	 */
 	public VerticalCoordinateReferenceSystem() {
-		setType(CoordinateReferenceSystemType.VERTICAL);
+		super(CoordinateReferenceSystemType.VERTICAL);
 	}
 
 	/**

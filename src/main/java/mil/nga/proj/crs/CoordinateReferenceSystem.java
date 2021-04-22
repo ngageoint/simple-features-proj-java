@@ -64,6 +64,16 @@ public abstract class CoordinateReferenceSystem {
 	/**
 	 * Constructor
 	 * 
+	 * @param type
+	 *            coordinate reference system type
+	 */
+	public CoordinateReferenceSystem(CoordinateReferenceSystemType type) {
+		setType(type);
+	}
+
+	/**
+	 * Constructor
+	 * 
 	 * @param name
 	 *            name
 	 * @param type

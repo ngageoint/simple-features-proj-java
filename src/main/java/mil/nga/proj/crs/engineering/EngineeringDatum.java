@@ -1,4 +1,4 @@
-package mil.nga.proj.crs.vertical;
+package mil.nga.proj.crs.engineering;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -9,23 +9,23 @@ import mil.nga.proj.crs.common.ReferenceFrame;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
- * Vertical Reference Frame (datum)
+ * Engineering Datum
  * 
  * @author osbornb
  */
-public class VerticalReferenceFrame extends ReferenceFrame {
+public class EngineeringDatum extends ReferenceFrame {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger logger = Logger
-			.getLogger(VerticalReferenceFrame.class.getName());
+			.getLogger(EngineeringDatum.class.getName());
 
 	/**
 	 * Constructor
 	 */
-	public VerticalReferenceFrame() {
-		super(CoordinateReferenceSystemType.VERTICAL);
+	public EngineeringDatum() {
+		super(CoordinateReferenceSystemType.ENGINEERING);
 	}
 
 	/**
@@ -34,8 +34,8 @@ public class VerticalReferenceFrame extends ReferenceFrame {
 	 * @param name
 	 *            name
 	 */
-	public VerticalReferenceFrame(String name) {
-		super(name, CoordinateReferenceSystemType.VERTICAL);
+	public EngineeringDatum(String name) {
+		super(name, CoordinateReferenceSystemType.ENGINEERING);
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class VerticalReferenceFrame extends ReferenceFrame {
 			value = writer.toString();
 		} catch (IOException e) {
 			logger.log(Level.WARNING,
-					"Failed to write vertical reference frame as a string", e);
+					"Failed to write engineering datum as a string", e);
 			value = super.toString();
 		} finally {
 			writer.close();

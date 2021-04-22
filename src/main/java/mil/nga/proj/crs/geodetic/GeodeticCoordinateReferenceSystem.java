@@ -49,6 +49,17 @@ public class GeodeticCoordinateReferenceSystem
 	/**
 	 * Constructor
 	 * 
+	 * @param type
+	 *            coordinate reference system type
+	 */
+	public GeodeticCoordinateReferenceSystem(
+			CoordinateReferenceSystemType type) {
+		super(type);
+	}
+
+	/**
+	 * Constructor
+	 * 
 	 * @param name
 	 *            name
 	 * @param type

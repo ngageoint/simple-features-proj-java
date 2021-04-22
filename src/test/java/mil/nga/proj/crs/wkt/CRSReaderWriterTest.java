@@ -27,6 +27,7 @@ import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.common.UnitType;
 import mil.nga.proj.crs.common.Usage;
 import mil.nga.proj.crs.common.VerticalExtent;
+import mil.nga.proj.crs.engineering.EngineeringCoordinateReferenceSystem;
 import mil.nga.proj.crs.geodetic.Ellipsoid;
 import mil.nga.proj.crs.geodetic.GeodeticCoordinateReferenceSystem;
 import mil.nga.proj.crs.geodetic.GeodeticDatumEnsemble;
@@ -2586,6 +2587,227 @@ public class CRSReaderWriterTest {
 				.getConversionFactor(), 0);
 		assertEquals(text, verticalCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(verticalCrs));
+
+	}
+
+	/**
+	 * Test engineering geographic coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testEngineeringGeographicCoordinateReferenceSystem()
+			throws IOException {
+
+		String text = "ENGCRS[\"A construction site CRS\","
+				+ "EDATUM[\"P1\",ANCHOR[\"Peg in south corner\"]],"
+				+ "CS[Cartesian,2],AXIS[\"site east\",southWest,ORDER[1]],"
+				+ "AXIS[\"site north\",southEast,ORDER[2]],"
+				+ "LENGTHUNIT[\"metre\",1.0],"
+				+ "USAGE[SCOPE[\"Construction\"],TIMEEXTENT[\"date/time t1\",\"date/time t2\"]]]";
+
+		CoordinateReferenceSystem crs = CRSReader.readCRS(text);
+		EngineeringCoordinateReferenceSystem engineeringCrs = CRSReader
+				.readEngineering(text);
+		assertEquals(crs, engineeringCrs);
+		assertEquals(CoordinateReferenceSystemType.ENGINEERING,
+				engineeringCrs.getType());
+		assertEquals("A construction site CRS", engineeringCrs.getName());
+		assertEquals("P1", engineeringCrs.getEngineeringDatum().getName());
+		assertEquals("Peg in south corner",
+				engineeringCrs.getEngineeringDatum().getAnchor());
+		assertEquals(CoordinateSystemType.CARTESIAN,
+				engineeringCrs.getCoordinateSystem().getType());
+		assertEquals(2, engineeringCrs.getCoordinateSystem().getDimension());
+		assertEquals("site east", engineeringCrs.getCoordinateSystem().getAxes()
+				.get(0).getName());
+		assertEquals(AxisDirectionType.SOUTH_WEST, engineeringCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals(1, engineeringCrs.getCoordinateSystem().getAxes().get(0)
+				.getOrder().intValue());
+		assertEquals("site north", engineeringCrs.getCoordinateSystem()
+				.getAxes().get(1).getName());
+		assertEquals(AxisDirectionType.SOUTH_EAST, engineeringCrs
+				.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals(2, engineeringCrs.getCoordinateSystem().getAxes().get(1)
+				.getOrder().intValue());
+		assertEquals(UnitType.LENGTHUNIT,
+				engineeringCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("metre",
+				engineeringCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(1.0, engineeringCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+		assertEquals(text, engineeringCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(engineeringCrs));
+
+		text = "ENGINEERINGCRS[\"Astra Minas Grid\","
+				+ "ENGINEERINGDATUM[\"Astra Minas\"],CS[Cartesian,2],"
+				+ "AXIS[\"northing (X)\",north,ORDER[1]],"
+				+ "AXIS[\"westing (Y)\",west,ORDER[2]],"
+				+ "LENGTHUNIT[\"metre\",1.0],ID[\"EPSG\",5800]]";
+
+		crs = CRSReader.readCRS(text);
+		engineeringCrs = CRSReader.readEngineering(text);
+		assertEquals(crs, engineeringCrs);
+		assertEquals(CoordinateReferenceSystemType.ENGINEERING,
+				engineeringCrs.getType());
+		assertEquals("Astra Minas Grid", engineeringCrs.getName());
+		assertEquals("Astra Minas",
+				engineeringCrs.getEngineeringDatum().getName());
+		assertEquals(CoordinateSystemType.CARTESIAN,
+				engineeringCrs.getCoordinateSystem().getType());
+		assertEquals(2, engineeringCrs.getCoordinateSystem().getDimension());
+		assertEquals("northing", engineeringCrs.getCoordinateSystem().getAxes()
+				.get(0).getName());
+		assertEquals("X", engineeringCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.NORTH, engineeringCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals(1, engineeringCrs.getCoordinateSystem().getAxes().get(0)
+				.getOrder().intValue());
+		assertEquals("westing", engineeringCrs.getCoordinateSystem().getAxes()
+				.get(1).getName());
+		assertEquals("Y", engineeringCrs.getCoordinateSystem().getAxes().get(1)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.WEST, engineeringCrs
+				.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals(2, engineeringCrs.getCoordinateSystem().getAxes().get(1)
+				.getOrder().intValue());
+		assertEquals(UnitType.LENGTHUNIT,
+				engineeringCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("metre",
+				engineeringCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(1.0, engineeringCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+		assertEquals("EPSG", engineeringCrs.getIdentifiers().get(0).getName());
+		assertEquals("5800",
+				engineeringCrs.getIdentifiers().get(0).getUniqueIdentifier());
+		text = text.replaceAll("ENGINEERINGCRS", "ENGCRS")
+				.replaceAll("ENGINEERINGDATUM", "EDATUM");
+		assertEquals(text, engineeringCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(engineeringCrs));
+
+		text = "ENGCRS[\"A ship-centred CRS\","
+				+ "EDATUM[\"Ship reference point\",ANCHOR[\"Centre of buoyancy\"]],"
+				+ "CS[Cartesian,3],AXIS[\"(x)\",forward],"
+				+ "AXIS[\"(y)\",starboard],AXIS[\"(z)\",down],"
+				+ "LENGTHUNIT[\"metre\",1.0]]";
+
+		crs = CRSReader.readCRS(text);
+		engineeringCrs = CRSReader.readEngineering(text);
+		assertEquals(crs, engineeringCrs);
+		assertEquals(CoordinateReferenceSystemType.ENGINEERING,
+				engineeringCrs.getType());
+		assertEquals("A ship-centred CRS", engineeringCrs.getName());
+		assertEquals("Ship reference point",
+				engineeringCrs.getEngineeringDatum().getName());
+		assertEquals("Centre of buoyancy",
+				engineeringCrs.getEngineeringDatum().getAnchor());
+		assertEquals(CoordinateSystemType.CARTESIAN,
+				engineeringCrs.getCoordinateSystem().getType());
+		assertEquals(3, engineeringCrs.getCoordinateSystem().getDimension());
+		assertEquals("x", engineeringCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.FORWARD, engineeringCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals("y", engineeringCrs.getCoordinateSystem().getAxes().get(1)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.STARBOARD, engineeringCrs
+				.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals("z", engineeringCrs.getCoordinateSystem().getAxes().get(2)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.DOWN, engineeringCrs
+				.getCoordinateSystem().getAxes().get(2).getDirection());
+		assertEquals(UnitType.LENGTHUNIT,
+				engineeringCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("metre",
+				engineeringCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(1.0, engineeringCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+		assertEquals(text, engineeringCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(engineeringCrs));
+
+		text = "ENGCRS[\"An analogue image CRS\","
+				+ "EDATUM[\"Image reference point\","
+				+ "ANCHOR[\"Top left corner of image = 0,0\"]],"
+				+ "CS[Cartesian,2],AXIS[\"Column (x)\",columnPositive],"
+				+ "AXIS[\"Row (y)\",rowPositive],"
+				+ "LENGTHUNIT[\"micrometre\",1E-6]]";
+
+		crs = CRSReader.readCRS(text);
+		engineeringCrs = CRSReader.readEngineering(text);
+		assertEquals(crs, engineeringCrs);
+		assertEquals(CoordinateReferenceSystemType.ENGINEERING,
+				engineeringCrs.getType());
+		assertEquals("An analogue image CRS", engineeringCrs.getName());
+		assertEquals("Image reference point",
+				engineeringCrs.getEngineeringDatum().getName());
+		assertEquals("Top left corner of image = 0,0",
+				engineeringCrs.getEngineeringDatum().getAnchor());
+		assertEquals(CoordinateSystemType.CARTESIAN,
+				engineeringCrs.getCoordinateSystem().getType());
+		assertEquals(2, engineeringCrs.getCoordinateSystem().getDimension());
+		assertEquals("Column", engineeringCrs.getCoordinateSystem().getAxes()
+				.get(0).getName());
+		assertEquals("x", engineeringCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.COLUMN_POSITIVE, engineeringCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals("Row", engineeringCrs.getCoordinateSystem().getAxes()
+				.get(1).getName());
+		assertEquals("y", engineeringCrs.getCoordinateSystem().getAxes().get(1)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.ROW_POSITIVE, engineeringCrs
+				.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals(UnitType.LENGTHUNIT,
+				engineeringCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("micrometre",
+				engineeringCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(1E-6, engineeringCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+		text = text.replaceAll("1E-6", "1.0E-6");
+		assertEquals(text, engineeringCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(engineeringCrs));
+
+		text = "ENGCRS[\"A digital image CRS\","
+				+ "EDATUM[\"Image reference point\","
+				+ "ANCHOR[\"Top left corner of image = 0,0\"]],"
+				+ "CS[ordinal,2],"
+				+ "AXIS[\"Column pixel (x)\",columnPositive,ORDER[1]],"
+				+ "AXIS[\"Row pixel (y)\",rowPositive,ORDER[2]]]";
+
+		crs = CRSReader.readCRS(text);
+		engineeringCrs = CRSReader.readEngineering(text);
+		assertEquals(crs, engineeringCrs);
+		assertEquals(CoordinateReferenceSystemType.ENGINEERING,
+				engineeringCrs.getType());
+		assertEquals("A digital image CRS", engineeringCrs.getName());
+		assertEquals("Image reference point",
+				engineeringCrs.getEngineeringDatum().getName());
+		assertEquals("Top left corner of image = 0,0",
+				engineeringCrs.getEngineeringDatum().getAnchor());
+		assertEquals(CoordinateSystemType.ORDINAL,
+				engineeringCrs.getCoordinateSystem().getType());
+		assertEquals(2, engineeringCrs.getCoordinateSystem().getDimension());
+		assertEquals("Column pixel", engineeringCrs.getCoordinateSystem()
+				.getAxes().get(0).getName());
+		assertEquals("x", engineeringCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.COLUMN_POSITIVE, engineeringCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals(1, engineeringCrs.getCoordinateSystem().getAxes().get(0)
+				.getOrder().intValue());
+		assertEquals("Row pixel", engineeringCrs.getCoordinateSystem().getAxes()
+				.get(1).getName());
+		assertEquals("y", engineeringCrs.getCoordinateSystem().getAxes().get(1)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.ROW_POSITIVE, engineeringCrs
+				.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals(2, engineeringCrs.getCoordinateSystem().getAxes().get(1)
+				.getOrder().intValue());
+		assertEquals(text, engineeringCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(engineeringCrs));
 
 	}
 

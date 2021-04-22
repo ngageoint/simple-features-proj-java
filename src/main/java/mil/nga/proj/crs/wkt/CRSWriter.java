@@ -23,6 +23,7 @@ import mil.nga.proj.crs.common.TemporalExtent;
 import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.common.Usage;
 import mil.nga.proj.crs.common.VerticalExtent;
+import mil.nga.proj.crs.engineering.EngineeringCoordinateReferenceSystem;
 import mil.nga.proj.crs.geodetic.Ellipsoid;
 import mil.nga.proj.crs.geodetic.GeodeticCoordinateReferenceSystem;
 import mil.nga.proj.crs.geodetic.GeodeticDatumEnsemble;
@@ -140,6 +141,9 @@ public class CRSWriter implements Closeable {
 			break;
 		case VERTICAL:
 			write((VerticalCoordinateReferenceSystem) crs);
+			break;
+		case ENGINEERING:
+			write((EngineeringCoordinateReferenceSystem) crs);
 			break;
 		default:
 			throw new ProjectionException(
@@ -469,6 +473,47 @@ public class CRSWriter implements Closeable {
 	}
 
 	/**
+	 * Write an engineering CRS to well-known text
+	 * 
+	 * @param crs
+	 *            engineering coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(EngineeringCoordinateReferenceSystem crs)
+			throws IOException {
+
+		write(CoordinateReferenceSystemKeyword.ENGCRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(crs.getName());
+
+		writeSeparator();
+		write(crs.getEngineeringDatum());
+
+		writeSeparator();
+		write(crs.getCoordinateSystem());
+
+		if (crs.hasUsages()) {
+			writeSeparator();
+			writeUsages(crs.getUsages());
+		}
+
+		if (crs.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(crs.getIdentifiers());
+		}
+
+		if (crs.hasRemark()) {
+			writeSeparator();
+			writeRemark(crs.getRemark());
+		}
+
+		writeRightDelimiter();
+	}
+
+	/**
 	 * Write a reference frame to well-known text
 	 * 
 	 * @param referenceFrame
@@ -483,10 +528,21 @@ public class CRSWriter implements Closeable {
 			geodeticReferenceFrame = (GeodeticReferenceFrame) referenceFrame;
 		}
 
-		if (geodeticReferenceFrame != null) {
+		switch (referenceFrame.getType()) {
+		case GEODETIC:
+		case GEOGRAPHIC:
 			write(CoordinateReferenceSystemKeyword.DATUM);
-		} else {
+			break;
+		case VERTICAL:
 			write(CoordinateReferenceSystemKeyword.VDATUM);
+			break;
+		case ENGINEERING:
+			write(CoordinateReferenceSystemKeyword.EDATUM);
+			break;
+		default:
+			throw new ProjectionException(
+					"Unexpected Reference Frame Coordinate Reference System Type: "
+							+ referenceFrame.getType());
 		}
 
 		writeLeftDelimiter();

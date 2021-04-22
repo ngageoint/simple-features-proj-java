@@ -8,6 +8,11 @@ package mil.nga.proj.crs;
 public enum CoordinateReferenceSystemType {
 
 	/**
+	 * Engineering
+	 */
+	ENGINEERING,
+
+	/**
 	 * Geodetic
 	 */
 	GEODETIC,
