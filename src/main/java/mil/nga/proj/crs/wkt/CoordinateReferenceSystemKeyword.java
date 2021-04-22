@@ -168,9 +168,19 @@ public enum CoordinateReferenceSystemKeyword {
 	PARAMETER(),
 
 	/**
+	 * Parametric CRS
+	 */
+	PARAMETRICCRS(),
+
+	/**
 	 * Parametric Unit
 	 */
 	PARAMETRICUNIT(),
+
+	/**
+	 * Parametric datum
+	 */
+	PDATUM("PARAMETRICDATUM"),
 
 	/**
 	 * Prime meridian

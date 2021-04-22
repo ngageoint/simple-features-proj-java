@@ -34,6 +34,8 @@ import mil.nga.proj.crs.geodetic.GeodeticCoordinateReferenceSystem;
 import mil.nga.proj.crs.geodetic.GeodeticDatumEnsemble;
 import mil.nga.proj.crs.geodetic.GeodeticReferenceFrame;
 import mil.nga.proj.crs.geodetic.PrimeMeridian;
+import mil.nga.proj.crs.parametric.ParametricCoordinateReferenceSystem;
+import mil.nga.proj.crs.parametric.ParametricDatum;
 import mil.nga.proj.crs.projected.MapProjection;
 import mil.nga.proj.crs.projected.MapProjectionParameter;
 import mil.nga.proj.crs.projected.ProjectedCoordinateReferenceSystem;
@@ -241,6 +243,27 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read an Parametric Coordinate Reference System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Parametric Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static ParametricCoordinateReferenceSystem readParametric(
+			String text) throws IOException {
+		ParametricCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readParametric();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
 	 * Text Reader
 	 */
 	private TextReader reader;
@@ -317,6 +340,9 @@ public class CRSReader implements Closeable {
 			break;
 		case ENGCRS:
 			crs = readEngineering();
+			break;
+		case PARAMETRICCRS:
+			crs = readParametric();
 			break;
 		default:
 			throw new ProjectionException(
@@ -1025,6 +1051,53 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read a Parametric CRS
+	 * 
+	 * @return parametric coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ParametricCoordinateReferenceSystem readParametric()
+			throws IOException {
+
+		ParametricCoordinateReferenceSystem crs = new ParametricCoordinateReferenceSystem();
+
+		validateKeyword(readKeyword(),
+				CoordinateReferenceSystemKeyword.PARAMETRICCRS);
+
+		readLeftDelimiter();
+
+		crs.setName(reader.readExpectedToken());
+
+		readSeparator();
+
+		crs.setParametricDatum(readParametricDatum());
+
+		readSeparator();
+
+		crs.setCoordinateSystem(readCoordinateSystem());
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.USAGE)) {
+			readSeparator();
+			crs.setUsages(readUsages());
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			crs.setIdentifiers(readIdentifiers());
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.REMARK)) {
+			readSeparator();
+			crs.setRemark(readRemark());
+		}
+
+		readRightDelimiter();
+
+		return crs;
+	}
+
+	/**
 	 * Read a Geodetic reference frame
 	 * 
 	 * @return geodetic reference frame
@@ -1075,6 +1148,22 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read a Parametric datum
+	 * 
+	 * @return parametric datum
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ParametricDatum readParametricDatum() throws IOException {
+		ReferenceFrame referenceFrame = readReferenceFrame();
+		if (!(referenceFrame instanceof ParametricDatum)) {
+			throw new ProjectionException(
+					"Reference frame was not an expected Parametric Datum");
+		}
+		return (ParametricDatum) referenceFrame;
+	}
+
+	/**
 	 * Read a Reference frame (datum)
 	 * 
 	 * @return reference frame
@@ -1089,7 +1178,8 @@ public class CRSReader implements Closeable {
 		CoordinateReferenceSystemKeyword type = readKeyword();
 		validateKeyword(type, CoordinateReferenceSystemKeyword.DATUM,
 				CoordinateReferenceSystemKeyword.VDATUM,
-				CoordinateReferenceSystemKeyword.EDATUM);
+				CoordinateReferenceSystemKeyword.EDATUM,
+				CoordinateReferenceSystemKeyword.PDATUM);
 		switch (type) {
 		case DATUM:
 			geodeticReferenceFrame = new GeodeticReferenceFrame();
@@ -1100,6 +1190,9 @@ public class CRSReader implements Closeable {
 			break;
 		case EDATUM:
 			referenceFrame = new EngineeringDatum();
+			break;
+		case PDATUM:
+			referenceFrame = new ParametricDatum();
 			break;
 		default:
 			throw new ProjectionException(

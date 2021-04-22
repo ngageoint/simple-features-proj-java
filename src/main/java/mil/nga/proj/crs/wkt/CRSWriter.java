@@ -29,6 +29,7 @@ import mil.nga.proj.crs.geodetic.GeodeticCoordinateReferenceSystem;
 import mil.nga.proj.crs.geodetic.GeodeticDatumEnsemble;
 import mil.nga.proj.crs.geodetic.GeodeticReferenceFrame;
 import mil.nga.proj.crs.geodetic.PrimeMeridian;
+import mil.nga.proj.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.proj.crs.projected.MapProjection;
 import mil.nga.proj.crs.projected.MapProjectionParameter;
 import mil.nga.proj.crs.projected.ProjectedCoordinateReferenceSystem;
@@ -144,6 +145,9 @@ public class CRSWriter implements Closeable {
 			break;
 		case ENGINEERING:
 			write((EngineeringCoordinateReferenceSystem) crs);
+			break;
+		case PARAMETRIC:
+			write((ParametricCoordinateReferenceSystem) crs);
 			break;
 		default:
 			throw new ProjectionException(
@@ -514,6 +518,47 @@ public class CRSWriter implements Closeable {
 	}
 
 	/**
+	 * Write a parametric CRS to well-known text
+	 * 
+	 * @param crs
+	 *            parametric coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(ParametricCoordinateReferenceSystem crs)
+			throws IOException {
+
+		write(CoordinateReferenceSystemKeyword.PARAMETRICCRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(crs.getName());
+
+		writeSeparator();
+		write(crs.getParametricDatum());
+
+		writeSeparator();
+		write(crs.getCoordinateSystem());
+
+		if (crs.hasUsages()) {
+			writeSeparator();
+			writeUsages(crs.getUsages());
+		}
+
+		if (crs.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(crs.getIdentifiers());
+		}
+
+		if (crs.hasRemark()) {
+			writeSeparator();
+			writeRemark(crs.getRemark());
+		}
+
+		writeRightDelimiter();
+	}
+
+	/**
 	 * Write a reference frame to well-known text
 	 * 
 	 * @param referenceFrame
@@ -538,6 +583,9 @@ public class CRSWriter implements Closeable {
 			break;
 		case ENGINEERING:
 			write(CoordinateReferenceSystemKeyword.EDATUM);
+			break;
+		case PARAMETRIC:
+			write(CoordinateReferenceSystemKeyword.PDATUM);
 			break;
 		default:
 			throw new ProjectionException(

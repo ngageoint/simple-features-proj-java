@@ -23,6 +23,11 @@ public enum CoordinateReferenceSystemType {
 	GEOGRAPHIC,
 
 	/**
+	 * Parametric
+	 */
+	PARAMETRIC,
+
+	/**
 	 * Projected
 	 */
 	PROJECTED,

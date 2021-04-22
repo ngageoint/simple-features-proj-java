@@ -33,6 +33,7 @@ import mil.nga.proj.crs.geodetic.GeodeticCoordinateReferenceSystem;
 import mil.nga.proj.crs.geodetic.GeodeticDatumEnsemble;
 import mil.nga.proj.crs.geodetic.GeodeticReferenceFrame;
 import mil.nga.proj.crs.geodetic.PrimeMeridian;
+import mil.nga.proj.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.proj.crs.projected.MapProjection;
 import mil.nga.proj.crs.projected.ProjectedCoordinateReferenceSystem;
 import mil.nga.proj.crs.vertical.VerticalCoordinateReferenceSystem;
@@ -2475,14 +2476,13 @@ public class CRSReaderWriterTest {
 	}
 
 	/**
-	 * Test vertical geographic coordinate reference system
+	 * Test vertical coordinate reference system
 	 * 
 	 * @throws IOException
 	 *             upon error
 	 */
 	@Test
-	public void testVerticalGeographicCoordinateReferenceSystem()
-			throws IOException {
+	public void testVerticalCoordinateReferenceSystem() throws IOException {
 
 		String text = "VERTCRS[\"NAVD88\","
 				+ "VDATUM[\"North American Vertical Datum 1988\"],"
@@ -2591,14 +2591,13 @@ public class CRSReaderWriterTest {
 	}
 
 	/**
-	 * Test engineering geographic coordinate reference system
+	 * Test engineering coordinate reference system
 	 * 
 	 * @throws IOException
 	 *             upon error
 	 */
 	@Test
-	public void testEngineeringGeographicCoordinateReferenceSystem()
-			throws IOException {
+	public void testEngineeringCoordinateReferenceSystem() throws IOException {
 
 		String text = "ENGCRS[\"A construction site CRS\","
 				+ "EDATUM[\"P1\",ANCHOR[\"Peg in south corner\"]],"
@@ -2808,6 +2807,52 @@ public class CRSReaderWriterTest {
 				.getOrder().intValue());
 		assertEquals(text, engineeringCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(engineeringCrs));
+
+	}
+
+	/**
+	 * Test parametric coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testParametricCoordinateReferenceSystem() throws IOException {
+
+		String text = "PARAMETRICCRS[\"WMO standard atmosphere layer 0\","
+				+ "PDATUM[\"Mean Sea Level\",ANCHOR[\"1013.25 hPa at 15°C\"]],"
+				+ "CS[parametric,1],"
+				+ "AXIS[\"pressure (hPa)\",up],PARAMETRICUNIT[\"HectoPascal\",100.0]]";
+
+		CoordinateReferenceSystem crs = CRSReader.readCRS(text);
+		ParametricCoordinateReferenceSystem parametricCrs = CRSReader
+				.readParametric(text);
+		assertEquals(crs, parametricCrs);
+		assertEquals(CoordinateReferenceSystemType.PARAMETRIC,
+				parametricCrs.getType());
+		assertEquals("WMO standard atmosphere layer 0",
+				parametricCrs.getName());
+		assertEquals("Mean Sea Level",
+				parametricCrs.getParametricDatum().getName());
+		assertEquals("1013.25 hPa at 15°C",
+				parametricCrs.getParametricDatum().getAnchor());
+		assertEquals(CoordinateSystemType.PARAMETRIC,
+				parametricCrs.getCoordinateSystem().getType());
+		assertEquals(1, parametricCrs.getCoordinateSystem().getDimension());
+		assertEquals("pressure",
+				parametricCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals("hPa", parametricCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.UP, parametricCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals(UnitType.PARAMETRICUNIT,
+				parametricCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("HectoPascal",
+				parametricCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(100.0, parametricCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+		assertEquals(text, parametricCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(parametricCrs));
 
 	}
 
