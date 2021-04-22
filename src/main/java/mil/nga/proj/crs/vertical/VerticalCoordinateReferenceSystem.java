@@ -8,6 +8,7 @@ import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystemType;
 import mil.nga.proj.crs.common.CoordinateSystem;
 import mil.nga.proj.crs.common.Dynamic;
+import mil.nga.proj.crs.common.Identifier;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
@@ -39,7 +40,15 @@ public class VerticalCoordinateReferenceSystem
 	 */
 	private Dynamic dynamic = null;
 
-	// TODO geoid model ID
+	/**
+	 * Geoid Model Name
+	 */
+	private String geoidModelName;
+
+	/**
+	 * Geoid Model Identifier
+	 */
+	private Identifier geoidModelIdentifier;
 
 	/**
 	 * Constructor
@@ -188,7 +197,120 @@ public class VerticalCoordinateReferenceSystem
 		this.dynamic = dynamic;
 	}
 
-	// TODO
+	/**
+	 * Get the geoid model name
+	 * 
+	 * @return geoid model name
+	 */
+	public String getGeoidModelName() {
+		return geoidModelName;
+	}
+
+	/**
+	 * Has a geoid model name
+	 * 
+	 * @return true if has geoid model name
+	 */
+	public boolean hasGeoidModelName() {
+		return getGeoidModelName() != null;
+	}
+
+	/**
+	 * Set the geoid model name
+	 * 
+	 * @param geoidModelName
+	 *            geoid model name
+	 */
+	public void setGeoidModelName(String geoidModelName) {
+		this.geoidModelName = geoidModelName;
+	}
+
+	/**
+	 * Get the geoid model identifier
+	 * 
+	 * @return geoid model identifier
+	 */
+	public Identifier getGeoidModelIdentifier() {
+		return geoidModelIdentifier;
+	}
+
+	/**
+	 * Has a geoid model identifier
+	 * 
+	 * @return true if has geoid model identifier
+	 */
+	public boolean hasGeoidModelIdentifier() {
+		return getGeoidModelIdentifier() != null;
+	}
+
+	/**
+	 * Set the geoid model identifier
+	 * 
+	 * @param geoidModelIdentifier
+	 *            geoid model identifier
+	 */
+	public void setGeoidModelIdentifier(Identifier geoidModelIdentifier) {
+		this.geoidModelIdentifier = geoidModelIdentifier;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((dynamic == null) ? 0 : dynamic.hashCode());
+		result = prime * result + ((geoidModelIdentifier == null) ? 0
+				: geoidModelIdentifier.hashCode());
+		result = prime * result
+				+ ((geoidModelName == null) ? 0 : geoidModelName.hashCode());
+		result = prime * result + ((verticalDatumEnsemble == null) ? 0
+				: verticalDatumEnsemble.hashCode());
+		result = prime * result + ((verticalReferenceFrame == null) ? 0
+				: verticalReferenceFrame.hashCode());
+		return result;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		VerticalCoordinateReferenceSystem other = (VerticalCoordinateReferenceSystem) obj;
+		if (dynamic == null) {
+			if (other.dynamic != null)
+				return false;
+		} else if (!dynamic.equals(other.dynamic))
+			return false;
+		if (geoidModelIdentifier == null) {
+			if (other.geoidModelIdentifier != null)
+				return false;
+		} else if (!geoidModelIdentifier.equals(other.geoidModelIdentifier))
+			return false;
+		if (geoidModelName == null) {
+			if (other.geoidModelName != null)
+				return false;
+		} else if (!geoidModelName.equals(other.geoidModelName))
+			return false;
+		if (verticalDatumEnsemble == null) {
+			if (other.verticalDatumEnsemble != null)
+				return false;
+		} else if (!verticalDatumEnsemble.equals(other.verticalDatumEnsemble))
+			return false;
+		if (verticalReferenceFrame == null) {
+			if (other.verticalReferenceFrame != null)
+				return false;
+		} else if (!verticalReferenceFrame.equals(other.verticalReferenceFrame))
+			return false;
+		return true;
+	}
 
 	/**
 	 * {@inheritDoc}

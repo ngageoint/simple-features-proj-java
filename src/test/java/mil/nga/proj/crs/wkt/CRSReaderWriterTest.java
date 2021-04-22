@@ -34,6 +34,8 @@ import mil.nga.proj.crs.geodetic.GeodeticReferenceFrame;
 import mil.nga.proj.crs.geodetic.PrimeMeridian;
 import mil.nga.proj.crs.projected.MapProjection;
 import mil.nga.proj.crs.projected.ProjectedCoordinateReferenceSystem;
+import mil.nga.proj.crs.vertical.VerticalCoordinateReferenceSystem;
+import mil.nga.proj.crs.vertical.VerticalReferenceFrame;
 
 /**
  * CRS Reader tests
@@ -2031,8 +2033,7 @@ public class CRSReaderWriterTest {
 				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219],ID[\"EPSG\",8826]],"
 				+ "PARAMETER[\"Northing at false origin\",0.0,"
 				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219],ID[\"EPSG\",8827]]],"
-				+ "CS[Cartesian,2]," + "AXIS[\"(X)\",east],"
-				+ "AXIS[\"(Y)\",north],"
+				+ "CS[Cartesian,2],AXIS[\"(X)\",east]," + "AXIS[\"(Y)\",north],"
 				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219],"
 				+ "REMARK[\"Fundamental point: Meade's Ranch KS, latitude 39°13'26.686\"\"N,"
 				+ "longitude 98°32'30.506\"\"W.\"]]";
@@ -2205,18 +2206,18 @@ public class CRSReaderWriterTest {
 		assertEquals(text, projectedGeographicCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(projectedGeographicCrs));
 
-		text = "PROJCRS[\"NAD83 UTM 10\"," + "BASEGEOGCRS[\"NAD83(86)\","
+		text = "PROJCRS[\"NAD83 UTM 10\",BASEGEOGCRS[\"NAD83(86)\","
 				+ "DATUM[\"North American Datum 1983\","
 				+ "ELLIPSOID[\"GRS 1980\",6378137,298.257222101]],"
-				+ "PRIMEM[\"Greenwich\",0]]," + "CONVERSION[\"UTM zone 10N\","
+				+ "PRIMEM[\"Greenwich\",0]],CONVERSION[\"UTM zone 10N\","
 				+ "METHOD[\"Transverse Mercator\"],"
 				+ "PARAMETER[\"Latitude of natural origin\",0.0],"
 				+ "PARAMETER[\"Longitude of natural origin\",-123.0],"
 				+ "PARAMETER[\"Scale factor\",0.9996],"
 				+ "PARAMETER[\"False easting\",500000.0],"
-				+ "PARAMETER[\"False northing\",0.0]," + "ID[\"EPSG\",16010]],"
+				+ "PARAMETER[\"False northing\",0.0],ID[\"EPSG\",16010]],"
 				+ "CS[Cartesian,2]," + "AXIS[\"(E)\",east,ORDER[1]],"
-				+ "AXIS[\"(N)\",north,ORDER[2]]," + "LENGTHUNIT[\"metre\",1.0],"
+				+ "AXIS[\"(N)\",north,ORDER[2]],LENGTHUNIT[\"metre\",1.0],"
 				+ "REMARK[\"In this example parameter value units are not given. This is allowed for backward compatibility. However it is strongly recommended that units are explicitly given in the string, as in the previous two examples.\"]]";
 
 		crs = CRSReader.readCRS(text);
@@ -2313,7 +2314,7 @@ public class CRSReaderWriterTest {
 				+ "PARAMETER[\"Scale factor\",0.9996,SCALEUNIT[\"unity\",1.0]],"
 				+ "PARAMETER[\"False easting\",500000.0,LENGTHUNIT[\"metre\",1.0]],"
 				+ "PARAMETER[\"False northing\",0.0,LENGTHUNIT[\"metre\",1.0]]],"
-				+ "CS[Cartesian,3]," + "AXIS[\"(E)\",east,ORDER[1]],"
+				+ "CS[Cartesian,3],AXIS[\"(E)\",east,ORDER[1]],"
 				+ "AXIS[\"(N)\",north,ORDER[2]],"
 				+ "AXIS[\"ellipsoidal height (h)\",up,ORDER[3]],"
 				+ "LENGTHUNIT[\"metre\",1.0]]";
@@ -2440,6 +2441,151 @@ public class CRSReaderWriterTest {
 		text = text.replaceAll("6378137", "6378137.0");
 		assertEquals(text, projectedGeographicCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(projectedGeographicCrs));
+
+	}
+
+	/**
+	 * Test vertical reference frame
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testVerticalReferenceFrame() throws IOException {
+
+		String text = "VDATUM[\"Newlyn\"]";
+		CRSReader reader = new CRSReader(text);
+		VerticalReferenceFrame verticalReferenceFrame = reader
+				.readVerticalReferenceFrame();
+		assertEquals("Newlyn", verticalReferenceFrame.getName());
+		reader.close();
+		assertEquals(text, verticalReferenceFrame.toString());
+
+		text = "VERTICALDATUM[\"Newlyn\",ANCHOR[\"Mean Sea Level 1915 to 1921.\"]]";
+		reader = new CRSReader(text);
+		verticalReferenceFrame = reader.readVerticalReferenceFrame();
+		assertEquals("Newlyn", verticalReferenceFrame.getName());
+		assertEquals("Mean Sea Level 1915 to 1921.",
+				verticalReferenceFrame.getAnchor());
+		reader.close();
+		assertEquals(text.replaceAll("VERTICALDATUM", "VDATUM"),
+				verticalReferenceFrame.toString());
+
+	}
+
+	/**
+	 * Test vertical geographic coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testVerticalGeographicCoordinateReferenceSystem()
+			throws IOException {
+
+		String text = "VERTCRS[\"NAVD88\","
+				+ "VDATUM[\"North American Vertical Datum 1988\"],"
+				+ "CS[vertical,1],AXIS[\"gravity-related height (H)\",up],"
+				+ "LENGTHUNIT[\"metre\",1.0]]";
+
+		CoordinateReferenceSystem crs = CRSReader.readCRS(text);
+		VerticalCoordinateReferenceSystem verticalCrs = CRSReader
+				.readVertical(text);
+		assertEquals(crs, verticalCrs);
+		assertEquals(CoordinateReferenceSystemType.VERTICAL,
+				verticalCrs.getType());
+		assertEquals("NAVD88", verticalCrs.getName());
+		assertEquals("North American Vertical Datum 1988",
+				verticalCrs.getVerticalReferenceFrame().getName());
+		assertEquals(CoordinateSystemType.VERTICAL,
+				verticalCrs.getCoordinateSystem().getType());
+		assertEquals(1, verticalCrs.getCoordinateSystem().getDimension());
+		assertEquals("gravity-related height",
+				verticalCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals("H", verticalCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.UP, verticalCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals(UnitType.LENGTHUNIT,
+				verticalCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("metre",
+				verticalCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(1.0, verticalCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+		assertEquals(text, verticalCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(verticalCrs));
+
+		text = "VERTCRS[\"CGVD2013\","
+				+ "VRF[\"Canadian Geodetic Vertical Datum of 2013\"],"
+				+ "CS[vertical,1],AXIS[\"gravity-related height (H)\",up],"
+				+ "LENGTHUNIT[\"metre\",1.0],"
+				+ "GEOIDMODEL[\"CGG2013\",ID[\"EPSG\",6648]]]";
+
+		crs = CRSReader.readCRS(text);
+		verticalCrs = CRSReader.readVertical(text);
+		assertEquals(crs, verticalCrs);
+		assertEquals(CoordinateReferenceSystemType.VERTICAL,
+				verticalCrs.getType());
+		assertEquals("CGVD2013", verticalCrs.getName());
+		assertEquals("Canadian Geodetic Vertical Datum of 2013",
+				verticalCrs.getVerticalReferenceFrame().getName());
+		assertEquals(CoordinateSystemType.VERTICAL,
+				verticalCrs.getCoordinateSystem().getType());
+		assertEquals(1, verticalCrs.getCoordinateSystem().getDimension());
+		assertEquals("gravity-related height",
+				verticalCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals("H", verticalCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.UP, verticalCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals(UnitType.LENGTHUNIT,
+				verticalCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("metre",
+				verticalCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(1.0, verticalCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+		assertEquals("CGG2013", verticalCrs.getGeoidModelName());
+		assertEquals("EPSG", verticalCrs.getGeoidModelIdentifier().getName());
+		assertEquals("6648",
+				verticalCrs.getGeoidModelIdentifier().getUniqueIdentifier());
+		text = text.replaceAll("VRF", "VDATUM");
+		assertEquals(text, verticalCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(verticalCrs));
+
+		text = "VERTCRS[\"RH2000\","
+				+ "DYNAMIC[FRAMEEPOCH[2000.0],MODEL[\"NKG2016LU\"]],"
+				+ "VDATUM[\"Rikets Hojdsystem 2000\"],CS[vertical,1],"
+				+ "AXIS[\"gravity-related height (H)\",up],"
+				+ "LENGTHUNIT[\"metre\",1.0]]";
+
+		crs = CRSReader.readCRS(text);
+		verticalCrs = CRSReader.readVertical(text);
+		assertEquals(crs, verticalCrs);
+		assertEquals(CoordinateReferenceSystemType.VERTICAL,
+				verticalCrs.getType());
+		assertEquals("RH2000", verticalCrs.getName());
+		assertEquals(2000.0, verticalCrs.getDynamic().getReferenceEpoch(), 0);
+		assertEquals("NKG2016LU",
+				verticalCrs.getDynamic().getDeformationModelName());
+		assertEquals("Rikets Hojdsystem 2000",
+				verticalCrs.getVerticalReferenceFrame().getName());
+		assertEquals(CoordinateSystemType.VERTICAL,
+				verticalCrs.getCoordinateSystem().getType());
+		assertEquals(1, verticalCrs.getCoordinateSystem().getDimension());
+		assertEquals("gravity-related height",
+				verticalCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals("H", verticalCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.UP, verticalCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals(UnitType.LENGTHUNIT,
+				verticalCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("metre",
+				verticalCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(1.0, verticalCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+		assertEquals(text, verticalCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(verticalCrs));
 
 	}
 

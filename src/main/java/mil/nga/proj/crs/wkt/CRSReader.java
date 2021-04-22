@@ -289,6 +289,9 @@ public class CRSReader implements Closeable {
 		case PROJCRS:
 			crs = readProjected();
 			break;
+		case VERTCRS:
+			crs = readVertical();
+			break;
 		default:
 			throw new ProjectionException(
 					"Unsupported WKT CRS keyword: " + keyword);
@@ -884,7 +887,67 @@ public class CRSReader implements Closeable {
 
 		VerticalCoordinateReferenceSystem crs = new VerticalCoordinateReferenceSystem();
 
-		// TODO
+		validateKeyword(readKeyword(),
+				CoordinateReferenceSystemKeyword.VERTCRS);
+
+		readLeftDelimiter();
+
+		crs.setName(reader.readExpectedToken());
+
+		boolean isDynamic = isKeywordNext(
+				CoordinateReferenceSystemKeyword.DYNAMIC);
+		if (isDynamic) {
+			readSeparator();
+			crs.setDynamic(readDynamic());
+		}
+
+		if (isDynamic
+				|| isKeywordNext(CoordinateReferenceSystemKeyword.VDATUM)) {
+			readSeparator();
+			crs.setVerticalReferenceFrame(readVerticalReferenceFrame());
+		} else if (isKeywordNext(CoordinateReferenceSystemKeyword.ENSEMBLE)) {
+			readSeparator();
+			crs.setVerticalDatumEnsemble(readVerticalDatumEnsemble());
+		} else {
+			// Validation error
+			readSeparator();
+			validateKeyword(readKeyword(),
+					CoordinateReferenceSystemKeyword.VDATUM,
+					CoordinateReferenceSystemKeyword.ENSEMBLE);
+		}
+
+		readSeparator();
+
+		crs.setCoordinateSystem(readCoordinateSystem());
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.GEOIDMODEL)) {
+			readSeparator();
+			readKeyword();
+			readLeftDelimiter();
+			crs.setGeoidModelName(reader.readExpectedToken());
+			if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+				readSeparator();
+				crs.setGeoidModelIdentifier(readIdentifier());
+			}
+			readRightDelimiter();
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.USAGE)) {
+			readSeparator();
+			crs.setUsages(readUsages());
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			crs.setIdentifiers(readIdentifiers());
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.REMARK)) {
+			readSeparator();
+			crs.setRemark(readRemark());
+		}
+
+		readRightDelimiter();
 
 		return crs;
 	}
@@ -979,7 +1042,7 @@ public class CRSReader implements Closeable {
 			geodeticReferenceFrame.setPrimeMeridian(readPrimeMeridian());
 		}
 
-		return geodeticReferenceFrame;
+		return referenceFrame;
 	}
 
 	/**

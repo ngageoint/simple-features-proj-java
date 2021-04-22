@@ -416,7 +416,56 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(VerticalCoordinateReferenceSystem crs)
 			throws IOException {
-		// TODO
+
+		write(CoordinateReferenceSystemKeyword.VERTCRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(crs.getName());
+
+		if (crs.hasDynamic()) {
+			writeSeparator();
+			write(crs.getDynamic());
+		}
+
+		writeSeparator();
+		if (crs.hasDynamic() || crs.hasVerticalReferenceFrame()) {
+			write(crs.getVerticalReferenceFrame());
+		} else {
+			write(crs.getVerticalDatumEnsemble());
+		}
+
+		writeSeparator();
+		write(crs.getCoordinateSystem());
+
+		if (crs.hasGeoidModelName()) {
+			writeSeparator();
+			write(CoordinateReferenceSystemKeyword.GEOIDMODEL);
+			writeLeftDelimiter();
+			writeQuotedText(crs.getGeoidModelName());
+			if (crs.hasGeoidModelIdentifier()) {
+				writeSeparator();
+				write(crs.getGeoidModelIdentifier());
+			}
+			writeRightDelimiter();
+		}
+
+		if (crs.hasUsages()) {
+			writeSeparator();
+			writeUsages(crs.getUsages());
+		}
+
+		if (crs.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(crs.getIdentifiers());
+		}
+
+		if (crs.hasRemark()) {
+			writeSeparator();
+			writeRemark(crs.getRemark());
+		}
+
+		writeRightDelimiter();
 	}
 
 	/**
