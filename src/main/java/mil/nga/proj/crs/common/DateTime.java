@@ -128,9 +128,10 @@ public class DateTime {
 								String seconds = timeParts[2];
 								int decimalIndex = seconds.indexOf(PERIOD);
 								if (decimalIndex > -1) {
+									String fraction = "0" + PERIOD + seconds
+											.substring(decimalIndex + 1);
 									dateTime.setFraction(
-											Integer.parseInt(seconds.substring(
-													decimalIndex + 1)));
+											Double.parseDouble(fraction));
 									seconds = seconds.substring(0,
 											decimalIndex);
 								}
@@ -205,7 +206,7 @@ public class DateTime {
 	/**
 	 * Seconds fraction
 	 */
-	private Integer fraction = null;
+	private Double fraction = null;
 
 	/**
 	 * Local time zone hour
@@ -416,7 +417,7 @@ public class DateTime {
 	 * 
 	 * @return fraction
 	 */
-	public Integer getFraction() {
+	public Double getFraction() {
 		return fraction;
 	}
 
@@ -435,7 +436,11 @@ public class DateTime {
 	 * @param fraction
 	 *            fraction
 	 */
-	public void setFraction(Integer fraction) {
+	public void setFraction(Double fraction) {
+		if (fraction != null && (fraction < 0 || fraction >= 1.0)) {
+			throw new ProjectionException(
+					"Invalid fraction value: " + fraction);
+		}
 		this.fraction = fraction;
 	}
 
@@ -620,8 +625,13 @@ public class DateTime {
 					text.append(COLON);
 					text.append(String.format("%02d", getSecond()));
 					if (hasFraction()) {
-						text.append(PERIOD);
-						text.append(String.format("%03d", getFraction()));
+						String fraction = getFraction().toString();
+						int periodIndex = fraction.indexOf(PERIOD);
+						if (periodIndex >= 0
+								&& periodIndex + 1 < fraction.length()) {
+							text.append(PERIOD);
+							text.append(fraction.substring(periodIndex + 1));
+						}
 					}
 				}
 			}

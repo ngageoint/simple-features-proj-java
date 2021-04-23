@@ -33,6 +33,8 @@ import mil.nga.proj.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.proj.crs.projected.MapProjection;
 import mil.nga.proj.crs.projected.MapProjectionParameter;
 import mil.nga.proj.crs.projected.ProjectedCoordinateReferenceSystem;
+import mil.nga.proj.crs.temporal.TemporalCoordinateReferenceSystem;
+import mil.nga.proj.crs.temporal.TemporalDatum;
 import mil.nga.proj.crs.vertical.VerticalCoordinateReferenceSystem;
 
 /**
@@ -148,6 +150,9 @@ public class CRSWriter implements Closeable {
 			break;
 		case PARAMETRIC:
 			write((ParametricCoordinateReferenceSystem) crs);
+			break;
+		case TEMPORAL:
+			write((TemporalCoordinateReferenceSystem) crs);
 			break;
 		default:
 			throw new ProjectionException(
@@ -536,6 +541,47 @@ public class CRSWriter implements Closeable {
 
 		writeSeparator();
 		write(crs.getParametricDatum());
+
+		writeSeparator();
+		write(crs.getCoordinateSystem());
+
+		if (crs.hasUsages()) {
+			writeSeparator();
+			writeUsages(crs.getUsages());
+		}
+
+		if (crs.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(crs.getIdentifiers());
+		}
+
+		if (crs.hasRemark()) {
+			writeSeparator();
+			writeRemark(crs.getRemark());
+		}
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write a temporal CRS to well-known text
+	 * 
+	 * @param crs
+	 *            temporal coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(TemporalCoordinateReferenceSystem crs)
+			throws IOException {
+
+		write(CoordinateReferenceSystemKeyword.TIMECRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(crs.getName());
+
+		writeSeparator();
+		write(crs.getTemporalDatum());
 
 		writeSeparator();
 		write(crs.getCoordinateSystem());
@@ -1341,6 +1387,49 @@ public class CRSWriter implements Closeable {
 		if (parameter.hasIdentifiers()) {
 			writeSeparator();
 			writeIdentifiers(parameter.getIdentifiers());
+		}
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write a temporal datum to well-known text
+	 * 
+	 * @param temporalDatum
+	 *            temporal datum
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(TemporalDatum temporalDatum) throws IOException {
+
+		write(CoordinateReferenceSystemKeyword.TDATUM);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(temporalDatum.getName());
+
+		if (temporalDatum.hasCalendar()) {
+			writeSeparator();
+			writeKeywordDelimitedQuotedText(
+					CoordinateReferenceSystemKeyword.CALENDAR,
+					temporalDatum.getCalendar());
+		}
+
+		if (temporalDatum.hasOrigin() || temporalDatum.hasOriginDateTime()) {
+			writeSeparator();
+			write(CoordinateReferenceSystemKeyword.TIMEORIGIN);
+			writeLeftDelimiter();
+			if (temporalDatum.hasOriginDateTime()) {
+				writer.write(temporalDatum.getOriginDateTime().toString());
+			} else {
+				writeQuotedText(temporalDatum.getOrigin());
+			}
+			writeRightDelimiter();
+		}
+
+		if (temporalDatum.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(temporalDatum.getIdentifiers());
 		}
 
 		writeRightDelimiter();

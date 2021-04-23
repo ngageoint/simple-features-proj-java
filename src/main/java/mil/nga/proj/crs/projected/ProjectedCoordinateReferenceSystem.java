@@ -1,7 +1,6 @@
 package mil.nga.proj.crs.projected;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,6 +11,7 @@ import mil.nga.proj.crs.common.CoordinateSystem;
 import mil.nga.proj.crs.common.Dynamic;
 import mil.nga.proj.crs.common.Identifier;
 import mil.nga.proj.crs.common.Unit;
+import mil.nga.proj.crs.geodetic.GeodeticCoordinateReferenceSystem;
 import mil.nga.proj.crs.geodetic.GeodeticDatumEnsemble;
 import mil.nga.proj.crs.geodetic.GeodeticReferenceFrame;
 import mil.nga.proj.crs.wkt.CRSWriter;
@@ -31,39 +31,9 @@ public class ProjectedCoordinateReferenceSystem
 			.getLogger(ProjectedCoordinateReferenceSystem.class.getName());
 
 	/**
-	 * Name
+	 * Base
 	 */
-	private String baseName = null;
-
-	/**
-	 * Base Type
-	 */
-	private CoordinateReferenceSystemType baseType = null;
-
-	/**
-	 * Geodetic Reference Frame
-	 */
-	private GeodeticReferenceFrame geodeticReferenceFrame = null;
-
-	/**
-	 * Geodetic Datum Ensemble
-	 */
-	private GeodeticDatumEnsemble geodeticDatumEnsemble = null;
-
-	/**
-	 * Dynamic coordinate reference system
-	 */
-	private Dynamic dynamic = null;
-
-	/**
-	 * Ellipsoidal Angle Unit
-	 */
-	private Unit ellipsoidalAngleUnit = null;
-
-	/**
-	 * Base Identifiers
-	 */
-	private List<Identifier> baseIdentifiers = null;
+	private GeodeticCoordinateReferenceSystem base = new GeodeticCoordinateReferenceSystem();
 
 	/**
 	 * Map Projection
@@ -162,12 +132,31 @@ public class ProjectedCoordinateReferenceSystem
 	}
 
 	/**
+	 * Get the base coordinate reference system
+	 * 
+	 * @return base coordinate reference system
+	 */
+	public GeodeticCoordinateReferenceSystem getBase() {
+		return base;
+	}
+
+	/**
+	 * Set the base coordinate reference system
+	 * 
+	 * @param base
+	 *            base coordinate reference system
+	 */
+	public void setBase(GeodeticCoordinateReferenceSystem base) {
+		this.base = base;
+	}
+
+	/**
 	 * Get the base name
 	 * 
 	 * @return base name
 	 */
 	public String getBaseName() {
-		return baseName;
+		return getBase().getName();
 	}
 
 	/**
@@ -177,7 +166,7 @@ public class ProjectedCoordinateReferenceSystem
 	 *            base name
 	 */
 	public void setBaseName(String baseName) {
-		this.baseName = baseName;
+		getBase().setName(baseName);
 	}
 
 	/**
@@ -186,7 +175,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * @return base type
 	 */
 	public CoordinateReferenceSystemType getBaseType() {
-		return baseType;
+		return getBase().getType();
 	}
 
 	/**
@@ -196,7 +185,7 @@ public class ProjectedCoordinateReferenceSystem
 	 *            base type
 	 */
 	public void setBaseType(CoordinateReferenceSystemType baseType) {
-		this.baseType = baseType;
+		getBase().setType(baseType);
 	}
 
 	/**
@@ -205,7 +194,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * @return geodetic reference frame
 	 */
 	public GeodeticReferenceFrame getGeodeticReferenceFrame() {
-		return geodeticReferenceFrame;
+		return getBase().getGeodeticReferenceFrame();
 	}
 
 	/**
@@ -214,7 +203,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * @return true if has geodetic reference frame
 	 */
 	public boolean hasGeodeticReferenceFrame() {
-		return getGeodeticReferenceFrame() != null;
+		return getBase().hasGeodeticReferenceFrame();
 	}
 
 	/**
@@ -225,7 +214,7 @@ public class ProjectedCoordinateReferenceSystem
 	 */
 	public void setGeodeticReferenceFrame(
 			GeodeticReferenceFrame geodeticReferenceFrame) {
-		this.geodeticReferenceFrame = geodeticReferenceFrame;
+		getBase().setGeodeticReferenceFrame(geodeticReferenceFrame);
 	}
 
 	/**
@@ -234,7 +223,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * @return geodetic datum ensemble
 	 */
 	public GeodeticDatumEnsemble getGeodeticDatumEnsemble() {
-		return geodeticDatumEnsemble;
+		return getBase().getGeodeticDatumEnsemble();
 	}
 
 	/**
@@ -243,7 +232,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * @return true if has geodetic datum ensemble
 	 */
 	public boolean hasGeodeticDatumEnsemble() {
-		return getGeodeticDatumEnsemble() != null;
+		return getBase().hasGeodeticDatumEnsemble();
 	}
 
 	/**
@@ -254,7 +243,7 @@ public class ProjectedCoordinateReferenceSystem
 	 */
 	public void setGeodeticDatumEnsemble(
 			GeodeticDatumEnsemble geodeticDatumEnsemble) {
-		this.geodeticDatumEnsemble = geodeticDatumEnsemble;
+		getBase().setGeodeticDatumEnsemble(geodeticDatumEnsemble);
 	}
 
 	/**
@@ -263,7 +252,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * @return dynamic coordinate reference system
 	 */
 	public Dynamic getDynamic() {
-		return dynamic;
+		return getBase().getDynamic();
 	}
 
 	/**
@@ -272,7 +261,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * @return true if has dynamic
 	 */
 	public boolean hasDynamic() {
-		return getDynamic() != null;
+		return getBase().hasDynamic();
 	}
 
 	/**
@@ -282,7 +271,7 @@ public class ProjectedCoordinateReferenceSystem
 	 *            dynamic coordinate reference system
 	 */
 	public void setDynamic(Dynamic dynamic) {
-		this.dynamic = dynamic;
+		getBase().setDynamic(dynamic);
 	}
 
 	/**
@@ -291,7 +280,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * @return ellipsoidal angle unit
 	 */
 	public Unit getEllipsoidalAngleUnit() {
-		return ellipsoidalAngleUnit;
+		return getBase().getCoordinateSystem().getUnit();
 	}
 
 	/**
@@ -300,7 +289,8 @@ public class ProjectedCoordinateReferenceSystem
 	 * @return true if has ellipsoidal angle unit
 	 */
 	public boolean hasEllipsoidalAngleUnit() {
-		return getEllipsoidalAngleUnit() != null;
+		CoordinateSystem cs = getBase().getCoordinateSystem();
+		return cs != null && cs.hasUnit();
 	}
 
 	/**
@@ -310,7 +300,12 @@ public class ProjectedCoordinateReferenceSystem
 	 *            ellipsoidal angle unit
 	 */
 	public void setEllipsoidalAngleUnit(Unit ellipsoidalAngleUnit) {
-		this.ellipsoidalAngleUnit = ellipsoidalAngleUnit;
+		CoordinateSystem cs = getBase().getCoordinateSystem();
+		if (cs == null) {
+			cs = new CoordinateSystem();
+			getBase().setCoordinateSystem(cs);
+		}
+		cs.setUnit(ellipsoidalAngleUnit);
 	}
 
 	/**
@@ -319,7 +314,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * @return base identifiers
 	 */
 	public List<Identifier> getBaseIdentifiers() {
-		return baseIdentifiers;
+		return getBase().getIdentifiers();
 	}
 
 	/**
@@ -328,7 +323,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * @return true if has base identifiers
 	 */
 	public boolean hasBaseIdentifiers() {
-		return baseIdentifiers != null && !baseIdentifiers.isEmpty();
+		return getBase().hasIdentifiers();
 	}
 
 	/**
@@ -338,7 +333,7 @@ public class ProjectedCoordinateReferenceSystem
 	 *            base identifiers
 	 */
 	public void setBaseIdentifiers(List<Identifier> baseIdentifiers) {
-		this.baseIdentifiers = baseIdentifiers;
+		getBase().setIdentifiers(baseIdentifiers);
 	}
 
 	/**
@@ -348,10 +343,7 @@ public class ProjectedCoordinateReferenceSystem
 	 *            base identifier
 	 */
 	public void addBaseIdentifier(Identifier baseIdentifier) {
-		if (this.baseIdentifiers == null) {
-			this.baseIdentifiers = new ArrayList<>();
-		}
-		this.baseIdentifiers.add(baseIdentifier);
+		getBase().addIdentifier(baseIdentifier);
 	}
 
 	/**
@@ -361,10 +353,7 @@ public class ProjectedCoordinateReferenceSystem
 	 *            base identifiers
 	 */
 	public void addBaseIdentifiers(List<Identifier> baseIdentifiers) {
-		if (this.baseIdentifiers == null) {
-			this.baseIdentifiers = new ArrayList<>();
-		}
-		this.baseIdentifiers.addAll(baseIdentifiers);
+		getBase().addIdentifiers(baseIdentifiers);
 	}
 
 	/**
@@ -393,19 +382,7 @@ public class ProjectedCoordinateReferenceSystem
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ ((baseIdentifiers == null) ? 0 : baseIdentifiers.hashCode());
-		result = prime * result
-				+ ((baseName == null) ? 0 : baseName.hashCode());
-		result = prime * result
-				+ ((baseType == null) ? 0 : baseType.hashCode());
-		result = prime * result + ((dynamic == null) ? 0 : dynamic.hashCode());
-		result = prime * result + ((ellipsoidalAngleUnit == null) ? 0
-				: ellipsoidalAngleUnit.hashCode());
-		result = prime * result + ((geodeticDatumEnsemble == null) ? 0
-				: geodeticDatumEnsemble.hashCode());
-		result = prime * result + ((geodeticReferenceFrame == null) ? 0
-				: geodeticReferenceFrame.hashCode());
+		result = prime * result + ((base == null) ? 0 : base.hashCode());
 		result = prime * result
 				+ ((mapProjection == null) ? 0 : mapProjection.hashCode());
 		return result;
@@ -423,37 +400,10 @@ public class ProjectedCoordinateReferenceSystem
 		if (getClass() != obj.getClass())
 			return false;
 		ProjectedCoordinateReferenceSystem other = (ProjectedCoordinateReferenceSystem) obj;
-		if (baseIdentifiers == null) {
-			if (other.baseIdentifiers != null)
+		if (base == null) {
+			if (other.base != null)
 				return false;
-		} else if (!baseIdentifiers.equals(other.baseIdentifiers))
-			return false;
-		if (baseName == null) {
-			if (other.baseName != null)
-				return false;
-		} else if (!baseName.equals(other.baseName))
-			return false;
-		if (baseType != other.baseType)
-			return false;
-		if (dynamic == null) {
-			if (other.dynamic != null)
-				return false;
-		} else if (!dynamic.equals(other.dynamic))
-			return false;
-		if (ellipsoidalAngleUnit == null) {
-			if (other.ellipsoidalAngleUnit != null)
-				return false;
-		} else if (!ellipsoidalAngleUnit.equals(other.ellipsoidalAngleUnit))
-			return false;
-		if (geodeticDatumEnsemble == null) {
-			if (other.geodeticDatumEnsemble != null)
-				return false;
-		} else if (!geodeticDatumEnsemble.equals(other.geodeticDatumEnsemble))
-			return false;
-		if (geodeticReferenceFrame == null) {
-			if (other.geodeticReferenceFrame != null)
-				return false;
-		} else if (!geodeticReferenceFrame.equals(other.geodeticReferenceFrame))
+		} else if (!base.equals(other.base))
 			return false;
 		if (mapProjection == null) {
 			if (other.mapProjection != null)

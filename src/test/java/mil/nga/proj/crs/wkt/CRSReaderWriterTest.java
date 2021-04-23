@@ -36,6 +36,8 @@ import mil.nga.proj.crs.geodetic.PrimeMeridian;
 import mil.nga.proj.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.proj.crs.projected.MapProjection;
 import mil.nga.proj.crs.projected.ProjectedCoordinateReferenceSystem;
+import mil.nga.proj.crs.temporal.TemporalCoordinateReferenceSystem;
+import mil.nga.proj.crs.temporal.TemporalDatum;
 import mil.nga.proj.crs.vertical.VerticalCoordinateReferenceSystem;
 import mil.nga.proj.crs.vertical.VerticalReferenceFrame;
 
@@ -45,6 +47,31 @@ import mil.nga.proj.crs.vertical.VerticalReferenceFrame;
  * @author osbornb
  */
 public class CRSReaderWriterTest {
+
+	@Test
+	public void test3857() throws IOException {
+
+		String text = "PROJCS[\"WGS 84 / Pseudo-Mercator\","
+				+ "GEOGCRS[\"WGS 84\",DATUM[\"WGS_1984\","
+				+ "SPHEROID[\"WGS 84\",6378137,298.257223563,"
+				+ "ID[\"EPSG\",\"7030\"]],ID[\"EPSG\",\"6326\"]],"
+				+ "PRIMEM[\"Greenwich\",0,ID[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "ID[\"EPSG\",\"9122\"]],ID[\"EPSG\",\"4326\"]],"
+				+ "PROJECTION[\"Mercator_1SP\"],"
+				+ "PARAMETER[\"central_meridian\",0],"
+				+ "PARAMETER[\"scale_factor\",1],"
+				+ "PARAMETER[\"false_easting\",0],"
+				+ "PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,"
+				+ "ID[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],"
+				+ "AXIS[\"Y\",NORTH],ID[\"EPSG\",\"3857\"]]";
+
+		CoordinateReferenceSystem crs = CRSReader.readCRS(text);
+
+		assertEquals(text, crs.toString());
+		assertEquals(text, CRSWriter.writeCRS(crs));
+
+	}
 
 	/**
 	 * Test EPSG 4979
@@ -2853,6 +2880,216 @@ public class CRSReaderWriterTest {
 				.getConversionFactor(), 0);
 		assertEquals(text, parametricCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(parametricCrs));
+
+	}
+
+	/**
+	 * Test temporal datum
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testTemporalDatum() throws IOException {
+
+		String text = "TIMEDATUM[\"Gregorian calendar\",CALENDAR[\"proleptic Gregorian\"],"
+				+ "TIMEORIGIN[0000-01-01]]";
+		CRSReader reader = new CRSReader(text);
+		TemporalDatum temporalDatum = reader.readTemporalDatum();
+		assertEquals("Gregorian calendar", temporalDatum.getName());
+		assertEquals("proleptic Gregorian", temporalDatum.getCalendar());
+		assertEquals("0000-01-01", temporalDatum.getOrigin());
+		assertTrue(temporalDatum.hasOriginDateTime());
+		assertEquals("0000-01-01",
+				temporalDatum.getOriginDateTime().toString());
+		reader.close();
+		text = text.replaceAll("TIMEDATUM", "TDATUM");
+		assertEquals(text, temporalDatum.toString());
+
+		text = "TDATUM[\"Gregorian calendar\",TIMEORIGIN[\"0001 January 1st\"]]";
+		reader = new CRSReader(text);
+		temporalDatum = reader.readTemporalDatum();
+		assertEquals("Gregorian calendar", temporalDatum.getName());
+		assertFalse(temporalDatum.hasCalendar());
+		assertEquals("0001 January 1st", temporalDatum.getOrigin());
+		assertFalse(temporalDatum.hasOriginDateTime());
+		reader.close();
+		assertEquals(text, temporalDatum.toString());
+
+		text = "TDATUM[\"Gregorian calendar\"]";
+		reader = new CRSReader(text);
+		temporalDatum = reader.readTemporalDatum();
+		assertFalse(temporalDatum.hasCalendar());
+		assertFalse(temporalDatum.hasOrigin());
+		assertFalse(temporalDatum.hasOriginDateTime());
+		reader.close();
+		assertEquals(text, temporalDatum.toString());
+
+	}
+
+	/**
+	 * Test temporal coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testTemporalCoordinateReferenceSystem() throws IOException {
+
+		String text = "TIMECRS[\"DateTime\","
+				+ "TDATUM[\"Gregorian Calendar\"],"
+				+ "CS[TemporalDateTime,1],AXIS[\"Time (T)\",future]]";
+
+		CoordinateReferenceSystem crs = CRSReader.readCRS(text);
+		TemporalCoordinateReferenceSystem temporalCrs = CRSReader
+				.readTemporal(text);
+		assertEquals(crs, temporalCrs);
+		assertEquals(CoordinateReferenceSystemType.TEMPORAL,
+				temporalCrs.getType());
+		assertEquals("DateTime", temporalCrs.getName());
+		assertEquals("Gregorian Calendar",
+				temporalCrs.getTemporalDatum().getName());
+		assertEquals(CoordinateSystemType.TEMPORAL_DATE_TIME,
+				temporalCrs.getCoordinateSystem().getType());
+		assertEquals(1, temporalCrs.getCoordinateSystem().getDimension());
+		assertEquals("Time",
+				temporalCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals("T", temporalCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.FUTURE, temporalCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		text = text.replaceAll("TemporalDateTime", "temporalDateTime");
+		assertEquals(text, temporalCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(temporalCrs));
+
+		text = "TIMECRS[\"GPS milliseconds\","
+				+ "TDATUM[\"GPS time origin\",TIMEORIGIN[1980-01-01T00:00:00.0Z]],"
+				+ "CS[TemporalCount,1],AXIS[\"(T)\",future,TIMEUNIT[\"millisecond (ms)\",0.001]]]";
+
+		crs = CRSReader.readCRS(text);
+		temporalCrs = CRSReader.readTemporal(text);
+		assertEquals(crs, temporalCrs);
+		assertEquals(CoordinateReferenceSystemType.TEMPORAL,
+				temporalCrs.getType());
+		assertEquals("GPS milliseconds", temporalCrs.getName());
+		assertEquals("GPS time origin",
+				temporalCrs.getTemporalDatum().getName());
+		assertEquals("1980-01-01T00:00:00.0Z",
+				temporalCrs.getTemporalDatum().getOrigin());
+		assertTrue(temporalCrs.getTemporalDatum().hasOriginDateTime());
+		assertEquals("1980-01-01T00:00:00.0Z",
+				temporalCrs.getTemporalDatum().getOriginDateTime().toString());
+		assertEquals(CoordinateSystemType.TEMPORAL_COUNT,
+				temporalCrs.getCoordinateSystem().getType());
+		assertEquals(1, temporalCrs.getCoordinateSystem().getDimension());
+		assertEquals("T", temporalCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.FUTURE, temporalCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals(UnitType.TIMEUNIT, temporalCrs.getCoordinateSystem()
+				.getAxes().get(0).getUnit().getType());
+		assertEquals("millisecond (ms)", temporalCrs.getCoordinateSystem()
+				.getAxes().get(0).getUnit().getName());
+		assertEquals(0.001, temporalCrs.getCoordinateSystem().getAxes().get(0)
+				.getUnit().getConversionFactor(), 0);
+		text = text.replaceAll("TemporalCount", "temporalCount");
+		assertEquals(text, temporalCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(temporalCrs));
+
+		text = "TIMECRS[\"Calendar hours from 1979-12-29\","
+				+ "TDATUM[\"29 December 1979\",TIMEORIGIN[1979-12-29T00Z]],"
+				+ "CS[TemporalCount,1],AXIS[\"Time\",future,TIMEUNIT[\"hour\"]]]";
+
+		crs = CRSReader.readCRS(text);
+		temporalCrs = CRSReader.readTemporal(text);
+		assertEquals(crs, temporalCrs);
+		assertEquals(CoordinateReferenceSystemType.TEMPORAL,
+				temporalCrs.getType());
+		assertEquals("Calendar hours from 1979-12-29", temporalCrs.getName());
+		assertEquals("29 December 1979",
+				temporalCrs.getTemporalDatum().getName());
+		assertEquals("1979-12-29T00Z",
+				temporalCrs.getTemporalDatum().getOrigin());
+		assertTrue(temporalCrs.getTemporalDatum().hasOriginDateTime());
+		assertEquals("1979-12-29T00Z",
+				temporalCrs.getTemporalDatum().getOriginDateTime().toString());
+		assertEquals(CoordinateSystemType.TEMPORAL_COUNT,
+				temporalCrs.getCoordinateSystem().getType());
+		assertEquals(1, temporalCrs.getCoordinateSystem().getDimension());
+		assertEquals("Time",
+				temporalCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals(AxisDirectionType.FUTURE, temporalCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals(UnitType.TIMEUNIT, temporalCrs.getCoordinateSystem()
+				.getAxes().get(0).getUnit().getType());
+		assertEquals("hour", temporalCrs.getCoordinateSystem().getAxes().get(0)
+				.getUnit().getName());
+		text = text.replaceAll("TemporalCount", "temporalCount");
+		assertEquals(text, temporalCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(temporalCrs));
+
+		text = "TIMECRS[\"Decimal Years CE\","
+				+ "TDATUM[\"Common Era\",TIMEORIGIN[0000]],"
+				+ "CS[TemporalMeasure,1],AXIS[\"Decimal years (a)\",future,TIMEUNIT[\"year\"]]]";
+
+		crs = CRSReader.readCRS(text);
+		temporalCrs = CRSReader.readTemporal(text);
+		assertEquals(crs, temporalCrs);
+		assertEquals(CoordinateReferenceSystemType.TEMPORAL,
+				temporalCrs.getType());
+		assertEquals("Decimal Years CE", temporalCrs.getName());
+		assertEquals("Common Era", temporalCrs.getTemporalDatum().getName());
+		assertEquals("0000", temporalCrs.getTemporalDatum().getOrigin());
+		assertTrue(temporalCrs.getTemporalDatum().hasOriginDateTime());
+		assertEquals("0000",
+				temporalCrs.getTemporalDatum().getOriginDateTime().toString());
+		assertEquals(CoordinateSystemType.TEMPORAL_MEASURE,
+				temporalCrs.getCoordinateSystem().getType());
+		assertEquals(1, temporalCrs.getCoordinateSystem().getDimension());
+		assertEquals("Decimal years",
+				temporalCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals("a", temporalCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.FUTURE, temporalCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals(UnitType.TIMEUNIT, temporalCrs.getCoordinateSystem()
+				.getAxes().get(0).getUnit().getType());
+		assertEquals("year", temporalCrs.getCoordinateSystem().getAxes().get(0)
+				.getUnit().getName());
+		text = text.replaceAll("TemporalMeasure", "temporalMeasure");
+		assertEquals(text, temporalCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(temporalCrs));
+
+		text = "TIMECRS[\"Unix time\","
+				+ "TDATUM[\"Unix epoch\",TIMEORIGIN[1970-01-01T00:00:00Z]],"
+				+ "CS[TemporalCount,1],AXIS[\"Time\",future,TIMEUNIT[\"second\"]]]";
+
+		crs = CRSReader.readCRS(text);
+		temporalCrs = CRSReader.readTemporal(text);
+		assertEquals(crs, temporalCrs);
+		assertEquals(CoordinateReferenceSystemType.TEMPORAL,
+				temporalCrs.getType());
+		assertEquals("Unix time", temporalCrs.getName());
+		assertEquals("Unix epoch", temporalCrs.getTemporalDatum().getName());
+		assertEquals("1970-01-01T00:00:00Z",
+				temporalCrs.getTemporalDatum().getOrigin());
+		assertTrue(temporalCrs.getTemporalDatum().hasOriginDateTime());
+		assertEquals("1970-01-01T00:00:00Z",
+				temporalCrs.getTemporalDatum().getOriginDateTime().toString());
+		assertEquals(CoordinateSystemType.TEMPORAL_COUNT,
+				temporalCrs.getCoordinateSystem().getType());
+		assertEquals(1, temporalCrs.getCoordinateSystem().getDimension());
+		assertEquals("Time",
+				temporalCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals(AxisDirectionType.FUTURE, temporalCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals(UnitType.TIMEUNIT, temporalCrs.getCoordinateSystem()
+				.getAxes().get(0).getUnit().getType());
+		assertEquals("second", temporalCrs.getCoordinateSystem().getAxes()
+				.get(0).getUnit().getName());
+		text = text.replaceAll("TemporalCount", "temporalCount");
+		assertEquals(text, temporalCrs.toString());
+		assertEquals(text, CRSWriter.writeCRS(temporalCrs));
 
 	}
 

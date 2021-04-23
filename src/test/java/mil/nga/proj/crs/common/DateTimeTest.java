@@ -7,8 +7,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import mil.nga.proj.crs.common.DateTime;
-
 /**
  * Date and Time tests
  * 
@@ -206,7 +204,7 @@ public class DateTimeTest {
 		assertEquals(0, dateTime.getHour().intValue());
 		assertEquals(34, dateTime.getMinute().intValue());
 		assertEquals(56, dateTime.getSecond().intValue());
-		assertEquals(789, dateTime.getFraction().intValue());
+		assertEquals(0.789, dateTime.getFraction(), 0);
 		assertTrue(dateTime.isTimeZoneUTC());
 		assertEquals(text, dateTime.toString());
 
@@ -229,7 +227,7 @@ public class DateTimeTest {
 		assertEquals(0, dateTime.getHour().intValue());
 		assertEquals(34, dateTime.getMinute().intValue());
 		assertEquals(56, dateTime.getSecond().intValue());
-		assertEquals(789, dateTime.getFraction().intValue());
+		assertEquals(0.789, dateTime.getFraction(), 0);
 		assertFalse(dateTime.isTimeZoneUTC());
 		assertEquals(6, dateTime.getTimeZoneHour().intValue());
 		assertEquals(35, dateTime.getTimeZoneMinute().intValue());
@@ -254,7 +252,7 @@ public class DateTimeTest {
 		assertEquals(0, dateTime.getHour().intValue());
 		assertEquals(34, dateTime.getMinute().intValue());
 		assertEquals(56, dateTime.getSecond().intValue());
-		assertEquals(789, dateTime.getFraction().intValue());
+		assertEquals(0.789, dateTime.getFraction(), 0);
 		assertFalse(dateTime.isTimeZoneUTC());
 		assertEquals(-10, dateTime.getTimeZoneHour().intValue());
 		assertEquals(7, dateTime.getTimeZoneMinute().intValue());

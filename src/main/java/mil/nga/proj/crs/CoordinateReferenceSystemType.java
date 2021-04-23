@@ -33,6 +33,11 @@ public enum CoordinateReferenceSystemType {
 	PROJECTED,
 
 	/**
+	 * Temporal
+	 */
+	TEMPORAL,
+
+	/**
 	 * Vertical
 	 */
 	VERTICAL;

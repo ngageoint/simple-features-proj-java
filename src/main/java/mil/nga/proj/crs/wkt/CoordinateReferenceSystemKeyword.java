@@ -58,6 +58,11 @@ public enum CoordinateReferenceSystemKeyword {
 	BEARING(),
 
 	/**
+	 * Calendar
+	 */
+	CALENDAR(),
+
+	/**
 	 * Citation
 	 */
 	CITATION(),
@@ -193,6 +198,11 @@ public enum CoordinateReferenceSystemKeyword {
 	PROJCRS("PROJECTEDCRS"),
 
 	/**
+	 * Backwards Compatibility Projected CRS
+	 */
+	PROJCS(),
+
+	/**
 	 * Remark
 	 */
 	REMARK(),
@@ -208,9 +218,24 @@ public enum CoordinateReferenceSystemKeyword {
 	SCOPE(),
 
 	/**
+	 * Temporal Datum
+	 */
+	TDATUM("TIMEDATUM"),
+
+	/**
+	 * Temporal CRS
+	 */
+	TIMECRS(),
+
+	/**
 	 * Temporal extent
 	 */
 	TIMEEXTENT(),
+
+	/**
+	 * Temporal Origin
+	 */
+	TIMEORIGIN(),
 
 	/**
 	 * Time Unit
