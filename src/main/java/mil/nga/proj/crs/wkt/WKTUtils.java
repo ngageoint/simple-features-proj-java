@@ -114,11 +114,13 @@ public class WKTUtils {
 
 		case GEODCRS:
 		case BASEGEODCRS:
+		case GEOCCS:
 			crsType = CoordinateReferenceSystemType.GEODETIC;
 			break;
 
 		case GEOGCRS:
 		case BASEGEOGCRS:
+		case GEOGCS:
 			crsType = CoordinateReferenceSystemType.GEOGRAPHIC;
 			break;
 

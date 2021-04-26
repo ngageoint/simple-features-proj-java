@@ -383,9 +383,9 @@ public class CRSWriter implements Closeable {
 			write(crs.getGeodeticDatumEnsemble());
 		}
 
-		if (crs.hasEllipsoidalAngleUnit()) {
+		if (crs.hasUnit()) {
 			writeSeparator();
-			write(crs.getEllipsoidalAngleUnit());
+			write(crs.getUnit());
 		}
 
 		if (crs.hasBaseIdentifiers()) {
@@ -810,9 +810,9 @@ public class CRSWriter implements Closeable {
 
 		write(primeMeridian.getIrmLongitude());
 
-		if (primeMeridian.hasIrmLongitudeAngleUnit()) {
+		if (primeMeridian.hasIrmLongitudeUnit()) {
 			writeSeparator();
-			write(primeMeridian.getIrmLongitudeAngleUnit());
+			write(primeMeridian.getIrmLongitudeUnit());
 		}
 
 		if (primeMeridian.hasIdentifiers()) {
@@ -847,9 +847,9 @@ public class CRSWriter implements Closeable {
 
 		write(ellipsoid.getInverseFlattening());
 
-		if (ellipsoid.hasLengthUnit()) {
+		if (ellipsoid.hasUnit()) {
 			writeSeparator();
-			write(ellipsoid.getLengthUnit());
+			write(ellipsoid.getUnit());
 		}
 
 		if (ellipsoid.hasIdentifiers()) {
@@ -1039,7 +1039,7 @@ public class CRSWriter implements Closeable {
 
 				writeSeparator();
 
-				write(axis.getMeridianAngleUnit());
+				write(axis.getMeridianUnit());
 
 				writeRightDelimiter();
 			}
@@ -1254,9 +1254,9 @@ public class CRSWriter implements Closeable {
 
 		write(verticalExtent.getMaximumHeight());
 
-		if (verticalExtent.hasLengthUnit()) {
+		if (verticalExtent.hasUnit()) {
 			writeSeparator();
-			write(verticalExtent.getLengthUnit());
+			write(verticalExtent.getUnit());
 		}
 
 		writeRightDelimiter();

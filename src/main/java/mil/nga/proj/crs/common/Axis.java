@@ -41,9 +41,9 @@ public class Axis {
 	private Double meridian = null;
 
 	/**
-	 * Meridian Angle Unit
+	 * Meridian (Angle) Unit
 	 */
-	private Unit meridianAngleUnit = null;
+	private Unit meridianUnit = null;
 
 	/**
 	 * Bearing
@@ -70,6 +70,19 @@ public class Axis {
 	 */
 	public Axis() {
 
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param name
+	 *            name
+	 * @param direction
+	 *            axis direction
+	 */
+	public Axis(String name, AxisDirectionType direction) {
+		setName(name);
+		setDirection(direction);
 	}
 
 	/**
@@ -176,22 +189,22 @@ public class Axis {
 	}
 
 	/**
-	 * Get the meridian angle unit
+	 * Get the meridian (angle) unit
 	 * 
-	 * @return meridian angle unit
+	 * @return meridian (angle) unit
 	 */
-	public Unit getMeridianAngleUnit() {
-		return meridianAngleUnit;
+	public Unit getMeridianUnit() {
+		return meridianUnit;
 	}
 
 	/**
-	 * Set the meridian angle unit
+	 * Set the meridian (angle) unit
 	 * 
-	 * @param meridianAngleUnit
-	 *            meridian angle unit
+	 * @param meridianUnit
+	 *            meridian (angle) unit
 	 */
-	public void setMeridianAngleUnit(Unit meridianAngleUnit) {
-		this.meridianAngleUnit = meridianAngleUnit;
+	public void setMeridianUnit(Unit meridianUnit) {
+		this.meridianUnit = meridianUnit;
 	}
 
 	/**
@@ -348,8 +361,8 @@ public class Axis {
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
 		result = prime * result
 				+ ((meridian == null) ? 0 : meridian.hashCode());
-		result = prime * result + ((meridianAngleUnit == null) ? 0
-				: meridianAngleUnit.hashCode());
+		result = prime * result
+				+ ((meridianUnit == null) ? 0 : meridianUnit.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((order == null) ? 0 : order.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
@@ -390,10 +403,10 @@ public class Axis {
 				return false;
 		} else if (!meridian.equals(other.meridian))
 			return false;
-		if (meridianAngleUnit == null) {
-			if (other.meridianAngleUnit != null)
+		if (meridianUnit == null) {
+			if (other.meridianUnit != null)
 				return false;
-		} else if (!meridianAngleUnit.equals(other.meridianAngleUnit))
+		} else if (!meridianUnit.equals(other.meridianUnit))
 			return false;
 		if (name == null) {
 			if (other.name != null)

@@ -30,9 +30,9 @@ public class VerticalExtent {
 	private double maximumHeight;
 
 	/**
-	 * Length unit
+	 * Unit (Length)
 	 */
-	private Unit lengthUnit = null;
+	private Unit unit = null;
 
 	/**
 	 * Constructor
@@ -60,14 +60,14 @@ public class VerticalExtent {
 	 *            minimum height
 	 * @param maximumHeight
 	 *            maximum height
-	 * @param lengthUnit
-	 *            length unit
+	 * @param unit
+	 *            unit (length)
 	 */
 	public VerticalExtent(double minimumHeight, double maximumHeight,
-			Unit lengthUnit) {
+			Unit unit) {
 		setMinimumHeight(minimumHeight);
 		setMaximumHeight(maximumHeight);
-		setLengthUnit(lengthUnit);
+		setUnit(unit);
 	}
 
 	/**
@@ -109,31 +109,31 @@ public class VerticalExtent {
 	}
 
 	/**
-	 * Get the length unit
+	 * Get the unit (length)
 	 * 
-	 * @return length unit
+	 * @return unit (length)
 	 */
-	public Unit getLengthUnit() {
-		return lengthUnit;
+	public Unit getUnit() {
+		return unit;
 	}
 
 	/**
-	 * Has a length unit
+	 * Has a unit (length)
 	 * 
-	 * @return true if has length unit
+	 * @return true if has unit (length)
 	 */
-	public boolean hasLengthUnit() {
-		return getLengthUnit() != null;
+	public boolean hasUnit() {
+		return getUnit() != null;
 	}
 
 	/**
-	 * Set the length unit
+	 * Set the unit (length)
 	 * 
-	 * @param lengthUnit
-	 *            length unit
+	 * @param unit
+	 *            unit (length)
 	 */
-	public void setLengthUnit(Unit lengthUnit) {
-		this.lengthUnit = lengthUnit;
+	public void setUnit(Unit unit) {
+		this.unit = unit;
 	}
 
 	/**
@@ -143,8 +143,7 @@ public class VerticalExtent {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((lengthUnit == null) ? 0 : lengthUnit.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(maximumHeight);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -165,10 +164,10 @@ public class VerticalExtent {
 		if (getClass() != obj.getClass())
 			return false;
 		VerticalExtent other = (VerticalExtent) obj;
-		if (lengthUnit == null) {
-			if (other.lengthUnit != null)
+		if (unit == null) {
+			if (other.unit != null)
 				return false;
-		} else if (!lengthUnit.equals(other.lengthUnit))
+		} else if (!unit.equals(other.unit))
 			return false;
 		if (Double.doubleToLongBits(maximumHeight) != Double
 				.doubleToLongBits(other.maximumHeight))

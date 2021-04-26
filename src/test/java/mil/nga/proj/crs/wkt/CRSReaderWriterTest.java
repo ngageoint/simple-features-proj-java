@@ -48,6 +48,12 @@ import mil.nga.proj.crs.vertical.VerticalReferenceFrame;
  */
 public class CRSReaderWriterTest {
 
+	/**
+	 * Test EPSG 3857
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
 	@Test
 	public void test3857() throws IOException {
 
@@ -62,14 +68,31 @@ public class CRSReaderWriterTest {
 				+ "PARAMETER[\"central_meridian\",0],"
 				+ "PARAMETER[\"scale_factor\",1],"
 				+ "PARAMETER[\"false_easting\",0],"
-				+ "PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,"
-				+ "ID[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],"
-				+ "AXIS[\"Y\",NORTH],ID[\"EPSG\",\"3857\"]]";
+				+ "PARAMETER[\"false_northing\",0]"
+				+ ",UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]]"
+				+ ",AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]"
+				+ ",ID[\"EPSG\",\"3857\"]]";
 
 		CoordinateReferenceSystem crs = CRSReader.readCRS(text);
 
-		assertEquals(text, crs.toString());
-		assertEquals(text, CRSWriter.writeCRS(crs));
+		String expectedText = "PROJCRS[\"WGS 84 / Pseudo-Mercator\","
+				+ "BASEGEOGCRS[\"WGS 84\",DATUM[\"WGS_1984\","
+				+ "ELLIPSOID[\"WGS 84\",6378137.0,298.257223563,"
+				+ "ID[\"EPSG\",7030]],ID[\"EPSG\",6326]],"
+				+ "PRIMEM[\"Greenwich\",0.0,ID[\"EPSG\",8901]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "ID[\"EPSG\",9122]],ID[\"EPSG\",4326]],"
+				+ "CONVERSION[\"Mercator_1SP\",METHOD[\"Mercator_1SP\"],"
+				+ "PARAMETER[\"central_meridian\",0.0],"
+				+ "PARAMETER[\"scale_factor\",1.0],"
+				+ "PARAMETER[\"false_easting\",0.0],"
+				+ "PARAMETER[\"false_northing\",0.0]],CS[ellipsoidal,2]"
+				+ ",AXIS[\"X\",east],AXIS[\"Y\",north]"
+				+ ",UNIT[\"metre\",1.0,ID[\"EPSG\",9001]]"
+				+ ",ID[\"EPSG\",3857]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.writeCRS(crs));
 
 	}
 
@@ -183,7 +206,7 @@ public class CRSReaderWriterTest {
 		assertNotNull(verticalExtent);
 		assertEquals(-1000, verticalExtent.getMinimumHeight(), 0);
 		assertEquals(0, verticalExtent.getMaximumHeight(), 0);
-		Unit lengthUnit = verticalExtent.getLengthUnit();
+		Unit lengthUnit = verticalExtent.getUnit();
 		assertNotNull(lengthUnit);
 		assertEquals(UnitType.LENGTHUNIT, lengthUnit.getType());
 		assertEquals("metre", lengthUnit.getName());
@@ -198,7 +221,7 @@ public class CRSReaderWriterTest {
 		assertNotNull(verticalExtent);
 		assertEquals(-1000, verticalExtent.getMinimumHeight(), 0);
 		assertEquals(0, verticalExtent.getMaximumHeight(), 0);
-		lengthUnit = verticalExtent.getLengthUnit();
+		lengthUnit = verticalExtent.getUnit();
 		assertNull(lengthUnit);
 		reader.close();
 		text = text.replaceAll("-1000,0", "-1000.0,0.0");
@@ -842,20 +865,20 @@ public class CRSReaderWriterTest {
 		assertEquals(AxisDirectionType.SOUTH, axes.get(0).getDirection());
 		assertEquals(90, axes.get(0).getMeridian(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				axes.get(0).getMeridianAngleUnit().getType());
-		assertEquals("degree", axes.get(0).getMeridianAngleUnit().getName());
+				axes.get(0).getMeridianUnit().getType());
+		assertEquals("degree", axes.get(0).getMeridianUnit().getName());
 		assertEquals(0.0174532925199433,
-				axes.get(0).getMeridianAngleUnit().getConversionFactor(), 0);
+				axes.get(0).getMeridianUnit().getConversionFactor(), 0);
 		assertEquals(1, axes.get(0).getOrder().intValue());
 		assertEquals("northing", axes.get(1).getName());
 		assertEquals("Y", axes.get(1).getAbbreviation());
 		assertEquals(AxisDirectionType.SOUTH, axes.get(1).getDirection());
 		assertEquals(180, axes.get(1).getMeridian(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				axes.get(1).getMeridianAngleUnit().getType());
-		assertEquals("degree", axes.get(1).getMeridianAngleUnit().getName());
+				axes.get(1).getMeridianUnit().getType());
+		assertEquals("degree", axes.get(1).getMeridianUnit().getName());
 		assertEquals(0.0174532925199433,
-				axes.get(1).getMeridianAngleUnit().getConversionFactor(), 0);
+				axes.get(1).getMeridianUnit().getConversionFactor(), 0);
 		assertEquals(2, axes.get(1).getOrder().intValue());
 		unit = coordinateSystem.getUnit();
 		assertEquals(UnitType.LENGTHUNIT, unit.getType());
@@ -1094,11 +1117,11 @@ public class CRSReaderWriterTest {
 		assertEquals(298.2572236,
 				datumEnsemble.getEllipsoid().getInverseFlattening(), 0);
 		assertEquals(UnitType.LENGTHUNIT,
-				datumEnsemble.getEllipsoid().getLengthUnit().getType());
-		assertEquals("metre",
-				datumEnsemble.getEllipsoid().getLengthUnit().getName());
-		assertEquals(1.0, datumEnsemble.getEllipsoid().getLengthUnit()
-				.getConversionFactor(), 0);
+				datumEnsemble.getEllipsoid().getUnit().getType());
+		assertEquals("metre", datumEnsemble.getEllipsoid().getUnit().getName());
+		assertEquals(1.0,
+				datumEnsemble.getEllipsoid().getUnit().getConversionFactor(),
+				0);
 		assertEquals(2, datumEnsemble.getAccuracy(), 0);
 		reader.close();
 		assertEquals(
@@ -1161,11 +1184,11 @@ public class CRSReaderWriterTest {
 		assertEquals(298.2572236,
 				datumEnsemble.getEllipsoid().getInverseFlattening(), 0);
 		assertEquals(UnitType.LENGTHUNIT,
-				datumEnsemble.getEllipsoid().getLengthUnit().getType());
-		assertEquals("metre",
-				datumEnsemble.getEllipsoid().getLengthUnit().getName());
-		assertEquals(1.0, datumEnsemble.getEllipsoid().getLengthUnit()
-				.getConversionFactor(), 0);
+				datumEnsemble.getEllipsoid().getUnit().getType());
+		assertEquals("metre", datumEnsemble.getEllipsoid().getUnit().getName());
+		assertEquals(1.0,
+				datumEnsemble.getEllipsoid().getUnit().getConversionFactor(),
+				0);
 		assertEquals(2, datumEnsemble.getAccuracy(), 0);
 		reader.close();
 		assertEquals(
@@ -1241,9 +1264,9 @@ public class CRSReaderWriterTest {
 		assertEquals("GRS 1980", ellipsoid.getName());
 		assertEquals(6378137, ellipsoid.getSemiMajorAxis(), 0);
 		assertEquals(298.257222101, ellipsoid.getInverseFlattening(), 0);
-		assertEquals(UnitType.LENGTHUNIT, ellipsoid.getLengthUnit().getType());
-		assertEquals("metre", ellipsoid.getLengthUnit().getName());
-		assertEquals(1.0, ellipsoid.getLengthUnit().getConversionFactor(), 0);
+		assertEquals(UnitType.LENGTHUNIT, ellipsoid.getUnit().getType());
+		assertEquals("metre", ellipsoid.getUnit().getName());
+		assertEquals(1.0, ellipsoid.getUnit().getConversionFactor(), 0);
 		reader.close();
 		assertEquals(text.replaceAll("6378137", "6378137.0"),
 				ellipsoid.toString());
@@ -1265,10 +1288,10 @@ public class CRSReaderWriterTest {
 		assertEquals("Clark 1866", ellipsoid.getName());
 		assertEquals(20925832.164, ellipsoid.getSemiMajorAxis(), 0);
 		assertEquals(294.97869821, ellipsoid.getInverseFlattening(), 0);
-		assertEquals(UnitType.LENGTHUNIT, ellipsoid.getLengthUnit().getType());
-		assertEquals("US survey foot", ellipsoid.getLengthUnit().getName());
+		assertEquals(UnitType.LENGTHUNIT, ellipsoid.getUnit().getType());
+		assertEquals("US survey foot", ellipsoid.getUnit().getName());
 		assertEquals(0.304800609601219,
-				ellipsoid.getLengthUnit().getConversionFactor(), 0);
+				ellipsoid.getUnit().getConversionFactor(), 0);
 		reader.close();
 		assertEquals(text.replaceAll("20925832.164", "2.0925832164E7"),
 				ellipsoid.toString());
@@ -1279,9 +1302,9 @@ public class CRSReaderWriterTest {
 		assertEquals("Sphere", ellipsoid.getName());
 		assertEquals(6371000, ellipsoid.getSemiMajorAxis(), 0);
 		assertEquals(0, ellipsoid.getInverseFlattening(), 0);
-		assertEquals(UnitType.LENGTHUNIT, ellipsoid.getLengthUnit().getType());
-		assertEquals("metre", ellipsoid.getLengthUnit().getName());
-		assertEquals(1.0, ellipsoid.getLengthUnit().getConversionFactor(), 0);
+		assertEquals(UnitType.LENGTHUNIT, ellipsoid.getUnit().getType());
+		assertEquals("metre", ellipsoid.getUnit().getName());
+		assertEquals(1.0, ellipsoid.getUnit().getConversionFactor(), 0);
 		reader.close();
 		assertEquals(text.replaceAll("6371000,0", "6371000.0,0.0"),
 				ellipsoid.toString());
@@ -1303,12 +1326,10 @@ public class CRSReaderWriterTest {
 		assertEquals("Paris", primeMeridian.getName());
 		assertEquals(2.5969213, primeMeridian.getIrmLongitude(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				primeMeridian.getIrmLongitudeAngleUnit().getType());
-		assertEquals("grad",
-				primeMeridian.getIrmLongitudeAngleUnit().getName());
+				primeMeridian.getIrmLongitudeUnit().getType());
+		assertEquals("grad", primeMeridian.getIrmLongitudeUnit().getName());
 		assertEquals(0.015707963267949,
-				primeMeridian.getIrmLongitudeAngleUnit().getConversionFactor(),
-				0);
+				primeMeridian.getIrmLongitudeUnit().getConversionFactor(), 0);
 		reader.close();
 		assertEquals(text, primeMeridian.toString());
 
@@ -1326,12 +1347,10 @@ public class CRSReaderWriterTest {
 		assertEquals("Greenwich", primeMeridian.getName());
 		assertEquals(0.0, primeMeridian.getIrmLongitude(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				primeMeridian.getIrmLongitudeAngleUnit().getType());
-		assertEquals("degree",
-				primeMeridian.getIrmLongitudeAngleUnit().getName());
+				primeMeridian.getIrmLongitudeUnit().getType());
+		assertEquals("degree", primeMeridian.getIrmLongitudeUnit().getName());
 		assertEquals(0.0174532925199433,
-				primeMeridian.getIrmLongitudeAngleUnit().getConversionFactor(),
-				0);
+				primeMeridian.getIrmLongitudeUnit().getConversionFactor(), 0);
 		reader.close();
 		assertEquals(text, primeMeridian.toString());
 
@@ -1357,9 +1376,9 @@ public class CRSReaderWriterTest {
 		assertEquals("GRS 1980", ellipsoid.getName());
 		assertEquals(6378137, ellipsoid.getSemiMajorAxis(), 0);
 		assertEquals(298.257222101, ellipsoid.getInverseFlattening(), 0);
-		assertEquals(UnitType.LENGTHUNIT, ellipsoid.getLengthUnit().getType());
-		assertEquals("metre", ellipsoid.getLengthUnit().getName());
-		assertEquals(1.0, ellipsoid.getLengthUnit().getConversionFactor(), 0);
+		assertEquals(UnitType.LENGTHUNIT, ellipsoid.getUnit().getType());
+		assertEquals("metre", ellipsoid.getUnit().getName());
+		assertEquals(1.0, ellipsoid.getUnit().getConversionFactor(), 0);
 		reader.close();
 		assertEquals(text.replaceAll("6378137", "6378137.0"),
 				geodeticReferenceFrame.toString());
@@ -1375,9 +1394,9 @@ public class CRSReaderWriterTest {
 		assertEquals("WGS 84", ellipsoid.getName());
 		assertEquals(6378388.0, ellipsoid.getSemiMajorAxis(), 0);
 		assertEquals(298.257223563, ellipsoid.getInverseFlattening(), 0);
-		assertEquals(UnitType.LENGTHUNIT, ellipsoid.getLengthUnit().getType());
-		assertEquals("metre", ellipsoid.getLengthUnit().getName());
-		assertEquals(1.0, ellipsoid.getLengthUnit().getConversionFactor(), 0);
+		assertEquals(UnitType.LENGTHUNIT, ellipsoid.getUnit().getType());
+		assertEquals("metre", ellipsoid.getUnit().getName());
+		assertEquals(1.0, ellipsoid.getUnit().getConversionFactor(), 0);
 		assertEquals("Greenwich",
 				geodeticReferenceFrame.getPrimeMeridian().getName());
 		assertEquals(0.0,
@@ -1397,9 +1416,9 @@ public class CRSReaderWriterTest {
 		assertEquals("International 1924", ellipsoid.getName());
 		assertEquals(6378388.0, ellipsoid.getSemiMajorAxis(), 0);
 		assertEquals(297.0, ellipsoid.getInverseFlattening(), 0);
-		assertEquals(UnitType.LENGTHUNIT, ellipsoid.getLengthUnit().getType());
-		assertEquals("metre", ellipsoid.getLengthUnit().getName());
-		assertEquals(1.0, ellipsoid.getLengthUnit().getConversionFactor(), 0);
+		assertEquals(UnitType.LENGTHUNIT, ellipsoid.getUnit().getType());
+		assertEquals("metre", ellipsoid.getUnit().getName());
+		assertEquals(1.0, ellipsoid.getUnit().getConversionFactor(), 0);
 		assertEquals(
 				"Tananarive observatory:21.0191667gS, 50.23849537gE of Paris",
 				geodeticReferenceFrame.getAnchor());
@@ -1408,12 +1427,11 @@ public class CRSReaderWriterTest {
 		assertEquals(2.5969213,
 				geodeticReferenceFrame.getPrimeMeridian().getIrmLongitude(), 0);
 		assertEquals(UnitType.ANGLEUNIT, geodeticReferenceFrame
-				.getPrimeMeridian().getIrmLongitudeAngleUnit().getType());
+				.getPrimeMeridian().getIrmLongitudeUnit().getType());
 		assertEquals("grad", geodeticReferenceFrame.getPrimeMeridian()
-				.getIrmLongitudeAngleUnit().getName());
-		assertEquals(0.015707963267949,
-				geodeticReferenceFrame.getPrimeMeridian()
-						.getIrmLongitudeAngleUnit().getConversionFactor(),
+				.getIrmLongitudeUnit().getName());
+		assertEquals(0.015707963267949, geodeticReferenceFrame
+				.getPrimeMeridian().getIrmLongitudeUnit().getConversionFactor(),
 				0);
 		reader.close();
 		assertEquals(text.replaceAll("GEODETICDATUM", "DATUM"),
@@ -1559,11 +1577,11 @@ public class CRSReaderWriterTest {
 				.getEllipsoid().getInverseFlattening(), 0);
 		assertEquals(UnitType.LENGTHUNIT,
 				geographicCrs.getGeodeticReferenceFrame().getEllipsoid()
-						.getLengthUnit().getType());
+						.getUnit().getType());
 		assertEquals("metre", geographicCrs.getGeodeticReferenceFrame()
-				.getEllipsoid().getLengthUnit().getName());
+				.getEllipsoid().getUnit().getName());
 		assertEquals(1.0, geographicCrs.getGeodeticReferenceFrame()
-				.getEllipsoid().getLengthUnit().getConversionFactor(), 0);
+				.getEllipsoid().getUnit().getConversionFactor(), 0);
 		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
 				geographicCrs.getCoordinateSystem().getType());
 		assertEquals(3, geographicCrs.getCoordinateSystem().getDimension());
@@ -1630,11 +1648,11 @@ public class CRSReaderWriterTest {
 				.getEllipsoid().getInverseFlattening(), 0);
 		assertEquals(UnitType.LENGTHUNIT,
 				geographicCrs.getGeodeticReferenceFrame().getEllipsoid()
-						.getLengthUnit().getType());
+						.getUnit().getType());
 		assertEquals("metre", geographicCrs.getGeodeticReferenceFrame()
-				.getEllipsoid().getLengthUnit().getName());
+				.getEllipsoid().getUnit().getName());
 		assertEquals(1.0, geographicCrs.getGeodeticReferenceFrame()
-				.getEllipsoid().getLengthUnit().getConversionFactor(), 0);
+				.getEllipsoid().getUnit().getConversionFactor(), 0);
 		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
 				geographicCrs.getCoordinateSystem().getType());
 		assertEquals(2, geographicCrs.getCoordinateSystem().getDimension());
@@ -1946,13 +1964,11 @@ public class CRSReaderWriterTest {
 				0);
 		assertEquals(UnitType.LENGTHUNIT,
 				projectedGeographicCrs.getGeodeticReferenceFrame()
-						.getEllipsoid().getLengthUnit().getType());
+						.getEllipsoid().getUnit().getType());
 		assertEquals("metre", projectedGeographicCrs.getGeodeticReferenceFrame()
-				.getEllipsoid().getLengthUnit().getName());
-		assertEquals(1.0,
-				projectedGeographicCrs.getGeodeticReferenceFrame()
-						.getEllipsoid().getLengthUnit().getConversionFactor(),
-				0);
+				.getEllipsoid().getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getUnit().getConversionFactor(), 0);
 		assertEquals("EuroGeographics",
 				projectedGeographicCrs.getBaseIdentifiers().get(0).getName());
 		assertEquals("ETRS89-LatLon", projectedGeographicCrs
@@ -2092,13 +2108,13 @@ public class CRSReaderWriterTest {
 				0);
 		assertEquals(UnitType.LENGTHUNIT,
 				projectedGeographicCrs.getGeodeticReferenceFrame()
-						.getEllipsoid().getLengthUnit().getType());
+						.getEllipsoid().getUnit().getType());
 		assertEquals("US survey foot",
 				projectedGeographicCrs.getGeodeticReferenceFrame()
-						.getEllipsoid().getLengthUnit().getName());
+						.getEllipsoid().getUnit().getName());
 		assertEquals(0.304800609601219,
 				projectedGeographicCrs.getGeodeticReferenceFrame()
-						.getEllipsoid().getLengthUnit().getConversionFactor(),
+						.getEllipsoid().getUnit().getConversionFactor(),
 				0);
 		assertEquals("Texas South Central SPCS27",
 				projectedGeographicCrs.getMapProjection().getName());
@@ -2372,13 +2388,11 @@ public class CRSReaderWriterTest {
 				0);
 		assertEquals(UnitType.LENGTHUNIT,
 				projectedGeographicCrs.getGeodeticReferenceFrame()
-						.getEllipsoid().getLengthUnit().getType());
+						.getEllipsoid().getUnit().getType());
 		assertEquals("metre", projectedGeographicCrs.getGeodeticReferenceFrame()
-				.getEllipsoid().getLengthUnit().getName());
-		assertEquals(1.0,
-				projectedGeographicCrs.getGeodeticReferenceFrame()
-						.getEllipsoid().getLengthUnit().getConversionFactor(),
-				0);
+				.getEllipsoid().getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getUnit().getConversionFactor(), 0);
 		assertEquals("UTM zone 31N 3D",
 				projectedGeographicCrs.getMapProjection().getName());
 		assertEquals("Transverse Mercator (3D)",
@@ -3091,6 +3105,209 @@ public class CRSReaderWriterTest {
 		assertEquals(text, temporalCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(temporalCrs));
 
+	}
+
+	/**
+	 * Test Backward Compatibility map projection
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testMapProjectionCompat() throws IOException {
+
+		String text = "PROJECTION[\"Transverse Mercator\"],"
+				+ "PARAMETER[\"Latitude of origin\",0],"
+				+ "PARAMETER[\"Central meridian\",-123],"
+				+ "PARAMETER[\"Scale factor\",0.9996],"
+				+ "PARAMETER[\"False easting\",500000],"
+				+ "PARAMETER[\"False northing\",0]";
+		CRSReader reader = new CRSReader(text);
+		MapProjection mapProjection = reader.readMapProjectionMethod();
+		assertEquals("Transverse Mercator", mapProjection.getName());
+		assertEquals("Transverse Mercator", mapProjection.getMethodName());
+		assertEquals("Latitude of origin",
+				mapProjection.getParameters().get(0).getName());
+		assertEquals(0, mapProjection.getParameters().get(0).getValue(), 0);
+		assertEquals("Central meridian",
+				mapProjection.getParameters().get(1).getName());
+		assertEquals(-123, mapProjection.getParameters().get(1).getValue(), 0);
+		assertEquals("Scale factor",
+				mapProjection.getParameters().get(2).getName());
+		assertEquals(0.9996, mapProjection.getParameters().get(2).getValue(),
+				0);
+		assertEquals("False easting",
+				mapProjection.getParameters().get(3).getName());
+		assertEquals(500000, mapProjection.getParameters().get(3).getValue(),
+				0);
+		assertEquals("False northing",
+				mapProjection.getParameters().get(4).getName());
+		assertEquals(0, mapProjection.getParameters().get(4).getValue(), 0);
+		reader.close();
+
+		String expectedText = "CONVERSION[\"Transverse Mercator\",METHOD[\"Transverse Mercator\"],"
+				+ "PARAMETER[\"Latitude of origin\",0.0],"
+				+ "PARAMETER[\"Central meridian\",-123.0],"
+				+ "PARAMETER[\"Scale factor\",0.9996],"
+				+ "PARAMETER[\"False easting\",500000.0],"
+				+ "PARAMETER[\"False northing\",0.0]]";
+
+		assertEquals(expectedText, mapProjection.toString());
+
+		text = "PROJECTION[\"UTM zone 10N\"],"
+				+ "PARAMETER[\"Latitude of natural origin\",0],"
+				+ "PARAMETER[\"Longitude of natural origin\",-123],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.9996],"
+				+ "PARAMETER[\"FE\",500000],PARAMETER[\"FN\",0]";
+		reader = new CRSReader(text);
+		mapProjection = reader.readMapProjectionMethod();
+		assertEquals("UTM zone 10N", mapProjection.getName());
+		assertEquals("UTM zone 10N", mapProjection.getMethodName());
+		assertEquals("Latitude of natural origin",
+				mapProjection.getParameters().get(0).getName());
+		assertEquals(0, mapProjection.getParameters().get(0).getValue(), 0);
+		assertEquals("Longitude of natural origin",
+				mapProjection.getParameters().get(1).getName());
+		assertEquals(-123, mapProjection.getParameters().get(1).getValue(), 0);
+		assertEquals("Scale factor at natural origin",
+				mapProjection.getParameters().get(2).getName());
+		assertEquals(0.9996, mapProjection.getParameters().get(2).getValue(),
+				0);
+		assertEquals("FE", mapProjection.getParameters().get(3).getName());
+		assertEquals(500000, mapProjection.getParameters().get(3).getValue(),
+				0);
+		assertEquals("FN", mapProjection.getParameters().get(4).getName());
+		assertEquals(0, mapProjection.getParameters().get(4).getValue(), 0);
+		reader.close();
+
+		expectedText = "CONVERSION[\"UTM zone 10N\",METHOD[\"UTM zone 10N\"],"
+				+ "PARAMETER[\"Latitude of natural origin\",0.0],"
+				+ "PARAMETER[\"Longitude of natural origin\",-123.0],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.9996],"
+				+ "PARAMETER[\"FE\",500000.0],PARAMETER[\"FN\",0.0]]";
+
+		assertEquals(expectedText, mapProjection.toString());
+
+	}
+
+	// TODO Unit compat
+
+	// TODO Axis compat
+
+	/**
+	 * Test Backward Compatibility of Geographic CRS
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testGeographicCompat() throws IOException {
+
+		String text = "GEOGCS[\"NAD83\","
+				+ "DATUM[\"North American Datum 1983\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101]],"
+				+ "PRIMEM[\"Greenwich\",0],"
+				+ "UNIT[\"degree\",0.0174532925199433]]";
+
+		CoordinateReferenceSystem crs = CRSReader.readCRS(text);
+		GeodeticCoordinateReferenceSystem geodeticOrGeographicCrs = CRSReader
+				.readGeodeticOrGeographicCompat(text);
+		assertEquals(crs, geodeticOrGeographicCrs);
+		GeodeticCoordinateReferenceSystem geographicCrs = CRSReader
+				.readGeographicCompat(text);
+		assertEquals(crs, geographicCrs);
+		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
+				geographicCrs.getType());
+		assertEquals("NAD83", geographicCrs.getName());
+		assertEquals("North American Datum 1983",
+				geographicCrs.getGeodeticReferenceFrame().getName());
+		assertEquals("GRS 1980", geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getName());
+		assertEquals(6378137.0, geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(298.257222101, geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getInverseFlattening(), 0);
+		assertEquals("Greenwich", geographicCrs.getGeodeticReferenceFrame()
+				.getPrimeMeridian().getName());
+		assertEquals(0.0, geographicCrs.getGeodeticReferenceFrame()
+				.getPrimeMeridian().getIrmLongitude(), 0);
+		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
+				geographicCrs.getCoordinateSystem().getType());
+		assertEquals(2, geographicCrs.getCoordinateSystem().getDimension());
+		assertEquals("Lon",
+				geographicCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals(AxisDirectionType.EAST, geographicCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals("Lat",
+				geographicCrs.getCoordinateSystem().getAxes().get(1).getName());
+		assertEquals(AxisDirectionType.NORTH, geographicCrs
+				.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals("degree",
+				geographicCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(0.0174532925199433, geographicCrs.getCoordinateSystem()
+				.getUnit().getConversionFactor(), 0);
+
+		String expectedText = "GEOGCRS[\"NAD83\","
+				+ "DATUM[\"North American Datum 1983\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101]],"
+				+ "PRIMEM[\"Greenwich\",0.0],CS[ellipsoidal,2],"
+				+ "AXIS[\"Lon\",east],AXIS[\"Lat\",north],UNIT[\"degree\",0.0174532925199433]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.writeCRS(crs));
+
+		text = "GEOGCS[\"NAD83\",DATUM[\"North American Datum 1983\","
+				+ "SPHEROID[\"GRS 1980\",6378137.0,298.257222101]],"
+				+ "PRIMEM[\"Greenwich\",0],"
+				+ "AXIS[\"latitude\",NORTH],AXIS[\"longitude\",EAST],"
+				+ "UNIT[\"degree\",0.0174532925199433]]";
+
+		crs = CRSReader.readCRS(text);
+		geodeticOrGeographicCrs = CRSReader
+				.readGeodeticOrGeographicCompat(text);
+		assertEquals(crs, geodeticOrGeographicCrs);
+		geographicCrs = CRSReader.readGeographicCompat(text);
+		assertEquals(crs, geographicCrs);
+		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
+				geographicCrs.getType());
+		assertEquals("NAD83", geographicCrs.getName());
+		assertEquals("North American Datum 1983",
+				geographicCrs.getGeodeticReferenceFrame().getName());
+		assertEquals("GRS 1980", geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getName());
+		assertEquals(6378137.0, geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(298.257222101, geographicCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getInverseFlattening(), 0);
+		assertEquals("Greenwich", geographicCrs.getGeodeticReferenceFrame()
+				.getPrimeMeridian().getName());
+		assertEquals(0.0, geographicCrs.getGeodeticReferenceFrame()
+				.getPrimeMeridian().getIrmLongitude(), 0);
+		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
+				geographicCrs.getCoordinateSystem().getType());
+		assertEquals(2, geographicCrs.getCoordinateSystem().getDimension());
+		assertEquals("latitude",
+				geographicCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals(AxisDirectionType.NORTH, geographicCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals("longitude",
+				geographicCrs.getCoordinateSystem().getAxes().get(1).getName());
+		assertEquals(AxisDirectionType.EAST, geographicCrs.getCoordinateSystem()
+				.getAxes().get(1).getDirection());
+		assertEquals("degree",
+				geographicCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(0.0174532925199433, geographicCrs.getCoordinateSystem()
+				.getUnit().getConversionFactor(), 0);
+
+		expectedText = "GEOGCRS[\"NAD83\","
+				+ "DATUM[\"North American Datum 1983\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101]],"
+				+ "PRIMEM[\"Greenwich\",0.0],CS[ellipsoidal,2],"
+				+ "AXIS[\"latitude\",north],AXIS[\"longitude\",east],"
+				+ "UNIT[\"degree\",0.0174532925199433]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.writeCRS(crs));
 	}
 
 }

@@ -275,40 +275,6 @@ public class ProjectedCoordinateReferenceSystem
 	}
 
 	/**
-	 * Get the ellipsoidal angle unit
-	 * 
-	 * @return ellipsoidal angle unit
-	 */
-	public Unit getEllipsoidalAngleUnit() {
-		return getBase().getCoordinateSystem().getUnit();
-	}
-
-	/**
-	 * Has an ellipsoidal angle unit
-	 * 
-	 * @return true if has ellipsoidal angle unit
-	 */
-	public boolean hasEllipsoidalAngleUnit() {
-		CoordinateSystem cs = getBase().getCoordinateSystem();
-		return cs != null && cs.hasUnit();
-	}
-
-	/**
-	 * Set the ellipsoidal angle unit
-	 * 
-	 * @param ellipsoidalAngleUnit
-	 *            ellipsoidal angle unit
-	 */
-	public void setEllipsoidalAngleUnit(Unit ellipsoidalAngleUnit) {
-		CoordinateSystem cs = getBase().getCoordinateSystem();
-		if (cs == null) {
-			cs = new CoordinateSystem();
-			getBase().setCoordinateSystem(cs);
-		}
-		cs.setUnit(ellipsoidalAngleUnit);
-	}
-
-	/**
 	 * Get the base identifiers
 	 * 
 	 * @return base identifiers
@@ -354,6 +320,40 @@ public class ProjectedCoordinateReferenceSystem
 	 */
 	public void addBaseIdentifiers(List<Identifier> baseIdentifiers) {
 		getBase().addIdentifiers(baseIdentifiers);
+	}
+
+	/**
+	 * Get the unit (ellipsoidal angle)
+	 * 
+	 * @return unit (ellipsoidal angle)
+	 */
+	public Unit getUnit() {
+		return getBase().getCoordinateSystem().getUnit();
+	}
+
+	/**
+	 * Has a unit (ellipsoidal angle)
+	 * 
+	 * @return true if has unit (ellipsoidal angle)
+	 */
+	public boolean hasUnit() {
+		CoordinateSystem cs = getBase().getCoordinateSystem();
+		return cs != null && cs.hasUnit();
+	}
+
+	/**
+	 * Set the unit (angle)
+	 * 
+	 * @param unit
+	 *            unit (ellipsoidal angle)
+	 */
+	public void setUnit(Unit unit) {
+		CoordinateSystem cs = getBase().getCoordinateSystem();
+		if (cs == null) {
+			cs = new CoordinateSystem();
+			getBase().setCoordinateSystem(cs);
+		}
+		cs.setUnit(unit);
 	}
 
 	/**

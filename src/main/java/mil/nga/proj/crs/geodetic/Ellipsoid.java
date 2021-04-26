@@ -39,9 +39,9 @@ public class Ellipsoid {
 	private double inverseFlattening;
 
 	/**
-	 * Length Unit
+	 * Unit (Length)
 	 */
-	private Unit lengthUnit = null;
+	private Unit unit = null;
 
 	/**
 	 * Identifiers
@@ -130,31 +130,31 @@ public class Ellipsoid {
 	}
 
 	/**
-	 * Get the length unit
+	 * Get the unit (length)
 	 * 
-	 * @return length unit
+	 * @return unit (length)
 	 */
-	public Unit getLengthUnit() {
-		return lengthUnit;
+	public Unit getUnit() {
+		return unit;
 	}
 
 	/**
-	 * Has a length unit
+	 * Has a unit (length)
 	 * 
-	 * @return true if has length unit
+	 * @return true if has unit (length)
 	 */
-	public boolean hasLengthUnit() {
-		return getLengthUnit() != null;
+	public boolean hasUnit() {
+		return getUnit() != null;
 	}
 
 	/**
-	 * Set the length unit
+	 * Set the unit (length)
 	 * 
-	 * @param lengthUnit
-	 *            length unit
+	 * @param unit
+	 *            unit (length)
 	 */
-	public void setLengthUnit(Unit lengthUnit) {
-		this.lengthUnit = lengthUnit;
+	public void setUnit(Unit unit) {
+		this.unit = unit;
 	}
 
 	/**
@@ -223,8 +223,7 @@ public class Ellipsoid {
 		long temp;
 		temp = Double.doubleToLongBits(inverseFlattening);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result
-				+ ((lengthUnit == null) ? 0 : lengthUnit.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		temp = Double.doubleToLongBits(semiMajorAxis);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -251,10 +250,10 @@ public class Ellipsoid {
 		if (Double.doubleToLongBits(inverseFlattening) != Double
 				.doubleToLongBits(other.inverseFlattening))
 			return false;
-		if (lengthUnit == null) {
-			if (other.lengthUnit != null)
+		if (unit == null) {
+			if (other.unit != null)
 				return false;
-		} else if (!lengthUnit.equals(other.lengthUnit))
+		} else if (!unit.equals(other.unit))
 			return false;
 		if (name == null) {
 			if (other.name != null)

@@ -90,7 +90,7 @@ public enum CoordinateReferenceSystemKeyword {
 	/**
 	 * Engineering datum
 	 */
-	EDATUM("ENGINEERINGDATUM"),
+	EDATUM("ENGINEERINGDATUM", "LOCAL_DATUM"),
 
 	/**
 	 * Ellipsoid
@@ -118,14 +118,24 @@ public enum CoordinateReferenceSystemKeyword {
 	FRAMEEPOCH(),
 
 	/**
+	 * Backwards Compatibility Geodetic CRS
+	 */
+	GEOCCS,
+
+	/**
 	 * Geodetic CRS
 	 */
-	GEODCRS("GEODETICCRS", "GEOCCS"),
+	GEODCRS("GEODETICCRS"),
+
+	/**
+	 * Backwards Compatibility Geographic CRS
+	 */
+	GEOGCS(),
 
 	/**
 	 * Geographic CRS
 	 */
-	GEOGCRS("GEOGRAPHICCRS", "GEOGCS"),
+	GEOGCRS("GEOGRAPHICCRS"),
 
 	/**
 	 * Geoid Model ID
@@ -255,7 +265,7 @@ public enum CoordinateReferenceSystemKeyword {
 	/**
 	 * Vertical Reference Frame
 	 */
-	VDATUM("VRF", "VERTICALDATUM"),
+	VDATUM("VRF", "VERTICALDATUM", "VERT_DATUM"),
 
 	/**
 	 * Vertical CRS

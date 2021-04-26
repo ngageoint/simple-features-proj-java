@@ -35,9 +35,9 @@ public class PrimeMeridian {
 	private double irmLongitude;
 
 	/**
-	 * IRM longitude angle unit
+	 * IRM longitude unit (angle)
 	 */
-	private Unit irmLongitudeAngleUnit;
+	private Unit irmLongitudeUnit;
 
 	/**
 	 * Identifiers
@@ -103,31 +103,31 @@ public class PrimeMeridian {
 	}
 
 	/**
-	 * Get the IRM longitude angle unit
+	 * Get the IRM longitude unit (angle)
 	 * 
-	 * @return IRM longitude angle unit
+	 * @return IRM longitude unit (angle)
 	 */
-	public Unit getIrmLongitudeAngleUnit() {
-		return irmLongitudeAngleUnit;
+	public Unit getIrmLongitudeUnit() {
+		return irmLongitudeUnit;
 	}
 
 	/**
-	 * Has an IRM longitude angle unit
+	 * Has an IRM longitude unit (angle)
 	 * 
-	 * @return true if has IRM longitude angle unit
+	 * @return true if has IRM longitude unit (angle)
 	 */
-	public boolean hasIrmLongitudeAngleUnit() {
-		return getIrmLongitudeAngleUnit() != null;
+	public boolean hasIrmLongitudeUnit() {
+		return getIrmLongitudeUnit() != null;
 	}
 
 	/**
-	 * Set the IRM longitude angle unit
+	 * Set the IRM longitude unit (angle)
 	 * 
-	 * @param irmLongitudeAngleUnit
-	 *            IRM longitude angle unit
+	 * @param irmLongitudeUnit
+	 *            IRM longitude unit (angle)
 	 */
-	public void setIrmLongitudeAngleUnit(Unit irmLongitudeAngleUnit) {
-		this.irmLongitudeAngleUnit = irmLongitudeAngleUnit;
+	public void setIrmLongitudeUnit(Unit irmLongitudeUnit) {
+		this.irmLongitudeUnit = irmLongitudeUnit;
 	}
 
 	/**
@@ -196,8 +196,8 @@ public class PrimeMeridian {
 		long temp;
 		temp = Double.doubleToLongBits(irmLongitude);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((irmLongitudeAngleUnit == null) ? 0
-				: irmLongitudeAngleUnit.hashCode());
+		result = prime * result + ((irmLongitudeUnit == null) ? 0
+				: irmLongitudeUnit.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
@@ -222,10 +222,10 @@ public class PrimeMeridian {
 		if (Double.doubleToLongBits(irmLongitude) != Double
 				.doubleToLongBits(other.irmLongitude))
 			return false;
-		if (irmLongitudeAngleUnit == null) {
-			if (other.irmLongitudeAngleUnit != null)
+		if (irmLongitudeUnit == null) {
+			if (other.irmLongitudeUnit != null)
 				return false;
-		} else if (!irmLongitudeAngleUnit.equals(other.irmLongitudeAngleUnit))
+		} else if (!irmLongitudeUnit.equals(other.irmLongitudeUnit))
 			return false;
 		if (name == null) {
 			if (other.name != null)

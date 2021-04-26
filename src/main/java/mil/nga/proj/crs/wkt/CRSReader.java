@@ -287,6 +287,138 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read a Backward Compatible Geodetic or Geographic Coordinate Reference
+	 * System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Geodetic or Geographic Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static GeodeticCoordinateReferenceSystem readGeodeticOrGeographicCompat(
+			String text) throws IOException {
+		GeodeticCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readGeodeticOrGeographicCompat();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
+	 * Read a Backward Compatible Geodetic Coordinate Reference System from the
+	 * well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Geodetic Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static GeodeticCoordinateReferenceSystem readGeodeticCompat(
+			String text) throws IOException {
+		GeodeticCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readGeodeticCompat();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
+	 * Read a Backward Compatible Geographic Coordinate Reference System from
+	 * the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Geographic Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static GeodeticCoordinateReferenceSystem readGeographicCompat(
+			String text) throws IOException {
+		GeodeticCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readGeographicCompat();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
+	 * Read a Backward Compatible Projected Coordinate Reference System from the
+	 * well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Projected Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static ProjectedCoordinateReferenceSystem readProjectedCompat(
+			String text) throws IOException {
+		ProjectedCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readProjectedCompat();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
+	 * Read a Backward Compatible Projected Geodetic Coordinate Reference System
+	 * from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Projected Geodetic Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static ProjectedCoordinateReferenceSystem readProjectedGeodeticCompat(
+			String text) throws IOException {
+		ProjectedCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readProjectedGeodeticCompat();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
+	 * Read a Backward Compatible Projected Geographic Coordinate Reference
+	 * System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Projected Geographic Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static ProjectedCoordinateReferenceSystem readProjectedGeographicCompat(
+			String text) throws IOException {
+		ProjectedCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readProjectedGeographicCompat();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
 	 * Text Reader
 	 */
 	private TextReader reader;
@@ -354,6 +486,10 @@ public class CRSReader implements Closeable {
 		case GEODCRS:
 		case GEOGCRS:
 			crs = readGeodeticOrGeographic();
+			break;
+		case GEOCCS:
+		case GEOGCS:
+			crs = readGeodeticOrGeographicCompat();
 			break;
 		case PROJCRS:
 			crs = readProjected();
@@ -919,7 +1055,7 @@ public class CRSReader implements Closeable {
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.ANGLEUNIT)) {
 			readSeparator();
-			crs.setEllipsoidalAngleUnit(readAngleUnit());
+			crs.setUnit(readAngleUnit());
 		}
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
@@ -950,181 +1086,6 @@ public class CRSReader implements Closeable {
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.REMARK)) {
 			readSeparator();
 			crs.setRemark(readRemark());
-		}
-
-		readRightDelimiter();
-
-		return crs;
-	}
-
-	/**
-	 * Read a Backward Compatible Geodetic or Geographic CRS
-	 * 
-	 * @return geodetic or geographic coordinate reference system
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public GeodeticCoordinateReferenceSystem readGeodeticOrGeographicCompat()
-			throws IOException {
-		CoordinateReferenceSystemType expectedType = null;
-		return readGeodeticOrGeographicCompat(expectedType);
-	}
-
-	/**
-	 * Read a Backward Compatible Geodetic CRS
-	 * 
-	 * @return geodetic coordinate reference system
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public GeodeticCoordinateReferenceSystem readGeodeticCompat()
-			throws IOException {
-		return readGeodeticOrGeographicCompat(
-				CoordinateReferenceSystemType.GEODETIC);
-	}
-
-	/**
-	 * Read a Backward Compatible Geographic CRS
-	 * 
-	 * @return geographic coordinate reference system
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public GeodeticCoordinateReferenceSystem readGeographicCompat()
-			throws IOException {
-		return readGeodeticOrGeographicCompat(
-				CoordinateReferenceSystemType.GEOGRAPHIC);
-	}
-
-	/**
-	 * Read a Backward Compatible Geodetic or Geographic CRS
-	 * 
-	 * @param expectedType
-	 *            expected coordinate reference system type
-	 * 
-	 * @return geodetic or geographic coordinate reference system
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public GeodeticCoordinateReferenceSystem readGeodeticOrGeographicCompat(
-			CoordinateReferenceSystemType expectedType) throws IOException {
-
-		GeodeticCoordinateReferenceSystem crs = new GeodeticCoordinateReferenceSystem();
-
-		CoordinateReferenceSystemKeyword type = readKeyword();
-		validateKeyword(type, CoordinateReferenceSystemKeyword.GEODCRS,
-				CoordinateReferenceSystemKeyword.GEOGCRS);
-		CoordinateReferenceSystemType crsType = WKTUtils
-				.getCoordinateReferenceSystemType(type);
-		if (expectedType != null && crsType != expectedType) {
-			throw new ProjectionException(
-					"Unexpected Coordinate Reference System Type. expected: "
-							+ expectedType + ", found: " + crsType);
-		}
-		crs.setType(crsType);
-
-		readLeftDelimiter();
-
-		crs.setName(reader.readExpectedToken());
-
-		readSeparator();
-		crs.setGeodeticReferenceFrame(readGeodeticReferenceFrame());
-
-		CoordinateSystem coordinateSystem = new CoordinateSystem();
-		crs.setCoordinateSystem(coordinateSystem);
-
-		if (isUnitNext()) {
-			readSeparator();
-			coordinateSystem.setUnit(readUnit());
-		}
-
-		// TODO axis list
-
-		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
-			readSeparator();
-			crs.setIdentifiers(readIdentifiers());
-		}
-
-		readRightDelimiter();
-
-		return crs;
-	}
-
-	/**
-	 * Read a Backward Compatible Projected CRS
-	 * 
-	 * @return projected coordinate reference system
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public ProjectedCoordinateReferenceSystem readProjectedCompat()
-			throws IOException {
-		CoordinateReferenceSystemType expectedType = null;
-		return readProjectedCompat(expectedType);
-	}
-
-	/**
-	 * Read a Backward Compatible Projected Geodetic CRS
-	 * 
-	 * @return projected geodetic coordinate reference system
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public ProjectedCoordinateReferenceSystem readProjectedGeodeticCompat()
-			throws IOException {
-		return readProjectedCompat(CoordinateReferenceSystemType.GEODETIC);
-	}
-
-	/**
-	 * Read a Backward Compatible Projected Geographic CRS
-	 * 
-	 * @return projected geographic coordinate reference system
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public ProjectedCoordinateReferenceSystem readProjectedGeographicCompat()
-			throws IOException {
-		return readProjectedCompat(CoordinateReferenceSystemType.GEOGRAPHIC);
-	}
-
-	/**
-	 * Read a Backward Compatible Projected CRS
-	 * 
-	 * @param expectedBaseType
-	 *            expected base coordinate reference system type
-	 * 
-	 * @return projected coordinate reference system
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public ProjectedCoordinateReferenceSystem readProjectedCompat(
-			CoordinateReferenceSystemType expectedBaseType) throws IOException {
-
-		ProjectedCoordinateReferenceSystem crs = new ProjectedCoordinateReferenceSystem();
-
-		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.PROJCS);
-
-		readLeftDelimiter();
-
-		crs.setName(reader.readExpectedToken());
-
-		readSeparator();
-
-		crs.setBase(readGeodeticOrGeographicCompat(expectedBaseType));
-
-		readSeparator();
-		crs.setMapProjection(readMapProjectionMethod());
-
-		if (isUnitNext()) {
-			readSeparator();
-			crs.setEllipsoidalAngleUnit(readUnit());
-		}
-
-		// TODO axis list
-
-		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
-			readSeparator();
-			crs.setIdentifiers(readIdentifiers());
 		}
 
 		readRightDelimiter();
@@ -1681,7 +1642,7 @@ public class CRSReader implements Closeable {
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.ANGLEUNIT)) {
 			readSeparator();
-			primeMeridian.setIrmLongitudeAngleUnit(readAngleUnit());
+			primeMeridian.setIrmLongitudeUnit(readAngleUnit());
 		}
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
@@ -1722,7 +1683,7 @@ public class CRSReader implements Closeable {
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.LENGTHUNIT)) {
 			readSeparator();
-			ellipsoid.setLengthUnit(readLengthUnit());
+			ellipsoid.setUnit(readLengthUnit());
 		}
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
@@ -1948,23 +1909,8 @@ public class CRSReader implements Closeable {
 
 		readRightDelimiter();
 
-		boolean isTemporalCountMeasure = WKTUtils
-				.isTemporalCountMeasure(csType);
-		List<Axis> axes = new ArrayList<>();
-
-		do {
-
-			readSeparator();
-
-			axes.add(readAxis(csType));
-
-			if (isTemporalCountMeasure) {
-				break;
-			}
-
-		} while (isKeywordNext(CoordinateReferenceSystemKeyword.AXIS));
-
-		coordinateSystem.setAxes(axes);
+		readSeparator();
+		coordinateSystem.setAxes(readAxes(csType));
 
 		if (WKTUtils.isSpatial(csType)) {
 
@@ -1979,6 +1925,62 @@ public class CRSReader implements Closeable {
 		}
 
 		return coordinateSystem;
+	}
+
+	/**
+	 * Read Axes
+	 * 
+	 * @return axes
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public List<Axis> readAxes() throws IOException {
+		return readAxes(null);
+	}
+
+	/**
+	 * Read Axes
+	 * 
+	 * @param type
+	 *            coordinate system type
+	 * 
+	 * @return axes
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public List<Axis> readAxes(CoordinateSystemType type) throws IOException {
+
+		boolean isTemporalCountMeasure = type != null
+				&& WKTUtils.isTemporalCountMeasure(type);
+
+		List<Axis> axes = new ArrayList<>();
+
+		do {
+
+			if (!axes.isEmpty()) {
+				readSeparator();
+			}
+
+			axes.add(readAxis(type));
+
+			if (isTemporalCountMeasure) {
+				break;
+			}
+
+		} while (isKeywordNext(CoordinateReferenceSystemKeyword.AXIS));
+
+		return axes;
+	}
+
+	/**
+	 * Read an Axis
+	 * 
+	 * @return axis
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Axis readAxis() throws IOException {
+		return readAxis(null);
 	}
 
 	/**
@@ -2016,93 +2018,101 @@ public class CRSReader implements Closeable {
 		AxisDirectionType axisDirectionType = AxisDirectionType
 				.getType(axisDirectionTypeName);
 		if (axisDirectionType == null) {
-			throw new ProjectionException(
-					"Unexpected axis direction type. found: "
-							+ axisDirectionTypeName);
+			if (axisDirectionTypeName.equalsIgnoreCase("other")) {
+				axisDirectionType = AxisDirectionType.UNSPECIFIED;
+			} else {
+				throw new ProjectionException(
+						"Unexpected axis direction type. found: "
+								+ axisDirectionTypeName);
+			}
 		}
 		axis.setDirection(axisDirectionType);
 
-		switch (axisDirectionType) {
+		if (type != null) {
 
-		case NORTH:
-		case SOUTH:
+			switch (axisDirectionType) {
 
-			if (isKeywordNext(CoordinateReferenceSystemKeyword.MERIDIAN)) {
+			case NORTH:
+			case SOUTH:
+
+				if (isKeywordNext(CoordinateReferenceSystemKeyword.MERIDIAN)) {
+
+					readSeparator();
+					readKeyword();
+
+					readLeftDelimiter();
+
+					axis.setMeridian(reader.readNumber());
+
+					readSeparator();
+
+					axis.setMeridianUnit(readAngleUnit());
+
+					readRightDelimiter();
+
+				}
+
+				break;
+
+			case CLOCKWISE:
+			case COUNTER_CLOCKWISE:
+
+				readSeparator();
+
+				validateKeyword(readKeyword(),
+						CoordinateReferenceSystemKeyword.BEARING);
+
+				readLeftDelimiter();
+
+				axis.setBearing(reader.readNumber());
+
+				readRightDelimiter();
+
+				break;
+
+			default:
+			}
+
+			if (isKeywordNext(CoordinateReferenceSystemKeyword.ORDER)) {
 
 				readSeparator();
 				readKeyword();
 
 				readLeftDelimiter();
 
-				axis.setMeridian(reader.readNumber());
-
-				readSeparator();
-
-				axis.setMeridianAngleUnit(readAngleUnit());
+				axis.setOrder(reader.readUnsignedInteger());
 
 				readRightDelimiter();
 
 			}
 
-			break;
+			if (WKTUtils.isSpatial(type)) {
 
-		case CLOCKWISE:
-		case COUNTER_CLOCKWISE:
+				if (isSpatialUnitNext()) {
 
-			readSeparator();
+					readSeparator();
 
-			validateKeyword(readKeyword(),
-					CoordinateReferenceSystemKeyword.BEARING);
+					axis.setUnit(readUnit());
 
-			readLeftDelimiter();
+				}
 
-			axis.setBearing(reader.readNumber());
+			} else if (WKTUtils.isTemporalCountMeasure(type)) {
 
-			readRightDelimiter();
+				if (isTimeUnitNext()) {
 
-			break;
+					readSeparator();
 
-		default:
-		}
+					axis.setUnit(readTimeUnit());
 
-		if (isKeywordNext(CoordinateReferenceSystemKeyword.ORDER)) {
-
-			readSeparator();
-			readKeyword();
-
-			readLeftDelimiter();
-
-			axis.setOrder(reader.readUnsignedInteger());
-
-			readRightDelimiter();
-
-		}
-
-		if (WKTUtils.isSpatial(type)) {
-
-			if (isSpatialUnitNext()) {
-
-				readSeparator();
-
-				axis.setUnit(readUnit());
+				}
 
 			}
 
-		} else if (WKTUtils.isTemporalCountMeasure(type)) {
-
-			if (isTimeUnitNext()) {
-
+			if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
 				readSeparator();
-
-				axis.setUnit(readTimeUnit());
-
+				axis.setIdentifiers(readIdentifiers());
 			}
 
-		}
-
-		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
-			readSeparator();
-			axis.setIdentifiers(readIdentifiers());
 		}
 
 		readRightDelimiter();
@@ -2312,7 +2322,7 @@ public class CRSReader implements Closeable {
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.LENGTHUNIT)) {
 			readSeparator();
-			verticalExtent.setLengthUnit(readLengthUnit());
+			verticalExtent.setUnit(readLengthUnit());
 		}
 
 		readRightDelimiter();
@@ -2374,12 +2384,28 @@ public class CRSReader implements Closeable {
 		return mapProjection;
 	}
 
-	private MapProjection readMapProjectionMethod() throws IOException {
+	/**
+	 * Read map projection method
+	 * 
+	 * @return map projection
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public MapProjection readMapProjectionMethod() throws IOException {
 		MapProjection mapProjection = new MapProjection();
 		readMapProjectionMethod(mapProjection);
+		mapProjection.setName(mapProjection.getMethodName());
 		return mapProjection;
 	}
 
+	/**
+	 * Read map projection method
+	 * 
+	 * @param mapProjection
+	 *            map projection
+	 * @throws IOException
+	 *             upon failure to read
+	 */
 	private void readMapProjectionMethod(MapProjection mapProjection)
 			throws IOException {
 
@@ -2510,6 +2536,254 @@ public class CRSReader implements Closeable {
 		readRightDelimiter();
 
 		return temporalDatum;
+	}
+
+	/**
+	 * Read a Backward Compatible Geodetic or Geographic CRS
+	 * 
+	 * @return geodetic or geographic coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public GeodeticCoordinateReferenceSystem readGeodeticOrGeographicCompat()
+			throws IOException {
+		CoordinateReferenceSystemType expectedType = null;
+		return readGeodeticOrGeographicCompat(expectedType);
+	}
+
+	/**
+	 * Read a Backward Compatible Geodetic CRS
+	 * 
+	 * @return geodetic coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public GeodeticCoordinateReferenceSystem readGeodeticCompat()
+			throws IOException {
+		return readGeodeticOrGeographicCompat(
+				CoordinateReferenceSystemType.GEODETIC);
+	}
+
+	/**
+	 * Read a Backward Compatible Geographic CRS
+	 * 
+	 * @return geographic coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public GeodeticCoordinateReferenceSystem readGeographicCompat()
+			throws IOException {
+		return readGeodeticOrGeographicCompat(
+				CoordinateReferenceSystemType.GEOGRAPHIC);
+	}
+
+	/**
+	 * Read a Backward Compatible Geodetic or Geographic CRS
+	 * 
+	 * @param expectedType
+	 *            expected coordinate reference system type
+	 * 
+	 * @return geodetic or geographic coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public GeodeticCoordinateReferenceSystem readGeodeticOrGeographicCompat(
+			CoordinateReferenceSystemType expectedType) throws IOException {
+
+		GeodeticCoordinateReferenceSystem crs = new GeodeticCoordinateReferenceSystem();
+
+		CoordinateReferenceSystemKeyword type = readKeyword();
+		validateKeyword(type, CoordinateReferenceSystemKeyword.GEOCCS,
+				CoordinateReferenceSystemKeyword.GEOGCS,
+				CoordinateReferenceSystemKeyword.GEODCRS,
+				CoordinateReferenceSystemKeyword.GEOGCRS);
+		CoordinateReferenceSystemType crsType = WKTUtils
+				.getCoordinateReferenceSystemType(type);
+		if (expectedType != null && crsType != expectedType) {
+			throw new ProjectionException(
+					"Unexpected Coordinate Reference System Type. expected: "
+							+ expectedType + ", found: " + crsType);
+		}
+		crs.setType(crsType);
+
+		readLeftDelimiter();
+
+		crs.setName(reader.readExpectedToken());
+
+		readSeparator();
+		crs.setGeodeticReferenceFrame(readGeodeticReferenceFrame());
+
+		crs.setCoordinateSystem(readCoordinateSystemCompat(crsType,
+				crs.getGeodeticReferenceFrame()));
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			crs.setIdentifiers(readIdentifiers());
+		}
+
+		readRightDelimiter();
+
+		return crs;
+	}
+
+	/**
+	 * Read a Backward Compatible Projected CRS
+	 * 
+	 * @return projected coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ProjectedCoordinateReferenceSystem readProjectedCompat()
+			throws IOException {
+		CoordinateReferenceSystemType expectedType = null;
+		return readProjectedCompat(expectedType);
+	}
+
+	/**
+	 * Read a Backward Compatible Projected Geodetic CRS
+	 * 
+	 * @return projected geodetic coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ProjectedCoordinateReferenceSystem readProjectedGeodeticCompat()
+			throws IOException {
+		return readProjectedCompat(CoordinateReferenceSystemType.GEODETIC);
+	}
+
+	/**
+	 * Read a Backward Compatible Projected Geographic CRS
+	 * 
+	 * @return projected geographic coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ProjectedCoordinateReferenceSystem readProjectedGeographicCompat()
+			throws IOException {
+		return readProjectedCompat(CoordinateReferenceSystemType.GEOGRAPHIC);
+	}
+
+	/**
+	 * Read a Backward Compatible Projected CRS
+	 * 
+	 * @param expectedBaseType
+	 *            expected base coordinate reference system type
+	 * 
+	 * @return projected coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ProjectedCoordinateReferenceSystem readProjectedCompat(
+			CoordinateReferenceSystemType expectedBaseType) throws IOException {
+
+		ProjectedCoordinateReferenceSystem crs = new ProjectedCoordinateReferenceSystem();
+
+		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.PROJCS);
+
+		readLeftDelimiter();
+
+		crs.setName(reader.readExpectedToken());
+
+		readSeparator();
+
+		crs.setBase(readGeodeticOrGeographicCompat(expectedBaseType));
+
+		readSeparator();
+		crs.setMapProjection(readMapProjectionMethod());
+
+		crs.setCoordinateSystem(readCoordinateSystemCompat(
+				CoordinateReferenceSystemType.PROJECTED,
+				crs.getGeodeticReferenceFrame()));
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
+			readSeparator();
+			crs.setIdentifiers(readIdentifiers());
+		}
+
+		readRightDelimiter();
+
+		return crs;
+	}
+
+	/**
+	 * Read a Backward Compatible Coordinate System
+	 * 
+	 * @param type
+	 *            coordinate reference system type
+	 * @param datum
+	 *            reference frame
+	 * 
+	 * @return coordinate system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CoordinateSystem readCoordinateSystemCompat(
+			CoordinateReferenceSystemType type, ReferenceFrame datum)
+			throws IOException {
+
+		CoordinateSystem coordinateSystem = new CoordinateSystem();
+
+		switch (datum.getType()) {
+		case GEODETIC:
+		case GEOGRAPHIC:
+			coordinateSystem.setType(CoordinateSystemType.ELLIPSOIDAL);
+			break;
+		case VERTICAL:
+			coordinateSystem.setType(CoordinateSystemType.VERTICAL);
+			break;
+		case ENGINEERING:
+			coordinateSystem.setType(CoordinateSystemType.CARTESIAN);
+			break;
+		default:
+			throw new ProjectionException(
+					"Unexpected Reference Frame Type. expected: "
+							+ datum.getType());
+		}
+
+		if (isUnitNext()) {
+			readSeparator();
+			coordinateSystem.setUnit(readUnit());
+		}
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.AXIS)) {
+			readSeparator();
+			coordinateSystem.setAxes(readAxes());
+		} else {
+
+			switch (type) {
+			case GEOGRAPHIC:
+				coordinateSystem
+						.addAxis(new Axis("Lon", AxisDirectionType.EAST));
+				coordinateSystem
+						.addAxis(new Axis("Lat", AxisDirectionType.NORTH));
+				break;
+			case PROJECTED:
+				coordinateSystem.addAxis(new Axis("X", AxisDirectionType.EAST));
+				coordinateSystem
+						.addAxis(new Axis("Y", AxisDirectionType.NORTH));
+				break;
+			case GEODETIC:
+				coordinateSystem
+						.addAxis(new Axis("X", AxisDirectionType.UNSPECIFIED));
+				coordinateSystem.addAxis(new Axis("Y", AxisDirectionType.EAST));
+				coordinateSystem
+						.addAxis(new Axis("Z", AxisDirectionType.NORTH));
+				break;
+			default:
+				throw new ProjectionException(
+						"Unexpected Coordinate Reference System Type: " + type);
+			}
+
+		}
+		coordinateSystem.setDimension(coordinateSystem.getAxes().size());
+
+		// TODO read unit again? OGC issue?
+		if (isUnitNext()) {
+			readSeparator();
+			coordinateSystem.setUnit(readUnit());
+		}
+
+		return coordinateSystem;
 	}
 
 }
