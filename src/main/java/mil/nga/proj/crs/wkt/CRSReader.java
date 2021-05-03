@@ -2777,7 +2777,7 @@ public class CRSReader implements Closeable {
 		}
 		coordinateSystem.setDimension(coordinateSystem.getAxes().size());
 
-		// TODO read unit again? OGC issue?
+		// TODO http://ogc.standardstracker.org/show_request.cgi?id=674
 		if (isUnitNext()) {
 			readSeparator();
 			coordinateSystem.setUnit(readUnit());

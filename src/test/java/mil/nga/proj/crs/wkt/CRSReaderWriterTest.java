@@ -3190,9 +3190,52 @@ public class CRSReaderWriterTest {
 
 	}
 
-	// TODO Unit compat
+	/**
+	 * Test Backward Compatibility unit
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testUnitCompat() throws IOException {
 
-	// TODO Axis compat
+		String text = "UNIT[\"German legal metre\",1.0000135965]";
+		CRSReader reader = new CRSReader(text);
+		Unit unit = reader.readUnit();
+		assertEquals(UnitType.UNIT, unit.getType());
+		assertEquals("German legal metre", unit.getName());
+		assertEquals(1.0000135965, unit.getConversionFactor(), 0);
+		reader.close();
+		assertEquals(text, unit.toString());
+
+	}
+
+	/**
+	 * Test Backward Compatibility axis
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testAxisCompat() throws IOException {
+
+		String text = "AXIS[\"northing\",north]";
+		CRSReader reader = new CRSReader(text);
+		Axis axis = reader.readAxis();
+		assertEquals("northing", axis.getName());
+		assertEquals(AxisDirectionType.NORTH, axis.getDirection());
+		reader.close();
+		assertEquals(text, axis.toString());
+
+		text = "AXIS[\"easting\",east]";
+		reader = new CRSReader(text);
+		axis = reader.readAxis();
+		assertEquals("easting", axis.getName());
+		assertEquals(AxisDirectionType.EAST, axis.getDirection());
+		reader.close();
+		assertEquals(text, axis.toString());
+
+	}
 
 	/**
 	 * Test Backward Compatibility of Geographic CRS
@@ -3308,6 +3351,177 @@ public class CRSReaderWriterTest {
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.writeCRS(crs));
+	}
+
+	/**
+	 * Test Backward Compatibility of Projected CRS
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testProjectedCompat() throws IOException {
+
+		String text = "PROJCS[\"NAD83 / UTM zone 10N\",GEOGCS[\"NAD83\","
+				+ "DATUM[\"North American Datum 1983\","
+				+ "SPHEROID[\"GRS 1980\",6378137.0,298.257222101]],"
+				+ "PRIMEM[\"Greenwich\",0]],"
+				+ "PROJECTION[\"Transverse Mercator\"],"
+				+ "PARAMETER[\"Latitude of origin\",0.0],"
+				+ "PARAMETER[\"Longitude of origin\",-123],"
+				+ "PARAMETER[\"Scale factor\",0.9996],"
+				+ "PARAMETER[\"False easting\",500000],"
+				+ "PARAMETER[\"False northing\",0],UNIT[\"metre\",1.0]]";
+
+		CoordinateReferenceSystem crs = CRSReader.readCRS(text);
+		ProjectedCoordinateReferenceSystem projectedCrs = CRSReader
+				.readProjectedCompat(text);
+		assertEquals(crs, projectedCrs);
+		assertEquals(CoordinateReferenceSystemType.PROJECTED,
+				projectedCrs.getType());
+		assertEquals("NAD83 / UTM zone 10N", projectedCrs.getName());
+		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
+				projectedCrs.getBaseType());
+		assertEquals("NAD83", projectedCrs.getBaseName());
+		assertEquals("North American Datum 1983",
+				projectedCrs.getGeodeticReferenceFrame().getName());
+		assertEquals("GRS 1980", projectedCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getName());
+		assertEquals(6378137.0, projectedCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(298.257222101, projectedCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getInverseFlattening(), 0);
+		assertEquals("Greenwich", projectedCrs.getGeodeticReferenceFrame()
+				.getPrimeMeridian().getName());
+		assertEquals(0, projectedCrs.getGeodeticReferenceFrame()
+				.getPrimeMeridian().getIrmLongitude(), 0);
+		assertEquals("Transverse Mercator",
+				projectedCrs.getMapProjection().getName());
+		assertEquals("Transverse Mercator",
+				projectedCrs.getMapProjection().getMethodName());
+		assertEquals("Latitude of origin", projectedCrs.getMapProjection()
+				.getParameters().get(0).getName());
+		assertEquals(0.0, projectedCrs.getMapProjection().getParameters().get(0)
+				.getValue(), 0);
+		assertEquals("Longitude of origin", projectedCrs.getMapProjection()
+				.getParameters().get(1).getName());
+		assertEquals(-123, projectedCrs.getMapProjection().getParameters()
+				.get(1).getValue(), 0);
+		assertEquals("Scale factor", projectedCrs.getMapProjection()
+				.getParameters().get(2).getName());
+		assertEquals(0.9996, projectedCrs.getMapProjection().getParameters()
+				.get(2).getValue(), 0);
+		assertEquals("False easting", projectedCrs.getMapProjection()
+				.getParameters().get(3).getName());
+		assertEquals(500000, projectedCrs.getMapProjection().getParameters()
+				.get(3).getValue(), 0);
+		assertEquals("False northing", projectedCrs.getMapProjection()
+				.getParameters().get(4).getName());
+		assertEquals(0, projectedCrs.getMapProjection().getParameters().get(4)
+				.getValue(), 0);
+		assertEquals(UnitType.UNIT,
+				projectedCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("metre",
+				projectedCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(1.0, projectedCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+
+		String expectedText = "PROJCRS[\"NAD83 / UTM zone 10N\",BASEGEOGCRS[\"NAD83\","
+				+ "DATUM[\"North American Datum 1983\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101]],"
+				+ "PRIMEM[\"Greenwich\",0.0]],"
+				+ "CONVERSION[\"Transverse Mercator\",METHOD[\"Transverse Mercator\"],"
+				+ "PARAMETER[\"Latitude of origin\",0.0],"
+				+ "PARAMETER[\"Longitude of origin\",-123.0],"
+				+ "PARAMETER[\"Scale factor\",0.9996],"
+				+ "PARAMETER[\"False easting\",500000.0],"
+				+ "PARAMETER[\"False northing\",0.0]],"
+				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
+				+ "UNIT[\"metre\",1.0]]";
+
+		assertEquals(expectedText, projectedCrs.toString());
+		assertEquals(expectedText, CRSWriter.writeCRS(projectedCrs));
+
+		text = "PROJCS[\"NAD83 / UTM zone 10N\",GEOGCS[\"NAD83\","
+				+ "DATUM[\"North American Datum 1983\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101]],"
+				+ "PRIMEM[\"Greenwich\",0],"
+				+ "AXIS[\"latitude\",NORTH],AXIS[\"longitude\",EAST]],"
+				+ "PROJECTION[\"UTM zone 10N\"],"
+				+ "PARAMETER[\"Latitude of origin\",0.0],"
+				+ "PARAMETER[\"Longitude of origin\",-123],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.9996],"
+				+ "PARAMETER[\"FE\",500000],PARAMETER[\"FN\",0],"
+				+ "AXIS[\"easting\",EAST],AXIS[\"northing\",NORTH],"
+				+ "UNIT[\"metre\",1.0]]";
+
+		crs = CRSReader.readCRS(text);
+		projectedCrs = CRSReader.readProjectedCompat(text);
+		assertEquals(crs, projectedCrs);
+		assertEquals(CoordinateReferenceSystemType.PROJECTED,
+				projectedCrs.getType());
+		assertEquals("NAD83 / UTM zone 10N", projectedCrs.getName());
+		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
+				projectedCrs.getBaseType());
+		assertEquals("NAD83", projectedCrs.getBaseName());
+		assertEquals("North American Datum 1983",
+				projectedCrs.getGeodeticReferenceFrame().getName());
+		assertEquals("GRS 1980", projectedCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getName());
+		assertEquals(6378137.0, projectedCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(298.257222101, projectedCrs.getGeodeticReferenceFrame()
+				.getEllipsoid().getInverseFlattening(), 0);
+		assertEquals("Greenwich", projectedCrs.getGeodeticReferenceFrame()
+				.getPrimeMeridian().getName());
+		assertEquals(0, projectedCrs.getGeodeticReferenceFrame()
+				.getPrimeMeridian().getIrmLongitude(), 0);
+		assertEquals("UTM zone 10N", projectedCrs.getMapProjection().getName());
+		assertEquals("UTM zone 10N",
+				projectedCrs.getMapProjection().getMethodName());
+		assertEquals("Latitude of origin", projectedCrs.getMapProjection()
+				.getParameters().get(0).getName());
+		assertEquals(0.0, projectedCrs.getMapProjection().getParameters().get(0)
+				.getValue(), 0);
+		assertEquals("Longitude of origin", projectedCrs.getMapProjection()
+				.getParameters().get(1).getName());
+		assertEquals(-123, projectedCrs.getMapProjection().getParameters()
+				.get(1).getValue(), 0);
+		assertEquals("Scale factor at natural origin", projectedCrs
+				.getMapProjection().getParameters().get(2).getName());
+		assertEquals(0.9996, projectedCrs.getMapProjection().getParameters()
+				.get(2).getValue(), 0);
+		assertEquals("FE", projectedCrs.getMapProjection().getParameters()
+				.get(3).getName());
+		assertEquals(500000, projectedCrs.getMapProjection().getParameters()
+				.get(3).getValue(), 0);
+		assertEquals("FN", projectedCrs.getMapProjection().getParameters()
+				.get(4).getName());
+		assertEquals(0, projectedCrs.getMapProjection().getParameters().get(4)
+				.getValue(), 0);
+		assertEquals(UnitType.UNIT,
+				projectedCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("metre",
+				projectedCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(1.0, projectedCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+
+		expectedText = "PROJCRS[\"NAD83 / UTM zone 10N\",BASEGEOGCRS[\"NAD83\","
+				+ "DATUM[\"North American Datum 1983\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101]],"
+				+ "PRIMEM[\"Greenwich\",0.0]],"
+				+ "CONVERSION[\"UTM zone 10N\",METHOD[\"UTM zone 10N\"],"
+				+ "PARAMETER[\"Latitude of origin\",0.0],"
+				+ "PARAMETER[\"Longitude of origin\",-123.0],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.9996],"
+				+ "PARAMETER[\"FE\",500000.0],PARAMETER[\"FN\",0.0]],"
+				+ "CS[ellipsoidal,2],"
+				+ "AXIS[\"easting\",east],AXIS[\"northing\",north],"
+				+ "UNIT[\"metre\",1.0]]";
+
+		assertEquals(expectedText, projectedCrs.toString());
+		assertEquals(expectedText, CRSWriter.writeCRS(projectedCrs));
+
 	}
 
 }
