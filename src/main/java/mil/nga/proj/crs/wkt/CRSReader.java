@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import mil.nga.proj.ProjectionException;
@@ -2616,6 +2619,8 @@ public class CRSReader implements Closeable {
 		crs.setCoordinateSystem(readCoordinateSystemCompat(crsType,
 				crs.getGeodeticReferenceFrame()));
 
+		readExtensionsCompatAsRemark(crs);
+
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
 			readSeparator();
 			crs.setIdentifiers(readIdentifiers());
@@ -2694,6 +2699,8 @@ public class CRSReader implements Closeable {
 		crs.setCoordinateSystem(readCoordinateSystemCompat(
 				CoordinateReferenceSystemType.PROJECTED,
 				crs.getGeodeticReferenceFrame()));
+
+		readExtensionsCompatAsRemark(crs);
 
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.ID)) {
 			readSeparator();
@@ -2784,6 +2791,78 @@ public class CRSReader implements Closeable {
 		}
 
 		return coordinateSystem;
+	}
+
+	/**
+	 * Read a Backward Compatible Extensions and set as a remark
+	 * 
+	 * @param crs
+	 *            coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public void readExtensionsCompatAsRemark(CoordinateReferenceSystem crs)
+			throws IOException {
+
+		Map<String, String> extensions = readExtensionsCompat();
+
+		if (extensions != null && !extensions.isEmpty()) {
+
+			StringBuilder remark = null;
+
+			for (Entry<String, String> extension : extensions.entrySet()) {
+
+				if (remark == null) {
+					remark = new StringBuilder();
+				} else {
+					remark.append(",");
+				}
+
+				remark.append("[\"");
+				remark.append(extension.getKey());
+				remark.append("\",\"");
+				remark.append(extension.getValue());
+				remark.append("\"]");
+			}
+
+			crs.setRemark(remark.toString());
+		}
+
+	}
+
+	/**
+	 * Read a Backward Compatible Extensions
+	 * 
+	 * @return extensions
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public Map<String, String> readExtensionsCompat() throws IOException {
+
+		Map<String, String> extensions = null;
+
+		while (peekSeparator()
+				&& reader.peekToken(2).equalsIgnoreCase("EXTENSION")) {
+
+			if (extensions == null) {
+				extensions = new LinkedHashMap<>();
+			}
+
+			readSeparator();
+			reader.readExpectedToken();
+			readLeftDelimiter();
+
+			String key = reader.readExpectedToken();
+			readSeparator();
+			String value = reader.readExpectedToken();
+
+			extensions.put(key, value);
+
+			readRightDelimiter();
+		}
+
+		return extensions;
 	}
 
 }
