@@ -428,4 +428,121 @@ public class CRSReaderWriterEpsgTest {
 
 	}
 
+	/**
+	 * Test EPSG 5041
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void test5041() throws IOException {
+
+		String text = "PROJCRS[\"WGS 84 / UPS North (E,N)\",BASEGEOGCRS[\"WGS 84\","
+				+ "ENSEMBLE[\"World Geodetic System 1984 ensemble\","
+				+ "MEMBER[\"World Geodetic System 1984 (Transit)\",ID[\"EPSG\",1166]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G730)\",ID[\"EPSG\",1152]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G873)\",ID[\"EPSG\",1153]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1150)\",ID[\"EPSG\",1154]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1674)\",ID[\"EPSG\",1155]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1762)\",ID[\"EPSG\",1156]],"
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,ID[\"EPSG\",7030]],"
+				+ "ENSEMBLEACCURACY[2],ID[\"EPSG\",6326]],ID[\"EPSG\",4326]],"
+				+ "CONVERSION[\"Universal Polar Stereographic North\","
+				+ "METHOD[\"Polar Stereographic (variant A)\",ID[\"EPSG\",9810]],"
+				+ "PARAMETER[\"Latitude of natural origin\",90,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Longitude of natural origin\",0,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.994,SCALEUNIT[\"unity\",1,ID[\"EPSG\",9201]]],"
+				+ "PARAMETER[\"False easting\",2000000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "PARAMETER[\"False northing\",2000000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "ID[\"EPSG\",16061]],CS[Cartesian,2,ID[\"EPSG\",1026]],"
+				+ "AXIS[\"Easting (E)\",South],AXIS[\"Northing (N)\",South],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5041]]";
+
+		CoordinateReferenceSystem crs = CRSReader.readCRS(text, true);
+
+		String expectedText = text.replace("6378137", "6378137.0")
+				.replace("ENSEMBLEACCURACY[2]", "ENSEMBLEACCURACY[2.0]")
+				.replace(",0,", ",0.0,").replace(",1,", ",1.0,")
+				.replace(",90,", ",90.0,").replace(",2000000,", ",2000000.0,")
+				.replace("South", "south");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.writeCRS(crs));
+
+		text = "PROJCS[\"WGS 84 / UPS North (E,N)\"," + "GEOGCS[\"WGS 84\","
+				+ "DATUM[\"WGS_1984\","
+				+ "SPHEROID[\"WGS 84\",6378137,298.257223563,"
+				+ "AUTHORITY[\"EPSG\",\"7030\"]],"
+				+ "AUTHORITY[\"EPSG\",\"6326\"]],"
+				+ "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "AUTHORITY[\"EPSG\",\"9122\"]],"
+				+ "AUTHORITY[\"EPSG\",\"4326\"]],"
+				+ "PROJECTION[\"Polar_Stereographic\"],"
+				+ "PARAMETER[\"latitude_of_origin\",90],"
+				+ "PARAMETER[\"central_meridian\",0],"
+				+ "PARAMETER[\"scale_factor\",0.994],"
+				+ "PARAMETER[\"false_easting\",2000000],"
+				+ "PARAMETER[\"false_northing\",2000000]," + "UNIT[\"metre\",1,"
+				+ "AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
+				+ "AUTHORITY[\"EPSG\",\"5041\"]]";
+
+		crs = CRSReader.readCRS(text, true);
+
+		expectedText = "PROJCRS[\"WGS 84 / UPS North (E,N)\",BASEGEOGCRS[\"WGS 84\","
+				+ "DATUM[\"WGS_1984\","
+				+ "ELLIPSOID[\"WGS 84\",6378137.0,298.257223563,"
+				+ "ID[\"EPSG\",7030]],ID[\"EPSG\",6326]],"
+				+ "PRIMEM[\"Greenwich\",0.0,ID[\"EPSG\",8901]],"
+				+ "UNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9122]],"
+				+ "ID[\"EPSG\",4326]],"
+				+ "CONVERSION[\"Polar_Stereographic\",METHOD[\"Polar_Stereographic\"],"
+				+ "PARAMETER[\"latitude_of_origin\",90.0],PARAMETER[\"central_meridian\",0.0],"
+				+ "PARAMETER[\"scale_factor\",0.994],PARAMETER[\"false_easting\",2000000.0],"
+				+ "PARAMETER[\"false_northing\",2000000.0]],"
+				+ "CS[ellipsoidal,2],AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",5041]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.writeCRS(crs));
+
+		text = "PROJCRS[\"WGS 84 / UPS North (E,N)\","
+				+ "BASEGEODCRS[\"WGS 84\","
+				+ "DATUM[\"World Geodetic System 1984\","
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,"
+				+ "LENGTHUNIT[\"metre\",1.0]]]],"
+				+ "CONVERSION[\"Universal Polar Stereographic North\","
+				+ "METHOD[\"Polar Stereographic (variant A)\",ID[\"EPSG\",\"9810\"]],"
+				+ "PARAMETER[\"Latitude of natural origin\",90,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"Longitude of natural origin\",0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.994,"
+				+ "SCALEUNIT[\"unity\",1.0]],"
+				+ "PARAMETER[\"False easting\",2000000,"
+				+ "LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"False northing\",2000000,"
+				+ "LENGTHUNIT[\"metre\",1.0]],ID[\"EPSG\",\"16061\"]],"
+				+ "CS[Cartesian,2],AXIS[\"Easting (E)\",south,"
+				+ "MERIDIAN[90,ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "ORDER[1]],AXIS[\"Northing (N)\",south,"
+				+ "MERIDIAN[180,ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "ORDER[2]],LENGTHUNIT[\"metre\",1.0],"
+				+ "ID[\"EPSG\",\"5041\"]]";
+
+		crs = CRSReader.readCRS(text, true);
+
+		expectedText = text.replace("6378137", "6378137.0")
+				.replace("\"9810\"", "9810").replace(",90,", ",90.0,")
+				.replace(",0,", ",0.0,").replace(",2000000,", ",2000000.0,")
+				.replace("\"16061\"", "16061").replace("[90,", "[90.0,")
+				.replace("[180,", "[180.0,").replace("\"5041\"", "5041");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.writeCRS(crs));
+
+	}
+
 }
