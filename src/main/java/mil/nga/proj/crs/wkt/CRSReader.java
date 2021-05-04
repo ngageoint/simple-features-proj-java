@@ -6,10 +6,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import mil.nga.proj.ProjectionException;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
@@ -56,6 +59,12 @@ import mil.nga.proj.crs.vertical.VerticalReferenceFrame;
 public class CRSReader implements Closeable {
 
 	/**
+	 * Logger
+	 */
+	private static final Logger logger = Logger
+			.getLogger(CRSReader.class.getName());
+
+	/**
 	 * Read a Coordinate Reference System from the well-known text
 	 * 
 	 * @param text
@@ -66,8 +75,24 @@ public class CRSReader implements Closeable {
 	 */
 	public static CoordinateReferenceSystem readCRS(String text)
 			throws IOException {
+		return readCRS(text, false);
+	}
+
+	/**
+	 * Read a Coordinate Reference System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @param strict
+	 *            strict enforcement
+	 * @return Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static CoordinateReferenceSystem readCRS(String text, boolean strict)
+			throws IOException {
 		CoordinateReferenceSystem crs = null;
-		CRSReader reader = new CRSReader(text);
+		CRSReader reader = new CRSReader(text, strict);
 		try {
 			crs = reader.read();
 		} finally {
@@ -427,6 +452,11 @@ public class CRSReader implements Closeable {
 	private TextReader reader;
 
 	/**
+	 * Strict rule enforcement
+	 */
+	private boolean strict = false;
+
+	/**
 	 * Constructor
 	 * 
 	 * @param text
@@ -443,7 +473,32 @@ public class CRSReader implements Closeable {
 	 *            text reader
 	 */
 	public CRSReader(TextReader reader) {
+		this(reader, false);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @param strict
+	 *            strict rule enforcement
+	 */
+	public CRSReader(String text, boolean strict) {
+		this(new TextReader(text), strict);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param reader
+	 *            text reader
+	 * @param strict
+	 *            strict rule enforcement
+	 */
+	public CRSReader(TextReader reader, boolean strict) {
 		this.reader = reader;
+		this.strict = strict;
 	}
 
 	/**
@@ -453,6 +508,25 @@ public class CRSReader implements Closeable {
 	 */
 	public TextReader getTextReader() {
 		return reader;
+	}
+
+	/**
+	 * Is strict rule enforcement enabled
+	 * 
+	 * @return true if strict
+	 */
+	public boolean isStrict() {
+		return strict;
+	}
+
+	/**
+	 * Set the strict rule enforcement setting
+	 * 
+	 * @param strict
+	 *            true for strict enforcement
+	 */
+	public void setStrict(boolean strict) {
+		this.strict = strict;
 	}
 
 	/**
@@ -543,6 +617,78 @@ public class CRSReader implements Closeable {
 			throws IOException {
 		return CoordinateReferenceSystemKeyword
 				.getRequiredTypes(reader.readToken());
+	}
+
+	/**
+	 * Read a specific WKT CRS keyword, next token when strict, until found when
+	 * not
+	 * 
+	 * @param keywords
+	 *            read until one of the keywords
+	 * @return keyword read
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CoordinateReferenceSystemKeyword readKeyword(
+			CoordinateReferenceSystemKeyword... keywords) throws IOException {
+		CoordinateReferenceSystemKeyword keyword = null;
+		if (strict) {
+			Set<CoordinateReferenceSystemKeyword> readKeywords = readKeywords();
+			keyword = validateKeyword(readKeywords, keywords);
+		} else {
+			keyword = readUntilKeyword(keywords);
+		}
+		return keyword;
+	}
+
+	/**
+	 * Read looking for a specific WKT CRS keyword, skipping others
+	 * 
+	 * @param keywords
+	 *            read until one of the keywords
+	 * @return keyword read
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CoordinateReferenceSystemKeyword readUntilKeyword(
+			CoordinateReferenceSystemKeyword... keywords) throws IOException {
+
+		CoordinateReferenceSystemKeyword keyword = null;
+		Set<CoordinateReferenceSystemKeyword> keywordSet = new HashSet<>(
+				Arrays.asList(keywords));
+
+		String token = reader.readToken();
+
+		StringBuilder ignored = null;
+		while (token != null) {
+			Set<CoordinateReferenceSystemKeyword> tokenKeywords = CoordinateReferenceSystemKeyword
+					.getTypes(token);
+			if (tokenKeywords != null) {
+				for (CoordinateReferenceSystemKeyword kw : tokenKeywords) {
+					if (keywordSet.contains(kw)) {
+						keyword = kw;
+						break;
+					}
+				}
+				if (keyword != null) {
+					break;
+				}
+			}
+			if (ignored == null) {
+				ignored = new StringBuilder();
+			}
+			ignored.append(token);
+			token = reader.readToken();
+		}
+		if (keyword == null) {
+			throw new ProjectionException(
+					"Expected keyword not found: " + keywordNames(keywordSet));
+		} else if (ignored != null) {
+			logger.log(Level.WARNING,
+					"Ignored before " + keyword.getKeywords() + ": " + ignored);
+		}
+
+		return keyword;
 	}
 
 	/**
@@ -695,7 +841,7 @@ public class CRSReader implements Closeable {
 	public String readKeywordDelimitedToken(
 			CoordinateReferenceSystemKeyword keyword) throws IOException {
 
-		validateKeyword(readKeyword(), keyword);
+		readKeyword(keyword);
 
 		readLeftDelimiter();
 
@@ -707,54 +853,48 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
-	 * Validate the keyword against the expected
-	 * 
-	 * @param keyword
-	 *            keyword
-	 * @param expected
-	 *            expected keyword
-	 */
-	private void validateKeyword(CoordinateReferenceSystemKeyword keyword,
-			CoordinateReferenceSystemKeyword expected) {
-		if (keyword != expected) {
-			throw new ProjectionException("Unexpected keyword. found: "
-					+ keyword + ", expected: " + expected);
-		}
-	}
-
-	/**
 	 * Validate the keyword against the expected keywords
-	 * 
-	 * @param keyword
-	 *            keyword
-	 * @param expected
-	 *            expected keywords
-	 */
-	private void validateKeyword(CoordinateReferenceSystemKeyword keyword,
-			CoordinateReferenceSystemKeyword... expected) {
-		Set<CoordinateReferenceSystemKeyword> expectedSet = new HashSet<>(
-				Arrays.asList(expected));
-		if (!expectedSet.contains(keyword)) {
-			throw new ProjectionException("Unexpected keyword. found: "
-					+ keyword + ", expected: " + expectedSet);
-		}
-	}
-
-	/**
-	 * Validate the keywords against the expected keyword
 	 * 
 	 * @param keywords
 	 *            keywords
 	 * @param expected
-	 *            expected keyword
+	 *            expected keywords
+	 * @return matching keyword
 	 */
-	private void validateKeywords(
+	private CoordinateReferenceSystemKeyword validateKeyword(
 			Set<CoordinateReferenceSystemKeyword> keywords,
-			CoordinateReferenceSystemKeyword expected) {
-		if (!keywords.contains(expected)) {
-			throw new ProjectionException("Unexpected keyword. found: "
-					+ keywords + ", expected: " + expected);
+			CoordinateReferenceSystemKeyword... expected) {
+		CoordinateReferenceSystemKeyword keyword = null;
+		Set<CoordinateReferenceSystemKeyword> expectedSet = new HashSet<>(
+				Arrays.asList(expected));
+		for (CoordinateReferenceSystemKeyword kw : keywords) {
+			if (expectedSet.contains(kw)) {
+				keyword = kw;
+				break;
+			}
 		}
+		if (keyword == null) {
+			throw new ProjectionException(
+					"Unexpected keyword. found: " + keywordNames(keywords)
+							+ ", expected: " + keywordNames(expectedSet));
+		}
+		return keyword;
+	}
+
+	/**
+	 * Set of all keyword names from the set of keywords
+	 * 
+	 * @param keywords
+	 *            keywords
+	 * @return set of names
+	 */
+	private Set<String> keywordNames(
+			Set<CoordinateReferenceSystemKeyword> keywords) {
+		Set<String> names = new LinkedHashSet<>();
+		for (CoordinateReferenceSystemKeyword keyword : keywords) {
+			names.addAll(keyword.getKeywords());
+		}
+		return names;
 	}
 
 	/**
@@ -895,8 +1035,8 @@ public class CRSReader implements Closeable {
 
 		GeodeticCoordinateReferenceSystem crs = new GeodeticCoordinateReferenceSystem();
 
-		CoordinateReferenceSystemKeyword type = readKeyword();
-		validateKeyword(type, CoordinateReferenceSystemKeyword.GEODCRS,
+		CoordinateReferenceSystemKeyword type = readKeyword(
+				CoordinateReferenceSystemKeyword.GEODCRS,
 				CoordinateReferenceSystemKeyword.GEOGCRS);
 		CoordinateReferenceSystemType crsType = WKTUtils
 				.getCoordinateReferenceSystemType(type);
@@ -928,8 +1068,7 @@ public class CRSReader implements Closeable {
 		} else {
 			// Validation error
 			readSeparator();
-			validateKeyword(readKeyword(),
-					CoordinateReferenceSystemKeyword.DATUM,
+			readKeyword(CoordinateReferenceSystemKeyword.DATUM,
 					CoordinateReferenceSystemKeyword.ENSEMBLE);
 		}
 
@@ -1009,8 +1148,7 @@ public class CRSReader implements Closeable {
 
 		ProjectedCoordinateReferenceSystem crs = new ProjectedCoordinateReferenceSystem();
 
-		validateKeyword(readKeyword(),
-				CoordinateReferenceSystemKeyword.PROJCRS);
+		readKeyword(CoordinateReferenceSystemKeyword.PROJCRS);
 
 		readLeftDelimiter();
 
@@ -1018,8 +1156,8 @@ public class CRSReader implements Closeable {
 
 		readSeparator();
 
-		CoordinateReferenceSystemKeyword type = readKeyword();
-		validateKeyword(type, CoordinateReferenceSystemKeyword.BASEGEODCRS,
+		CoordinateReferenceSystemKeyword type = readKeyword(
+				CoordinateReferenceSystemKeyword.BASEGEODCRS,
 				CoordinateReferenceSystemKeyword.BASEGEOGCRS);
 		CoordinateReferenceSystemType crsType = WKTUtils
 				.getCoordinateReferenceSystemType(type);
@@ -1051,8 +1189,7 @@ public class CRSReader implements Closeable {
 		} else {
 			// Validation error
 			readSeparator();
-			validateKeyword(readKeyword(),
-					CoordinateReferenceSystemKeyword.DATUM,
+			readKeyword(CoordinateReferenceSystemKeyword.DATUM,
 					CoordinateReferenceSystemKeyword.ENSEMBLE);
 		}
 
@@ -1107,8 +1244,7 @@ public class CRSReader implements Closeable {
 
 		VerticalCoordinateReferenceSystem crs = new VerticalCoordinateReferenceSystem();
 
-		validateKeyword(readKeyword(),
-				CoordinateReferenceSystemKeyword.VERTCRS);
+		readKeyword(CoordinateReferenceSystemKeyword.VERTCRS);
 
 		readLeftDelimiter();
 
@@ -1131,8 +1267,7 @@ public class CRSReader implements Closeable {
 		} else {
 			// Validation error
 			readSeparator();
-			validateKeyword(readKeyword(),
-					CoordinateReferenceSystemKeyword.VDATUM,
+			readKeyword(CoordinateReferenceSystemKeyword.VDATUM,
 					CoordinateReferenceSystemKeyword.ENSEMBLE);
 		}
 
@@ -1184,7 +1319,7 @@ public class CRSReader implements Closeable {
 
 		EngineeringCoordinateReferenceSystem crs = new EngineeringCoordinateReferenceSystem();
 
-		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.ENGCRS);
+		readKeyword(CoordinateReferenceSystemKeyword.ENGCRS);
 
 		readLeftDelimiter();
 
@@ -1230,8 +1365,7 @@ public class CRSReader implements Closeable {
 
 		ParametricCoordinateReferenceSystem crs = new ParametricCoordinateReferenceSystem();
 
-		validateKeyword(readKeyword(),
-				CoordinateReferenceSystemKeyword.PARAMETRICCRS);
+		readKeyword(CoordinateReferenceSystemKeyword.PARAMETRICCRS);
 
 		readLeftDelimiter();
 
@@ -1276,8 +1410,7 @@ public class CRSReader implements Closeable {
 
 		TemporalCoordinateReferenceSystem crs = new TemporalCoordinateReferenceSystem();
 
-		validateKeyword(readKeyword(),
-				CoordinateReferenceSystemKeyword.TIMECRS);
+		readKeyword(CoordinateReferenceSystemKeyword.TIMECRS);
 
 		readLeftDelimiter();
 
@@ -1389,8 +1522,8 @@ public class CRSReader implements Closeable {
 		ReferenceFrame referenceFrame = null;
 		GeodeticReferenceFrame geodeticReferenceFrame = null;
 
-		CoordinateReferenceSystemKeyword type = readKeyword();
-		validateKeyword(type, CoordinateReferenceSystemKeyword.DATUM,
+		CoordinateReferenceSystemKeyword type = readKeyword(
+				CoordinateReferenceSystemKeyword.DATUM,
 				CoordinateReferenceSystemKeyword.VDATUM,
 				CoordinateReferenceSystemKeyword.EDATUM,
 				CoordinateReferenceSystemKeyword.PDATUM);
@@ -1487,8 +1620,7 @@ public class CRSReader implements Closeable {
 	 */
 	public DatumEnsemble readDatumEnsemble() throws IOException {
 
-		validateKeyword(readKeyword(),
-				CoordinateReferenceSystemKeyword.ENSEMBLE);
+		readKeyword(CoordinateReferenceSystemKeyword.ENSEMBLE);
 
 		readLeftDelimiter();
 
@@ -1522,8 +1654,7 @@ public class CRSReader implements Closeable {
 		}
 
 		readSeparator();
-		validateKeyword(readKeyword(),
-				CoordinateReferenceSystemKeyword.ENSEMBLEACCURACY);
+		readKeyword(CoordinateReferenceSystemKeyword.ENSEMBLEACCURACY);
 
 		readLeftDelimiter();
 
@@ -1559,7 +1690,7 @@ public class CRSReader implements Closeable {
 
 		DatumEnsembleMember member = new DatumEnsembleMember();
 
-		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.MEMBER);
+		readKeyword(CoordinateReferenceSystemKeyword.MEMBER);
 
 		readLeftDelimiter();
 
@@ -1586,13 +1717,11 @@ public class CRSReader implements Closeable {
 
 		Dynamic dynamic = new Dynamic();
 
-		validateKeyword(readKeyword(),
-				CoordinateReferenceSystemKeyword.DYNAMIC);
+		readKeyword(CoordinateReferenceSystemKeyword.DYNAMIC);
 
 		readLeftDelimiter();
 
-		validateKeyword(readKeyword(),
-				CoordinateReferenceSystemKeyword.FRAMEEPOCH);
+		readKeyword(CoordinateReferenceSystemKeyword.FRAMEEPOCH);
 
 		readLeftDelimiter();
 
@@ -1633,7 +1762,7 @@ public class CRSReader implements Closeable {
 
 		PrimeMeridian primeMeridian = new PrimeMeridian();
 
-		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.PRIMEM);
+		readKeyword(CoordinateReferenceSystemKeyword.PRIMEM);
 
 		readLeftDelimiter();
 
@@ -1669,8 +1798,7 @@ public class CRSReader implements Closeable {
 
 		Ellipsoid ellipsoid = new Ellipsoid();
 
-		validateKeyword(readKeyword(),
-				CoordinateReferenceSystemKeyword.ELLIPSOID);
+		readKeyword(CoordinateReferenceSystemKeyword.ELLIPSOID);
 
 		readLeftDelimiter();
 
@@ -1782,12 +1910,12 @@ public class CRSReader implements Closeable {
 		if (type != UnitType.UNIT) {
 			CoordinateReferenceSystemKeyword crsType = CoordinateReferenceSystemKeyword
 					.getType(type.name());
-			validateKeywords(keywords, crsType);
+			validateKeyword(keywords, crsType);
 		} else if (keywords.size() == 1) {
 			type = WKTUtils.getUnitType(keywords.iterator().next());
 		} else if (keywords.isEmpty()) {
-			throw new ProjectionException(
-					"Unexpected unit keyword. found: " + keywords);
+			throw new ProjectionException("Unexpected unit keyword. found: "
+					+ keywordNames(keywords));
 		}
 		unit.setType(type);
 
@@ -1846,7 +1974,7 @@ public class CRSReader implements Closeable {
 
 		Identifier identifier = new Identifier();
 
-		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.ID);
+		readKeyword(CoordinateReferenceSystemKeyword.ID);
 
 		readLeftDelimiter();
 
@@ -1889,7 +2017,7 @@ public class CRSReader implements Closeable {
 
 		CoordinateSystem coordinateSystem = new CoordinateSystem();
 
-		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.CS);
+		readKeyword(CoordinateReferenceSystemKeyword.CS);
 
 		readLeftDelimiter();
 
@@ -1999,7 +2127,7 @@ public class CRSReader implements Closeable {
 
 		Axis axis = new Axis();
 
-		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.AXIS);
+		readKeyword(CoordinateReferenceSystemKeyword.AXIS);
 
 		readLeftDelimiter();
 
@@ -2062,8 +2190,7 @@ public class CRSReader implements Closeable {
 
 				readSeparator();
 
-				validateKeyword(readKeyword(),
-						CoordinateReferenceSystemKeyword.BEARING);
+				readKeyword(CoordinateReferenceSystemKeyword.BEARING);
 
 				readLeftDelimiter();
 
@@ -2170,7 +2297,7 @@ public class CRSReader implements Closeable {
 
 		Usage usage = new Usage();
 
-		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.USAGE);
+		readKeyword(CoordinateReferenceSystemKeyword.USAGE);
 
 		readLeftDelimiter();
 
@@ -2278,7 +2405,7 @@ public class CRSReader implements Closeable {
 
 		GeographicBoundingBox boundingBox = new GeographicBoundingBox();
 
-		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.BBOX);
+		readKeyword(CoordinateReferenceSystemKeyword.BBOX);
 
 		readLeftDelimiter();
 
@@ -2312,8 +2439,7 @@ public class CRSReader implements Closeable {
 
 		VerticalExtent verticalExtent = new VerticalExtent();
 
-		validateKeyword(readKeyword(),
-				CoordinateReferenceSystemKeyword.VERTICALEXTENT);
+		readKeyword(CoordinateReferenceSystemKeyword.VERTICALEXTENT);
 
 		readLeftDelimiter();
 
@@ -2344,8 +2470,7 @@ public class CRSReader implements Closeable {
 
 		TemporalExtent temporalExtent = new TemporalExtent();
 
-		validateKeyword(readKeyword(),
-				CoordinateReferenceSystemKeyword.TIMEEXTENT);
+		readKeyword(CoordinateReferenceSystemKeyword.TIMEEXTENT);
 
 		readLeftDelimiter();
 
@@ -2371,8 +2496,7 @@ public class CRSReader implements Closeable {
 
 		MapProjection mapProjection = new MapProjection();
 
-		validateKeyword(readKeyword(),
-				CoordinateReferenceSystemKeyword.CONVERSION);
+		readKeyword(CoordinateReferenceSystemKeyword.CONVERSION);
 
 		readLeftDelimiter();
 
@@ -2412,7 +2536,7 @@ public class CRSReader implements Closeable {
 	private void readMapProjectionMethod(MapProjection mapProjection)
 			throws IOException {
 
-		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.METHOD);
+		readKeyword(CoordinateReferenceSystemKeyword.METHOD);
 
 		readLeftDelimiter();
 
@@ -2474,8 +2598,7 @@ public class CRSReader implements Closeable {
 
 		MapProjectionParameter parameter = new MapProjectionParameter();
 
-		validateKeyword(readKeyword(),
-				CoordinateReferenceSystemKeyword.PARAMETER);
+		readKeyword(CoordinateReferenceSystemKeyword.PARAMETER);
 
 		readLeftDelimiter();
 
@@ -2513,7 +2636,7 @@ public class CRSReader implements Closeable {
 
 		TemporalDatum temporalDatum = new TemporalDatum();
 
-		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.TDATUM);
+		readKeyword(CoordinateReferenceSystemKeyword.TDATUM);
 
 		readLeftDelimiter();
 
@@ -2595,8 +2718,8 @@ public class CRSReader implements Closeable {
 
 		GeodeticCoordinateReferenceSystem crs = new GeodeticCoordinateReferenceSystem();
 
-		CoordinateReferenceSystemKeyword type = readKeyword();
-		validateKeyword(type, CoordinateReferenceSystemKeyword.GEOCCS,
+		CoordinateReferenceSystemKeyword type = readKeyword(
+				CoordinateReferenceSystemKeyword.GEOCCS,
 				CoordinateReferenceSystemKeyword.GEOGCS,
 				CoordinateReferenceSystemKeyword.GEODCRS,
 				CoordinateReferenceSystemKeyword.GEOGCRS);
@@ -2683,7 +2806,7 @@ public class CRSReader implements Closeable {
 
 		ProjectedCoordinateReferenceSystem crs = new ProjectedCoordinateReferenceSystem();
 
-		validateKeyword(readKeyword(), CoordinateReferenceSystemKeyword.PROJCS);
+		readKeyword(CoordinateReferenceSystemKeyword.PROJCS);
 
 		readLeftDelimiter();
 
