@@ -7,7 +7,7 @@ import java.io.IOException;
 import org.junit.Test;
 
 /**
- * CRS Reader tests
+ * Text Reader tests
  * 
  * @author osbornb
  */

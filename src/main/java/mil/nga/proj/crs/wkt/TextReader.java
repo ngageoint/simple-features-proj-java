@@ -39,6 +39,11 @@ public class TextReader {
 	private Integer nextCharacterNum;
 
 	/**
+	 * Include quotes on quoted strings
+	 */
+	private boolean includeQuotes = false;
+
+	/**
 	 * Constructor
 	 * 
 	 * @param text
@@ -55,7 +60,32 @@ public class TextReader {
 	 *            reader
 	 */
 	public TextReader(Reader reader) {
+		this(reader, false);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param text
+	 *            text
+	 * @param includeQuotes
+	 *            include quotes
+	 */
+	public TextReader(String text, boolean includeQuotes) {
+		this(new StringReader(text), includeQuotes);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param reader
+	 *            reader
+	 * @param includeQuotes
+	 *            include quotes
+	 */
+	public TextReader(Reader reader, boolean includeQuotes) {
 		this.reader = reader;
+		this.includeQuotes = includeQuotes;
 	}
 
 	/**
@@ -65,6 +95,25 @@ public class TextReader {
 	 */
 	public Reader getReader() {
 		return reader;
+	}
+
+	/**
+	 * Is include quotes enabled
+	 * 
+	 * @return include quotes setting
+	 */
+	public boolean isIncludeQuotes() {
+		return includeQuotes;
+	}
+
+	/**
+	 * Set the include quotes setting
+	 * 
+	 * @param includeQuotes
+	 *            true to include quotes
+	 */
+	public void setIncludeQuotes(boolean includeQuotes) {
+		this.includeQuotes = includeQuotes;
 	}
 
 	/**
@@ -199,6 +248,9 @@ public class TextReader {
 
 			if (builder != null) {
 				token = builder.toString();
+				if (isQuote && includeQuotes) {
+					token = "\"" + token + "\"";
+				}
 			}
 
 		}

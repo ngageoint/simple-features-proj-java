@@ -74,6 +74,20 @@ public class CRSWriter implements Closeable {
 	}
 
 	/**
+	 * Write a coordinate reference system to well-known pretty text
+	 * 
+	 * @param crs
+	 *            coordinate reference system
+	 * @return well-known pretty text
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public static String writeCRSPretty(CoordinateReferenceSystem crs)
+			throws IOException {
+		return WKTUtils.pretty(writeCRS(crs));
+	}
+
+	/**
 	 * Writer
 	 */
 	private Writer writer;

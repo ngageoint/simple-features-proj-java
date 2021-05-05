@@ -1,5 +1,7 @@
 package mil.nga.proj.crs.wkt;
 
+import java.io.IOException;
+
 import mil.nga.proj.ProjectionException;
 import mil.nga.proj.crs.CoordinateReferenceSystemType;
 import mil.nga.proj.crs.common.CoordinateSystemType;
@@ -131,6 +133,93 @@ public class WKTUtils {
 		}
 
 		return crsType;
+	}
+
+	/**
+	 * Convert the WKT to a pretty WKT string, 4 space indents
+	 * 
+	 * @param wkt
+	 *            well-known text
+	 * @return pretty wkt
+	 * @throws IOException
+	 *             upon failure to read and create
+	 */
+	public static String pretty(String wkt) throws IOException {
+		return pretty(wkt, "    ");
+	}
+
+	/**
+	 * Convert the WKT to a pretty WKT string, tab indents
+	 * 
+	 * @param wkt
+	 *            well-known text
+	 * @return pretty wkt
+	 * @throws IOException
+	 *             upon failure to read and create
+	 */
+	public static String prettyTabIndent(String wkt) throws IOException {
+		return pretty(wkt, "\t");
+	}
+
+	/**
+	 * Convert the WKT to a pretty WKT string, no indents
+	 * 
+	 * @param wkt
+	 *            well-known text
+	 * @return pretty wkt
+	 * @throws IOException
+	 *             upon failure to read and create
+	 */
+	public static String prettyNoIndent(String wkt) throws IOException {
+		return pretty(wkt, "");
+	}
+
+	/**
+	 * Convert the WKT to a pretty WKT string
+	 * 
+	 * @param wkt
+	 *            well-known text
+	 * @param indent
+	 *            indent string
+	 * @return pretty wkt
+	 * @throws IOException
+	 *             upon failure to read and create
+	 */
+	public static String pretty(String wkt, String indent) throws IOException {
+
+		StringBuilder pretty = new StringBuilder();
+
+		int depth = 0;
+
+		TextReader reader = new TextReader(wkt, true);
+
+		String previousToken = reader.readToken();
+		String token = reader.readToken();
+		while (previousToken != null) {
+
+			if (token != null && (token.equals("[") || token.equals("("))) {
+				depth++;
+				if (pretty.length() > 0) {
+					pretty.append("\n");
+				}
+				for (int i = 1; i < depth; i++) {
+					pretty.append(indent);
+				}
+			}
+
+			pretty.append(previousToken);
+
+			if (previousToken.equals("]") || previousToken.equals(")")) {
+				depth--;
+			}
+
+			previousToken = token;
+			token = reader.readToken();
+		}
+
+		reader.close();
+
+		return pretty.toString();
 	}
 
 }

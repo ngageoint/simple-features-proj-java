@@ -42,7 +42,7 @@ import mil.nga.proj.crs.vertical.VerticalCoordinateReferenceSystem;
 import mil.nga.proj.crs.vertical.VerticalReferenceFrame;
 
 /**
- * CRS Reader tests
+ * CRS Reader and Writer tests
  * 
  * @author osbornb
  */
@@ -1470,6 +1470,8 @@ public class CRSReaderWriterTest {
 		text = text.replaceAll("6378137", "6378137.0");
 		assertEquals(text, geodeticCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(geodeticCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(geodeticCrs));
 
 	}
 
@@ -1556,6 +1558,8 @@ public class CRSReaderWriterTest {
 				"6378137.0");
 		assertEquals(text, geographicCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(geographicCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(geographicCrs));
 
 		text = "GEOGRAPHICCRS[\"NAD83\","
 				+ "DATUM[\"North American Datum 1983\","
@@ -1613,6 +1617,8 @@ public class CRSReaderWriterTest {
 				"6378137.0");
 		assertEquals(text, geographicCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(geographicCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(geographicCrs));
 
 		text = "GEOGCRS[\"NTF (Paris)\","
 				+ "DATUM[\"Nouvelle Triangulation Francaise\","
@@ -1668,6 +1674,8 @@ public class CRSReaderWriterTest {
 				geographicCrs.getRemark());
 		assertEquals(text, geographicCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(geographicCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(geographicCrs));
 
 	}
 
@@ -1993,6 +2001,8 @@ public class CRSReaderWriterTest {
 		text = text.replaceAll("6378137", "6378137.0");
 		assertEquals(text, projectedGeographicCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(projectedGeographicCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(projectedGeographicCrs));
 
 		text = "PROJCRS[\"NAD27 / Texas South Central\","
 				+ "BASEGEOGCRS[\"NAD27\","
@@ -2185,6 +2195,8 @@ public class CRSReaderWriterTest {
 		text = text.replaceAll("20925832.164", "2.0925832164E7");
 		assertEquals(text, projectedGeographicCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(projectedGeographicCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(projectedGeographicCrs));
 
 		text = "PROJCRS[\"NAD83 UTM 10\",BASEGEOGCRS[\"NAD83(86)\","
 				+ "DATUM[\"North American Datum 1983\","
@@ -2281,6 +2293,8 @@ public class CRSReaderWriterTest {
 		text = text.replaceAll("6378137", "6378137.0").replace(",0]", ",0.0]");
 		assertEquals(text, projectedGeographicCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(projectedGeographicCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(projectedGeographicCrs));
 
 		text = "PROJCRS[\"WGS 84 (G1762) / UTM zone 31N 3D\",BASEGEOGCRS[\"WGS 84\","
 				+ "DATUM[\"World Geodetic System of 1984 (G1762)\","
@@ -2419,6 +2433,8 @@ public class CRSReaderWriterTest {
 		text = text.replaceAll("6378137", "6378137.0");
 		assertEquals(text, projectedGeographicCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(projectedGeographicCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(projectedGeographicCrs));
 
 	}
 
@@ -2491,6 +2507,8 @@ public class CRSReaderWriterTest {
 				.getConversionFactor(), 0);
 		assertEquals(text, verticalCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(verticalCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(verticalCrs));
 
 		text = "VERTCRS[\"CGVD2013\","
 				+ "VRF[\"Canadian Geodetic Vertical Datum of 2013\"],"
@@ -2528,6 +2546,8 @@ public class CRSReaderWriterTest {
 		text = text.replaceAll("VRF", "VDATUM");
 		assertEquals(text, verticalCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(verticalCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(verticalCrs));
 
 		text = "VERTCRS[\"RH2000\","
 				+ "DYNAMIC[FRAMEEPOCH[2000.0],MODEL[\"NKG2016LU\"]],"
@@ -2563,6 +2583,8 @@ public class CRSReaderWriterTest {
 				.getConversionFactor(), 0);
 		assertEquals(text, verticalCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(verticalCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(verticalCrs));
 
 	}
 
@@ -2615,6 +2637,8 @@ public class CRSReaderWriterTest {
 				.getConversionFactor(), 0);
 		assertEquals(text, engineeringCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(engineeringCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(engineeringCrs));
 
 		text = "ENGINEERINGCRS[\"Astra Minas Grid\","
 				+ "ENGINEERINGDATUM[\"Astra Minas\"],CS[Cartesian,2],"
@@ -2662,6 +2686,8 @@ public class CRSReaderWriterTest {
 				.replaceAll("ENGINEERINGDATUM", "EDATUM");
 		assertEquals(text, engineeringCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(engineeringCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(engineeringCrs));
 
 		text = "ENGCRS[\"A ship-centred CRS\","
 				+ "EDATUM[\"Ship reference point\",ANCHOR[\"Centre of buoyancy\"]],"
@@ -2702,6 +2728,8 @@ public class CRSReaderWriterTest {
 				.getConversionFactor(), 0);
 		assertEquals(text, engineeringCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(engineeringCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(engineeringCrs));
 
 		text = "ENGCRS[\"An analogue image CRS\","
 				+ "EDATUM[\"Image reference point\","
@@ -2744,6 +2772,8 @@ public class CRSReaderWriterTest {
 		text = text.replaceAll("1E-6", "1.0E-6");
 		assertEquals(text, engineeringCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(engineeringCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(engineeringCrs));
 
 		text = "ENGCRS[\"A digital image CRS\","
 				+ "EDATUM[\"Image reference point\","
@@ -2783,6 +2813,8 @@ public class CRSReaderWriterTest {
 				.getOrder().intValue());
 		assertEquals(text, engineeringCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(engineeringCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(engineeringCrs));
 
 	}
 
@@ -2829,6 +2861,8 @@ public class CRSReaderWriterTest {
 				.getConversionFactor(), 0);
 		assertEquals(text, parametricCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(parametricCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(parametricCrs));
 
 	}
 
@@ -2910,6 +2944,8 @@ public class CRSReaderWriterTest {
 		text = text.replaceAll("TemporalDateTime", "temporalDateTime");
 		assertEquals(text, temporalCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(temporalCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(temporalCrs));
 
 		text = "TIMECRS[\"GPS milliseconds\","
 				+ "TDATUM[\"GPS time origin\",TIMEORIGIN[1980-01-01T00:00:00.0Z]],"
@@ -2944,6 +2980,8 @@ public class CRSReaderWriterTest {
 		text = text.replaceAll("TemporalCount", "temporalCount");
 		assertEquals(text, temporalCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(temporalCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(temporalCrs));
 
 		text = "TIMECRS[\"Calendar hours from 1979-12-29\","
 				+ "TDATUM[\"29 December 1979\",TIMEORIGIN[1979-12-29T00Z]],"
@@ -2976,6 +3014,8 @@ public class CRSReaderWriterTest {
 		text = text.replaceAll("TemporalCount", "temporalCount");
 		assertEquals(text, temporalCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(temporalCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(temporalCrs));
 
 		text = "TIMECRS[\"Decimal Years CE\","
 				+ "TDATUM[\"Common Era\",TIMEORIGIN[0000]],"
@@ -3008,6 +3048,8 @@ public class CRSReaderWriterTest {
 		text = text.replaceAll("TemporalMeasure", "temporalMeasure");
 		assertEquals(text, temporalCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(temporalCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(temporalCrs));
 
 		text = "TIMECRS[\"Unix time\","
 				+ "TDATUM[\"Unix epoch\",TIMEORIGIN[1970-01-01T00:00:00Z]],"
@@ -3039,6 +3081,8 @@ public class CRSReaderWriterTest {
 		text = text.replaceAll("TemporalCount", "temporalCount");
 		assertEquals(text, temporalCrs.toString());
 		assertEquals(text, CRSWriter.writeCRS(temporalCrs));
+		assertEquals(WKTUtils.pretty(text),
+				CRSWriter.writeCRSPretty(temporalCrs));
 
 	}
 
@@ -3233,6 +3277,8 @@ public class CRSReaderWriterTest {
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.writeCRS(crs));
+		assertEquals(WKTUtils.pretty(expectedText),
+				CRSWriter.writeCRSPretty(crs));
 
 		text = "GEOGCS[\"NAD83\",DATUM[\"North American Datum 1983\","
 				+ "SPHEROID[\"GRS 1980\",6378137.0,298.257222101]],"
@@ -3286,6 +3332,9 @@ public class CRSReaderWriterTest {
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.writeCRS(crs));
+		assertEquals(WKTUtils.pretty(expectedText),
+				CRSWriter.writeCRSPretty(crs));
+
 	}
 
 	/**
@@ -3376,6 +3425,8 @@ public class CRSReaderWriterTest {
 
 		assertEquals(expectedText, projectedCrs.toString());
 		assertEquals(expectedText, CRSWriter.writeCRS(projectedCrs));
+		assertEquals(WKTUtils.pretty(expectedText),
+				CRSWriter.writeCRSPretty(projectedCrs));
 
 		text = "PROJCS[\"NAD83 / UTM zone 10N\",GEOGCS[\"NAD83\","
 				+ "DATUM[\"North American Datum 1983\","
@@ -3456,6 +3507,8 @@ public class CRSReaderWriterTest {
 
 		assertEquals(expectedText, projectedCrs.toString());
 		assertEquals(expectedText, CRSWriter.writeCRS(projectedCrs));
+		assertEquals(WKTUtils.pretty(expectedText),
+				CRSWriter.writeCRSPretty(projectedCrs));
 
 	}
 
