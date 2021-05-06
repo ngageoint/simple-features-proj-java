@@ -2816,12 +2816,23 @@ public class CRSReader implements Closeable {
 
 		crs.setBase(readGeodeticOrGeographicCompat(expectedBaseType));
 
+		// Not spec based, but some implementations provide the unit here
+		Unit unit = null;
+		if (isUnitNext()) {
+			readSeparator();
+			unit = readUnit();
+		}
+
 		readSeparator();
 		crs.setMapProjection(readMapProjectionMethod());
 
 		crs.setCoordinateSystem(readCoordinateSystemCompat(
 				CoordinateReferenceSystemType.PROJECTED,
 				crs.getGeodeticReferenceFrame()));
+
+		if (unit != null && !crs.getCoordinateSystem().hasUnit()) {
+			crs.getCoordinateSystem().setUnit(unit);
+		}
 
 		readExtensionsCompatAsRemark(crs);
 

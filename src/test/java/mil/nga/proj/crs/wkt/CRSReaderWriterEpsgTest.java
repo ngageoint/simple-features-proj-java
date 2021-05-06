@@ -117,7 +117,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AUTHORITY[\"EPSG\",\"3395\"],"
 				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]";
 
-		crs = CRSReader.read(text);
+		crs = CRSReader.read(text, true);
 
 		expectedText = "PROJCRS[\"WGS 84 / World Mercator\",BASEGEOGCRS[\"WGS 84\","
 				+ "DATUM[\"WGS_1984\","
@@ -132,7 +132,8 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"false_easting\",0.0],"
 				+ "PARAMETER[\"false_northing\",0.0],"
 				+ "ID[\"EPSG\",3395]],CS[ellipsoidal,2],"
-				+ "AXIS[\"Easting\",east],AXIS[\"Northing\",north]]";
+				+ "AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -683,6 +684,129 @@ public class CRSReaderWriterEpsgTest {
 				.replace(",0,", ",0.0,").replace(",2000000,", ",2000000.0,")
 				.replace("\"16161\"", "16161").replace("[90,", "[90.0,")
 				.replace("[0,", "[0.0,").replace("\"5042\"", "5042");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+	}
+
+	/**
+	 * Test EPSG 32660
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void test32660() throws IOException {
+
+		String text = "PROJCRS[\"WGS 84 / UTM zone 60N\",BASEGEOGCRS[\"WGS 84\","
+				+ "ENSEMBLE[\"World Geodetic System 1984 ensemble\","
+				+ "MEMBER[\"World Geodetic System 1984 (Transit)\",ID[\"EPSG\",1166]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G730)\",ID[\"EPSG\",1152]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G873)\",ID[\"EPSG\",1153]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1150)\",ID[\"EPSG\",1154]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1674)\",ID[\"EPSG\",1155]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1762)\",ID[\"EPSG\",1156]],"
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,ID[\"EPSG\",7030]],"
+				+ "ENSEMBLEACCURACY[2],ID[\"EPSG\",6326]],ID[\"EPSG\",4326]],"
+				+ "CONVERSION[\"UTM zone 60N\",METHOD[\"Transverse Mercator\",ID[\"EPSG\",9807]],"
+				+ "PARAMETER[\"Latitude of natural origin\",0,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Longitude of natural origin\",177,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.9996,SCALEUNIT[\"unity\",1,ID[\"EPSG\",9201]]],"
+				+ "PARAMETER[\"False easting\",500000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "PARAMETER[\"False northing\",0,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",16060]],"
+				+ "CS[Cartesian,2,ID[\"EPSG\",4400]],AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",32660]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+
+		String expectedText = text.replace("6378137", "6378137.0")
+				.replace("ENSEMBLEACCURACY[2]", "ENSEMBLEACCURACY[2.0]")
+				.replace(",0,", ",0.0,").replace(",1,", ",1.0,")
+				.replace(",177,", ",177.0,").replace(",500000,", ",500000.0,");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "PROJCS[\"WGS 84 / UTM zone 60N\",GEOGCS[\"WGS 84\","
+				+ "DATUM[\"WGS_1984\","
+				+ "SPHEROID[\"WGS 84\",6378137,298.257223563,"
+				+ "AUTHORITY[\"EPSG\",\"7030\"]],"
+				+ "AUTHORITY[\"EPSG\",\"6326\"]],"
+				+ "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.01745329251994328,"
+				+ "AUTHORITY[\"EPSG\",\"9122\"]],"
+				+ "AUTHORITY[\"EPSG\",\"4326\"]],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "PROJECTION[\"Transverse_Mercator\"],"
+				+ "PARAMETER[\"latitude_of_origin\",0],"
+				+ "PARAMETER[\"central_meridian\",177],"
+				+ "PARAMETER[\"scale_factor\",0.9996],"
+				+ "PARAMETER[\"false_easting\",500000],"
+				+ "PARAMETER[\"false_northing\",0],"
+				+ "AUTHORITY[\"EPSG\",\"32660\"],"
+				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]";
+
+		crs = CRSReader.read(text, true);
+
+		expectedText = "PROJCRS[\"WGS 84 / UTM zone 60N\",BASEGEOGCRS[\"WGS 84\","
+				+ "DATUM[\"WGS_1984\","
+				+ "ELLIPSOID[\"WGS 84\",6378137.0,298.257223563,"
+				+ "ID[\"EPSG\",7030]],ID[\"EPSG\",6326]],"
+				+ "PRIMEM[\"Greenwich\",0.0,ID[\"EPSG\",8901]],"
+				+ "UNIT[\"degree\",0.01745329251994328,"
+				+ "ID[\"EPSG\",9122]],ID[\"EPSG\",4326]],"
+				+ "CONVERSION[\"Transverse_Mercator\",METHOD[\"Transverse_Mercator\"],"
+				+ "PARAMETER[\"latitude_of_origin\",0.0],"
+				+ "PARAMETER[\"central_meridian\",177.0],"
+				+ "PARAMETER[\"scale_factor\",0.9996],"
+				+ "PARAMETER[\"false_easting\",500000.0],"
+				+ "PARAMETER[\"false_northing\",0.0],"
+				+ "ID[\"EPSG\",32660]],CS[ellipsoidal,2],"
+				+ "AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "PROJCS[\"WGS 84 / UTM zone 60N\",GEOGCRS[\"WGS 84\","
+				+ "DATUM[\"WGS_1984\","
+				+ "SPHEROID[\"WGS84\",6378137,298.257223563,"
+				+ "ID[\"EPSG\",\"7030\"]],ID[\"EPSG\",\"6326\"]],"
+				+ "PRIMEM[\"Greenwich\",0,ID[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",\"9122\"]],"
+				+ "ID[\"EPSG\",\"4326\"]],"
+				+ "PROJECTION[\"Transverse_Mercator\"],"
+				+ "PARAMETER[\"latitude_of_origin\",0],"
+				+ "PARAMETER[\"central_meridian\",177],"
+				+ "PARAMETER[\"scale_factor\",0.9996],"
+				+ "PARAMETER[\"false_easting\",500000],"
+				+ "PARAMETER[\"false_northing\",0],"
+				+ "UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]],"
+				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
+				+ "ID[\"EPSG\",\"32660\"]]";
+
+		crs = CRSReader.read(text, true);
+
+		expectedText = "PROJCRS[\"WGS 84 / UTM zone 60N\",BASEGEOGCRS[\"WGS 84\","
+				+ "DATUM[\"WGS_1984\","
+				+ "ELLIPSOID[\"WGS84\",6378137.0,298.257223563,"
+				+ "ID[\"EPSG\",7030]],ID[\"EPSG\",6326]],"
+				+ "PRIMEM[\"Greenwich\",0.0,ID[\"EPSG\",8901]],"
+				+ "UNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9122]],"
+				+ "ID[\"EPSG\",4326]],"
+				+ "CONVERSION[\"Transverse_Mercator\",METHOD[\"Transverse_Mercator\"],"
+				+ "PARAMETER[\"latitude_of_origin\",0.0],"
+				+ "PARAMETER[\"central_meridian\",177.0],"
+				+ "PARAMETER[\"scale_factor\",0.9996],"
+				+ "PARAMETER[\"false_easting\",500000.0],"
+				+ "PARAMETER[\"false_northing\",0.0]],"
+				+ "CS[ellipsoidal,2],AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",32660]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
