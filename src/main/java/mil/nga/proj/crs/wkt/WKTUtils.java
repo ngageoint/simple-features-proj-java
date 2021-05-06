@@ -186,6 +186,24 @@ public class WKTUtils {
 	 *             upon failure to read and create
 	 */
 	public static String pretty(String wkt, String indent) throws IOException {
+		return pretty(wkt, "\n", indent);
+	}
+
+	/**
+	 * Convert the WKT to a pretty WKT string
+	 * 
+	 * @param wkt
+	 *            well-known text
+	 * @param newline
+	 *            newline string
+	 * @param indent
+	 *            indent string
+	 * @return pretty wkt
+	 * @throws IOException
+	 *             upon failure to read and create
+	 */
+	public static String pretty(String wkt, String newline, String indent)
+			throws IOException {
 
 		StringBuilder pretty = new StringBuilder();
 
@@ -200,7 +218,7 @@ public class WKTUtils {
 			if (token != null && (token.equals("[") || token.equals("("))) {
 				depth++;
 				if (pretty.length() > 0) {
-					pretty.append("\n");
+					pretty.append(newline);
 				}
 				for (int i = 1; i < depth; i++) {
 					pretty.append(indent);

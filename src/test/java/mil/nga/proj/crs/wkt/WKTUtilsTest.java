@@ -51,38 +51,48 @@ public class WKTUtilsTest {
 		String pretty = CRSWriter.writePretty(crs);
 		String prettyTab = CRSWriter.writePrettyTabIndent(crs);
 		String prettyNo = CRSWriter.writePrettyNoIndent(crs);
-		String prettyCustom = CRSWriter.writePretty(crs, "\n\t  ");
+		String prettyCustom = CRSWriter.writePretty(crs, "\t  ");
+		String prettyNewline = CRSWriter.writePretty(crs, "\n\n", "\t  ");
 
 		assertNotEquals(wkt, pretty);
 		assertNotEquals(wkt, prettyTab);
 		assertNotEquals(wkt, prettyNo);
 		assertNotEquals(wkt, prettyCustom);
+		assertNotEquals(wkt, prettyNewline);
 		assertNotEquals(pretty, prettyTab);
 		assertNotEquals(pretty, prettyNo);
 		assertNotEquals(pretty, prettyCustom);
+		assertNotEquals(pretty, prettyNewline);
 		assertNotEquals(prettyTab, prettyNo);
 		assertNotEquals(prettyTab, prettyCustom);
+		assertNotEquals(prettyTab, prettyNewline);
 		assertNotEquals(prettyNo, prettyCustom);
+		assertNotEquals(prettyNo, prettyNewline);
+		assertNotEquals(prettyCustom, prettyNewline);
 
 		String pretty2 = CRSWriter.writePretty(text);
 		String prettyTab2 = CRSWriter.writePrettyTabIndent(text);
 		String prettyNo2 = CRSWriter.writePrettyNoIndent(text);
-		String prettyCustom2 = CRSWriter.writePretty(text, "\n\t  ");
+		String prettyCustom2 = CRSWriter.writePretty(text, "\t  ");
+		String prettyNewline2 = CRSWriter.writePretty(text, "\n\n", "\t  ");
 
 		assertEquals(pretty, pretty2);
 		assertEquals(prettyTab, prettyTab2);
 		assertEquals(prettyNo, prettyNo2);
 		assertEquals(prettyCustom, prettyCustom2);
+		assertEquals(prettyNewline, prettyNewline2);
 
 		String pretty3 = CRSWriter.writePretty(wkt);
 		String prettyTab3 = CRSWriter.writePrettyTabIndent(wkt);
 		String prettyNo3 = CRSWriter.writePrettyNoIndent(wkt);
-		String prettyCustom3 = CRSWriter.writePretty(wkt, "\n\t  ");
+		String prettyCustom3 = CRSWriter.writePretty(wkt, "\t  ");
+		String prettyNewline3 = CRSWriter.writePretty(wkt, "\n\n", "\t  ");
 
 		assertEquals(pretty, pretty3);
 		assertEquals(prettyTab, prettyTab3);
 		assertEquals(prettyNo, prettyNo3);
 		assertEquals(prettyCustom, prettyCustom3);
+		assertEquals(prettyNewline, prettyNewline3);
 
 		CoordinateReferenceSystem prettyCrs = CRSReader.read(pretty, true);
 		CoordinateReferenceSystem prettyTabCrs = CRSReader.read(prettyTab,
@@ -90,16 +100,20 @@ public class WKTUtilsTest {
 		CoordinateReferenceSystem prettyNoCrs = CRSReader.read(prettyNo, true);
 		CoordinateReferenceSystem prettyCustomCrs = CRSReader.read(prettyCustom,
 				true);
+		CoordinateReferenceSystem prettyNewlineCrs = CRSReader
+				.read(prettyNewline, true);
 
 		assertEquals(crs, prettyCrs);
 		assertEquals(crs, prettyTabCrs);
 		assertEquals(crs, prettyNoCrs);
 		assertEquals(crs, prettyCustomCrs);
+		assertEquals(crs, prettyNewlineCrs);
 
 		assertEquals(wkt, CRSWriter.write(prettyCrs));
 		assertEquals(wkt, CRSWriter.write(prettyTabCrs));
 		assertEquals(wkt, CRSWriter.write(prettyNoCrs));
 		assertEquals(wkt, CRSWriter.write(prettyCustomCrs));
+		assertEquals(wkt, CRSWriter.write(prettyNewlineCrs));
 
 	}
 

@@ -134,6 +134,24 @@ public class CRSWriter implements Closeable {
 	}
 
 	/**
+	 * Write a coordinate reference system to well-known pretty text
+	 * 
+	 * @param crs
+	 *            coordinate reference system
+	 * @param newline
+	 *            newline string
+	 * @param indent
+	 *            indent string
+	 * @return well-known pretty text
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public static String writePretty(CoordinateReferenceSystem crs,
+			String newline, String indent) throws IOException {
+		return writePretty(write(crs), newline, indent);
+	}
+
+	/**
 	 * Write well-known text to well-known pretty text, 4 space indents
 	 * 
 	 * @param wkt
@@ -186,6 +204,24 @@ public class CRSWriter implements Closeable {
 	public static String writePretty(String wkt, String indent)
 			throws IOException {
 		return WKTUtils.pretty(wkt, indent);
+	}
+
+	/**
+	 * Write well-known text to well-known pretty text
+	 * 
+	 * @param wkt
+	 *            well-known text
+	 * @param newline
+	 *            newline string
+	 * @param indent
+	 *            indent string
+	 * @return well-known pretty text
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public static String writePretty(String wkt, String newline, String indent)
+			throws IOException {
+		return WKTUtils.pretty(wkt, newline, indent);
 	}
 
 	/**
