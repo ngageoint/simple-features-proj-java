@@ -348,17 +348,13 @@ public abstract class CoordinateReferenceSystem {
 	@Override
 	public String toString() {
 		String value = null;
-		CRSWriter writer = new CRSWriter();
 		try {
-			writer.write(this);
-			value = writer.toString();
+			value = CRSWriter.write(this);
 		} catch (IOException e) {
 			logger.log(Level.WARNING,
 					"Failed to write coordinate reference system as a string",
 					e);
 			value = super.toString();
-		} finally {
-			writer.close();
 		}
 		return value;
 	}

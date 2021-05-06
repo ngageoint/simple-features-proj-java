@@ -1,14 +1,11 @@
 package mil.nga.proj.crs.geodetic;
 
-import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystemType;
 import mil.nga.proj.crs.common.CoordinateSystem;
 import mil.nga.proj.crs.common.Dynamic;
-import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
  * Geodetic and Geographic Coordinate Reference System
@@ -249,23 +246,6 @@ public class GeodeticCoordinateReferenceSystem
 		} else if (!geodeticReferenceFrame.equals(other.geodeticReferenceFrame))
 			return false;
 		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		String value = null;
-		try {
-			value = CRSWriter.writeCRS(this);
-		} catch (IOException e) {
-			logger.log(Level.WARNING,
-					"Failed to write geodetic coordinate reference system as a string",
-					e);
-			value = super.toString();
-		}
-		return value;
 	}
 
 }

@@ -1,8 +1,6 @@
 package mil.nga.proj.crs.projected;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.crs.CoordinateReferenceSystem;
@@ -14,7 +12,6 @@ import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.geodetic.GeodeticCoordinateReferenceSystem;
 import mil.nga.proj.crs.geodetic.GeodeticDatumEnsemble;
 import mil.nga.proj.crs.geodetic.GeodeticReferenceFrame;
-import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
  * Projected Coordinate Reference System
@@ -411,23 +408,6 @@ public class ProjectedCoordinateReferenceSystem
 		} else if (!mapProjection.equals(other.mapProjection))
 			return false;
 		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		String value = null;
-		try {
-			value = CRSWriter.writeCRS(this);
-		} catch (IOException e) {
-			logger.log(Level.WARNING,
-					"Failed to write projected coordinate reference system as a string",
-					e);
-			value = super.toString();
-		}
-		return value;
 	}
 
 }

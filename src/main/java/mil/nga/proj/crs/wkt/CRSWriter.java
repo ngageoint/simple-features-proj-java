@@ -60,12 +60,12 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public static String writeCRS(CoordinateReferenceSystem crs)
+	public static String write(CoordinateReferenceSystem crs)
 			throws IOException {
 		String value = null;
 		CRSWriter writer = new CRSWriter();
 		try {
-			writer.write(crs);
+			writer.writeCRS(crs);
 			value = writer.toString();
 		} finally {
 			writer.close();
@@ -74,7 +74,8 @@ public class CRSWriter implements Closeable {
 	}
 
 	/**
-	 * Write a coordinate reference system to well-known pretty text
+	 * Write a coordinate reference system to well-known pretty text, 4 space
+	 * indents
 	 * 
 	 * @param crs
 	 *            coordinate reference system
@@ -82,9 +83,109 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public static String writeCRSPretty(CoordinateReferenceSystem crs)
+	public static String writePretty(CoordinateReferenceSystem crs)
 			throws IOException {
-		return WKTUtils.pretty(writeCRS(crs));
+		return writePretty(write(crs));
+	}
+
+	/**
+	 * Write a coordinate reference system to well-known pretty text, tab
+	 * indents
+	 * 
+	 * @param crs
+	 *            coordinate reference system
+	 * @return well-known pretty text
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public static String writePrettyTabIndent(CoordinateReferenceSystem crs)
+			throws IOException {
+		return writePrettyTabIndent(write(crs));
+	}
+
+	/**
+	 * Write a coordinate reference system to well-known pretty text, no indents
+	 * 
+	 * @param crs
+	 *            coordinate reference system
+	 * @return well-known pretty text
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public static String writePrettyNoIndent(CoordinateReferenceSystem crs)
+			throws IOException {
+		return writePrettyNoIndent(write(crs));
+	}
+
+	/**
+	 * Write a coordinate reference system to well-known pretty text
+	 * 
+	 * @param crs
+	 *            coordinate reference system
+	 * @param indent
+	 *            indent string
+	 * @return well-known pretty text
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public static String writePretty(CoordinateReferenceSystem crs,
+			String indent) throws IOException {
+		return writePretty(write(crs), indent);
+	}
+
+	/**
+	 * Write well-known text to well-known pretty text, 4 space indents
+	 * 
+	 * @param wkt
+	 *            well-known text
+	 * @return well-known pretty text
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public static String writePretty(String wkt) throws IOException {
+		return WKTUtils.pretty(wkt);
+	}
+
+	/**
+	 * Write well-known text to well-known pretty text, tab indents
+	 * 
+	 * @param wkt
+	 *            well-known text
+	 * @return well-known pretty text
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public static String writePrettyTabIndent(String wkt) throws IOException {
+		return WKTUtils.prettyTabIndent(wkt);
+	}
+
+	/**
+	 * Write well-known text to well-known pretty text, no indents
+	 * 
+	 * @param wkt
+	 *            well-known text
+	 * @return well-known pretty text
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public static String writePrettyNoIndent(String wkt) throws IOException {
+		return WKTUtils.prettyNoIndent(wkt);
+	}
+
+	/**
+	 * Write well-known text to well-known pretty text
+	 * 
+	 * @param wkt
+	 *            well-known text
+	 * @param indent
+	 *            indent string
+	 * @return well-known pretty text
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public static String writePretty(String wkt, String indent)
+			throws IOException {
+		return WKTUtils.pretty(wkt, indent);
 	}
 
 	/**
@@ -146,27 +247,27 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void write(CoordinateReferenceSystem crs) throws IOException {
+	public void writeCRS(CoordinateReferenceSystem crs) throws IOException {
 
 		switch (crs.getType()) {
 		case GEODETIC:
 		case GEOGRAPHIC:
-			write((GeodeticCoordinateReferenceSystem) crs);
+			writeCRS((GeodeticCoordinateReferenceSystem) crs);
 			break;
 		case PROJECTED:
-			write((ProjectedCoordinateReferenceSystem) crs);
+			writeCRS((ProjectedCoordinateReferenceSystem) crs);
 			break;
 		case VERTICAL:
-			write((VerticalCoordinateReferenceSystem) crs);
+			writeCRS((VerticalCoordinateReferenceSystem) crs);
 			break;
 		case ENGINEERING:
-			write((EngineeringCoordinateReferenceSystem) crs);
+			writeCRS((EngineeringCoordinateReferenceSystem) crs);
 			break;
 		case PARAMETRIC:
-			write((ParametricCoordinateReferenceSystem) crs);
+			writeCRS((ParametricCoordinateReferenceSystem) crs);
 			break;
 		case TEMPORAL:
-			write((TemporalCoordinateReferenceSystem) crs);
+			writeCRS((TemporalCoordinateReferenceSystem) crs);
 			break;
 		default:
 			throw new ProjectionException(
@@ -292,7 +393,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void write(GeodeticCoordinateReferenceSystem crs)
+	public void writeCRS(GeodeticCoordinateReferenceSystem crs)
 			throws IOException {
 
 		CoordinateReferenceSystemKeyword keyword = null;
@@ -355,7 +456,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void write(ProjectedCoordinateReferenceSystem crs)
+	public void writeCRS(ProjectedCoordinateReferenceSystem crs)
 			throws IOException {
 
 		write(CoordinateReferenceSystemKeyword.PROJCRS);
@@ -441,7 +542,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void write(VerticalCoordinateReferenceSystem crs)
+	public void writeCRS(VerticalCoordinateReferenceSystem crs)
 			throws IOException {
 
 		write(CoordinateReferenceSystemKeyword.VERTCRS);
@@ -503,7 +604,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void write(EngineeringCoordinateReferenceSystem crs)
+	public void writeCRS(EngineeringCoordinateReferenceSystem crs)
 			throws IOException {
 
 		write(CoordinateReferenceSystemKeyword.ENGCRS);
@@ -544,7 +645,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void write(ParametricCoordinateReferenceSystem crs)
+	public void writeCRS(ParametricCoordinateReferenceSystem crs)
 			throws IOException {
 
 		write(CoordinateReferenceSystemKeyword.PARAMETRICCRS);
@@ -585,7 +686,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void write(TemporalCoordinateReferenceSystem crs)
+	public void writeCRS(TemporalCoordinateReferenceSystem crs)
 			throws IOException {
 
 		write(CoordinateReferenceSystemKeyword.TIMECRS);

@@ -1,13 +1,10 @@
 package mil.nga.proj.crs.temporal;
 
-import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystemType;
 import mil.nga.proj.crs.common.CoordinateSystem;
-import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
  * Temporal Coordinate Reference System
@@ -100,23 +97,6 @@ public class TemporalCoordinateReferenceSystem
 		} else if (!temporalDatum.equals(other.temporalDatum))
 			return false;
 		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		String value = null;
-		try {
-			value = CRSWriter.writeCRS(this);
-		} catch (IOException e) {
-			logger.log(Level.WARNING,
-					"Failed to write temporal coordinate reference system as a string",
-					e);
-			value = super.toString();
-		}
-		return value;
 	}
 
 }

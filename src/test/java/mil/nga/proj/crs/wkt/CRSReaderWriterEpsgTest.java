@@ -27,36 +27,36 @@ public class CRSReaderWriterEpsgTest {
 	//
 	// String text = "";
 	//
-	// CoordinateReferenceSystem crs = CRSReader.readCRS(text, true);
+	// CoordinateReferenceSystem crs = CRSReader.read(text, true);
 	//
 	// String expectedText = text;
 	//
 	// assertEquals(expectedText, crs.toString());
-	// assertEquals(expectedText, CRSWriter.writeCRS(crs));
+	// assertEquals(expectedText, CRSWriter.write(crs));
 	// assertEquals(WKTUtils.pretty(expectedText),
-	// CRSWriter.writeCRSPretty(crs));
+	// CRSWriter.writePretty(crs));
 	//
 	// text = "";
 	//
-	// crs = CRSReader.readCRS(text, true);
+	// crs = CRSReader.read(text, true);
 	//
 	// expectedText = text;
 	//
 	// assertEquals(expectedText, crs.toString());
-	// assertEquals(expectedText, CRSWriter.writeCRS(crs));
+	// assertEquals(expectedText, CRSWriter.write(crs));
 	// assertEquals(WKTUtils.pretty(expectedText),
-	// CRSWriter.writeCRSPretty(crs));
+	// CRSWriter.writePretty(crs));
 	//
 	// text = "";
 	//
-	// crs = CRSReader.readCRS(text, true);
+	// crs = CRSReader.read(text, true);
 	//
 	// expectedText = text;
 	//
 	// assertEquals(expectedText, crs.toString());
-	// assertEquals(expectedText, CRSWriter.writeCRS(crs));
+	// assertEquals(expectedText, CRSWriter.write(crs));
 	// assertEquals(WKTUtils.pretty(expectedText),
-	// CRSWriter.writeCRSPretty(crs));
+	// CRSWriter.writePretty(crs));
 	//
 	// }
 
@@ -89,16 +89,15 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3395]]";
 
-		CoordinateReferenceSystem crs = CRSReader.readCRS(text, true);
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("6378137", "6378137.0")
 				.replace("ENSEMBLEACCURACY[2]", "ENSEMBLEACCURACY[2.0]")
 				.replace(",0,", ",0.0,").replace(",1,", ",1.0,");
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 		text = "PROJCS[\"WGS 84 / World Mercator\",GEOGCS[\"WGS 84\","
 				+ "DATUM[\"WGS_1984\","
@@ -118,7 +117,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AUTHORITY[\"EPSG\",\"3395\"],"
 				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]";
 
-		crs = CRSReader.readCRS(text);
+		crs = CRSReader.read(text);
 
 		expectedText = "PROJCRS[\"WGS 84 / World Mercator\",BASEGEOGCRS[\"WGS 84\","
 				+ "DATUM[\"WGS_1984\","
@@ -136,9 +135,8 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Easting\",east],AXIS[\"Northing\",north]]";
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 		text = "PROJCRS[\"WGS 84 / World Mercator\","
 				+ "BASEGEODCRS[\"WGS 84\","
@@ -159,7 +157,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Northing (N)\",north,ORDER[2]],"
 				+ "LENGTHUNIT[\"metre\",1.0],ID[\"EPSG\",\"3395\"]]";
 
-		crs = CRSReader.readCRS(text, true);
+		crs = CRSReader.read(text, true);
 
 		expectedText = text.replace("6378137", "6378137.0")
 				.replace(",0,", ",0.0,").replace(",1,", ",1.0,")
@@ -167,9 +165,8 @@ public class CRSReaderWriterEpsgTest {
 				.replace("\"3395\"", "3395");
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 	}
 
@@ -202,16 +199,15 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Easting (X)\",east],AXIS[\"Northing (Y)\",north],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3857]]";
 
-		CoordinateReferenceSystem crs = CRSReader.readCRS(text, true);
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("6378137", "6378137.0")
 				.replace("ENSEMBLEACCURACY[2]", "ENSEMBLEACCURACY[2.0]")
 				.replace(",0,", ",0.0,").replace(",1,", ",1.0,");
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 		text = "PROJCS[\"WGS 84 / Pseudo-Mercator\",GEOGCS[\"WGS 84\","
 				+ "DATUM[\"WGS_1984\","
@@ -232,7 +228,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "EXTENSION[\"PROJ4\",\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs\"],"
 				+ "AUTHORITY[\"EPSG\",\"3857\"]]";
 
-		crs = CRSReader.readCRS(text, true);
+		crs = CRSReader.read(text, true);
 
 		expectedText = "PROJCRS[\"WGS 84 / Pseudo-Mercator\",BASEGEOGCRS[\"WGS 84\","
 				+ "DATUM[\"WGS_1984\","
@@ -251,9 +247,8 @@ public class CRSReaderWriterEpsgTest {
 				+ "REMARK[\"[\"\"PROJ4\"\",\"\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs\"\"]\"]]";
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 		text = "PROJCS[\"WGS 84 / Pseudo-Mercator\","
 				+ "GEOGCRS[\"WGS 84\",DATUM[\"WGS_1984\","
@@ -271,7 +266,7 @@ public class CRSReaderWriterEpsgTest {
 				+ ",AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]"
 				+ ",ID[\"EPSG\",\"3857\"]]";
 
-		crs = CRSReader.readCRS(text, true);
+		crs = CRSReader.read(text, true);
 
 		expectedText = "PROJCRS[\"WGS 84 / Pseudo-Mercator\","
 				+ "BASEGEOGCRS[\"WGS 84\",DATUM[\"WGS_1984\","
@@ -290,9 +285,8 @@ public class CRSReaderWriterEpsgTest {
 				+ ",ID[\"EPSG\",3857]]";
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 	}
 
@@ -319,15 +313,14 @@ public class CRSReaderWriterEpsgTest {
 				+ "ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],"
 				+ "ID[\"EPSG\",4326]]";
 
-		CoordinateReferenceSystem crs = CRSReader.readCRS(text, true);
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("6378137", "6378137.0")
 				.replace("ENSEMBLEACCURACY[2]", "ENSEMBLEACCURACY[2.0]");
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 		text = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\","
 				+ "SPHEROID[\"WGS 84\",6378137,298.257223563,"
@@ -338,7 +331,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AUTHORITY[\"EPSG\",\"9122\"]],"
 				+ "AUTHORITY[\"EPSG\",\"4326\"]]";
 
-		crs = CRSReader.readCRS(text, true);
+		crs = CRSReader.read(text, true);
 
 		expectedText = "GEOGCRS[\"WGS 84\",DATUM[\"WGS_1984\","
 				+ "ELLIPSOID[\"WGS 84\",6378137.0,298.257223563,"
@@ -350,16 +343,15 @@ public class CRSReaderWriterEpsgTest {
 				+ "ID[\"EPSG\",9122]],ID[\"EPSG\",4326]]";
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 		text = "GEOGCS[\"WGS 84\"," + "DATUM[\"WGS_1984\","
 				+ "SPHEROID[\"WGS84\",6378137,298.257223563]],"
 				+ "PRIMEM[\"Greenwich\",0],"
 				+ "UNIT[\"degree\",0.0174532925199433]]";
 
-		crs = CRSReader.readCRS(text, true);
+		crs = CRSReader.read(text, true);
 
 		expectedText = "GEOGCRS[\"WGS 84\",DATUM[\"WGS_1984\","
 				+ "ELLIPSOID[\"WGS84\",6378137.0,298.257223563]],"
@@ -368,9 +360,8 @@ public class CRSReaderWriterEpsgTest {
 				+ "UNIT[\"degree\",0.0174532925199433]]";
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 	}
 
@@ -397,16 +388,15 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Geodetic longitude (Lon)\",east,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
 				+ "AXIS[\"Ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",4979]]";
 
-		CoordinateReferenceSystem crs = CRSReader.readCRS(text, true);
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("6378137", "6378137.0")
 				.replace("ENSEMBLEACCURACY[2]", "ENSEMBLEACCURACY[2.0]")
 				.replace(",1,", ",1.0,");
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 		text = "GEOGCS[\"WGS 84\"," + "DATUM[\"World Geodetic System 1984\","
 				+ "SPHEROID[\"WGS 84\",6378137.0,298.257223563,"
@@ -419,7 +409,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Ellipsoidal height\",UP],"
 				+ "AUTHORITY[\"EPSG\",\"4979\"]]";
 
-		crs = CRSReader.readCRS(text, true);
+		crs = CRSReader.read(text, true);
 
 		expectedText = "GEOGCRS[\"WGS 84\","
 				+ "DATUM[\"World Geodetic System 1984\","
@@ -433,9 +423,8 @@ public class CRSReaderWriterEpsgTest {
 				+ "ID[\"EPSG\",4979]]";
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 		text = "GEODCRS[\"WGS 84\",DATUM[\"World Geodetic System 1984\","
 				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,"
@@ -447,14 +436,13 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Ellipsoidal height (h)\",up,"
 				+ "LENGTHUNIT[\"metre\",1.0]],ID[\"EPSG\",4979]]";
 
-		crs = CRSReader.readCRS(text, true);
+		crs = CRSReader.read(text, true);
 
 		expectedText = text.replaceAll("6378137", "6378137.0");
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 	}
 
@@ -488,7 +476,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Easting (E)\",South],AXIS[\"Northing (N)\",South],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5041]]";
 
-		CoordinateReferenceSystem crs = CRSReader.readCRS(text, true);
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("6378137", "6378137.0")
 				.replace("ENSEMBLEACCURACY[2]", "ENSEMBLEACCURACY[2.0]")
@@ -497,9 +485,8 @@ public class CRSReaderWriterEpsgTest {
 				.replace("South", "south");
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 		text = "PROJCS[\"WGS 84 / UPS North (E,N)\"," + "GEOGCS[\"WGS 84\","
 				+ "DATUM[\"WGS_1984\","
@@ -520,7 +507,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
 				+ "AUTHORITY[\"EPSG\",\"5041\"]]";
 
-		crs = CRSReader.readCRS(text, true);
+		crs = CRSReader.read(text, true);
 
 		expectedText = "PROJCRS[\"WGS 84 / UPS North (E,N)\",BASEGEOGCRS[\"WGS 84\","
 				+ "DATUM[\"WGS_1984\","
@@ -538,9 +525,8 @@ public class CRSReaderWriterEpsgTest {
 				+ "ID[\"EPSG\",5041]]";
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 		text = "PROJCRS[\"WGS 84 / UPS North (E,N)\","
 				+ "BASEGEODCRS[\"WGS 84\","
@@ -566,7 +552,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "ORDER[2]],LENGTHUNIT[\"metre\",1.0],"
 				+ "ID[\"EPSG\",\"5041\"]]";
 
-		crs = CRSReader.readCRS(text, true);
+		crs = CRSReader.read(text, true);
 
 		expectedText = text.replace("6378137", "6378137.0")
 				.replace("\"9810\"", "9810").replace(",90,", ",90.0,")
@@ -575,9 +561,8 @@ public class CRSReaderWriterEpsgTest {
 				.replace("[180,", "[180.0,").replace("\"5041\"", "5041");
 
 		assertEquals(expectedText, crs.toString());
-		assertEquals(expectedText, CRSWriter.writeCRS(crs));
-		assertEquals(WKTUtils.pretty(expectedText),
-				CRSWriter.writeCRSPretty(crs));
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
 	}
 

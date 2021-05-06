@@ -73,9 +73,9 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public static CoordinateReferenceSystem readCRS(String text)
+	public static CoordinateReferenceSystem read(String text)
 			throws IOException {
-		return readCRS(text, false);
+		return read(text, false);
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public static CoordinateReferenceSystem readCRS(String text, boolean strict)
+	public static CoordinateReferenceSystem read(String text, boolean strict)
 			throws IOException {
 		CoordinateReferenceSystem crs = null;
 		CRSReader reader = new CRSReader(text, strict);

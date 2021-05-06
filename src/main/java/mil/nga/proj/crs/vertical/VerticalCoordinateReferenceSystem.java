@@ -1,7 +1,5 @@
 package mil.nga.proj.crs.vertical;
 
-import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.crs.CoordinateReferenceSystem;
@@ -9,7 +7,6 @@ import mil.nga.proj.crs.CoordinateReferenceSystemType;
 import mil.nga.proj.crs.common.CoordinateSystem;
 import mil.nga.proj.crs.common.Dynamic;
 import mil.nga.proj.crs.common.Identifier;
-import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
  * Vertical Coordinate Reference System
@@ -310,23 +307,6 @@ public class VerticalCoordinateReferenceSystem
 		} else if (!verticalReferenceFrame.equals(other.verticalReferenceFrame))
 			return false;
 		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		String value = null;
-		try {
-			value = CRSWriter.writeCRS(this);
-		} catch (IOException e) {
-			logger.log(Level.WARNING,
-					"Failed to write vertical coordinate reference system as a string",
-					e);
-			value = super.toString();
-		}
-		return value;
 	}
 
 }
