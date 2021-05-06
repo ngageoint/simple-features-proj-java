@@ -10,14 +10,14 @@ import org.junit.Test;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 
 /**
- * CRS Reader tests
+ * Well-Known Text Utility tests
  * 
  * @author osbornb
  */
 public class WKTUtilsTest {
 
 	/**
-	 * Test double quote
+	 * Test pretty WKT
 	 * 
 	 * @throws IOException
 	 *             upon error
