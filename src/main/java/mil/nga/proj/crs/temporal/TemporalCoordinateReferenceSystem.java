@@ -1,7 +1,5 @@
 package mil.nga.proj.crs.temporal;
 
-import java.util.logging.Logger;
-
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystemType;
 import mil.nga.proj.crs.common.CoordinateSystem;
@@ -13,12 +11,6 @@ import mil.nga.proj.crs.common.CoordinateSystem;
  */
 public class TemporalCoordinateReferenceSystem
 		extends CoordinateReferenceSystem {
-
-	/**
-	 * Logger
-	 */
-	private static final Logger logger = Logger
-			.getLogger(TemporalCoordinateReferenceSystem.class.getName());
 
 	/**
 	 * Temporal Datum

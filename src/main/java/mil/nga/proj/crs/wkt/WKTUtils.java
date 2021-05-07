@@ -15,6 +15,30 @@ import mil.nga.proj.crs.common.UnitType;
 public class WKTUtils {
 
 	/**
+	 * Is the text a left delimiter
+	 * 
+	 * @param text
+	 *            wkt text token
+	 * @return true if left delimiter
+	 */
+	public static boolean isLeftDelimiter(String text) {
+		return text.equals(WKTConstants.LEFT_DELIMITER)
+				|| text.equals(WKTConstants.LEFT_DELIMITER_COMPAT);
+	}
+
+	/**
+	 * Is the text a right delimiter
+	 * 
+	 * @param text
+	 *            wkt text token
+	 * @return true if right delimiter
+	 */
+	public static boolean isRightDelimiter(String text) {
+		return text.equals(WKTConstants.RIGHT_DELIMITER)
+				|| text.equals(WKTConstants.RIGHT_DELIMITER_COMPAT);
+	}
+
+	/**
 	 * Is the Coordinate System Type a spatial type
 	 * 
 	 * @param type

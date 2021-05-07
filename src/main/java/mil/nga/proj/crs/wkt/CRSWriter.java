@@ -38,8 +38,7 @@ import mil.nga.proj.crs.temporal.TemporalDatum;
 import mil.nga.proj.crs.vertical.VerticalCoordinateReferenceSystem;
 
 /**
- * 
- * Well Known Text writer
+ * Well-Known Text writer
  * 
  * @author osbornb
  */
@@ -332,7 +331,7 @@ public class CRSWriter implements Closeable {
 	 *             upon failure to write
 	 */
 	public void writeLeftDelimiter() throws IOException {
-		writer.write("[");
+		writer.write(WKTConstants.LEFT_DELIMITER);
 	}
 
 	/**
@@ -342,7 +341,7 @@ public class CRSWriter implements Closeable {
 	 *             upon failure to write
 	 */
 	public void writeRightDelimiter() throws IOException {
-		writer.write("]");
+		writer.write(WKTConstants.RIGHT_DELIMITER);
 	}
 
 	/**
@@ -352,7 +351,7 @@ public class CRSWriter implements Closeable {
 	 *             upon failure to write
 	 */
 	public void writeSeparator() throws IOException {
-		writer.write(",");
+		writer.write(WKTConstants.SEPARATOR);
 	}
 
 	/**
@@ -466,20 +465,7 @@ public class CRSWriter implements Closeable {
 		writeSeparator();
 		write(crs.getCoordinateSystem());
 
-		if (crs.hasUsages()) {
-			writeSeparator();
-			writeUsages(crs.getUsages());
-		}
-
-		if (crs.hasIdentifiers()) {
-			writeSeparator();
-			writeIdentifiers(crs.getIdentifiers());
-		}
-
-		if (crs.hasRemark()) {
-			writeSeparator();
-			writeRemark(crs.getRemark());
-		}
+		writeScopeExtentIdentifierRemark(crs);
 
 		writeRightDelimiter();
 	}
@@ -552,20 +538,7 @@ public class CRSWriter implements Closeable {
 		writeSeparator();
 		write(crs.getCoordinateSystem());
 
-		if (crs.hasUsages()) {
-			writeSeparator();
-			writeUsages(crs.getUsages());
-		}
-
-		if (crs.hasIdentifiers()) {
-			writeSeparator();
-			writeIdentifiers(crs.getIdentifiers());
-		}
-
-		if (crs.hasRemark()) {
-			writeSeparator();
-			writeRemark(crs.getRemark());
-		}
+		writeScopeExtentIdentifierRemark(crs);
 
 		writeRightDelimiter();
 	}
@@ -614,20 +587,7 @@ public class CRSWriter implements Closeable {
 			writeRightDelimiter();
 		}
 
-		if (crs.hasUsages()) {
-			writeSeparator();
-			writeUsages(crs.getUsages());
-		}
-
-		if (crs.hasIdentifiers()) {
-			writeSeparator();
-			writeIdentifiers(crs.getIdentifiers());
-		}
-
-		if (crs.hasRemark()) {
-			writeSeparator();
-			writeRemark(crs.getRemark());
-		}
+		writeScopeExtentIdentifierRemark(crs);
 
 		writeRightDelimiter();
 	}
@@ -655,20 +615,7 @@ public class CRSWriter implements Closeable {
 		writeSeparator();
 		write(crs.getCoordinateSystem());
 
-		if (crs.hasUsages()) {
-			writeSeparator();
-			writeUsages(crs.getUsages());
-		}
-
-		if (crs.hasIdentifiers()) {
-			writeSeparator();
-			writeIdentifiers(crs.getIdentifiers());
-		}
-
-		if (crs.hasRemark()) {
-			writeSeparator();
-			writeRemark(crs.getRemark());
-		}
+		writeScopeExtentIdentifierRemark(crs);
 
 		writeRightDelimiter();
 	}
@@ -696,20 +643,7 @@ public class CRSWriter implements Closeable {
 		writeSeparator();
 		write(crs.getCoordinateSystem());
 
-		if (crs.hasUsages()) {
-			writeSeparator();
-			writeUsages(crs.getUsages());
-		}
-
-		if (crs.hasIdentifiers()) {
-			writeSeparator();
-			writeIdentifiers(crs.getIdentifiers());
-		}
-
-		if (crs.hasRemark()) {
-			writeSeparator();
-			writeRemark(crs.getRemark());
-		}
+		writeScopeExtentIdentifierRemark(crs);
 
 		writeRightDelimiter();
 	}
@@ -737,6 +671,22 @@ public class CRSWriter implements Closeable {
 		writeSeparator();
 		write(crs.getCoordinateSystem());
 
+		writeScopeExtentIdentifierRemark(crs);
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write the CRS usages (scope and extent), identifiers, and remark
+	 * 
+	 * @param crs
+	 *            coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeScopeExtentIdentifierRemark(CoordinateReferenceSystem crs)
+			throws IOException {
+
 		if (crs.hasUsages()) {
 			writeSeparator();
 			writeUsages(crs.getUsages());
@@ -752,7 +702,6 @@ public class CRSWriter implements Closeable {
 			writeRemark(crs.getRemark());
 		}
 
-		writeRightDelimiter();
 	}
 
 	/**
@@ -1164,9 +1113,9 @@ public class CRSWriter implements Closeable {
 			if (nameAbbrev.length() > 0) {
 				nameAbbrev.append(" ");
 			}
-			nameAbbrev.append("(");
+			nameAbbrev.append(WKTConstants.AXIS_ABBREV_LEFT_DELIMITER);
 			nameAbbrev.append(axis.getAbbreviation());
-			nameAbbrev.append(")");
+			nameAbbrev.append(WKTConstants.AXIS_ABBREV_RIGHT_DELIMITER);
 		}
 		writeQuotedText(nameAbbrev.toString());
 

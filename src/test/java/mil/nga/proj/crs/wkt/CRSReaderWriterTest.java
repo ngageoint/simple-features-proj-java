@@ -3093,7 +3093,7 @@ public class CRSReaderWriterTest {
 				+ "PARAMETER[\"False easting\",500000],"
 				+ "PARAMETER[\"False northing\",0]";
 		CRSReader reader = new CRSReader(text);
-		MapProjection mapProjection = reader.readMapProjectionMethod();
+		MapProjection mapProjection = reader.readMapProjectionCompat();
 		assertEquals("Transverse Mercator", mapProjection.getName());
 		assertEquals("Transverse Mercator", mapProjection.getMethodName());
 		assertEquals("Latitude of origin",
@@ -3130,7 +3130,7 @@ public class CRSReaderWriterTest {
 				+ "PARAMETER[\"Scale factor at natural origin\",0.9996],"
 				+ "PARAMETER[\"FE\",500000],PARAMETER[\"FN\",0]";
 		reader = new CRSReader(text);
-		mapProjection = reader.readMapProjectionMethod();
+		mapProjection = reader.readMapProjectionCompat();
 		assertEquals("UTM zone 10N", mapProjection.getName());
 		assertEquals("UTM zone 10N", mapProjection.getMethodName());
 		assertEquals("Latitude of natural origin",

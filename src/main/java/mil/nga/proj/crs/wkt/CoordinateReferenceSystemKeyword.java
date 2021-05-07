@@ -113,6 +113,11 @@ public enum CoordinateReferenceSystemKeyword {
 	ENSEMBLEACCURACY(),
 
 	/**
+	 * Backwards Compatibility Extension
+	 */
+	EXTENSION(),
+
+	/**
 	 * Frame reference epoch
 	 */
 	FRAMEEPOCH(),

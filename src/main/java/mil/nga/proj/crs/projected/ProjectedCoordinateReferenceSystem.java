@@ -1,7 +1,6 @@
 package mil.nga.proj.crs.projected;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystemType;
@@ -20,12 +19,6 @@ import mil.nga.proj.crs.geodetic.GeodeticReferenceFrame;
  */
 public class ProjectedCoordinateReferenceSystem
 		extends CoordinateReferenceSystem {
-
-	/**
-	 * Logger
-	 */
-	private static final Logger logger = Logger
-			.getLogger(ProjectedCoordinateReferenceSystem.class.getName());
 
 	/**
 	 * Base

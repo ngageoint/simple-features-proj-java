@@ -1,7 +1,5 @@
 package mil.nga.proj.crs.vertical;
 
-import java.util.logging.Logger;
-
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystemType;
 import mil.nga.proj.crs.common.CoordinateSystem;
@@ -15,12 +13,6 @@ import mil.nga.proj.crs.common.Identifier;
  */
 public class VerticalCoordinateReferenceSystem
 		extends CoordinateReferenceSystem {
-
-	/**
-	 * Logger
-	 */
-	private static final Logger logger = Logger
-			.getLogger(VerticalCoordinateReferenceSystem.class.getName());
 
 	/**
 	 * Vertical Reference Frame

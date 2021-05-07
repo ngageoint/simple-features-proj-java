@@ -61,6 +61,207 @@ public class CRSReaderWriterEpsgTest {
 	// }
 
 	/**
+	 * Test EPSG 3035
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void test3035() throws IOException {
+
+		String text = "PROJCRS[\"ETRS89-extended / LAEA Europe\",BASEGEOGCRS[\"ETRS89\","
+				+ "ENSEMBLE[\"European Terrestrial Reference System 1989 ensemble\","
+				+ "MEMBER[\"European Terrestrial Reference Frame 1989\",ID[\"EPSG\",1178]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 1990\",ID[\"EPSG\",1179]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 1991\",ID[\"EPSG\",1180]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 1992\",ID[\"EPSG\",1181]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 1993\",ID[\"EPSG\",1182]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 1994\",ID[\"EPSG\",1183]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 1996\",ID[\"EPSG\",1184]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 1997\",ID[\"EPSG\",1185]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 2000\",ID[\"EPSG\",1186]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 2005\",ID[\"EPSG\",1204]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 2014\",ID[\"EPSG\",1206]],"
+				+ "ELLIPSOID[\"GRS 1980\",6378137,298.257222101,ID[\"EPSG\",7019]],"
+				+ "ENSEMBLEACCURACY[0.1],ID[\"EPSG\",6258]],ID[\"EPSG\",4258]],"
+				+ "CONVERSION[\"Europe Equal Area 2001\",METHOD[\"Lambert Azimuthal Equal Area\",ID[\"EPSG\",9820]],"
+				+ "PARAMETER[\"Latitude of natural origin\",52,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Longitude of natural origin\",10,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"False easting\",4321000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "PARAMETER[\"False northing\",3210000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "ID[\"EPSG\",19986]],CS[Cartesian,2,ID[\"EPSG\",4532]],"
+				+ "AXIS[\"Northing (Y)\",north],AXIS[\"Easting (X)\",east],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3035]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+
+		String expectedText = text.replace("6378137", "6378137.0")
+				.replace(",52", ",52.0").replace(",10", ",10.0")
+				.replace("4321000", "4321000.0").replace("3210000", "3210000.0")
+				.replace(",1,", ",1.0,");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "PROJCS[\"ETRS89 / ETRS-LAEA\",GEOGCS[\"ETRS89\","
+				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
+				+ "SPHEROID[\"GRS 1980\",6378137,298.257222101,"
+				+ "AUTHORITY[\"EPSG\",\"7019\"]],"
+				+ "AUTHORITY[\"EPSG\",\"6258\"]],"
+				+ "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.01745329251994328,"
+				+ "AUTHORITY[\"EPSG\",\"9122\"]],"
+				+ "AUTHORITY[\"EPSG\",\"4258\"]],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "PROJECTION[\"Lambert_Azimuthal_Equal_Area\"],"
+				+ "PARAMETER[\"latitude_of_center\",52],"
+				+ "PARAMETER[\"longitude_of_center\",10],"
+				+ "PARAMETER[\"false_easting\",4321000],"
+				+ "PARAMETER[\"false_northing\",3210000],"
+				+ "AUTHORITY[\"EPSG\",\"3035\"],"
+				+ "AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]";
+
+		crs = CRSReader.read(text, true);
+
+		expectedText = "PROJCRS[\"ETRS89 / ETRS-LAEA\",BASEGEOGCRS[\"ETRS89\","
+				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101,"
+				+ "ID[\"EPSG\",7019]],ID[\"EPSG\",6258]],"
+				+ "PRIMEM[\"Greenwich\",0.0,ID[\"EPSG\",8901]],"
+				+ "UNIT[\"degree\",0.01745329251994328,"
+				+ "ID[\"EPSG\",9122]],ID[\"EPSG\",4258]],"
+				+ "CONVERSION[\"Lambert_Azimuthal_Equal_Area\",METHOD[\"Lambert_Azimuthal_Equal_Area\"],"
+				+ "PARAMETER[\"latitude_of_center\",52.0],"
+				+ "PARAMETER[\"longitude_of_center\",10.0],"
+				+ "PARAMETER[\"false_easting\",4321000.0],"
+				+ "PARAMETER[\"false_northing\",3210000.0],"
+				+ "ID[\"EPSG\",3035]],"
+				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "PROJCS[\"ETRS89 / LAEA Europe\",GEOGCRS[\"ETRS89\","
+				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
+				+ "SPHEROID[\"GRS 1980\",6378137,298.257222101,"
+				+ "ID[\"EPSG\",\"7019\"]],"
+				+ "ABRIDGEDTRANSFORMATION[0,0,0,0,0,0,0],"
+				+ "ID[\"EPSG\",\"6258\"]],"
+				+ "PRIMEM[\"Greenwich\",0,ID[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "ID[\"EPSG\",\"9122\"]],ID[\"EPSG\",\"4258\"]],"
+				+ "PROJECTION[\"Lambert_Azimuthal_Equal_Area\"],"
+				+ "PARAMETER[\"latitude_of_center\",52],"
+				+ "PARAMETER[\"longitude_of_center\",10],"
+				+ "PARAMETER[\"false_easting\",4321000],"
+				+ "PARAMETER[\"false_northing\",3210000],"
+				+ "UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]],"
+				+ "ID[\"EPSG\",\"3035\"]]";
+
+		crs = CRSReader.read(text);
+
+		expectedText = "PROJCRS[\"ETRS89 / LAEA Europe\",BASEGEOGCRS[\"ETRS89\","
+				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101,"
+				+ "ID[\"EPSG\",7019]],ID[\"EPSG\",6258]],"
+				+ "PRIMEM[\"Greenwich\",0.0,ID[\"EPSG\",8901]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "ID[\"EPSG\",9122]],ID[\"EPSG\",4258]],"
+				+ "CONVERSION[\"Lambert_Azimuthal_Equal_Area\",METHOD[\"Lambert_Azimuthal_Equal_Area\"],"
+				+ "PARAMETER[\"latitude_of_center\",52.0],"
+				+ "PARAMETER[\"longitude_of_center\",10.0],"
+				+ "PARAMETER[\"false_easting\",4321000.0],"
+				+ "PARAMETER[\"false_northing\",3210000.0]],"
+				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",3035]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "PROJCS[\"ETRS89 / LAEA Europe\",GEOGCRS[\"ETRS89\","
+				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
+				+ "SPHEROID[\"GRS 1980\",6378137,298.257222101,"
+				+ "ID[\"EPSG\",\"7019\"]],"
+				+ "ABRIDGEDTRANSFORMATION[0,0,0,0,0,0,0]],"
+				+ "PRIMEM[\"Greenwich\",0,ID[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "ID[\"EPSG\",\"9122\"]],ID[\"EPSG\",\"4258\"]],"
+				+ "PROJECTION[\"Lambert_Azimuthal_Equal_Area\"],"
+				+ "PARAMETER[\"latitude_of_center\",52],"
+				+ "PARAMETER[\"longitude_of_center\",10],"
+				+ "PARAMETER[\"false_easting\",4321000],"
+				+ "PARAMETER[\"false_northing\",3210000],"
+				+ "UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]],"
+				+ "ID[\"EPSG\",\"3035\"]]";
+
+		crs = CRSReader.read(text);
+
+		expectedText = "PROJCRS[\"ETRS89 / LAEA Europe\",BASEGEOGCRS[\"ETRS89\","
+				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101,"
+				+ "ID[\"EPSG\",7019]]],"
+				+ "PRIMEM[\"Greenwich\",0.0,ID[\"EPSG\",8901]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "ID[\"EPSG\",9122]],ID[\"EPSG\",4258]],"
+				+ "CONVERSION[\"Lambert_Azimuthal_Equal_Area\",METHOD[\"Lambert_Azimuthal_Equal_Area\"],"
+				+ "PARAMETER[\"latitude_of_center\",52.0],"
+				+ "PARAMETER[\"longitude_of_center\",10.0],"
+				+ "PARAMETER[\"false_easting\",4321000.0],"
+				+ "PARAMETER[\"false_northing\",3210000.0]],"
+				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",3035]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "PROJCS[\"ETRS89 / LAEA Europe\",GEOGCRS[\"ETRS89\","
+				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
+				+ "SPHEROID[\"GRS 1980\",6378137,298.257222101,"
+				+ "ID[\"EPSG\",\"7019\"]],ID[\"EPSG\",\"6258\"],"
+				+ "ABRIDGEDTRANSFORMATION[0,0,0,0,0,0,0]],"
+				+ "PRIMEM[\"Greenwich\",0,ID[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "ID[\"EPSG\",\"9122\"]],ID[\"EPSG\",\"4258\"]],"
+				+ "PROJECTION[\"Lambert_Azimuthal_Equal_Area\"],"
+				+ "PARAMETER[\"latitude_of_center\",52],"
+				+ "PARAMETER[\"longitude_of_center\",10],"
+				+ "PARAMETER[\"false_easting\",4321000],"
+				+ "PARAMETER[\"false_northing\",3210000],"
+				+ "UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]],"
+				+ "ID[\"EPSG\",\"3035\"]]";
+
+		crs = CRSReader.read(text);
+
+		expectedText = "PROJCRS[\"ETRS89 / LAEA Europe\",BASEGEOGCRS[\"ETRS89\","
+				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101,"
+				+ "ID[\"EPSG\",7019]],ID[\"EPSG\",6258]],"
+				+ "PRIMEM[\"Greenwich\",0.0,ID[\"EPSG\",8901]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "ID[\"EPSG\",9122]],ID[\"EPSG\",4258]],"
+				+ "CONVERSION[\"Lambert_Azimuthal_Equal_Area\",METHOD[\"Lambert_Azimuthal_Equal_Area\"],"
+				+ "PARAMETER[\"latitude_of_center\",52.0],"
+				+ "PARAMETER[\"longitude_of_center\",10.0],"
+				+ "PARAMETER[\"false_easting\",4321000.0],"
+				+ "PARAMETER[\"false_northing\",3210000.0]],"
+				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",3035]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+	}
+
+	/**
 	 * Test EPSG 3395
 	 * 
 	 * @throws IOException

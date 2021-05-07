@@ -296,6 +296,16 @@ public class TextReader {
 	}
 
 	/**
+	 * Push a token back onto the read cache
+	 * 
+	 * @param token
+	 *            token
+	 */
+	public void pushToken(String token) {
+		nextTokens.add(0, token);
+	}
+
+	/**
 	 * Read an expected token
 	 * 
 	 * @return token
