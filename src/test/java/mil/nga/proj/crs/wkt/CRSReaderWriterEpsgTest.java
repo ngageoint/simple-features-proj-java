@@ -1017,6 +1017,102 @@ public class CRSReaderWriterEpsgTest {
 	}
 
 	/**
+	 * Test EPSG 9801
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void test9801() throws IOException {
+
+		String text = "PROJCS[\"Lambert_Conformal_Conic (1SP)\","
+				+ "GEODCRS[\"GCS_North_American_1983\","
+				+ "DATUM[\"North_American_Datum_1983\","
+				+ "SPHEROID[\"GRS_1980\",6371000,0]],"
+				+ "PRIMEM[\"Greenwich\",0],"
+				+ "UNIT[\"Degree\",0.017453292519943295]],"
+				+ "PROJECTION[\"Lambert_Conformal_Conic_1SP\"],"
+				+ "PARAMETER[\"latitude_of_origin\",25],"
+				+ "PARAMETER[\"central_meridian\",-95],"
+				+ "PARAMETER[\"scale_factor\",1],"
+				+ "PARAMETER[\"false_easting\",0],"
+				+ "PARAMETER[\"false_northing\",0],"
+				+ "PARAMETER[\"standard_parallel_1\",25],"
+				+ "UNIT[\"Meter\",1],AUTHORITY[\"EPSG\",\"9801\"]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+
+		String expectedText = "PROJCRS[\"Lambert_Conformal_Conic (1SP)\","
+				+ "BASEGEODCRS[\"GCS_North_American_1983\","
+				+ "DATUM[\"North_American_Datum_1983\","
+				+ "ELLIPSOID[\"GRS_1980\",6371000.0,0.0]],"
+				+ "PRIMEM[\"Greenwich\",0.0],"
+				+ "UNIT[\"Degree\",0.017453292519943295]],"
+				+ "CONVERSION[\"Lambert_Conformal_Conic_1SP\",METHOD[\"Lambert_Conformal_Conic_1SP\"],"
+				+ "PARAMETER[\"latitude_of_origin\",25.0],"
+				+ "PARAMETER[\"central_meridian\",-95.0],"
+				+ "PARAMETER[\"scale_factor\",1.0],"
+				+ "PARAMETER[\"false_easting\",0.0],"
+				+ "PARAMETER[\"false_northing\",0.0],"
+				+ "PARAMETER[\"standard_parallel_1\",25.0]],"
+				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
+				+ "UNIT[\"Meter\",1.0],ID[\"EPSG\",9801]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+	}
+
+	/**
+	 * Test EPSG 9802
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void test9802() throws IOException {
+
+		String text = "PROJCS[\"Lambert Conic Conformal (2SP)\","
+				+ "GEOCCS[\"GCS_North_American_1983\","
+				+ "DATUM[\"North_American_Datum_1983\","
+				+ "SPHEROID[\"GRS_1980\",6378160,298.2539162964695]],"
+				+ "PRIMEM[\"Greenwich\",0],"
+				+ "UNIT[\"degree\",0.0174532925199433]],"
+				+ "PROJECTION[\"Lambert_Conformal_Conic_2SP\"],"
+				+ "PARAMETER[\"standard_parallel_1\",30],"
+				+ "PARAMETER[\"standard_parallel_2\",60],"
+				+ "PARAMETER[\"latitude_of_origin\",30],"
+				+ "PARAMETER[\"central_meridian\",126],"
+				+ "PARAMETER[\"false_easting\",0],"
+				+ "PARAMETER[\"false_northing\",0],"
+				+ "AUTHORITY[\"EPSG\",\"9802\"]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+
+		String expectedText = "PROJCRS[\"Lambert Conic Conformal (2SP)\","
+				+ "BASEGEODCRS[\"GCS_North_American_1983\","
+				+ "DATUM[\"North_American_Datum_1983\","
+				+ "ELLIPSOID[\"GRS_1980\",6378160.0,298.2539162964695]],"
+				+ "PRIMEM[\"Greenwich\",0.0],"
+				+ "UNIT[\"degree\",0.0174532925199433]],"
+				+ "CONVERSION[\"Lambert_Conformal_Conic_2SP\",METHOD[\"Lambert_Conformal_Conic_2SP\"],"
+				+ "PARAMETER[\"standard_parallel_1\",30.0],"
+				+ "PARAMETER[\"standard_parallel_2\",60.0],"
+				+ "PARAMETER[\"latitude_of_origin\",30.0],"
+				+ "PARAMETER[\"central_meridian\",126.0],"
+				+ "PARAMETER[\"false_easting\",0.0],"
+				+ "PARAMETER[\"false_northing\",0.0],"
+				+ "ID[\"EPSG\",9802]],CS[ellipsoidal,2],"
+				+ "AXIS[\"X\",east],AXIS[\"Y\",north]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+	}
+
+	/**
 	 * Test EPSG 32660
 	 * 
 	 * @throws IOException

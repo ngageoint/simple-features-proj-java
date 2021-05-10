@@ -100,6 +100,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text, strict);
 		try {
 			crs = reader.read();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -122,6 +123,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readGeodeticOrGeographic();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -143,6 +145,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readGeodetic();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -164,6 +167,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readGeographic();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -185,6 +189,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readProjected();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -207,6 +212,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readProjectedGeodetic();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -229,6 +235,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readProjectedGeographic();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -250,6 +257,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readVertical();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -271,6 +279,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readEngineering();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -292,6 +301,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readParametric();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -313,6 +323,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readTemporal();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -335,6 +346,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readGeodeticOrGeographicCompat();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -357,6 +369,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readGeodeticCompat();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -379,6 +392,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readGeographicCompat();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -401,6 +415,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readProjectedCompat();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -423,6 +438,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readProjectedGeodeticCompat();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -445,6 +461,7 @@ public class CRSReader implements Closeable {
 		CRSReader reader = new CRSReader(text);
 		try {
 			crs = reader.readProjectedGeographicCompat();
+			reader.readEnd();
 		} finally {
 			reader.close();
 		}
@@ -929,6 +946,39 @@ public class CRSReader implements Closeable {
 			separator = token.equals(WKTConstants.SEPARATOR);
 		}
 		return separator;
+	}
+
+	/**
+	 * "Read" an expected end, checking for unexpected trailing tokens
+	 * 
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public void readEnd() throws IOException {
+
+		String token = reader.readToken();
+		if (token != null) {
+			StringBuilder ignored = new StringBuilder();
+			do {
+				ignored.append(token);
+				token = reader.readToken();
+			} while (token != null);
+
+			StringBuilder log = new StringBuilder();
+			if (strict) {
+				log.append("Unexpected");
+			} else {
+				log.append("Ignored");
+			}
+			log.append(" end: \"");
+			log.append(ignored);
+			log.append("\"");
+			if (strict) {
+				throw new ProjectionException(log.toString());
+			} else {
+				logger.log(Level.WARNING, log.toString());
+			}
+		}
 	}
 
 	/**
