@@ -479,6 +479,11 @@ public class CRSReader implements Closeable {
 	private boolean strict = false;
 
 	/**
+	 * Backward Compatible extras
+	 */
+	private Map<String, String> extras = new LinkedHashMap<>();
+
+	/**
 	 * Constructor
 	 * 
 	 * @param text
@@ -599,8 +604,14 @@ public class CRSReader implements Closeable {
 		case VERTCRS:
 			crs = readVertical();
 			break;
+		case VERT_CS:
+			crs = readVerticalCompat();
+			break;
 		case ENGCRS:
 			crs = readEngineering();
+			break;
+		case LOCAL_CS:
+			crs = readEngineeringCompat();
 			break;
 		case PARAMETRICCRS:
 			crs = readParametric();
@@ -2869,7 +2880,7 @@ public class CRSReader implements Closeable {
 				CoordinateReferenceSystemKeyword.ID);
 
 		if (keyword == CoordinateReferenceSystemKeyword.EXTENSION) {
-			crs.setRemark(convertExtensionsToRemark(readExtensionsCompat()));
+			extras.putAll(readExtensionsCompat());
 			keyword = readToKeyword(CoordinateReferenceSystemKeyword.ID);
 		}
 
@@ -2878,6 +2889,8 @@ public class CRSReader implements Closeable {
 		}
 
 		readRightDelimiter();
+
+		crs.setRemark(writeExtras());
 
 		return crs;
 	}
@@ -2967,7 +2980,7 @@ public class CRSReader implements Closeable {
 				CoordinateReferenceSystemKeyword.ID);
 
 		if (keyword == CoordinateReferenceSystemKeyword.EXTENSION) {
-			crs.setRemark(convertExtensionsToRemark(readExtensionsCompat()));
+			extras.putAll(readExtensionsCompat());
 			keyword = readToKeyword(CoordinateReferenceSystemKeyword.ID);
 		}
 
@@ -2976,6 +2989,98 @@ public class CRSReader implements Closeable {
 		}
 
 		readRightDelimiter();
+
+		crs.setRemark(writeExtras());
+
+		return crs;
+	}
+
+	/**
+	 * Read a Backward Compatible Vertical CRS
+	 * 
+	 * @return vertical coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public VerticalCoordinateReferenceSystem readVerticalCompat()
+			throws IOException {
+
+		VerticalCoordinateReferenceSystem crs = new VerticalCoordinateReferenceSystem();
+
+		readKeyword(CoordinateReferenceSystemKeyword.VERT_CS);
+
+		readLeftDelimiter();
+
+		crs.setName(reader.readExpectedToken());
+
+		readSeparator();
+		crs.setVerticalReferenceFrame(readVerticalDatumCompat());
+
+		crs.setCoordinateSystem(readCoordinateSystemCompat(
+				CoordinateReferenceSystemType.VERTICAL,
+				crs.getVerticalReferenceFrame()));
+
+		CoordinateReferenceSystemKeyword keyword = readToKeyword(
+				CoordinateReferenceSystemKeyword.EXTENSION,
+				CoordinateReferenceSystemKeyword.ID);
+
+		if (keyword == CoordinateReferenceSystemKeyword.EXTENSION) {
+			extras.putAll(readExtensionsCompat());
+			keyword = readToKeyword(CoordinateReferenceSystemKeyword.ID);
+		}
+
+		if (keyword == CoordinateReferenceSystemKeyword.ID) {
+			crs.setIdentifiers(readIdentifiers());
+		}
+
+		readRightDelimiter();
+
+		crs.setRemark(writeExtras());
+
+		return crs;
+	}
+
+	/**
+	 * Read a Backward Compatible Engineering CRS
+	 * 
+	 * @return engineering coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public EngineeringCoordinateReferenceSystem readEngineeringCompat()
+			throws IOException {
+
+		EngineeringCoordinateReferenceSystem crs = new EngineeringCoordinateReferenceSystem();
+
+		readKeyword(CoordinateReferenceSystemKeyword.LOCAL_CS);
+
+		readLeftDelimiter();
+
+		crs.setName(reader.readExpectedToken());
+
+		readSeparator();
+		crs.setEngineeringDatum(readEngineeringDatumCompat());
+
+		crs.setCoordinateSystem(readCoordinateSystemCompat(
+				CoordinateReferenceSystemType.ENGINEERING,
+				crs.getEngineeringDatum()));
+
+		CoordinateReferenceSystemKeyword keyword = readToKeyword(
+				CoordinateReferenceSystemKeyword.EXTENSION,
+				CoordinateReferenceSystemKeyword.ID);
+
+		if (keyword == CoordinateReferenceSystemKeyword.EXTENSION) {
+			extras.putAll(readExtensionsCompat());
+			keyword = readToKeyword(CoordinateReferenceSystemKeyword.ID);
+		}
+
+		if (keyword == CoordinateReferenceSystemKeyword.ID) {
+			crs.setIdentifiers(readIdentifiers());
+		}
+
+		readRightDelimiter();
+
+		crs.setRemark(writeExtras());
 
 		return crs;
 	}
@@ -3086,37 +3191,86 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
-	 * Read a Backward Compatible Extensions and set as a remark
+	 * Read a Backward Compatible vertical datum
 	 * 
-	 * @param extensions
-	 *            extensions
-	 * @return extensions remark
+	 * @return vertical reference frame
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public String convertExtensionsToRemark(Map<String, String> extensions)
-			throws IOException {
+	public VerticalReferenceFrame readVerticalDatumCompat() throws IOException {
+		ReferenceFrame referenceFrame = readDatumCompat();
+		if (!(referenceFrame instanceof VerticalReferenceFrame)) {
+			throw new ProjectionException(
+					"Datum was not an expected Vertical Reference Frame");
+		}
+		return (VerticalReferenceFrame) referenceFrame;
+	}
 
-		StringBuilder remark = new StringBuilder();
+	/**
+	 * Read a Backward Compatible engineering datum
+	 * 
+	 * @return engineering datum
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public EngineeringDatum readEngineeringDatumCompat() throws IOException {
+		ReferenceFrame referenceFrame = readDatumCompat();
+		if (!(referenceFrame instanceof EngineeringDatum)) {
+			throw new ProjectionException(
+					"Datum was not an expected Engineering Datum");
+		}
+		return (EngineeringDatum) referenceFrame;
+	}
 
-		for (Entry<String, String> extension : extensions.entrySet()) {
+	/**
+	 * Read a Backward Compatible datum
+	 * 
+	 * @return reference frame
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ReferenceFrame readDatumCompat() throws IOException {
 
-			if (remark.length() > 0) {
-				remark.append(WKTConstants.SEPARATOR);
-			}
+		ReferenceFrame referenceFrame = null;
 
-			remark.append(WKTConstants.LEFT_DELIMITER);
-			remark.append("\"");
-			remark.append(extension.getKey());
-			remark.append("\"");
-			remark.append(WKTConstants.SEPARATOR);
-			remark.append("\"");
-			remark.append(extension.getValue());
-			remark.append("\"");
-			remark.append(WKTConstants.RIGHT_DELIMITER);
+		CoordinateReferenceSystemKeyword type = readKeyword(
+				CoordinateReferenceSystemKeyword.VDATUM,
+				CoordinateReferenceSystemKeyword.EDATUM);
+		switch (type) {
+		case VDATUM:
+			referenceFrame = new VerticalReferenceFrame();
+			break;
+		case EDATUM:
+			referenceFrame = new EngineeringDatum();
+			break;
+		default:
+			throw new ProjectionException("Unexpected Datum type: " + type);
 		}
 
-		return remark.toString();
+		readLeftDelimiter();
+
+		referenceFrame.setName(reader.readExpectedToken());
+
+		readSeparator();
+		extras.put(WKTConstants.DATUM_TYPE,
+				Double.toString(reader.readNumber()));
+
+		CoordinateReferenceSystemKeyword keyword = readToKeyword(
+				CoordinateReferenceSystemKeyword.ID,
+				CoordinateReferenceSystemKeyword.EXTENSION);
+
+		if (keyword == CoordinateReferenceSystemKeyword.ID) {
+			referenceFrame.setIdentifiers(readIdentifiers());
+			keyword = readToKeyword(CoordinateReferenceSystemKeyword.EXTENSION);
+		}
+
+		if (keyword == CoordinateReferenceSystemKeyword.EXTENSION) {
+			extras.putAll(readExtensionsCompat());
+		}
+
+		readRightDelimiter();
+
+		return referenceFrame;
 	}
 
 	/**
@@ -3151,6 +3305,100 @@ public class CRSReader implements Closeable {
 		} while (isKeywordNext(CoordinateReferenceSystemKeyword.EXTENSION));
 
 		return extensions;
+	}
+
+	/**
+	 * Write backwards compatible extras map to text
+	 * 
+	 * @return extras text
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public String writeExtras() throws IOException {
+		return writeExtras(extras);
+	}
+
+	/**
+	 * Write backwards compatible extras map to text
+	 * 
+	 * @param extras
+	 *            extras map
+	 * @return extras text
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public static String writeExtras(Map<String, String> extras)
+			throws IOException {
+
+		String value = null;
+
+		if (!extras.isEmpty()) {
+
+			StringBuilder builder = new StringBuilder();
+
+			for (Entry<String, String> extension : extras.entrySet()) {
+
+				if (builder.length() > 0) {
+					builder.append(WKTConstants.SEPARATOR);
+				}
+
+				builder.append(WKTConstants.LEFT_DELIMITER);
+				builder.append("\"");
+				builder.append(extension.getKey());
+				builder.append("\"");
+				builder.append(WKTConstants.SEPARATOR);
+				builder.append("\"");
+				builder.append(extension.getValue());
+				builder.append("\"");
+				builder.append(WKTConstants.RIGHT_DELIMITER);
+			}
+
+			value = builder.toString();
+		}
+
+		return value;
+	}
+
+	/**
+	 * Read backwards compatible extras text (extensions, unsupported values)
+	 * that were saved as CRS remarks, retrievable by
+	 * {@link CoordinateReferenceSystem#getRemark()}
+	 * 
+	 * @param text
+	 *            extras text
+	 * @return extras map
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static Map<String, String> readExtras(String text)
+			throws IOException {
+
+		Map<String, String> extras = new LinkedHashMap<>();
+
+		CRSReader reader = new CRSReader(text);
+		try {
+
+			while (reader.peekLeftDelimiter()) {
+				reader.readLeftDelimiter();
+
+				String key = reader.getTextReader().readExpectedToken();
+				reader.readSeparator();
+				String value = reader.getTextReader().readExpectedToken();
+				extras.put(key, value);
+
+				reader.readRightDelimiter();
+
+				if (reader.peekSeparator()) {
+					reader.readSeparator();
+				}
+			}
+			reader.readEnd();
+
+		} finally {
+			reader.close();
+		}
+
+		return extras;
 	}
 
 }

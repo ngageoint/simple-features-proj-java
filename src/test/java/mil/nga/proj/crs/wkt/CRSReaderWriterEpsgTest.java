@@ -3,6 +3,7 @@ package mil.nga.proj.crs.wkt;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -365,6 +366,75 @@ public class CRSReaderWriterEpsgTest {
 				.replace(",0,", ",0.0,").replace(",1,", ",1.0,")
 				.replace("\"9804\"", "9804").replace("\"19833\"", "19833")
 				.replace("\"3395\"", "3395");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+	}
+
+	/**
+	 * Test EPSG 3855
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void test3855() throws IOException {
+
+		String text = "VERTCRS[\"EGM2008 height\","
+				+ "VDATUM[\"EGM2008 geoid\",ID[\"EPSG\",1027]],"
+				+ "CS[vertical,1,ID[\"EPSG\",6499]],"
+				+ "AXIS[\"Gravity-related height (H)\",up],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",3855]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+
+		String expectedText = text.replace("\"metre\",1,", "\"metre\",1.0,");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "VERT_CS[\"EGM2008 geoid height\","
+				+ "VERT_DATUM[\"EGM2008 geoid\",2005,"
+				+ "AUTHORITY[\"EPSG\",\"1027\"],"
+				+ "EXTENSION[\"PROJ4_GRIDS\",\"egm08_25.gtx\"]],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "AXIS[\"Up\",UP],AUTHORITY[\"EPSG\",\"3855\"]]";
+
+		crs = CRSReader.read(text, true);
+
+		expectedText = "VERTCRS[\"EGM2008 geoid height\","
+				+ "VDATUM[\"EGM2008 geoid\",ID[\"EPSG\",1027]],"
+				+ "CS[vertical,1],AXIS[\"Up\",up],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",3855],"
+				+ "REMARK[\"[\"\"datumType\"\",\"\"2005.0\"\"],[\"\"PROJ4_GRIDS\"\",\"\"egm08_25.gtx\"\"]\"]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		assertEquals(
+				"[\"datumType\",\"2005.0\"],[\"PROJ4_GRIDS\",\"egm08_25.gtx\"]",
+				crs.getRemark());
+		Map<String, String> extras = CRSReader.readExtras(crs.getRemark());
+		assertEquals(2, extras.size());
+		assertEquals("2005.0", extras.get(WKTConstants.DATUM_TYPE));
+		assertEquals("egm08_25.gtx", extras.get("PROJ4_GRIDS"));
+		assertEquals(crs.getRemark(), CRSReader.writeExtras(extras));
+
+		text = "VERTCRS[\"EGM2008 geoid height\","
+				+ "VDATUM[\"EGM2008 geoid\",ANCHOR[\"WGS 84 ellipsoid\"]],"
+				+ "CS[vertical,1],"
+				+ "AXIS[\"Gravity-related height (H)\",up],LENGTHUNIT[\"metre\",1.0],"
+				+ "ID[\"EPSG\",\"3855\"]]";
+
+		crs = CRSReader.read(text, true);
+
+		expectedText = text.replace("\"3855\"", "3855");
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));

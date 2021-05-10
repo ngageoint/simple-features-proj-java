@@ -142,7 +142,7 @@ public class TextReader {
 	/**
 	 * Read the next token. Ignores whitespace until a non whitespace character
 	 * is encountered. Returns a contiguous block of token characters ( [a-z] |
-	 * [A-Z] | [0-9] | - | . | + ) or a non whitespace single character.
+	 * [A-Z] | [0-9] | - | . | + | : | _ ) or a non whitespace single character.
 	 * 
 	 * @return token
 	 * @throws IOException
@@ -155,7 +155,7 @@ public class TextReader {
 	/**
 	 * Read the next token. Ignores whitespace until a non whitespace character
 	 * is encountered. Returns a contiguous block of token characters ( [a-z] |
-	 * [A-Z] | [0-9] | - | . | + ) or a non whitespace single character.
+	 * [A-Z] | [0-9] | - | . | + | : | _ ) or a non whitespace single character.
 	 * 
 	 * @param cache
 	 *            true to read from cached peeks, false to force read
@@ -424,7 +424,7 @@ public class TextReader {
 
 	/**
 	 * Check if the character is a contiguous block token character: ( [a-z] |
-	 * [A-Z] | [0-9] | - | . | + )
+	 * [A-Z] | [0-9] | - | . | + | : | _ )
 	 * 
 	 * @param c
 	 *            character
@@ -433,7 +433,7 @@ public class TextReader {
 	private static boolean isTokenCharacter(char c) {
 		return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
 				|| (c >= '0' && c <= '9') || c == '-' || c == '.' || c == '+'
-				|| c == ':';
+				|| c == ':' || c == '_';
 	}
 
 }

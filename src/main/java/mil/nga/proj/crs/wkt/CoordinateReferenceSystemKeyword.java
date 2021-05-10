@@ -158,6 +158,11 @@ public enum CoordinateReferenceSystemKeyword {
 	LENGTHUNIT("UNIT"),
 
 	/**
+	 * Backwards Compatibility Engineering CRS
+	 */
+	LOCAL_CS(),
+
+	/**
 	 * Member
 	 */
 	MEMBER(),
@@ -271,6 +276,11 @@ public enum CoordinateReferenceSystemKeyword {
 	 * Vertical Reference Frame
 	 */
 	VDATUM("VRF", "VERTICALDATUM", "VERT_DATUM"),
+
+	/**
+	 * Backwards Compatibility Vertical CRS
+	 */
+	VERT_CS(),
 
 	/**
 	 * Vertical CRS

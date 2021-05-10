@@ -72,4 +72,9 @@ public class WKTConstants {
 	 */
 	public static final String AXIS_NAME_Z = "Z";
 
+	/**
+	 * Backwards Compatible Datum Type extra value key name
+	 */
+	public static final String DATUM_TYPE = "datumType";
+
 }
