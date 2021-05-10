@@ -746,8 +746,9 @@ public class CRSReader implements Closeable {
 				log.append(" before ");
 				log.append(keyword.getKeywords());
 			}
-			log.append(": ");
+			log.append(": \"");
 			log.append(ignored);
+			log.append("\"");
 			if (strict) {
 				throw new ProjectionException(log.toString());
 			} else {

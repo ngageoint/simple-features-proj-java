@@ -493,6 +493,130 @@ public class CRSReaderWriterEpsgTest {
 	}
 
 	/**
+	 * Test EPSG 3978
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void test3978() throws IOException {
+
+		String text = "PROJCRS[\"NAD83 / Canada Atlas Lambert\",BASEGEOGCRS[\"NAD83\","
+				+ "DATUM[\"North American Datum 1983\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137,298.257222101,ID[\"EPSG\",7019]],"
+				+ "ID[\"EPSG\",6269]],ID[\"EPSG\",4269]],"
+				+ "CONVERSION[\"Canada Atlas Lambert\",METHOD[\"Lambert Conic Conformal (2SP)\",ID[\"EPSG\",9802]],"
+				+ "PARAMETER[\"Latitude of false origin\",49,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Longitude of false origin\",-95,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Latitude of 1st standard parallel\",49,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Latitude of 2nd standard parallel\",77,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Easting at false origin\",0,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "PARAMETER[\"Northing at false origin\",0,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "ID[\"EPSG\",3977]],CS[Cartesian,2,ID[\"EPSG\",4400]],"
+				+ "AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3978]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+
+		String expectedText = text.replace("6378137", "6378137.0")
+				.replace(",49,", ",49.0,").replace(",-95,", ",-95.0,")
+				.replace(",77,", ",77.0,").replace(",0,", ",0.0,")
+				.replace(",1,", ",1.0,");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "PROJCS[\"NAD83 / Canada Atlas Lambert\",GEOGCS[\"NAD83\","
+				+ "DATUM[\"North_American_Datum_1983\","
+				+ "SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],"
+				+ "TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\",\"6269\"]],"
+				+ "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "AUTHORITY[\"EPSG\",\"9122\"]],"
+				+ "AUTHORITY[\"EPSG\",\"4269\"]],"
+				+ "PROJECTION[\"Lambert_Conformal_Conic_2SP\"],"
+				+ "PARAMETER[\"standard_parallel_1\",49],"
+				+ "PARAMETER[\"standard_parallel_2\",77],"
+				+ "PARAMETER[\"latitude_of_origin\",49],"
+				+ "PARAMETER[\"central_meridian\",-95],"
+				+ "PARAMETER[\"false_easting\",0],"
+				+ "PARAMETER[\"false_northing\",0],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
+				+ "AUTHORITY[\"EPSG\",\"3978\"]]";
+
+		crs = CRSReader.read(text);
+
+		expectedText = "PROJCRS[\"NAD83 / Canada Atlas Lambert\",BASEGEOGCRS[\"NAD83\","
+				+ "DATUM[\"North_American_Datum_1983\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101,ID[\"EPSG\",7019]],"
+				+ "ID[\"EPSG\",6269]],"
+				+ "PRIMEM[\"Greenwich\",0.0,ID[\"EPSG\",8901]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "ID[\"EPSG\",9122]],ID[\"EPSG\",4269]],"
+				+ "CONVERSION[\"Lambert_Conformal_Conic_2SP\",METHOD[\"Lambert_Conformal_Conic_2SP\"],"
+				+ "PARAMETER[\"standard_parallel_1\",49.0],"
+				+ "PARAMETER[\"standard_parallel_2\",77.0],"
+				+ "PARAMETER[\"latitude_of_origin\",49.0],"
+				+ "PARAMETER[\"central_meridian\",-95.0],"
+				+ "PARAMETER[\"false_easting\",0.0],"
+				+ "PARAMETER[\"false_northing\",0.0]],"
+				+ "CS[ellipsoidal,2],AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",3978]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "PROJCS[\"NAD83 / Canada Atlas Lambert\",GEOGCRS[\"NAD83\","
+				+ "DATUM[\"North_American_Datum_1983\","
+				+ "SPHEROID[\"GRS 1980\",6378137,298.257222101,"
+				+ "ID[\"EPSG\",\"7019\"]],"
+				+ "ABRIDGEDTRANSFORMATION[0,0,0,0,0,0,0],"
+				+ "ID[\"EPSG\",\"6269\"]],"
+				+ "PRIMEM[\"Greenwich\",0,ID[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",\"9122\"]],"
+				+ "ID[\"EPSG\",\"4269\"]],"
+				+ "PROJECTION[\"Lambert_Conformal_Conic_2SP\"],"
+				+ "PARAMETER[\"standard_parallel_1\",49],"
+				+ "PARAMETER[\"standard_parallel_2\",77],"
+				+ "PARAMETER[\"latitude_of_origin\",49],"
+				+ "PARAMETER[\"central_meridian\",-95],"
+				+ "PARAMETER[\"false_easting\",0],"
+				+ "PARAMETER[\"false_northing\",0],"
+				+ "UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]],"
+				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
+				+ "ID[\"EPSG\",\"3978\"]]";
+
+		crs = CRSReader.read(text);
+
+		expectedText = "PROJCRS[\"NAD83 / Canada Atlas Lambert\",BASEGEOGCRS[\"NAD83\","
+				+ "DATUM[\"North_American_Datum_1983\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101,ID[\"EPSG\",7019]],"
+				+ "ID[\"EPSG\",6269]],"
+				+ "PRIMEM[\"Greenwich\",0.0,ID[\"EPSG\",8901]],"
+				+ "UNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9122]],"
+				+ "ID[\"EPSG\",4269]],"
+				+ "CONVERSION[\"Lambert_Conformal_Conic_2SP\",METHOD[\"Lambert_Conformal_Conic_2SP\"],"
+				+ "PARAMETER[\"standard_parallel_1\",49.0],"
+				+ "PARAMETER[\"standard_parallel_2\",77.0],"
+				+ "PARAMETER[\"latitude_of_origin\",49.0],"
+				+ "PARAMETER[\"central_meridian\",-95.0],"
+				+ "PARAMETER[\"false_easting\",0.0],"
+				+ "PARAMETER[\"false_northing\",0.0]],"
+				+ "CS[ellipsoidal,2],AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",3978]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+	}
+
+	/**
 	 * Test EPSG 4326
 	 * 
 	 * @throws IOException
