@@ -16,6 +16,31 @@ import mil.nga.proj.crs.CoordinateReferenceSystem;
 public class CRSReaderWriterNgaTest {
 
 	/**
+	 * Test NGA 8047
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void test8047() throws IOException {
+
+		String text = "VERTCRS[\"EGM96 geoid depth\","
+				+ "VDATUM[\"EGM96 geoid\",ANCHOR[\"WGS 84 ellipsoid\"]],"
+				+ "CS[vertical,1],"
+				+ "AXIS[\"Gravity-related depth (D)\",down],"
+				+ "LENGTHUNIT[\"metre\",1.0],ID[\"NSG\",\"8047\"]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+
+		String expectedText = text.replace("\"8047\"", "8047");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+	}
+
+	/**
 	 * Test NGA 8056
 	 * 
 	 * @throws IOException

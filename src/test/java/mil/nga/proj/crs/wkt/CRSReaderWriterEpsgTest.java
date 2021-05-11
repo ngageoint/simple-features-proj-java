@@ -1085,6 +1085,175 @@ public class CRSReaderWriterEpsgTest {
 	}
 
 	/**
+	 * Test EPSG 5714
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void test5714() throws IOException {
+
+		String text = "VERTCRS[\"MSL height\",VDATUM[\"Mean Sea Level\",ID[\"EPSG\",5100]],"
+				+ "CS[vertical,1,ID[\"EPSG\",6499]],"
+				+ "AXIS[\"Gravity-related height (H)\",up],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",5714]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+
+		String expectedText = text.replace("\",1,", "\",1.0,");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "VERT_CS[\"mean sea level height\","
+				+ "VERT_DATUM[\"Mean Sea Level\",2005,"
+				+ "AUTHORITY[\"EPSG\",\"5100\"]],"
+				+ "UNIT[\"m\",1.0],AXIS[\"Gravity-related height\",UP],"
+				+ "AUTHORITY[\"EPSG\",\"5714\"]]";
+
+		crs = CRSReader.read(text, true);
+
+		expectedText = "VERTCRS[\"mean sea level height\","
+				+ "VDATUM[\"Mean Sea Level\",ID[\"EPSG\",5100]],"
+				+ "CS[vertical,1],AXIS[\"Gravity-related height\",up],"
+				+ "UNIT[\"m\",1.0],ID[\"EPSG\",5714],"
+				+ "REMARK[\"[\"\"datumType\"\",\"\"2005.0\"\"]\"]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "VERTCRS[\"MSL height\",VDATUM[\"Mean Sea Level\","
+				+ "ANCHOR[\"The average height of the surface of the sea at a tide station for all stages of the tide over a 19-year period, usually determined from hourly height readings measured from a fixed predetermined reference level.\"]],"
+				+ "CS[vertical,1],"
+				+ "AXIS[\"Gravity-related height (H)\",up],LENGTHUNIT[\"metre\",1.0],"
+				+ "ID[\"EPSG\",\"5714\"]]";
+
+		crs = CRSReader.read(text, true);
+
+		expectedText = text.replace("\"5714\"", "5714");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+	}
+
+	/**
+	 * Test EPSG 5715
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void test5715() throws IOException {
+
+		String text = "VERTCRS[\"MSL depth\",VDATUM[\"Mean Sea Level\",ID[\"EPSG\",5100]],"
+				+ "CS[vertical,1,ID[\"EPSG\",6498]],"
+				+ "AXIS[\"Depth (D)\",down],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",5715]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+
+		String expectedText = text.replace("\",1,", "\",1.0,");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "VERT_CS[\"mean sea level depth\","
+				+ "VERT_DATUM[\"Mean Sea Level\",2005,"
+				+ "AUTHORITY[\"EPSG\",\"5100\"]],"
+				+ "UNIT[\"m\",1.0],AXIS[\"Gravity-related depth\",DOWN],"
+				+ "AUTHORITY[\"EPSG\",\"5715\"]]";
+
+		crs = CRSReader.read(text, true);
+
+		expectedText = "VERTCRS[\"mean sea level depth\",VDATUM[\"Mean Sea Level\",ID[\"EPSG\",5100]],"
+				+ "CS[vertical,1],AXIS[\"Gravity-related depth\",down],"
+				+ "UNIT[\"m\",1.0],ID[\"EPSG\",5715],"
+				+ "REMARK[\"[\"\"datumType\"\",\"\"2005.0\"\"]\"]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "VERTCRS[\"MSL depth\",VDATUM[\"Mean Sea Level\","
+				+ "ANCHOR[\"The average height of the surface of the sea at a tide station for all stages of the tide over a 19-year period, usually determined from hourly height readings measured from a fixed predetermined reference level.\"]],"
+				+ "CS[vertical,1],"
+				+ "AXIS[\"Depth (D)\",down],LENGTHUNIT[\"metre\",1.0],"
+				+ "ID[\"EPSG\",\"5715\"]]";
+
+		crs = CRSReader.read(text, true);
+
+		expectedText = text.replace("\"5715\"", "5715");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+	}
+
+	/**
+	 * Test EPSG 5773
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void test5773() throws IOException {
+
+		String text = "VERTCRS[\"EGM96 height\",VDATUM[\"EGM96 geoid\",ID[\"EPSG\",5171]],"
+				+ "CS[vertical,1,ID[\"EPSG\",6499]],"
+				+ "AXIS[\"Gravity-related height (H)\",up],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",5773]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+
+		String expectedText = text.replace("\",1,", "\",1.0,");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "VERT_CS[\"EGM96 geoid\","
+				+ "VERT_DATUM[\"EGM96 geoid\",2005,AUTHORITY[\"EPSG\",\"5171\"]],"
+				+ "UNIT[\"m\",1.0],AXIS[\"Gravity-related height\",UP],"
+				+ "AUTHORITY[\"EPSG\",\"5773\"]]";
+
+		crs = CRSReader.read(text, true);
+
+		expectedText = "VERTCRS[\"EGM96 geoid\","
+				+ "VDATUM[\"EGM96 geoid\",ID[\"EPSG\",5171]],"
+				+ "CS[vertical,1],AXIS[\"Gravity-related height\",up],"
+				+ "UNIT[\"m\",1.0],ID[\"EPSG\",5773],"
+				+ "REMARK[\"[\"\"datumType\"\",\"\"2005.0\"\"]\"]]";
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "VERTCRS[\"EGM96 geoid height\","
+				+ "VDATUM[\"EGM96 geoid\",ANCHOR[\"WGS 84 ellipsoid\"]],"
+				+ "CS[vertical,1],"
+				+ "AXIS[\"Gravity-related height (H)\",up],LENGTHUNIT[\"metre\",1.0],"
+				+ "ID[\"EPSG\",\"5773\"]]";
+
+		crs = CRSReader.read(text, true);
+
+		expectedText = text.replace("\"5773\"", "5773");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+	}
+
+	/**
 	 * Test EPSG 9801
 	 * 
 	 * @throws IOException
