@@ -2965,7 +2965,8 @@ public class CRSReader implements Closeable {
 		}
 
 		readSeparator();
-		crs.setMapProjection(readMapProjectionCompat());
+		MapProjection mapProjection = readMapProjectionCompat();
+		crs.setMapProjection(mapProjection);
 
 		crs.setCoordinateSystem(readCoordinateSystemCompat(
 				CoordinateReferenceSystemType.PROJECTED,
@@ -2986,6 +2987,9 @@ public class CRSReader implements Closeable {
 
 		if (keyword == CoordinateReferenceSystemKeyword.ID) {
 			crs.setIdentifiers(readIdentifiers());
+		} else if (mapProjection.hasIdentifiers()) {
+			crs.setIdentifiers(mapProjection.getIdentifiers());
+			mapProjection.setIdentifiers(null);
 		}
 
 		readRightDelimiter();

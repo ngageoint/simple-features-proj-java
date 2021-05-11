@@ -136,10 +136,9 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"latitude_of_center\",52.0],"
 				+ "PARAMETER[\"longitude_of_center\",10.0],"
 				+ "PARAMETER[\"false_easting\",4321000.0],"
-				+ "PARAMETER[\"false_northing\",3210000.0],"
-				+ "ID[\"EPSG\",3035]],"
+				+ "PARAMETER[\"false_northing\",3210000.0]],"
 				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
-				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]]]";
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],ID[\"EPSG\",3035]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -332,10 +331,9 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"central_meridian\",0.0],"
 				+ "PARAMETER[\"scale_factor\",1.0],"
 				+ "PARAMETER[\"false_easting\",0.0],"
-				+ "PARAMETER[\"false_northing\",0.0],"
-				+ "ID[\"EPSG\",3395]],CS[ellipsoidal,2],"
-				+ "AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
-				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]]]";
+				+ "PARAMETER[\"false_northing\",0.0]],"
+				+ "CS[ellipsoidal,2],AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],ID[\"EPSG\",3395]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -551,8 +549,8 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"central_meridian\",0.0],"
 				+ "PARAMETER[\"scale_factor\",1.0],"
 				+ "PARAMETER[\"false_easting\",0.0],"
-				+ "PARAMETER[\"false_northing\",0.0]],CS[ellipsoidal,2]"
-				+ ",AXIS[\"X\",east],AXIS[\"Y\",north]"
+				+ "PARAMETER[\"false_northing\",0.0]],"
+				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north]"
 				+ ",UNIT[\"metre\",1.0,ID[\"EPSG\",9001]]"
 				+ ",ID[\"EPSG\",3857]]";
 
@@ -1144,7 +1142,7 @@ public class CRSReaderWriterEpsgTest {
 	public void test9802() throws IOException {
 
 		String text = "PROJCS[\"Lambert Conic Conformal (2SP)\","
-				+ "GEOCCS[\"GCS_North_American_1983\","
+				+ "GEODCRS[\"GCS_North_American_1983\","
 				+ "DATUM[\"North_American_Datum_1983\","
 				+ "SPHEROID[\"GRS_1980\",6378160,298.2539162964695]],"
 				+ "PRIMEM[\"Greenwich\",0],"
@@ -1172,9 +1170,9 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"latitude_of_origin\",30.0],"
 				+ "PARAMETER[\"central_meridian\",126.0],"
 				+ "PARAMETER[\"false_easting\",0.0],"
-				+ "PARAMETER[\"false_northing\",0.0],"
-				+ "ID[\"EPSG\",9802]],CS[ellipsoidal,2],"
-				+ "AXIS[\"X\",east],AXIS[\"Y\",north]]";
+				+ "PARAMETER[\"false_northing\",0.0]],"
+				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
+				+ "ID[\"EPSG\",9802]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -1254,10 +1252,10 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"central_meridian\",177.0],"
 				+ "PARAMETER[\"scale_factor\",0.9996],"
 				+ "PARAMETER[\"false_easting\",500000.0],"
-				+ "PARAMETER[\"false_northing\",0.0],"
-				+ "ID[\"EPSG\",32660]],CS[ellipsoidal,2],"
-				+ "AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
-				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]]]";
+				+ "PARAMETER[\"false_northing\",0.0]],"
+				+ "CS[ellipsoidal,2],AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",32660]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
