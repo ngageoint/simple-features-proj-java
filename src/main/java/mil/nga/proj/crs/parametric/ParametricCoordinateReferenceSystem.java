@@ -15,7 +15,7 @@ public class ParametricCoordinateReferenceSystem
 	/**
 	 * Parametric Datum
 	 */
-	private ParametricDatum parametricDatum = null;
+	private ParametricDatum datum = null;
 
 	/**
 	 * Constructor
@@ -29,16 +29,15 @@ public class ParametricCoordinateReferenceSystem
 	 * 
 	 * @param name
 	 *            name
-	 * @param parametricDatum
+	 * @param datum
 	 *            parametric datum
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
 	public ParametricCoordinateReferenceSystem(String name,
-			ParametricDatum parametricDatum,
-			CoordinateSystem coordinateSystem) {
+			ParametricDatum datum, CoordinateSystem coordinateSystem) {
 		super(name, CoordinateReferenceSystemType.PARAMETRIC, coordinateSystem);
-		setParametricDatum(parametricDatum);
+		setDatum(datum);
 	}
 
 	/**
@@ -46,18 +45,18 @@ public class ParametricCoordinateReferenceSystem
 	 * 
 	 * @return parametric datum
 	 */
-	public ParametricDatum getParametricDatum() {
-		return parametricDatum;
+	public ParametricDatum getDatum() {
+		return datum;
 	}
 
 	/**
 	 * Set the parametric datum
 	 * 
-	 * @param parametricDatum
+	 * @param datum
 	 *            parametric datum
 	 */
-	public void setParametricDatum(ParametricDatum parametricDatum) {
-		this.parametricDatum = parametricDatum;
+	public void setDatum(ParametricDatum datum) {
+		this.datum = datum;
 	}
 
 	/**
@@ -67,8 +66,7 @@ public class ParametricCoordinateReferenceSystem
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ ((parametricDatum == null) ? 0 : parametricDatum.hashCode());
+		result = prime * result + ((datum == null) ? 0 : datum.hashCode());
 		return result;
 	}
 
@@ -84,10 +82,10 @@ public class ParametricCoordinateReferenceSystem
 		if (getClass() != obj.getClass())
 			return false;
 		ParametricCoordinateReferenceSystem other = (ParametricCoordinateReferenceSystem) obj;
-		if (parametricDatum == null) {
-			if (other.parametricDatum != null)
+		if (datum == null) {
+			if (other.datum != null)
 				return false;
-		} else if (!parametricDatum.equals(other.parametricDatum))
+		} else if (!datum.equals(other.datum))
 			return false;
 		return true;
 	}

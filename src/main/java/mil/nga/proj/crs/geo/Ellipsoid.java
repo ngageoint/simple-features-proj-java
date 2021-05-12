@@ -1,4 +1,4 @@
-package mil.nga.proj.crs.projected;
+package mil.nga.proj.crs.geo;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,17 +11,17 @@ import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
- * Map Projection Parameter
+ * Ellipsoid
  * 
  * @author osbornb
  */
-public class MapProjectionParameter {
+public class Ellipsoid {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger logger = Logger
-			.getLogger(MapProjectionParameter.class.getName());
+			.getLogger(Ellipsoid.class.getName());
 
 	/**
 	 * Name
@@ -29,14 +29,19 @@ public class MapProjectionParameter {
 	private String name = null;
 
 	/**
-	 * Value
+	 * Semi Major Axis
 	 */
-	private double value;
+	private double semiMajorAxis;
 
 	/**
-	 * Unit
+	 * Inverse Flattening
 	 */
-	private Unit unit;
+	private double inverseFlattening;
+
+	/**
+	 * Unit (Length)
+	 */
+	private Unit unit = null;
 
 	/**
 	 * Identifiers
@@ -46,7 +51,7 @@ public class MapProjectionParameter {
 	/**
 	 * Constructor
 	 */
-	public MapProjectionParameter() {
+	public Ellipsoid() {
 
 	}
 
@@ -55,12 +60,16 @@ public class MapProjectionParameter {
 	 * 
 	 * @param name
 	 *            name
-	 * @param value
-	 *            value
+	 * @param semiMajorAxis
+	 *            semi major axis
+	 * @param inverseFlattening
+	 *            inverse flattening
 	 */
-	public MapProjectionParameter(String name, double value) {
+	public Ellipsoid(String name, double semiMajorAxis,
+			double inverseFlattening) {
 		setName(name);
-		setValue(value);
+		setSemiMajorAxis(semiMajorAxis);
+		setInverseFlattening(inverseFlattening);
 	}
 
 	/**
@@ -83,47 +92,66 @@ public class MapProjectionParameter {
 	}
 
 	/**
-	 * Get the value
+	 * Get the semi major axis
 	 * 
-	 * @return value
+	 * @return semi major axis
 	 */
-	public double getValue() {
-		return value;
+	public double getSemiMajorAxis() {
+		return semiMajorAxis;
 	}
 
 	/**
-	 * Set the value
+	 * Set the semi major axis
 	 * 
-	 * @param value
-	 *            value
+	 * @param semiMajorAxis
+	 *            semi major axis
 	 */
-	public void setValue(double value) {
-		this.value = value;
+	public void setSemiMajorAxis(double semiMajorAxis) {
+		this.semiMajorAxis = semiMajorAxis;
 	}
 
 	/**
-	 * Get the unit
+	 * Get the inverse flattening
 	 * 
-	 * @return unit
+	 * @return inverse flattening
+	 */
+	public double getInverseFlattening() {
+		return inverseFlattening;
+	}
+
+	/**
+	 * Set the inverse flattening
+	 * 
+	 * @param inverseFlattening
+	 *            inverse flattening
+	 */
+	public void setInverseFlattening(double inverseFlattening) {
+		this.inverseFlattening = inverseFlattening;
+	}
+
+	/**
+	 * Get the unit (length)
+	 * 
+	 * @return unit (length)
 	 */
 	public Unit getUnit() {
 		return unit;
 	}
 
 	/**
-	 * Has a unit
+	 * Has a unit (length)
 	 * 
-	 * @return true if has unit
+	 * @return true if has unit (length)
 	 */
 	public boolean hasUnit() {
 		return getUnit() != null;
 	}
 
 	/**
-	 * Set the unit
+	 * Set the unit (length)
 	 * 
 	 * @param unit
-	 *            unit
+	 *            unit (length)
 	 */
 	public void setUnit(Unit unit) {
 		this.unit = unit;
@@ -192,10 +220,12 @@ public class MapProjectionParameter {
 		int result = 1;
 		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		long temp;
-		temp = Double.doubleToLongBits(value);
+		temp = Double.doubleToLongBits(inverseFlattening);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		temp = Double.doubleToLongBits(semiMajorAxis);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
@@ -211,24 +241,27 @@ public class MapProjectionParameter {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MapProjectionParameter other = (MapProjectionParameter) obj;
+		Ellipsoid other = (Ellipsoid) obj;
 		if (identifiers == null) {
 			if (other.identifiers != null)
 				return false;
 		} else if (!identifiers.equals(other.identifiers))
 			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
+		if (Double.doubleToLongBits(inverseFlattening) != Double
+				.doubleToLongBits(other.inverseFlattening))
 			return false;
 		if (unit == null) {
 			if (other.unit != null)
 				return false;
 		} else if (!unit.equals(other.unit))
 			return false;
-		if (Double.doubleToLongBits(value) != Double
-				.doubleToLongBits(other.value))
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (Double.doubleToLongBits(semiMajorAxis) != Double
+				.doubleToLongBits(other.semiMajorAxis))
 			return false;
 		return true;
 	}
@@ -244,8 +277,8 @@ public class MapProjectionParameter {
 			writer.write(this);
 			value = writer.toString();
 		} catch (IOException e) {
-			logger.log(Level.WARNING,
-					"Failed to write map projection parameter as a string", e);
+			logger.log(Level.WARNING, "Failed to write ellipsoid as a string",
+					e);
 			value = super.toString();
 		} finally {
 			writer.close();

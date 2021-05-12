@@ -8,9 +8,24 @@ package mil.nga.proj.crs;
 public enum CoordinateReferenceSystemType {
 
 	/**
+	 * Bound
+	 */
+	BOUND,
+
+	/**
+	 * Coordinate Operation
+	 */
+	COORDINATE_OPERATION,
+
+	/**
 	 * Engineering
 	 */
 	ENGINEERING,
+
+	/**
+	 * Derived
+	 */
+	DERIVED,
 
 	/**
 	 * Geodetic

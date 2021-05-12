@@ -8,9 +8,9 @@ import mil.nga.proj.crs.common.CoordinateSystem;
 import mil.nga.proj.crs.common.Dynamic;
 import mil.nga.proj.crs.common.Identifier;
 import mil.nga.proj.crs.common.Unit;
-import mil.nga.proj.crs.geodetic.GeodeticCoordinateReferenceSystem;
-import mil.nga.proj.crs.geodetic.GeodeticDatumEnsemble;
-import mil.nga.proj.crs.geodetic.GeodeticReferenceFrame;
+import mil.nga.proj.crs.geo.GeoCoordinateReferenceSystem;
+import mil.nga.proj.crs.geo.GeoDatumEnsemble;
+import mil.nga.proj.crs.geo.GeoReferenceFrame;
 
 /**
  * Projected Coordinate Reference System
@@ -23,7 +23,7 @@ public class ProjectedCoordinateReferenceSystem
 	/**
 	 * Base
 	 */
-	private GeodeticCoordinateReferenceSystem base = new GeodeticCoordinateReferenceSystem();
+	private GeoCoordinateReferenceSystem base = new GeoCoordinateReferenceSystem();
 
 	/**
 	 * Map Projection
@@ -46,8 +46,8 @@ public class ProjectedCoordinateReferenceSystem
 	 *            base CRS name
 	 * @param baseType
 	 *            base coordinate reference system type
-	 * @param geodeticReferenceFrame
-	 *            geodetic reference frame
+	 * @param referenceFrame
+	 *            reference frame
 	 * @param mapProjection
 	 *            map projection
 	 * @param coordinateSystem
@@ -55,12 +55,12 @@ public class ProjectedCoordinateReferenceSystem
 	 */
 	public ProjectedCoordinateReferenceSystem(String name, String baseName,
 			CoordinateReferenceSystemType baseType,
-			GeodeticReferenceFrame geodeticReferenceFrame,
-			MapProjection mapProjection, CoordinateSystem coordinateSystem) {
+			GeoReferenceFrame referenceFrame, MapProjection mapProjection,
+			CoordinateSystem coordinateSystem) {
 		super(name, CoordinateReferenceSystemType.PROJECTED, coordinateSystem);
 		setBaseName(baseName);
 		setBaseType(baseType);
-		setGeodeticReferenceFrame(geodeticReferenceFrame);
+		setReferenceFrame(referenceFrame);
 		setMapProjection(mapProjection);
 	}
 
@@ -73,8 +73,8 @@ public class ProjectedCoordinateReferenceSystem
 	 *            base CRS name
 	 * @param baseType
 	 *            base coordinate reference system type
-	 * @param geodeticDatumEnsemble
-	 *            geodetic datum ensemble
+	 * @param datumEnsemble
+	 *            datum ensemble
 	 * @param mapProjection
 	 *            map projection
 	 * @param coordinateSystem
@@ -82,12 +82,12 @@ public class ProjectedCoordinateReferenceSystem
 	 */
 	public ProjectedCoordinateReferenceSystem(String name, String baseName,
 			CoordinateReferenceSystemType baseType,
-			GeodeticDatumEnsemble geodeticDatumEnsemble,
-			MapProjection mapProjection, CoordinateSystem coordinateSystem) {
+			GeoDatumEnsemble datumEnsemble, MapProjection mapProjection,
+			CoordinateSystem coordinateSystem) {
 		super(name, CoordinateReferenceSystemType.PROJECTED, coordinateSystem);
 		setBaseName(baseName);
 		setBaseType(baseType);
-		setGeodeticDatumEnsemble(geodeticDatumEnsemble);
+		setDatumEnsemble(datumEnsemble);
 		setMapProjection(mapProjection);
 	}
 
@@ -102,8 +102,8 @@ public class ProjectedCoordinateReferenceSystem
 	 *            base coordinate reference system type
 	 * @param dynamic
 	 *            dynamic
-	 * @param geodeticReferenceFrame
-	 *            geodetic reference frame
+	 * @param referenceFrame
+	 *            reference frame
 	 * @param mapProjection
 	 *            map projection
 	 * @param coordinateSystem
@@ -111,13 +111,13 @@ public class ProjectedCoordinateReferenceSystem
 	 */
 	public ProjectedCoordinateReferenceSystem(String name, String baseName,
 			CoordinateReferenceSystemType baseType, Dynamic dynamic,
-			GeodeticReferenceFrame geodeticReferenceFrame,
-			MapProjection mapProjection, CoordinateSystem coordinateSystem) {
+			GeoReferenceFrame referenceFrame, MapProjection mapProjection,
+			CoordinateSystem coordinateSystem) {
 		super(name, CoordinateReferenceSystemType.PROJECTED, coordinateSystem);
 		setBaseName(baseName);
 		setBaseType(baseType);
 		setDynamic(dynamic);
-		setGeodeticReferenceFrame(geodeticReferenceFrame);
+		setReferenceFrame(referenceFrame);
 		setMapProjection(mapProjection);
 	}
 
@@ -126,7 +126,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * 
 	 * @return base coordinate reference system
 	 */
-	public GeodeticCoordinateReferenceSystem getBase() {
+	public GeoCoordinateReferenceSystem getBase() {
 		return base;
 	}
 
@@ -136,7 +136,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * @param base
 	 *            base coordinate reference system
 	 */
-	public void setBase(GeodeticCoordinateReferenceSystem base) {
+	public void setBase(GeoCoordinateReferenceSystem base) {
 		this.base = base;
 	}
 
@@ -179,61 +179,59 @@ public class ProjectedCoordinateReferenceSystem
 	}
 
 	/**
-	 * Get the geodetic reference frame
+	 * Get the reference frame
 	 * 
-	 * @return geodetic reference frame
+	 * @return reference frame
 	 */
-	public GeodeticReferenceFrame getGeodeticReferenceFrame() {
-		return getBase().getGeodeticReferenceFrame();
+	public GeoReferenceFrame getReferenceFrame() {
+		return getBase().getReferenceFrame();
 	}
 
 	/**
-	 * Determine if has a geodetic reference frame
+	 * Determine if has a reference frame
 	 * 
-	 * @return true if has geodetic reference frame
+	 * @return true if has reference frame
 	 */
-	public boolean hasGeodeticReferenceFrame() {
-		return getBase().hasGeodeticReferenceFrame();
+	public boolean hasReferenceFrame() {
+		return getBase().hasReferenceFrame();
 	}
 
 	/**
-	 * Set the geodetic reference frame
+	 * Set the reference frame
 	 * 
-	 * @param geodeticReferenceFrame
-	 *            geodetic reference frame
+	 * @param referenceFrame
+	 *            reference frame
 	 */
-	public void setGeodeticReferenceFrame(
-			GeodeticReferenceFrame geodeticReferenceFrame) {
-		getBase().setGeodeticReferenceFrame(geodeticReferenceFrame);
+	public void setReferenceFrame(GeoReferenceFrame referenceFrame) {
+		getBase().setReferenceFrame(referenceFrame);
 	}
 
 	/**
-	 * Get the geodetic datum ensemble
+	 * Get the datum ensemble
 	 * 
-	 * @return geodetic datum ensemble
+	 * @return datum ensemble
 	 */
-	public GeodeticDatumEnsemble getGeodeticDatumEnsemble() {
-		return getBase().getGeodeticDatumEnsemble();
+	public GeoDatumEnsemble getDatumEnsemble() {
+		return getBase().getDatumEnsemble();
 	}
 
 	/**
-	 * Determine if has a geodetic datum ensemble
+	 * Determine if has a datum ensemble
 	 * 
-	 * @return true if has geodetic datum ensemble
+	 * @return true if has datum ensemble
 	 */
-	public boolean hasGeodeticDatumEnsemble() {
-		return getBase().hasGeodeticDatumEnsemble();
+	public boolean hasDatumEnsemble() {
+		return getBase().hasDatumEnsemble();
 	}
 
 	/**
-	 * Set the geodetic datum ensemble
+	 * Set the datum ensemble
 	 * 
-	 * @param geodeticDatumEnsemble
-	 *            geodetic datum ensemble
+	 * @param datumEnsemble
+	 *            datum ensemble
 	 */
-	public void setGeodeticDatumEnsemble(
-			GeodeticDatumEnsemble geodeticDatumEnsemble) {
-		getBase().setGeodeticDatumEnsemble(geodeticDatumEnsemble);
+	public void setDatumEnsemble(GeoDatumEnsemble datumEnsemble) {
+		getBase().setDatumEnsemble(datumEnsemble);
 	}
 
 	/**

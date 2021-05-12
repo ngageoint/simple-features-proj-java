@@ -1,4 +1,4 @@
-package mil.nga.proj.crs.projected;
+package mil.nga.proj.crs.geo;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,37 +7,37 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.crs.common.Identifier;
-import mil.nga.proj.crs.operation.OperationMethod;
-import mil.nga.proj.crs.operation.OperationParameter;
+import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
- * Map Projection
+ * Prime Meridian
  * 
  * @author osbornb
+ *
  */
-public class MapProjection {
+public class PrimeMeridian {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger logger = Logger
-			.getLogger(MapProjection.class.getName());
+			.getLogger(PrimeMeridian.class.getName());
 
 	/**
 	 * Name
 	 */
-	private String name = null;
+	private String name = null;;
 
 	/**
-	 * Method
+	 * IRM longitude
 	 */
-	private OperationMethod method = null;
+	private double irmLongitude;
 
 	/**
-	 * Parameters
+	 * IRM longitude unit (angle)
 	 */
-	private List<OperationParameter> parameters = null;
+	private Unit irmLongitudeUnit;
 
 	/**
 	 * Identifiers
@@ -47,7 +47,7 @@ public class MapProjection {
 	/**
 	 * Constructor
 	 */
-	public MapProjection() {
+	public PrimeMeridian() {
 
 	}
 
@@ -56,12 +56,12 @@ public class MapProjection {
 	 * 
 	 * @param name
 	 *            name
-	 * @param method
-	 *            method
+	 * @param irmLongitude
+	 *            IRM longitude
 	 */
-	public MapProjection(String name, OperationMethod method) {
+	public PrimeMeridian(String name, double irmLongitude) {
 		setName(name);
-		setMethod(method);
+		setIrmLongitude(irmLongitude);
 	}
 
 	/**
@@ -84,76 +84,50 @@ public class MapProjection {
 	}
 
 	/**
-	 * Get the method
+	 * Get the IRM longitude
 	 * 
-	 * @return method
+	 * @return IRM longitude
 	 */
-	public OperationMethod getMethod() {
-		return method;
+	public double getIrmLongitude() {
+		return irmLongitude;
 	}
 
 	/**
-	 * Set the method
+	 * Set the IRM longitude
 	 * 
-	 * @param method
-	 *            method
+	 * @param irmLongitude
+	 *            IRM longitude
 	 */
-	public void setMethod(OperationMethod method) {
-		this.method = method;
+	public void setIrmLongitude(double irmLongitude) {
+		this.irmLongitude = irmLongitude;
 	}
 
 	/**
-	 * Get the parameters
+	 * Get the IRM longitude unit (angle)
 	 * 
-	 * @return parameters
+	 * @return IRM longitude unit (angle)
 	 */
-	public List<OperationParameter> getParameters() {
-		return parameters;
+	public Unit getIrmLongitudeUnit() {
+		return irmLongitudeUnit;
 	}
 
 	/**
-	 * Has parameters
+	 * Has an IRM longitude unit (angle)
 	 * 
-	 * @return true if has parameters
+	 * @return true if has IRM longitude unit (angle)
 	 */
-	public boolean hasParameters() {
-		return parameters != null && !parameters.isEmpty();
+	public boolean hasIrmLongitudeUnit() {
+		return getIrmLongitudeUnit() != null;
 	}
 
 	/**
-	 * Set the parameters
+	 * Set the IRM longitude unit (angle)
 	 * 
-	 * @param parameters
-	 *            parameters
+	 * @param irmLongitudeUnit
+	 *            IRM longitude unit (angle)
 	 */
-	public void setParameters(List<OperationParameter> parameters) {
-		this.parameters = parameters;
-	}
-
-	/**
-	 * Add the parameter
-	 * 
-	 * @param parameter
-	 *            parameter
-	 */
-	public void addParameter(OperationParameter parameter) {
-		if (this.parameters == null) {
-			this.parameters = new ArrayList<>();
-		}
-		this.parameters.add(parameter);
-	}
-
-	/**
-	 * Add the parameters
-	 * 
-	 * @param parameters
-	 *            parameters
-	 */
-	public void addParameters(List<OperationParameter> parameters) {
-		if (this.parameters == null) {
-			this.parameters = new ArrayList<>();
-		}
-		this.parameters.addAll(parameters);
+	public void setIrmLongitudeUnit(Unit irmLongitudeUnit) {
+		this.irmLongitudeUnit = irmLongitudeUnit;
 	}
 
 	/**
@@ -219,10 +193,12 @@ public class MapProjection {
 		int result = 1;
 		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
-		result = prime * result + ((method == null) ? 0 : method.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(irmLongitude);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((irmLongitudeUnit == null) ? 0
+				: irmLongitudeUnit.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((parameters == null) ? 0 : parameters.hashCode());
 		return result;
 	}
 
@@ -237,26 +213,24 @@ public class MapProjection {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MapProjection other = (MapProjection) obj;
+		PrimeMeridian other = (PrimeMeridian) obj;
 		if (identifiers == null) {
 			if (other.identifiers != null)
 				return false;
 		} else if (!identifiers.equals(other.identifiers))
 			return false;
-		if (method == null) {
-			if (other.method != null)
+		if (Double.doubleToLongBits(irmLongitude) != Double
+				.doubleToLongBits(other.irmLongitude))
+			return false;
+		if (irmLongitudeUnit == null) {
+			if (other.irmLongitudeUnit != null)
 				return false;
-		} else if (!method.equals(other.method))
+		} else if (!irmLongitudeUnit.equals(other.irmLongitudeUnit))
 			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
-			return false;
-		if (parameters == null) {
-			if (other.parameters != null)
-				return false;
-		} else if (!parameters.equals(other.parameters))
 			return false;
 		return true;
 	}
@@ -273,7 +247,7 @@ public class MapProjection {
 			value = writer.toString();
 		} catch (IOException e) {
 			logger.log(Level.WARNING,
-					"Failed to write map projection as a string", e);
+					"Failed to write prime meridian as a string", e);
 			value = super.toString();
 		} finally {
 			writer.close();

@@ -1,4 +1,4 @@
-package mil.nga.proj.crs.geodetic;
+package mil.nga.proj.crs.geo;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -9,17 +9,17 @@ import mil.nga.proj.crs.common.ReferenceFrame;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
- * Geodetic Reference Frame (datum)
+ * Geodetic and Geographic Reference Frame (datum)
  * 
  * @author osbornb
  */
-public class GeodeticReferenceFrame extends ReferenceFrame {
+public class GeoReferenceFrame extends ReferenceFrame {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger logger = Logger
-			.getLogger(GeodeticReferenceFrame.class.getName());
+			.getLogger(GeoReferenceFrame.class.getName());
 
 	/**
 	 * Ellipsoid
@@ -34,8 +34,18 @@ public class GeodeticReferenceFrame extends ReferenceFrame {
 	/**
 	 * Constructor
 	 */
-	public GeodeticReferenceFrame() {
-		super(CoordinateReferenceSystemType.GEODETIC);
+	public GeoReferenceFrame() {
+		this(CoordinateReferenceSystemType.GEODETIC);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param type
+	 *            geo crs type
+	 */
+	public GeoReferenceFrame(CoordinateReferenceSystemType type) {
+		super(type);
 	}
 
 	/**
@@ -46,8 +56,23 @@ public class GeodeticReferenceFrame extends ReferenceFrame {
 	 * @param ellipsoid
 	 *            ellipsoid
 	 */
-	public GeodeticReferenceFrame(String name, Ellipsoid ellipsoid) {
-		super(name, CoordinateReferenceSystemType.GEODETIC);
+	public GeoReferenceFrame(String name, Ellipsoid ellipsoid) {
+		this(name, CoordinateReferenceSystemType.GEODETIC, ellipsoid);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param name
+	 *            name
+	 * @param type
+	 *            geo crs type
+	 * @param ellipsoid
+	 *            ellipsoid
+	 */
+	public GeoReferenceFrame(String name, CoordinateReferenceSystemType type,
+			Ellipsoid ellipsoid) {
+		super(name, type);
 		setEllipsoid(ellipsoid);
 	}
 
@@ -123,7 +148,7 @@ public class GeodeticReferenceFrame extends ReferenceFrame {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GeodeticReferenceFrame other = (GeodeticReferenceFrame) obj;
+		GeoReferenceFrame other = (GeoReferenceFrame) obj;
 		if (ellipsoid == null) {
 			if (other.ellipsoid != null)
 				return false;
@@ -149,7 +174,7 @@ public class GeodeticReferenceFrame extends ReferenceFrame {
 			value = writer.toString();
 		} catch (IOException e) {
 			logger.log(Level.WARNING,
-					"Failed to write geodetic reference frame as a string", e);
+					"Failed to write geo reference frame as a string", e);
 			value = super.toString();
 		} finally {
 			writer.close();

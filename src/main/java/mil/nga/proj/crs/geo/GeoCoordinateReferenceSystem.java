@@ -1,4 +1,4 @@
-package mil.nga.proj.crs.geodetic;
+package mil.nga.proj.crs.geo;
 
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystemType;
@@ -10,18 +10,18 @@ import mil.nga.proj.crs.common.Dynamic;
  * 
  * @author osbornb
  */
-public class GeodeticCoordinateReferenceSystem
+public class GeoCoordinateReferenceSystem
 		extends CoordinateReferenceSystem {
 
 	/**
-	 * Geodetic Reference Frame
+	 * Reference Frame
 	 */
-	private GeodeticReferenceFrame geodeticReferenceFrame = null;
+	private GeoReferenceFrame referenceFrame = null;
 
 	/**
-	 * Geodetic Datum Ensemble
+	 * Datum Ensemble
 	 */
-	private GeodeticDatumEnsemble geodeticDatumEnsemble = null;
+	private GeoDatumEnsemble datumEnsemble = null;
 
 	/**
 	 * Dynamic coordinate reference system
@@ -31,7 +31,7 @@ public class GeodeticCoordinateReferenceSystem
 	/**
 	 * Constructor
 	 */
-	public GeodeticCoordinateReferenceSystem() {
+	public GeoCoordinateReferenceSystem() {
 
 	}
 
@@ -41,7 +41,7 @@ public class GeodeticCoordinateReferenceSystem
 	 * @param type
 	 *            coordinate reference system type
 	 */
-	public GeodeticCoordinateReferenceSystem(
+	public GeoCoordinateReferenceSystem(
 			CoordinateReferenceSystemType type) {
 		super(type);
 	}
@@ -53,17 +53,17 @@ public class GeodeticCoordinateReferenceSystem
 	 *            name
 	 * @param type
 	 *            coordinate reference system type
-	 * @param geodeticReferenceFrame
-	 *            geodetic reference frame
+	 * @param referenceFrame
+	 *            reference frame
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
-	public GeodeticCoordinateReferenceSystem(String name,
+	public GeoCoordinateReferenceSystem(String name,
 			CoordinateReferenceSystemType type,
-			GeodeticReferenceFrame geodeticReferenceFrame,
+			GeoReferenceFrame referenceFrame,
 			CoordinateSystem coordinateSystem) {
 		super(name, type, coordinateSystem);
-		setGeodeticReferenceFrame(geodeticReferenceFrame);
+		setReferenceFrame(referenceFrame);
 	}
 
 	/**
@@ -73,17 +73,17 @@ public class GeodeticCoordinateReferenceSystem
 	 *            name
 	 * @param type
 	 *            coordinate reference system type
-	 * @param geodeticDatumEnsemble
-	 *            geodetic datum ensemble
+	 * @param datumEnsemble
+	 *            datum ensemble
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
-	public GeodeticCoordinateReferenceSystem(String name,
+	public GeoCoordinateReferenceSystem(String name,
 			CoordinateReferenceSystemType type,
-			GeodeticDatumEnsemble geodeticDatumEnsemble,
+			GeoDatumEnsemble datumEnsemble,
 			CoordinateSystem coordinateSystem) {
 		super(name, type, coordinateSystem);
-		setGeodeticDatumEnsemble(geodeticDatumEnsemble);
+		setDatumEnsemble(datumEnsemble);
 	}
 
 	/**
@@ -95,76 +95,74 @@ public class GeodeticCoordinateReferenceSystem
 	 *            coordinate reference system type
 	 * @param dynamic
 	 *            dynamic
-	 * @param geodeticReferenceFrame
-	 *            geodetic reference frame
+	 * @param referenceFrame
+	 *            reference frame
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
-	public GeodeticCoordinateReferenceSystem(String name,
+	public GeoCoordinateReferenceSystem(String name,
 			CoordinateReferenceSystemType type, Dynamic dynamic,
-			GeodeticReferenceFrame geodeticReferenceFrame,
+			GeoReferenceFrame referenceFrame,
 			CoordinateSystem coordinateSystem) {
 		super(name, type, coordinateSystem);
 		setDynamic(dynamic);
-		setGeodeticReferenceFrame(geodeticReferenceFrame);
+		setReferenceFrame(referenceFrame);
 	}
 
 	/**
-	 * Get the geodetic reference frame
+	 * Get the reference frame
 	 * 
-	 * @return geodetic reference frame
+	 * @return reference frame
 	 */
-	public GeodeticReferenceFrame getGeodeticReferenceFrame() {
-		return geodeticReferenceFrame;
+	public GeoReferenceFrame getReferenceFrame() {
+		return referenceFrame;
 	}
 
 	/**
-	 * Determine if has a geodetic reference frame
+	 * Determine if has a reference frame
 	 * 
-	 * @return true if has geodetic reference frame
+	 * @return true if has reference frame
 	 */
-	public boolean hasGeodeticReferenceFrame() {
-		return getGeodeticReferenceFrame() != null;
+	public boolean hasReferenceFrame() {
+		return getReferenceFrame() != null;
 	}
 
 	/**
-	 * Set the geodetic reference frame
+	 * Set the reference frame
 	 * 
-	 * @param geodeticReferenceFrame
-	 *            geodetic reference frame
+	 * @param referenceFrame
+	 *            reference frame
 	 */
-	public void setGeodeticReferenceFrame(
-			GeodeticReferenceFrame geodeticReferenceFrame) {
-		this.geodeticReferenceFrame = geodeticReferenceFrame;
+	public void setReferenceFrame(GeoReferenceFrame referenceFrame) {
+		this.referenceFrame = referenceFrame;
 	}
 
 	/**
-	 * Get the geodetic datum ensemble
+	 * Get the datum ensemble
 	 * 
-	 * @return geodetic datum ensemble
+	 * @return datum ensemble
 	 */
-	public GeodeticDatumEnsemble getGeodeticDatumEnsemble() {
-		return geodeticDatumEnsemble;
+	public GeoDatumEnsemble getDatumEnsemble() {
+		return datumEnsemble;
 	}
 
 	/**
-	 * Determine if has a geodetic datum ensemble
+	 * Determine if has a datum ensemble
 	 * 
-	 * @return true if has geodetic datum ensemble
+	 * @return true if has datum ensemble
 	 */
-	public boolean hasGeodeticDatumEnsemble() {
-		return getGeodeticDatumEnsemble() != null;
+	public boolean hasDatumEnsemble() {
+		return getDatumEnsemble() != null;
 	}
 
 	/**
-	 * Set the geodetic datum ensemble
+	 * Set the datum ensemble
 	 * 
-	 * @param geodeticDatumEnsemble
-	 *            geodetic datum ensemble
+	 * @param datumEnsemble
+	 *            datum ensemble
 	 */
-	public void setGeodeticDatumEnsemble(
-			GeodeticDatumEnsemble geodeticDatumEnsemble) {
-		this.geodeticDatumEnsemble = geodeticDatumEnsemble;
+	public void setDatumEnsemble(GeoDatumEnsemble datumEnsemble) {
+		this.datumEnsemble = datumEnsemble;
 	}
 
 	/**
@@ -203,10 +201,10 @@ public class GeodeticCoordinateReferenceSystem
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((dynamic == null) ? 0 : dynamic.hashCode());
-		result = prime * result + ((geodeticDatumEnsemble == null) ? 0
-				: geodeticDatumEnsemble.hashCode());
-		result = prime * result + ((geodeticReferenceFrame == null) ? 0
-				: geodeticReferenceFrame.hashCode());
+		result = prime * result
+				+ ((datumEnsemble == null) ? 0 : datumEnsemble.hashCode());
+		result = prime * result
+				+ ((referenceFrame == null) ? 0 : referenceFrame.hashCode());
 		return result;
 	}
 
@@ -221,21 +219,21 @@ public class GeodeticCoordinateReferenceSystem
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GeodeticCoordinateReferenceSystem other = (GeodeticCoordinateReferenceSystem) obj;
+		GeoCoordinateReferenceSystem other = (GeoCoordinateReferenceSystem) obj;
 		if (dynamic == null) {
 			if (other.dynamic != null)
 				return false;
 		} else if (!dynamic.equals(other.dynamic))
 			return false;
-		if (geodeticDatumEnsemble == null) {
-			if (other.geodeticDatumEnsemble != null)
+		if (datumEnsemble == null) {
+			if (other.datumEnsemble != null)
 				return false;
-		} else if (!geodeticDatumEnsemble.equals(other.geodeticDatumEnsemble))
+		} else if (!datumEnsemble.equals(other.datumEnsemble))
 			return false;
-		if (geodeticReferenceFrame == null) {
-			if (other.geodeticReferenceFrame != null)
+		if (referenceFrame == null) {
+			if (other.referenceFrame != null)
 				return false;
-		} else if (!geodeticReferenceFrame.equals(other.geodeticReferenceFrame))
+		} else if (!referenceFrame.equals(other.referenceFrame))
 			return false;
 		return true;
 	}

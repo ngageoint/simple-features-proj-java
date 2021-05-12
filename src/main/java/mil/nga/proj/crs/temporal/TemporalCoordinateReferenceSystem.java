@@ -15,7 +15,7 @@ public class TemporalCoordinateReferenceSystem
 	/**
 	 * Temporal Datum
 	 */
-	private TemporalDatum temporalDatum = null;
+	private TemporalDatum datum = null;
 
 	/**
 	 * Constructor
@@ -45,18 +45,18 @@ public class TemporalCoordinateReferenceSystem
 	 * 
 	 * @return temporal datum
 	 */
-	public TemporalDatum getTemporalDatum() {
-		return temporalDatum;
+	public TemporalDatum getDatum() {
+		return datum;
 	}
 
 	/**
 	 * Set the temporal datum
 	 * 
-	 * @param temporalDatum
+	 * @param datum
 	 *            temporal datum
 	 */
-	public void setTemporalDatum(TemporalDatum temporalDatum) {
-		this.temporalDatum = temporalDatum;
+	public void setTemporalDatum(TemporalDatum datum) {
+		this.datum = datum;
 	}
 
 	/**
@@ -66,8 +66,7 @@ public class TemporalCoordinateReferenceSystem
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ ((temporalDatum == null) ? 0 : temporalDatum.hashCode());
+		result = prime * result + ((datum == null) ? 0 : datum.hashCode());
 		return result;
 	}
 
@@ -83,10 +82,10 @@ public class TemporalCoordinateReferenceSystem
 		if (getClass() != obj.getClass())
 			return false;
 		TemporalCoordinateReferenceSystem other = (TemporalCoordinateReferenceSystem) obj;
-		if (temporalDatum == null) {
-			if (other.temporalDatum != null)
+		if (datum == null) {
+			if (other.datum != null)
 				return false;
-		} else if (!temporalDatum.equals(other.temporalDatum))
+		} else if (!datum.equals(other.datum))
 			return false;
 		return true;
 	}

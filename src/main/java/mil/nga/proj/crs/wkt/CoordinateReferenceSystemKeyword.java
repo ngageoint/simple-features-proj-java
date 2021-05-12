@@ -58,6 +58,11 @@ public enum CoordinateReferenceSystemKeyword {
 	BEARING(),
 
 	/**
+	 * Bound CRS
+	 */
+	BOUNDCRS(),
+
+	/**
 	 * Calendar
 	 */
 	CALENDAR(),
@@ -73,6 +78,11 @@ public enum CoordinateReferenceSystemKeyword {
 	CONVERSION(),
 
 	/**
+	 * Coordinate Operation
+	 */
+	COORDINATEOPERATION(),
+
+	/**
 	 * Coordinate system
 	 */
 	CS(),
@@ -81,6 +91,11 @@ public enum CoordinateReferenceSystemKeyword {
 	 * Geodetic reference frame
 	 */
 	DATUM("GEODETICDATUM", "TRF"),
+
+	/**
+	 * Deriving Conversion
+	 */
+	DERIVINGCONVERSION(),
 
 	/**
 	 * Dynamic coordinate reference systems
@@ -191,6 +206,11 @@ public enum CoordinateReferenceSystemKeyword {
 	 * Parameter
 	 */
 	PARAMETER(),
+
+	/**
+	 * Parameter File
+	 */
+	PARAMETERFILE(),
 
 	/**
 	 * Parametric CRS

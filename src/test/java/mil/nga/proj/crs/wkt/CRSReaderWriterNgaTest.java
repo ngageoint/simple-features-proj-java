@@ -65,4 +65,40 @@ public class CRSReaderWriterNgaTest {
 
 	}
 
+	/**
+	 * Test NGA 8101
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void test8101() throws IOException {
+
+		String text = "COMPOUNDCRS[“WGS84 Height (EGM08)”,"
+				+ "GEODCRS[\"WGS 84\","
+				+ "DATUM[\"World Geodetic System 1984\","
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1.0]]],"
+				+ "CS[ellipsoidal,2],"
+				+ "AXIS[\"Geodetic latitude (Lat)\",north],"
+				+ "AXIS[\"Geodetic longitude (Long)\",east],"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",4326]],"
+				+ "VERTCRS[\"EGM2008 geoid height\","
+				+ "VDATUM[\"EGM2008 geoid\",ANCHOR[\"WGS 84 ellipsoid\"]],"
+				+ "CS[vertical,1],AXIS[\"Gravity-related height (H)\",up],"
+				+ "LENGTHUNIT[\"metre\",1.0]ID[\"EPSG\",\"3855\"]],"
+				+ "ID[“NSG”,”8101”]]";
+
+		// TODO
+		// CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		//
+		// String expectedText = text.replace("\"3855\"", "3855")
+		// .replace("\"8101\"", "8101");
+		//
+		// assertEquals(expectedText, crs.toString());
+		// assertEquals(expectedText, CRSWriter.write(crs));
+		// assertEquals(WKTUtils.pretty(expectedText),
+		// CRSWriter.writePretty(crs));
+
+	}
+
 }

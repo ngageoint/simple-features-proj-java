@@ -1,4 +1,4 @@
-package mil.nga.proj.crs.geodetic;
+package mil.nga.proj.crs.geo;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,17 +10,17 @@ import mil.nga.proj.crs.common.DatumEnsembleMember;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
- * Geodetic Datum Ensemble
+ * Geodetic and Geographic Datum Ensemble
  * 
  * @author osbornb
  */
-public class GeodeticDatumEnsemble extends DatumEnsemble {
+public class GeoDatumEnsemble extends DatumEnsemble {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger logger = Logger
-			.getLogger(GeodeticDatumEnsemble.class.getName());
+			.getLogger(GeoDatumEnsemble.class.getName());
 
 	/**
 	 * Ellipsoid
@@ -35,7 +35,7 @@ public class GeodeticDatumEnsemble extends DatumEnsemble {
 	/**
 	 * Constructor
 	 */
-	public GeodeticDatumEnsemble() {
+	public GeoDatumEnsemble() {
 
 	}
 
@@ -53,7 +53,7 @@ public class GeodeticDatumEnsemble extends DatumEnsemble {
 	 * @param primeMeridian
 	 *            prime meridian
 	 */
-	public GeodeticDatumEnsemble(String name, DatumEnsembleMember member,
+	public GeoDatumEnsemble(String name, DatumEnsembleMember member,
 			Ellipsoid ellipsoid, double accuracy, PrimeMeridian primeMeridian) {
 		super(name, member, accuracy);
 		setEllipsoid(ellipsoid);
@@ -74,7 +74,7 @@ public class GeodeticDatumEnsemble extends DatumEnsemble {
 	 * @param primeMeridian
 	 *            prime meridian
 	 */
-	public GeodeticDatumEnsemble(String name, List<DatumEnsembleMember> members,
+	public GeoDatumEnsemble(String name, List<DatumEnsembleMember> members,
 			Ellipsoid ellipsoid, double accuracy, PrimeMeridian primeMeridian) {
 		super(name, members, accuracy);
 		setEllipsoid(ellipsoid);
@@ -155,7 +155,7 @@ public class GeodeticDatumEnsemble extends DatumEnsemble {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GeodeticDatumEnsemble other = (GeodeticDatumEnsemble) obj;
+		GeoDatumEnsemble other = (GeoDatumEnsemble) obj;
 		if (ellipsoid == null) {
 			if (other.ellipsoid != null)
 				return false;
@@ -181,7 +181,7 @@ public class GeodeticDatumEnsemble extends DatumEnsemble {
 			value = writer.toString();
 		} catch (IOException e) {
 			logger.log(Level.WARNING,
-					"Failed to write geodetic datum ensemble as a string", e);
+					"Failed to write geo datum ensemble as a string", e);
 			value = super.toString();
 		} finally {
 			writer.close();

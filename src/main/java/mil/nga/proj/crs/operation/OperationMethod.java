@@ -1,4 +1,4 @@
-package mil.nga.proj.crs.geodetic;
+package mil.nga.proj.crs.operation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,37 +7,25 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.crs.common.Identifier;
-import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
- * Prime Meridian
+ * Operation Method
  * 
  * @author osbornb
- *
  */
-public class PrimeMeridian {
+public class OperationMethod {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger logger = Logger
-			.getLogger(PrimeMeridian.class.getName());
+			.getLogger(OperationMethod.class.getName());
 
 	/**
 	 * Name
 	 */
-	private String name = null;;
-
-	/**
-	 * IRM longitude
-	 */
-	private double irmLongitude;
-
-	/**
-	 * IRM longitude unit (angle)
-	 */
-	private Unit irmLongitudeUnit;
+	private String name = null;
 
 	/**
 	 * Identifiers
@@ -47,7 +35,7 @@ public class PrimeMeridian {
 	/**
 	 * Constructor
 	 */
-	public PrimeMeridian() {
+	public OperationMethod() {
 
 	}
 
@@ -56,12 +44,9 @@ public class PrimeMeridian {
 	 * 
 	 * @param name
 	 *            name
-	 * @param irmLongitude
-	 *            IRM longitude
 	 */
-	public PrimeMeridian(String name, double irmLongitude) {
+	public OperationMethod(String name) {
 		setName(name);
-		setIrmLongitude(irmLongitude);
 	}
 
 	/**
@@ -81,53 +66,6 @@ public class PrimeMeridian {
 	 */
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	/**
-	 * Get the IRM longitude
-	 * 
-	 * @return IRM longitude
-	 */
-	public double getIrmLongitude() {
-		return irmLongitude;
-	}
-
-	/**
-	 * Set the IRM longitude
-	 * 
-	 * @param irmLongitude
-	 *            IRM longitude
-	 */
-	public void setIrmLongitude(double irmLongitude) {
-		this.irmLongitude = irmLongitude;
-	}
-
-	/**
-	 * Get the IRM longitude unit (angle)
-	 * 
-	 * @return IRM longitude unit (angle)
-	 */
-	public Unit getIrmLongitudeUnit() {
-		return irmLongitudeUnit;
-	}
-
-	/**
-	 * Has an IRM longitude unit (angle)
-	 * 
-	 * @return true if has IRM longitude unit (angle)
-	 */
-	public boolean hasIrmLongitudeUnit() {
-		return getIrmLongitudeUnit() != null;
-	}
-
-	/**
-	 * Set the IRM longitude unit (angle)
-	 * 
-	 * @param irmLongitudeUnit
-	 *            IRM longitude unit (angle)
-	 */
-	public void setIrmLongitudeUnit(Unit irmLongitudeUnit) {
-		this.irmLongitudeUnit = irmLongitudeUnit;
 	}
 
 	/**
@@ -193,11 +131,6 @@ public class PrimeMeridian {
 		int result = 1;
 		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
-		long temp;
-		temp = Double.doubleToLongBits(irmLongitude);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((irmLongitudeUnit == null) ? 0
-				: irmLongitudeUnit.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
@@ -213,19 +146,11 @@ public class PrimeMeridian {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		PrimeMeridian other = (PrimeMeridian) obj;
+		OperationMethod other = (OperationMethod) obj;
 		if (identifiers == null) {
 			if (other.identifiers != null)
 				return false;
 		} else if (!identifiers.equals(other.identifiers))
-			return false;
-		if (Double.doubleToLongBits(irmLongitude) != Double
-				.doubleToLongBits(other.irmLongitude))
-			return false;
-		if (irmLongitudeUnit == null) {
-			if (other.irmLongitudeUnit != null)
-				return false;
-		} else if (!irmLongitudeUnit.equals(other.irmLongitudeUnit))
 			return false;
 		if (name == null) {
 			if (other.name != null)
@@ -246,8 +171,7 @@ public class PrimeMeridian {
 			writer.write(this);
 			value = writer.toString();
 		} catch (IOException e) {
-			logger.log(Level.WARNING,
-					"Failed to write prime meridian as a string", e);
+			logger.log(Level.WARNING, "Failed to write method as a string", e);
 			value = super.toString();
 		} finally {
 			writer.close();

@@ -1,4 +1,4 @@
-package mil.nga.proj.crs.geodetic;
+package mil.nga.proj.crs.derived;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,21 +7,22 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.crs.common.Identifier;
-import mil.nga.proj.crs.common.Unit;
+import mil.nga.proj.crs.operation.OperationMethod;
+import mil.nga.proj.crs.operation.Parameter;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
- * Ellipsoid
+ * Deriving Conversion
  * 
  * @author osbornb
  */
-public class Ellipsoid {
+public class DerivingConversion {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger logger = Logger
-			.getLogger(Ellipsoid.class.getName());
+			.getLogger(DerivingConversion.class.getName());
 
 	/**
 	 * Name
@@ -29,19 +30,14 @@ public class Ellipsoid {
 	private String name = null;
 
 	/**
-	 * Semi Major Axis
+	 * Method
 	 */
-	private double semiMajorAxis;
+	private OperationMethod method = null;
 
 	/**
-	 * Inverse Flattening
+	 * Parameters
 	 */
-	private double inverseFlattening;
-
-	/**
-	 * Unit (Length)
-	 */
-	private Unit unit = null;
+	private List<Parameter> parameters = null;
 
 	/**
 	 * Identifiers
@@ -51,7 +47,7 @@ public class Ellipsoid {
 	/**
 	 * Constructor
 	 */
-	public Ellipsoid() {
+	public DerivingConversion() {
 
 	}
 
@@ -60,16 +56,12 @@ public class Ellipsoid {
 	 * 
 	 * @param name
 	 *            name
-	 * @param semiMajorAxis
-	 *            semi major axis
-	 * @param inverseFlattening
-	 *            inverse flattening
+	 * @param method
+	 *            method
 	 */
-	public Ellipsoid(String name, double semiMajorAxis,
-			double inverseFlattening) {
+	public DerivingConversion(String name, OperationMethod method) {
 		setName(name);
-		setSemiMajorAxis(semiMajorAxis);
-		setInverseFlattening(inverseFlattening);
+		setMethod(method);
 	}
 
 	/**
@@ -92,69 +84,76 @@ public class Ellipsoid {
 	}
 
 	/**
-	 * Get the semi major axis
+	 * Get the method
 	 * 
-	 * @return semi major axis
+	 * @return method
 	 */
-	public double getSemiMajorAxis() {
-		return semiMajorAxis;
+	public OperationMethod getMethod() {
+		return method;
 	}
 
 	/**
-	 * Set the semi major axis
+	 * Set the method
 	 * 
-	 * @param semiMajorAxis
-	 *            semi major axis
+	 * @param method
+	 *            method
 	 */
-	public void setSemiMajorAxis(double semiMajorAxis) {
-		this.semiMajorAxis = semiMajorAxis;
+	public void setMethod(OperationMethod method) {
+		this.method = method;
 	}
 
 	/**
-	 * Get the inverse flattening
+	 * Get the parameters
 	 * 
-	 * @return inverse flattening
+	 * @return parameters
 	 */
-	public double getInverseFlattening() {
-		return inverseFlattening;
+	public List<Parameter> getParameters() {
+		return parameters;
 	}
 
 	/**
-	 * Set the inverse flattening
+	 * Has parameters
 	 * 
-	 * @param inverseFlattening
-	 *            inverse flattening
+	 * @return true if has parameters
 	 */
-	public void setInverseFlattening(double inverseFlattening) {
-		this.inverseFlattening = inverseFlattening;
+	public boolean hasParameters() {
+		return parameters != null && !parameters.isEmpty();
 	}
 
 	/**
-	 * Get the unit (length)
+	 * Set the parameters
 	 * 
-	 * @return unit (length)
+	 * @param parameters
+	 *            parameters
 	 */
-	public Unit getUnit() {
-		return unit;
+	public void setParameters(List<Parameter> parameters) {
+		this.parameters = parameters;
 	}
 
 	/**
-	 * Has a unit (length)
+	 * Add the parameter
 	 * 
-	 * @return true if has unit (length)
+	 * @param parameter
+	 *            parameter
 	 */
-	public boolean hasUnit() {
-		return getUnit() != null;
+	public void addParameter(Parameter parameter) {
+		if (this.parameters == null) {
+			this.parameters = new ArrayList<>();
+		}
+		this.parameters.add(parameter);
 	}
 
 	/**
-	 * Set the unit (length)
+	 * Add the parameters
 	 * 
-	 * @param unit
-	 *            unit (length)
+	 * @param parameters
+	 *            parameters
 	 */
-	public void setUnit(Unit unit) {
-		this.unit = unit;
+	public void addParameters(List<Parameter> parameters) {
+		if (this.parameters == null) {
+			this.parameters = new ArrayList<>();
+		}
+		this.parameters.addAll(parameters);
 	}
 
 	/**
@@ -220,13 +219,10 @@ public class Ellipsoid {
 		int result = 1;
 		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
-		long temp;
-		temp = Double.doubleToLongBits(inverseFlattening);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		result = prime * result + ((method == null) ? 0 : method.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		temp = Double.doubleToLongBits(semiMajorAxis);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result
+				+ ((parameters == null) ? 0 : parameters.hashCode());
 		return result;
 	}
 
@@ -241,27 +237,26 @@ public class Ellipsoid {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Ellipsoid other = (Ellipsoid) obj;
+		DerivingConversion other = (DerivingConversion) obj;
 		if (identifiers == null) {
 			if (other.identifiers != null)
 				return false;
 		} else if (!identifiers.equals(other.identifiers))
 			return false;
-		if (Double.doubleToLongBits(inverseFlattening) != Double
-				.doubleToLongBits(other.inverseFlattening))
-			return false;
-		if (unit == null) {
-			if (other.unit != null)
+		if (method == null) {
+			if (other.method != null)
 				return false;
-		} else if (!unit.equals(other.unit))
+		} else if (!method.equals(other.method))
 			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (Double.doubleToLongBits(semiMajorAxis) != Double
-				.doubleToLongBits(other.semiMajorAxis))
+		if (parameters == null) {
+			if (other.parameters != null)
+				return false;
+		} else if (!parameters.equals(other.parameters))
 			return false;
 		return true;
 	}
@@ -277,8 +272,8 @@ public class Ellipsoid {
 			writer.write(this);
 			value = writer.toString();
 		} catch (IOException e) {
-			logger.log(Level.WARNING, "Failed to write ellipsoid as a string",
-					e);
+			logger.log(Level.WARNING,
+					"Failed to write deriving conversion as a string", e);
 			value = super.toString();
 		} finally {
 			writer.close();

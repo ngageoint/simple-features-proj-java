@@ -15,7 +15,7 @@ public class EngineeringCoordinateReferenceSystem
 	/**
 	 * Engineering Datum
 	 */
-	private EngineeringDatum engineeringDatum = null;
+	private EngineeringDatum datum = null;
 
 	/**
 	 * Constructor
@@ -48,17 +48,17 @@ public class EngineeringCoordinateReferenceSystem
 	 * @return engineering datum
 	 */
 	public EngineeringDatum getEngineeringDatum() {
-		return engineeringDatum;
+		return datum;
 	}
 
 	/**
 	 * Set the engineering datum
 	 * 
-	 * @param engineeringDatum
+	 * @param datum
 	 *            engineering datum
 	 */
-	public void setEngineeringDatum(EngineeringDatum engineeringDatum) {
-		this.engineeringDatum = engineeringDatum;
+	public void setEngineeringDatum(EngineeringDatum datum) {
+		this.datum = datum;
 	}
 
 	/**
@@ -68,8 +68,7 @@ public class EngineeringCoordinateReferenceSystem
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((engineeringDatum == null) ? 0
-				: engineeringDatum.hashCode());
+		result = prime * result + ((datum == null) ? 0 : datum.hashCode());
 		return result;
 	}
 
@@ -85,10 +84,10 @@ public class EngineeringCoordinateReferenceSystem
 		if (getClass() != obj.getClass())
 			return false;
 		EngineeringCoordinateReferenceSystem other = (EngineeringCoordinateReferenceSystem) obj;
-		if (engineeringDatum == null) {
-			if (other.engineeringDatum != null)
+		if (datum == null) {
+			if (other.datum != null)
 				return false;
-		} else if (!engineeringDatum.equals(other.engineeringDatum))
+		} else if (!datum.equals(other.datum))
 			return false;
 		return true;
 	}

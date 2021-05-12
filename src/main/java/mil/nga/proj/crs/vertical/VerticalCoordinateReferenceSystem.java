@@ -110,9 +110,9 @@ public class VerticalCoordinateReferenceSystem
 	}
 
 	/**
-	 * Determine if has a geodetic reference frame
+	 * Determine if has a vertical reference frame
 	 * 
-	 * @return true if has geodetic reference frame
+	 * @return true if has vertical reference frame
 	 */
 	public boolean hasVerticalReferenceFrame() {
 		return getVerticalReferenceFrame() != null;

@@ -1,4 +1,4 @@
-package mil.nga.proj.crs.projected;
+package mil.nga.proj.crs.operation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,22 +7,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.crs.common.Identifier;
-import mil.nga.proj.crs.operation.OperationMethod;
-import mil.nga.proj.crs.operation.OperationParameter;
+import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
- * Map Projection
+ * Operation Parameter
  * 
  * @author osbornb
  */
-public class MapProjection {
+public class OperationParameter implements Parameter {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger logger = Logger
-			.getLogger(MapProjection.class.getName());
+			.getLogger(OperationParameter.class.getName());
 
 	/**
 	 * Name
@@ -30,14 +29,14 @@ public class MapProjection {
 	private String name = null;
 
 	/**
-	 * Method
+	 * Value
 	 */
-	private OperationMethod method = null;
+	private double value;
 
 	/**
-	 * Parameters
+	 * Unit
 	 */
-	private List<OperationParameter> parameters = null;
+	private Unit unit;
 
 	/**
 	 * Identifiers
@@ -47,7 +46,7 @@ public class MapProjection {
 	/**
 	 * Constructor
 	 */
-	public MapProjection() {
+	public OperationParameter() {
 
 	}
 
@@ -56,12 +55,12 @@ public class MapProjection {
 	 * 
 	 * @param name
 	 *            name
-	 * @param method
-	 *            method
+	 * @param value
+	 *            value
 	 */
-	public MapProjection(String name, OperationMethod method) {
+	public OperationParameter(String name, double value) {
 		setName(name);
-		setMethod(method);
+		setValue(value);
 	}
 
 	/**
@@ -84,76 +83,50 @@ public class MapProjection {
 	}
 
 	/**
-	 * Get the method
+	 * Get the value
 	 * 
-	 * @return method
+	 * @return value
 	 */
-	public OperationMethod getMethod() {
-		return method;
+	public double getValue() {
+		return value;
 	}
 
 	/**
-	 * Set the method
+	 * Set the value
 	 * 
-	 * @param method
-	 *            method
+	 * @param value
+	 *            value
 	 */
-	public void setMethod(OperationMethod method) {
-		this.method = method;
+	public void setValue(double value) {
+		this.value = value;
 	}
 
 	/**
-	 * Get the parameters
+	 * Get the unit
 	 * 
-	 * @return parameters
+	 * @return unit
 	 */
-	public List<OperationParameter> getParameters() {
-		return parameters;
+	public Unit getUnit() {
+		return unit;
 	}
 
 	/**
-	 * Has parameters
+	 * Has a unit
 	 * 
-	 * @return true if has parameters
+	 * @return true if has unit
 	 */
-	public boolean hasParameters() {
-		return parameters != null && !parameters.isEmpty();
+	public boolean hasUnit() {
+		return getUnit() != null;
 	}
 
 	/**
-	 * Set the parameters
+	 * Set the unit
 	 * 
-	 * @param parameters
-	 *            parameters
+	 * @param unit
+	 *            unit
 	 */
-	public void setParameters(List<OperationParameter> parameters) {
-		this.parameters = parameters;
-	}
-
-	/**
-	 * Add the parameter
-	 * 
-	 * @param parameter
-	 *            parameter
-	 */
-	public void addParameter(OperationParameter parameter) {
-		if (this.parameters == null) {
-			this.parameters = new ArrayList<>();
-		}
-		this.parameters.add(parameter);
-	}
-
-	/**
-	 * Add the parameters
-	 * 
-	 * @param parameters
-	 *            parameters
-	 */
-	public void addParameters(List<OperationParameter> parameters) {
-		if (this.parameters == null) {
-			this.parameters = new ArrayList<>();
-		}
-		this.parameters.addAll(parameters);
+	public void setUnit(Unit unit) {
+		this.unit = unit;
 	}
 
 	/**
@@ -219,10 +192,11 @@ public class MapProjection {
 		int result = 1;
 		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
-		result = prime * result + ((method == null) ? 0 : method.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((parameters == null) ? 0 : parameters.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(value);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -237,26 +211,24 @@ public class MapProjection {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MapProjection other = (MapProjection) obj;
+		OperationParameter other = (OperationParameter) obj;
 		if (identifiers == null) {
 			if (other.identifiers != null)
 				return false;
 		} else if (!identifiers.equals(other.identifiers))
-			return false;
-		if (method == null) {
-			if (other.method != null)
-				return false;
-		} else if (!method.equals(other.method))
 			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (parameters == null) {
-			if (other.parameters != null)
+		if (unit == null) {
+			if (other.unit != null)
 				return false;
-		} else if (!parameters.equals(other.parameters))
+		} else if (!unit.equals(other.unit))
+			return false;
+		if (Double.doubleToLongBits(value) != Double
+				.doubleToLongBits(other.value))
 			return false;
 		return true;
 	}
@@ -272,8 +244,8 @@ public class MapProjection {
 			writer.write(this);
 			value = writer.toString();
 		} catch (IOException e) {
-			logger.log(Level.WARNING,
-					"Failed to write map projection as a string", e);
+			logger.log(Level.WARNING, "Failed to write parameter as a string",
+					e);
 			value = super.toString();
 		} finally {
 			writer.close();

@@ -23,15 +23,19 @@ import mil.nga.proj.crs.common.TemporalExtent;
 import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.common.Usage;
 import mil.nga.proj.crs.common.VerticalExtent;
+import mil.nga.proj.crs.derived.DerivingConversion;
 import mil.nga.proj.crs.engineering.EngineeringCoordinateReferenceSystem;
-import mil.nga.proj.crs.geodetic.Ellipsoid;
-import mil.nga.proj.crs.geodetic.GeodeticCoordinateReferenceSystem;
-import mil.nga.proj.crs.geodetic.GeodeticDatumEnsemble;
-import mil.nga.proj.crs.geodetic.GeodeticReferenceFrame;
-import mil.nga.proj.crs.geodetic.PrimeMeridian;
+import mil.nga.proj.crs.geo.Ellipsoid;
+import mil.nga.proj.crs.geo.GeoCoordinateReferenceSystem;
+import mil.nga.proj.crs.geo.GeoDatumEnsemble;
+import mil.nga.proj.crs.geo.GeoReferenceFrame;
+import mil.nga.proj.crs.geo.PrimeMeridian;
+import mil.nga.proj.crs.operation.OperationMethod;
+import mil.nga.proj.crs.operation.OperationParameter;
+import mil.nga.proj.crs.operation.OperationParameterFile;
+import mil.nga.proj.crs.operation.Parameter;
 import mil.nga.proj.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.proj.crs.projected.MapProjection;
-import mil.nga.proj.crs.projected.MapProjectionParameter;
 import mil.nga.proj.crs.projected.ProjectedCoordinateReferenceSystem;
 import mil.nga.proj.crs.temporal.TemporalCoordinateReferenceSystem;
 import mil.nga.proj.crs.temporal.TemporalDatum;
@@ -287,7 +291,7 @@ public class CRSWriter implements Closeable {
 		switch (crs.getType()) {
 		case GEODETIC:
 		case GEOGRAPHIC:
-			writeCRS((GeodeticCoordinateReferenceSystem) crs);
+			writeCRS((GeoCoordinateReferenceSystem) crs);
 			break;
 		case PROJECTED:
 			writeCRS((ProjectedCoordinateReferenceSystem) crs);
@@ -428,8 +432,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeCRS(GeodeticCoordinateReferenceSystem crs)
-			throws IOException {
+	public void writeCRS(GeoCoordinateReferenceSystem crs) throws IOException {
 
 		CoordinateReferenceSystemKeyword keyword = null;
 		switch (crs.getType()) {
@@ -456,10 +459,10 @@ public class CRSWriter implements Closeable {
 		}
 
 		writeSeparator();
-		if (crs.hasDynamic() || crs.hasGeodeticReferenceFrame()) {
-			write(crs.getGeodeticReferenceFrame());
+		if (crs.hasDynamic() || crs.hasReferenceFrame()) {
+			write(crs.getReferenceFrame());
 		} else {
-			write(crs.getGeodeticDatumEnsemble());
+			write(crs.getDatumEnsemble());
 		}
 
 		writeSeparator();
@@ -514,10 +517,10 @@ public class CRSWriter implements Closeable {
 		}
 
 		writeSeparator();
-		if (crs.hasDynamic() || crs.hasGeodeticReferenceFrame()) {
-			write(crs.getGeodeticReferenceFrame());
+		if (crs.hasDynamic() || crs.hasReferenceFrame()) {
+			write(crs.getReferenceFrame());
 		} else {
-			write(crs.getGeodeticDatumEnsemble());
+			write(crs.getDatumEnsemble());
 		}
 
 		if (crs.hasUnit()) {
@@ -638,7 +641,7 @@ public class CRSWriter implements Closeable {
 		writeQuotedText(crs.getName());
 
 		writeSeparator();
-		write(crs.getParametricDatum());
+		write(crs.getDatum());
 
 		writeSeparator();
 		write(crs.getCoordinateSystem());
@@ -666,7 +669,7 @@ public class CRSWriter implements Closeable {
 		writeQuotedText(crs.getName());
 
 		writeSeparator();
-		write(crs.getTemporalDatum());
+		write(crs.getDatum());
 
 		writeSeparator();
 		write(crs.getCoordinateSystem());
@@ -714,9 +717,9 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(ReferenceFrame referenceFrame) throws IOException {
 
-		GeodeticReferenceFrame geodeticReferenceFrame = null;
-		if (referenceFrame instanceof GeodeticReferenceFrame) {
-			geodeticReferenceFrame = (GeodeticReferenceFrame) referenceFrame;
+		GeoReferenceFrame geodeticReferenceFrame = null;
+		if (referenceFrame instanceof GeoReferenceFrame) {
+			geodeticReferenceFrame = (GeoReferenceFrame) referenceFrame;
 		}
 
 		switch (referenceFrame.getType()) {
@@ -780,9 +783,9 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(DatumEnsemble datumEnsemble) throws IOException {
 
-		GeodeticDatumEnsemble geodeticDatumEnsemble = null;
-		if (datumEnsemble instanceof GeodeticDatumEnsemble) {
-			geodeticDatumEnsemble = (GeodeticDatumEnsemble) datumEnsemble;
+		GeoDatumEnsemble geodeticDatumEnsemble = null;
+		if (datumEnsemble instanceof GeoDatumEnsemble) {
+			geodeticDatumEnsemble = (GeoDatumEnsemble) datumEnsemble;
 		}
 
 		write(CoordinateReferenceSystemKeyword.ENSEMBLE);
@@ -1411,22 +1414,11 @@ public class CRSWriter implements Closeable {
 
 		writeSeparator();
 
-		write(CoordinateReferenceSystemKeyword.METHOD);
-
-		writeLeftDelimiter();
-
-		writeQuotedText(mapProjection.getMethodName());
-
-		if (mapProjection.hasMethodIdentifiers()) {
-			writeSeparator();
-			writeIdentifiers(mapProjection.getMethodIdentifiers());
-		}
-
-		writeRightDelimiter();
+		write(mapProjection.getMethod());
 
 		if (mapProjection.hasParameters()) {
 			writeSeparator();
-			writeMapProjectionParameters(mapProjection.getParameters());
+			writeParameters(mapProjection.getParameters());
 		}
 
 		if (mapProjection.hasIdentifiers()) {
@@ -1438,15 +1430,39 @@ public class CRSWriter implements Closeable {
 	}
 
 	/**
-	 * Write map projection parameters to well-known text
+	 * Write an operation method to well-known text
 	 * 
-	 * @param parameters
-	 *            map projection parameters
+	 * @param method
+	 *            operation method
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeMapProjectionParameters(
-			List<MapProjectionParameter> parameters) throws IOException {
+	public void write(OperationMethod method) throws IOException {
+
+		write(CoordinateReferenceSystemKeyword.METHOD);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(method.getName());
+
+		if (method.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(method.getIdentifiers());
+		}
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write operation parameters to well-known text
+	 * 
+	 * @param parameters
+	 *            operation parameters
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeParameters(List<OperationParameter> parameters)
+			throws IOException {
 
 		for (int i = 0; i < parameters.size(); i++) {
 
@@ -1460,14 +1476,14 @@ public class CRSWriter implements Closeable {
 	}
 
 	/**
-	 * Write a map projection parameter to well-known text
+	 * Write an operation parameter to well-known text
 	 * 
 	 * @param parameter
-	 *            map projection parameter
+	 *            operation parameter
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void write(MapProjectionParameter parameter) throws IOException {
+	public void write(OperationParameter parameter) throws IOException {
 
 		write(CoordinateReferenceSystemKeyword.PARAMETER);
 
@@ -1533,6 +1549,78 @@ public class CRSWriter implements Closeable {
 		}
 
 		writeRightDelimiter();
+	}
+
+	/**
+	 * Write a deriving conversion to well-known text
+	 * 
+	 * @param derivingConversion
+	 *            deriving conversion
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(DerivingConversion derivingConversion)
+			throws IOException {
+
+		// TODO
+
+	}
+
+	/**
+	 * Write operation parameters and operation parameter files to well-known
+	 * text
+	 * 
+	 * @param parameters
+	 *            operation parameters
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeParametersAndFiles(List<Parameter> parameters)
+			throws IOException {
+
+		for (int i = 0; i < parameters.size(); i++) {
+
+			if (i > 0) {
+				writeSeparator();
+			}
+
+			write(parameters.get(i));
+		}
+
+	}
+
+	/**
+	 * Write a parameter to well-known text
+	 * 
+	 * @param parameter
+	 *            parameter
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(Parameter parameter) throws IOException {
+
+		if (parameter instanceof OperationParameter) {
+			write((OperationParameter) parameter);
+		} else if (parameter instanceof OperationParameterFile) {
+			write((OperationParameterFile) parameter);
+		} else {
+			// TODO
+		}
+
+	}
+
+	/**
+	 * Write an operation parameter to well-known text
+	 * 
+	 * @param file
+	 *            operation parameter file
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(OperationParameterFile file) throws IOException {
+
+		// TODO
+
 	}
 
 }
