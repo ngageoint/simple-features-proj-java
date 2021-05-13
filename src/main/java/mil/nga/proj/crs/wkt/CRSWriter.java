@@ -23,6 +23,7 @@ import mil.nga.proj.crs.common.TemporalExtent;
 import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.common.Usage;
 import mil.nga.proj.crs.common.VerticalExtent;
+import mil.nga.proj.crs.derived.DerivedCoordinateReferenceSystem;
 import mil.nga.proj.crs.derived.DerivingConversion;
 import mil.nga.proj.crs.engineering.EngineeringCoordinateReferenceSystem;
 import mil.nga.proj.crs.geo.Ellipsoid;
@@ -307,6 +308,9 @@ public class CRSWriter implements Closeable {
 			break;
 		case TEMPORAL:
 			writeCRS((TemporalCoordinateReferenceSystem) crs);
+			break;
+		case DERIVED:
+			writeCRS((DerivedCoordinateReferenceSystem) crs);
 			break;
 		default:
 			throw new ProjectionException(
@@ -670,6 +674,104 @@ public class CRSWriter implements Closeable {
 
 		writeSeparator();
 		write(crs.getDatum());
+
+		writeSeparator();
+		write(crs.getCoordinateSystem());
+
+		writeScopeExtentIdentifierRemark(crs);
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write a derived CRS to well-known text
+	 * 
+	 * @param crs
+	 *            temporal coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeCRS(DerivedCoordinateReferenceSystem crs)
+			throws IOException {
+
+		switch (crs.getBaseType()) {
+		case GEODETIC:
+		case GEOGRAPHIC:
+			writeDerivedGeoCRS(crs);
+			break;
+		default:
+			throw new ProjectionException(
+					"Unsupported derived base CRS type: " + crs.getBaseType());
+		}
+
+	}
+
+	/**
+	 * Write a derived geo CRS to well-known text
+	 * 
+	 * @param crs
+	 *            derived geo coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeDerivedGeoCRS(DerivedCoordinateReferenceSystem crs)
+			throws IOException {
+
+		CoordinateReferenceSystemKeyword keyword = null;
+		CoordinateReferenceSystemKeyword baseKeyword = null;
+		switch (crs.getBaseType()) {
+		case GEODETIC:
+			keyword = CoordinateReferenceSystemKeyword.GEODCRS;
+			baseKeyword = CoordinateReferenceSystemKeyword.BASEGEODCRS;
+			break;
+		case GEOGRAPHIC:
+			keyword = CoordinateReferenceSystemKeyword.GEOGCRS;
+			baseKeyword = CoordinateReferenceSystemKeyword.BASEGEOGCRS;
+			break;
+		default:
+			throw new ProjectionException(
+					"Invalid Derived Geodetic or Geographic Coordinate Reference System Type: "
+							+ crs.getType());
+		}
+
+		GeoCoordinateReferenceSystem baseCrs = (GeoCoordinateReferenceSystem) crs
+				.getBase();
+
+		write(keyword);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(crs.getName());
+
+		writeSeparator();
+
+		write(baseKeyword);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(baseCrs.getName());
+
+		if (baseCrs.hasDynamic()) {
+			writeSeparator();
+			write(baseCrs.getDynamic());
+		}
+
+		writeSeparator();
+		if (baseCrs.hasDynamic() || baseCrs.hasReferenceFrame()) {
+			write(baseCrs.getReferenceFrame());
+		} else {
+			write(baseCrs.getDatumEnsemble());
+		}
+
+		if (baseCrs.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(baseCrs.getIdentifiers());
+		}
+
+		writeRightDelimiter();
+
+		writeSeparator();
+		write(crs.getConversion());
 
 		writeSeparator();
 		write(crs.getCoordinateSystem());
@@ -1562,8 +1664,27 @@ public class CRSWriter implements Closeable {
 	public void write(DerivingConversion derivingConversion)
 			throws IOException {
 
-		// TODO
+		write(CoordinateReferenceSystemKeyword.DERIVINGCONVERSION);
 
+		writeLeftDelimiter();
+
+		writeQuotedText(derivingConversion.getName());
+
+		writeSeparator();
+
+		write(derivingConversion.getMethod());
+
+		if (derivingConversion.hasParameters()) {
+			writeSeparator();
+			writeParametersAndFiles(derivingConversion.getParameters());
+		}
+
+		if (derivingConversion.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(derivingConversion.getIdentifiers());
+		}
+
+		writeRightDelimiter();
 	}
 
 	/**
@@ -1604,7 +1725,8 @@ public class CRSWriter implements Closeable {
 		} else if (parameter instanceof OperationParameterFile) {
 			write((OperationParameterFile) parameter);
 		} else {
-			// TODO
+			throw new ProjectionException("Unsupported parameter type: "
+					+ parameter.getClass().getSimpleName());
 		}
 
 	}
@@ -1619,8 +1741,22 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(OperationParameterFile file) throws IOException {
 
-		// TODO
+		write(CoordinateReferenceSystemKeyword.PARAMETERFILE);
 
+		writeLeftDelimiter();
+
+		writeQuotedText(file.getName());
+
+		writeSeparator();
+
+		writeQuotedText(file.getFileName());
+
+		if (file.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(file.getIdentifiers());
+		}
+
+		writeRightDelimiter();
 	}
 
 }

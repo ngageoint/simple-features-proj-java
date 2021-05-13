@@ -44,6 +44,7 @@ import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
 import mil.nga.proj.crs.operation.OperationMethod;
 import mil.nga.proj.crs.operation.OperationParameter;
+import mil.nga.proj.crs.operation.OperationParameterFile;
 import mil.nga.proj.crs.operation.Parameter;
 import mil.nga.proj.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.proj.crs.parametric.ParametricDatum;
@@ -1233,6 +1234,7 @@ public class CRSReader implements Closeable {
 			}
 
 			derived = new DerivedCoordinateReferenceSystem();
+			derived.setBase(baseCrs);
 			crs = derived;
 
 			readLeftDelimiter();
@@ -1252,7 +1254,7 @@ public class CRSReader implements Closeable {
 				|| isKeywordNext(CoordinateReferenceSystemKeyword.DATUM)) {
 			readSeparator();
 			GeoReferenceFrame referenceFrame = readGeoReferenceFrame();
-			referenceFrame.setType(crs.getType());
+			referenceFrame.setType(baseCrs.getType());
 			baseCrs.setReferenceFrame(referenceFrame);
 		} else if (isKeywordNext(CoordinateReferenceSystemKeyword.ENSEMBLE)) {
 			readSeparator();
@@ -2955,12 +2957,49 @@ public class CRSReader implements Closeable {
 				readSeparator();
 			}
 
-			parameters.add(readParameter(type)); // TODO parameters and files
+			if (isKeywordNext(CoordinateReferenceSystemKeyword.PARAMETERFILE)) {
+				parameters.add(readParameterFile());
+			} else {
+				parameters.add(readParameter(type));
+			}
 
 		} while (isKeywordNext(CoordinateReferenceSystemKeyword.PARAMETER,
 				CoordinateReferenceSystemKeyword.PARAMETERFILE));
 
 		return parameters;
+	}
+
+	/**
+	 * Read an Operation parameter file
+	 * 
+	 * @return operation parameter file
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public OperationParameterFile readParameterFile() throws IOException {
+
+		OperationParameterFile parameterFile = new OperationParameterFile();
+
+		readKeyword(CoordinateReferenceSystemKeyword.PARAMETERFILE);
+
+		readLeftDelimiter();
+
+		parameterFile.setName(reader.readExpectedToken());
+
+		readSeparator();
+
+		parameterFile.setFileName(reader.readExpectedToken());
+
+		CoordinateReferenceSystemKeyword keyword = readToKeyword(
+				CoordinateReferenceSystemKeyword.ID);
+
+		if (keyword == CoordinateReferenceSystemKeyword.ID) {
+			parameterFile.setIdentifiers(readIdentifiers());
+		}
+
+		readRightDelimiter();
+
+		return parameterFile;
 	}
 
 	/**

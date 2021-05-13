@@ -64,20 +64,17 @@ public class OperationParameter implements Parameter {
 	}
 
 	/**
-	 * Get the name
-	 * 
-	 * @return name
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * Set the name
-	 * 
-	 * @param name
-	 *            name
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -130,39 +127,33 @@ public class OperationParameter implements Parameter {
 	}
 
 	/**
-	 * Get the identifiers
-	 * 
-	 * @return identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Identifier> getIdentifiers() {
 		return identifiers;
 	}
 
 	/**
-	 * Has identifiers
-	 * 
-	 * @return true if has identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasIdentifiers() {
 		return identifiers != null && !identifiers.isEmpty();
 	}
 
 	/**
-	 * Set the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setIdentifiers(List<Identifier> identifiers) {
 		this.identifiers = identifiers;
 	}
 
 	/**
-	 * Add the identifier
-	 * 
-	 * @param identifier
-	 *            identifier
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifier(Identifier identifier) {
 		if (this.identifiers == null) {
 			this.identifiers = new ArrayList<>();
@@ -171,11 +162,9 @@ public class OperationParameter implements Parameter {
 	}
 
 	/**
-	 * Add the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifiers(List<Identifier> identifiers) {
 		if (this.identifiers == null) {
 			this.identifiers = new ArrayList<>();

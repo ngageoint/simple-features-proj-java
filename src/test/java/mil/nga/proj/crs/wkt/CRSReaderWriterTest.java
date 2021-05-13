@@ -27,12 +27,15 @@ import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.common.UnitType;
 import mil.nga.proj.crs.common.Usage;
 import mil.nga.proj.crs.common.VerticalExtent;
+import mil.nga.proj.crs.derived.DerivedCoordinateReferenceSystem;
+import mil.nga.proj.crs.derived.DerivingConversion;
 import mil.nga.proj.crs.engineering.EngineeringCoordinateReferenceSystem;
 import mil.nga.proj.crs.geo.Ellipsoid;
 import mil.nga.proj.crs.geo.GeoCoordinateReferenceSystem;
 import mil.nga.proj.crs.geo.GeoDatumEnsemble;
 import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
+import mil.nga.proj.crs.operation.OperationParameter;
 import mil.nga.proj.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.proj.crs.projected.MapProjection;
 import mil.nga.proj.crs.projected.ProjectedCoordinateReferenceSystem;
@@ -3054,6 +3057,202 @@ public class CRSReaderWriterTest {
 		assertEquals(text, temporalCrs.toString());
 		assertEquals(text, CRSWriter.write(temporalCrs));
 		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(temporalCrs));
+
+	}
+
+	/**
+	 * Test deriving conversion
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testDerivingConversion() throws IOException {
+
+		String text = "DERIVINGCONVERSION[\"conversion name\","
+				+ "METHOD[\"method name\",ID[\"authority\",123]],"
+				+ "PARAMETER[\"parameter 1 name\",0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],"
+				+ "ID[\"authority\",456]],"
+				+ "PARAMETER[\"parameter 2 name\",-123,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],"
+				+ "ID[\"authority\",789]]]";
+		CRSReader reader = new CRSReader(text);
+		DerivingConversion derivingConversion = reader.readDerivingConversion();
+		assertEquals("conversion name", derivingConversion.getName());
+		assertEquals("method name", derivingConversion.getMethod().getName());
+		assertEquals("authority", derivingConversion.getMethod()
+				.getIdentifiers().get(0).getName());
+		assertEquals("123", derivingConversion.getMethod().getIdentifiers()
+				.get(0).getUniqueIdentifier());
+		assertEquals("parameter 1 name",
+				derivingConversion.getParameters().get(0).getName());
+		assertEquals(0,
+				((OperationParameter) derivingConversion.getParameters().get(0))
+						.getValue(),
+				0);
+		assertEquals(UnitType.ANGLEUNIT,
+				((OperationParameter) derivingConversion.getParameters().get(0))
+						.getUnit().getType());
+		assertEquals("degree",
+				((OperationParameter) derivingConversion.getParameters().get(0))
+						.getUnit().getName());
+		assertEquals(0.0174532925199433,
+				((OperationParameter) derivingConversion.getParameters().get(0))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("authority", derivingConversion.getParameters().get(0)
+				.getIdentifiers().get(0).getName());
+		assertEquals("456", derivingConversion.getParameters().get(0)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("parameter 2 name",
+				derivingConversion.getParameters().get(1).getName());
+		assertEquals(-123,
+				((OperationParameter) derivingConversion.getParameters().get(1))
+						.getValue(),
+				0);
+		assertEquals(UnitType.ANGLEUNIT,
+				((OperationParameter) derivingConversion.getParameters().get(1))
+						.getUnit().getType());
+		assertEquals("degree",
+				((OperationParameter) derivingConversion.getParameters().get(1))
+						.getUnit().getName());
+		assertEquals(0.0174532925199433,
+				((OperationParameter) derivingConversion.getParameters().get(1))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("authority", derivingConversion.getParameters().get(1)
+				.getIdentifiers().get(0).getName());
+		assertEquals("789", derivingConversion.getParameters().get(1)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		reader.close();
+		text = text.replace(",0,", ",0.0,").replace(",-123,", ",-123.0,");
+		assertEquals(text, derivingConversion.toString());
+
+	}
+
+	/**
+	 * Test derived geographic coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testDerivedGeographicCoordinateReferenceSystem()
+			throws IOException {
+
+		String text = "GEOGCRS[\"WMO Atlantic Pole\","
+				+ "BASEGEOGCRS[\"WGS 84 (G1762)\","
+				+ "DYNAMIC[FRAMEEPOCH[2005.0]],"
+				+ "TRF[\"World Geodetic System 1984 (G1762)\","
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1.0]]]],"
+				+ "DERIVINGCONVERSION[\"Atlantic pole\","
+				+ "METHOD[\"Pole rotation\",ID[\"Authority\",1234]],"
+				+ "PARAMETER[\"Latitude of rotated pole\",52.0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"Longitude of rotated pole\",-30.0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"Axis rotation\",-25.0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]]],"
+				+ "CS[ellipsoidal,2],"
+				+ "AXIS[\"latitude\",north,ORDER[1]],AXIS[\"longitude\",east,ORDER[2]],"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		DerivedCoordinateReferenceSystem derivedCrs = CRSReader
+				.readDerived(text);
+		assertEquals(crs, derivedCrs);
+		assertEquals(CoordinateReferenceSystemType.DERIVED,
+				derivedCrs.getType());
+		assertEquals("WMO Atlantic Pole", derivedCrs.getName());
+		assertEquals("WGS 84 (G1762)", derivedCrs.getBaseName());
+		GeoCoordinateReferenceSystem baseCrs = (GeoCoordinateReferenceSystem) derivedCrs
+				.getBase();
+		assertEquals(2005.0, baseCrs.getDynamic().getReferenceEpoch(), 0);
+		assertEquals("World Geodetic System 1984 (G1762)",
+				baseCrs.getReferenceFrame().getName());
+		assertEquals("WGS 84",
+				baseCrs.getReferenceFrame().getEllipsoid().getName());
+		assertEquals(6378137,
+				baseCrs.getReferenceFrame().getEllipsoid().getSemiMajorAxis(),
+				0);
+		assertEquals(298.257223563, baseCrs.getReferenceFrame().getEllipsoid()
+				.getInverseFlattening(), 0);
+		assertEquals(UnitType.LENGTHUNIT,
+				baseCrs.getReferenceFrame().getEllipsoid().getUnit().getType());
+		assertEquals("metre",
+				baseCrs.getReferenceFrame().getEllipsoid().getUnit().getName());
+		assertEquals(1.0, baseCrs.getReferenceFrame().getEllipsoid().getUnit()
+				.getConversionFactor(), 0);
+		assertEquals("Atlantic pole", derivedCrs.getConversion().getName());
+		assertEquals("Pole rotation",
+				derivedCrs.getConversion().getMethod().getName());
+		assertEquals("Authority", derivedCrs.getConversion().getMethod()
+				.getIdentifiers().get(0).getName());
+		assertEquals("1234", derivedCrs.getConversion().getMethod()
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Latitude of rotated pole",
+				derivedCrs.getConversion().getParameters().get(0).getName());
+		assertEquals(52.0, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(0)).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(0)).getUnit().getType());
+		assertEquals("degree", ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(0)).getUnit().getName());
+		assertEquals(0.0174532925199433,
+				((OperationParameter) derivedCrs.getConversion().getParameters()
+						.get(0)).getUnit().getConversionFactor(),
+				0);
+		assertEquals("Longitude of rotated pole",
+				derivedCrs.getConversion().getParameters().get(1).getName());
+		assertEquals(-30.0, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(1)).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(1)).getUnit().getType());
+		assertEquals("degree", ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(1)).getUnit().getName());
+		assertEquals(0.0174532925199433,
+				((OperationParameter) derivedCrs.getConversion().getParameters()
+						.get(1)).getUnit().getConversionFactor(),
+				0);
+		assertEquals("Axis rotation",
+				derivedCrs.getConversion().getParameters().get(2).getName());
+		assertEquals(-25.0, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(2)).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(2)).getUnit().getType());
+		assertEquals("degree", ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(2)).getUnit().getName());
+		assertEquals(0.0174532925199433,
+				((OperationParameter) derivedCrs.getConversion().getParameters()
+						.get(2)).getUnit().getConversionFactor(),
+				0);
+		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
+				derivedCrs.getCoordinateSystem().getType());
+		assertEquals(2, derivedCrs.getCoordinateSystem().getDimension());
+		assertEquals("latitude",
+				derivedCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals(AxisDirectionType.NORTH, derivedCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals(1, derivedCrs.getCoordinateSystem().getAxes().get(0)
+				.getOrder().intValue());
+		assertEquals("longitude",
+				derivedCrs.getCoordinateSystem().getAxes().get(1).getName());
+		assertEquals(AxisDirectionType.EAST, derivedCrs.getCoordinateSystem()
+				.getAxes().get(1).getDirection());
+		assertEquals(2, derivedCrs.getCoordinateSystem().getAxes().get(1)
+				.getOrder().intValue());
+		assertEquals(UnitType.ANGLEUNIT,
+				derivedCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("degree",
+				derivedCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(0.0174532925199433, derivedCrs.getCoordinateSystem()
+				.getUnit().getConversionFactor(), 0);
+		text = text.replaceAll("TRF", "DATUM").replaceAll("6378137",
+				"6378137.0");
+		assertEquals(text, derivedCrs.toString());
+		assertEquals(text, CRSWriter.write(derivedCrs));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(derivedCrs));
 
 	}
 
