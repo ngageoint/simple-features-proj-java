@@ -494,8 +494,6 @@ public class CRSWriter implements Closeable {
 
 		writeQuotedText(crs.getName());
 
-		writeSeparator();
-
 		CoordinateReferenceSystemKeyword baseKeyword = null;
 		switch (crs.getBaseType()) {
 		case GEODETIC:
@@ -509,6 +507,8 @@ public class CRSWriter implements Closeable {
 					"Invalid Geodetic or Geographic Base Coordinate Reference System Type: "
 							+ crs.getBaseType());
 		}
+
+		writeSeparator();
 		write(baseKeyword);
 
 		writeLeftDelimiter();
@@ -699,6 +699,9 @@ public class CRSWriter implements Closeable {
 		case GEOGRAPHIC:
 			writeDerivedGeoCRS(crs);
 			break;
+		case PROJECTED:
+			writeDerivedProjectedCRS(crs);
+			break;
 		default:
 			throw new ProjectionException(
 					"Unsupported derived base CRS type: " + crs.getBaseType());
@@ -744,7 +747,6 @@ public class CRSWriter implements Closeable {
 		writeQuotedText(crs.getName());
 
 		writeSeparator();
-
 		write(baseKeyword);
 
 		writeLeftDelimiter();
@@ -766,6 +768,94 @@ public class CRSWriter implements Closeable {
 		if (baseCrs.hasIdentifiers()) {
 			writeSeparator();
 			writeIdentifiers(baseCrs.getIdentifiers());
+		}
+
+		writeRightDelimiter();
+
+		writeSeparator();
+		write(crs.getConversion());
+
+		writeSeparator();
+		write(crs.getCoordinateSystem());
+
+		writeScopeExtentIdentifierRemark(crs);
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write a derived projected CRS to well-known text
+	 * 
+	 * @param crs
+	 *            derived projected coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeDerivedProjectedCRS(DerivedCoordinateReferenceSystem crs)
+			throws IOException {
+
+		ProjectedCoordinateReferenceSystem projectedCrs = (ProjectedCoordinateReferenceSystem) crs
+				.getBase();
+
+		write(CoordinateReferenceSystemKeyword.DERIVEDPROJCRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(crs.getName());
+
+		writeSeparator();
+		write(CoordinateReferenceSystemKeyword.BASEPROJCRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(projectedCrs.getName());
+
+		CoordinateReferenceSystemKeyword keyword = null;
+		switch (projectedCrs.getBaseType()) {
+		case GEODETIC:
+			keyword = CoordinateReferenceSystemKeyword.BASEGEODCRS;
+			break;
+		case GEOGRAPHIC:
+			keyword = CoordinateReferenceSystemKeyword.BASEGEOGCRS;
+			break;
+		default:
+			throw new ProjectionException(
+					"Invalid Derived Projected Geodetic or Geographic Coordinate Reference System Type: "
+							+ crs.getType());
+		}
+
+		writeSeparator();
+		write(keyword);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(projectedCrs.getBaseName());
+
+		if (projectedCrs.hasDynamic()) {
+			writeSeparator();
+			write(projectedCrs.getDynamic());
+		}
+
+		writeSeparator();
+		if (projectedCrs.hasDynamic() || projectedCrs.hasReferenceFrame()) {
+			write(projectedCrs.getReferenceFrame());
+		} else {
+			write(projectedCrs.getDatumEnsemble());
+		}
+
+		if (projectedCrs.hasBaseIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(projectedCrs.getBaseIdentifiers());
+		}
+
+		writeRightDelimiter();
+
+		writeSeparator();
+		write(projectedCrs.getMapProjection());
+
+		if (projectedCrs.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(projectedCrs.getIdentifiers());
 		}
 
 		writeRightDelimiter();

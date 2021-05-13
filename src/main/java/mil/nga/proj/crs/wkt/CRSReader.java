@@ -661,6 +661,9 @@ public class CRSReader implements Closeable {
 		case TIMECRS:
 			crs = readTemporal();
 			break;
+		case DERIVEDPROJCRS:
+			crs = readDerivedProjected();
+			break;
 		default:
 			throw new ProjectionException(
 					"Unsupported WKT CRS keyword: " + keyword);
@@ -1206,12 +1209,12 @@ public class CRSReader implements Closeable {
 
 		GeoCoordinateReferenceSystem baseCrs = new GeoCoordinateReferenceSystem();
 		CoordinateReferenceSystem crs = baseCrs;
-		DerivedCoordinateReferenceSystem derived = null;
+		DerivedCoordinateReferenceSystem derivedCrs = null;
 
-		CoordinateReferenceSystemKeyword type = readKeyword(
+		CoordinateReferenceSystemKeyword keyword = readKeyword(
 				CoordinateReferenceSystemKeyword.GEODCRS,
 				CoordinateReferenceSystemKeyword.GEOGCRS);
-		crs.setType(WKTUtils.getCoordinateReferenceSystemType(type));
+		crs.setType(WKTUtils.getCoordinateReferenceSystemType(keyword));
 
 		readLeftDelimiter();
 
@@ -1220,7 +1223,7 @@ public class CRSReader implements Closeable {
 		if (isKeywordNext(CoordinateReferenceSystemKeyword.BASEGEODCRS,
 				CoordinateReferenceSystemKeyword.BASEGEOGCRS)) {
 
-			switch (type) {
+			switch (keyword) {
 			case GEODCRS:
 				readKeyword(CoordinateReferenceSystemKeyword.BASEGEODCRS);
 				break;
@@ -1230,12 +1233,12 @@ public class CRSReader implements Closeable {
 			default:
 				throw new ProjectionException(
 						"Unsupported Coordinate Reference System Type: "
-								+ type);
+								+ keyword);
 			}
 
-			derived = new DerivedCoordinateReferenceSystem();
-			derived.setBase(baseCrs);
-			crs = derived;
+			derivedCrs = new DerivedCoordinateReferenceSystem();
+			derivedCrs.setBase(baseCrs);
+			crs = derivedCrs;
 
 			readLeftDelimiter();
 			baseCrs.setName(reader.readExpectedToken());
@@ -1266,10 +1269,9 @@ public class CRSReader implements Closeable {
 					CoordinateReferenceSystemKeyword.ENSEMBLE);
 		}
 
-		if (derived != null) {
+		if (derivedCrs != null) {
 
-			CoordinateReferenceSystemKeyword keyword = readToKeyword(
-					CoordinateReferenceSystemKeyword.ID);
+			keyword = readToKeyword(CoordinateReferenceSystemKeyword.ID);
 			if (keyword == CoordinateReferenceSystemKeyword.ID) {
 				baseCrs.setIdentifiers(readIdentifiers());
 			}
@@ -1277,7 +1279,7 @@ public class CRSReader implements Closeable {
 			readRightDelimiter();
 
 			readSeparator();
-			derived.setConversion(readDerivingConversion());
+			derivedCrs.setConversion(readDerivingConversion());
 
 		}
 
@@ -1569,6 +1571,101 @@ public class CRSReader implements Closeable {
 		readSeparator();
 
 		crs.setTemporalDatum(readTemporalDatum());
+
+		readSeparator();
+
+		crs.setCoordinateSystem(readCoordinateSystem());
+
+		readScopeExtentIdentifierRemark(crs);
+
+		readRightDelimiter();
+
+		return crs;
+	}
+
+	/**
+	 * Read a Derived Projected CRS
+	 * 
+	 * @return derived coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public DerivedCoordinateReferenceSystem readDerivedProjected()
+			throws IOException {
+
+		DerivedCoordinateReferenceSystem crs = new DerivedCoordinateReferenceSystem();
+		ProjectedCoordinateReferenceSystem projectedCrs = new ProjectedCoordinateReferenceSystem();
+		crs.setBase(projectedCrs);
+
+		readKeyword(CoordinateReferenceSystemKeyword.DERIVEDPROJCRS);
+
+		readLeftDelimiter();
+
+		crs.setName(reader.readExpectedToken());
+
+		readSeparator();
+
+		readKeyword(CoordinateReferenceSystemKeyword.BASEPROJCRS);
+
+		readLeftDelimiter();
+
+		projectedCrs.setName(reader.readExpectedToken());
+
+		readSeparator();
+
+		CoordinateReferenceSystemKeyword keyword = readKeyword(
+				CoordinateReferenceSystemKeyword.BASEGEODCRS,
+				CoordinateReferenceSystemKeyword.BASEGEOGCRS);
+		projectedCrs.setBaseType(
+				WKTUtils.getCoordinateReferenceSystemType(keyword));
+
+		readLeftDelimiter();
+		projectedCrs.setBaseName(reader.readExpectedToken());
+
+		boolean isDynamic = isKeywordNext(
+				CoordinateReferenceSystemKeyword.DYNAMIC);
+		if (isDynamic) {
+			readSeparator();
+			projectedCrs.setDynamic(readDynamic());
+		}
+
+		if (isDynamic
+				|| isKeywordNext(CoordinateReferenceSystemKeyword.DATUM)) {
+			readSeparator();
+			GeoReferenceFrame referenceFrame = readGeoReferenceFrame();
+			referenceFrame.setType(projectedCrs.getBaseType());
+			projectedCrs.setReferenceFrame(referenceFrame);
+		} else if (isKeywordNext(CoordinateReferenceSystemKeyword.ENSEMBLE)) {
+			readSeparator();
+			projectedCrs.setDatumEnsemble(readGeoDatumEnsemble());
+		} else {
+			// Validation error
+			readSeparator();
+			readKeyword(CoordinateReferenceSystemKeyword.DATUM,
+					CoordinateReferenceSystemKeyword.ENSEMBLE);
+		}
+
+		keyword = readToKeyword(CoordinateReferenceSystemKeyword.ID);
+		if (keyword == CoordinateReferenceSystemKeyword.ID) {
+			projectedCrs.setBaseIdentifiers(readIdentifiers());
+		}
+
+		readRightDelimiter();
+
+		readSeparator();
+
+		projectedCrs.setMapProjection(readMapProjection());
+
+		keyword = readToKeyword(CoordinateReferenceSystemKeyword.ID);
+		if (keyword == CoordinateReferenceSystemKeyword.ID) {
+			projectedCrs.setIdentifiers(readIdentifiers());
+		}
+
+		readRightDelimiter();
+
+		readSeparator();
+
+		crs.setConversion(readDerivingConversion());
 
 		readSeparator();
 

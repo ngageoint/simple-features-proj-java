@@ -3165,6 +3165,8 @@ public class CRSReaderWriterTest {
 		assertEquals(CoordinateReferenceSystemType.DERIVED,
 				derivedCrs.getType());
 		assertEquals("WMO Atlantic Pole", derivedCrs.getName());
+		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
+				derivedCrs.getBaseType());
 		assertEquals("WGS 84 (G1762)", derivedCrs.getBaseName());
 		GeoCoordinateReferenceSystem baseCrs = (GeoCoordinateReferenceSystem) derivedCrs
 				.getBase();
@@ -3250,6 +3252,150 @@ public class CRSReaderWriterTest {
 				.getUnit().getConversionFactor(), 0);
 		text = text.replaceAll("TRF", "DATUM").replaceAll("6378137",
 				"6378137.0");
+		assertEquals(text, derivedCrs.toString());
+		assertEquals(text, CRSWriter.write(derivedCrs));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(derivedCrs));
+
+	}
+
+	/**
+	 * Test derived projected coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testDerivedProjectedCoordinateReferenceSystem()
+			throws IOException {
+
+		String text = "DERIVEDPROJCRS[\"Gulf of Mexico speculative seismic survey bin grid\","
+				+ "BASEPROJCRS[\"NAD27 / Texas South Central\","
+				+ "BASEGEOGCRS[\"NAD27\","
+				+ "DATUM[\"North American Datum 1927\","
+				+ "ELLIPSOID[\"Clarke 1866\",20925832.164,294.97869821,"
+				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219]]]],"
+				+ "CONVERSION[\"Texas South CentralSPCS27\","
+				+ "METHOD[\"Lambert Conic Conformal (2SP)\",ID[\"EPSG\",9802]],"
+				+ "PARAMETER[\"Latitude of false origin\",27.83333333333333,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8821]],"
+				+ "PARAMETER[\"Longitude of false origin\",-99.0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8822]],"
+				+ "PARAMETER[\"Latitude of 1st standard parallel\",28.383333333333,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8823]],"
+				+ "PARAMETER[\"Latitude of 2nd standard parallel\",30.283333333333,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8824]],"
+				+ "PARAMETER[\"Easting at false origin\",2000000.0,"
+				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219],ID[\"EPSG\",8826]],"
+				+ "PARAMETER[\"Northing at false origin\",0.0,"
+				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219],ID[\"EPSG\",8827]]]],"
+				+ "DERIVINGCONVERSION[\"Gulf of Mexico speculative survey bin grid\","
+				+ "METHOD[\"P6 (I = J-90°) seismic bin grid transformation\",ID[\"EPSG\",1049]],"
+				+ "PARAMETER[\"Bin grid origin I\",5000,SCALEUNIT[\"Bin\",1.0],ID[\"EPSG\",8733]],"
+				+ "PARAMETER[\"Bin grid origin J\",0,SCALEUNIT[\"Bin\",1.0],ID[\"EPSG\",8734]],"
+				+ "PARAMETER[\"Bin grid origin Easting\",871200,"
+				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219],ID[\"EPSG\",8735]],"
+				+ "PARAMETER[\"Bin grid origin Northing\",10280160,"
+				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219],ID[\"EPSG\",8736]],"
+				+ "PARAMETER[\"Scale factor of bin grid\",1.0,"
+				+ "SCALEUNIT[\"Unity\",1.0],ID[\"EPSG\",8737]],"
+				+ "PARAMETER[\"Bin width on I-axis\",82.5,"
+				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219],ID[\"EPSG\",8738]],"
+				+ "PARAMETER[\"Bin width on J-axis\",41.25,"
+				+ "LENGTHUNIT[\"US survey foot\",0.304800609601219],ID[\"EPSG\",8739]],"
+				+ "PARAMETER[\"Map grid bearing of bin grid J-axis\",340,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8740]],"
+				+ "PARAMETER[\"Bin node increment on I-axis\",1.0,"
+				+ "SCALEUNIT[\"Bin\",1.0],ID[\"EPSG\",8741]],"
+				+ "PARAMETER[\"Bin node increment on J-axis\",1.0,"
+				+ "SCALEUNIT[\"Bin\",1.0],ID[\"EPSG\",8742]]],"
+				+ "CS[ordinal,2]," 
+				+ "AXIS[\"Inline (I)\",northNorthWest],AXIS[\"Crossline (J)\",westSouthWest]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		DerivedCoordinateReferenceSystem derivedCrs = CRSReader.readDerived(text);
+		assertEquals(crs, derivedCrs);
+		assertEquals(CoordinateReferenceSystemType.DERIVED,derivedCrs.getType());
+		assertEquals("Gulf of Mexico speculative seismic survey bin grid",derivedCrs.getName());
+		assertEquals(CoordinateReferenceSystemType.PROJECTED,derivedCrs.getBaseType());
+		assertEquals("NAD27 / Texas South Central", derivedCrs.getBaseName());
+		ProjectedCoordinateReferenceSystem projectedCrs = (ProjectedCoordinateReferenceSystem) derivedCrs.getBase();
+		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,projectedCrs.getBaseType());
+		assertEquals("NAD27", projectedCrs.getBaseName());
+		assertEquals("North American Datum 1927", projectedCrs.getReferenceFrame().getName());
+		assertEquals("Clarke 1866", projectedCrs.getReferenceFrame().getEllipsoid().getName());
+		assertEquals(20925832.164, projectedCrs.getReferenceFrame().getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(294.97869821, projectedCrs.getReferenceFrame().getEllipsoid().getInverseFlattening(), 0);
+		assertEquals(UnitType.LENGTHUNIT, projectedCrs.getReferenceFrame().getEllipsoid().getUnit().getType());
+		assertEquals("US survey foot", projectedCrs.getReferenceFrame().getEllipsoid().getUnit().getName());
+		assertEquals(0.304800609601219, projectedCrs.getReferenceFrame().getEllipsoid().getUnit().getConversionFactor(), 0);
+		assertEquals("Texas South CentralSPCS27", projectedCrs.getMapProjection().getName());
+		assertEquals("Lambert Conic Conformal (2SP)", projectedCrs.getMapProjection().getMethod().getName());
+		assertEquals("EPSG", projectedCrs.getMapProjection().getMethod().getIdentifiers().get(0).getName());
+		assertEquals("9802", projectedCrs.getMapProjection().getMethod().getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Latitude of false origin", projectedCrs.getMapProjection().getParameters().get(0).getName());
+		assertEquals(27.83333333333333, projectedCrs.getMapProjection().getParameters().get(0).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection().getParameters().get(0).getUnit().getType());
+		assertEquals("degree", projectedCrs.getMapProjection().getParameters().get(0).getUnit().getName());
+		assertEquals(0.0174532925199433, projectedCrs.getMapProjection().getParameters().get(0).getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters().get(0).getIdentifiers().get(0).getName());
+		assertEquals("8821", projectedCrs.getMapProjection().getParameters().get(0).getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Longitude of false origin", projectedCrs.getMapProjection().getParameters().get(1).getName());
+		assertEquals(-99.0, projectedCrs.getMapProjection().getParameters().get(1).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection().getParameters().get(1).getUnit().getType());
+		assertEquals("degree", projectedCrs.getMapProjection().getParameters().get(1).getUnit().getName());
+		assertEquals(0.0174532925199433, projectedCrs.getMapProjection().getParameters().get(1).getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters().get(1).getIdentifiers().get(0).getName());
+		assertEquals("8822", projectedCrs.getMapProjection().getParameters().get(1).getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Latitude of 1st standard parallel", projectedCrs.getMapProjection().getParameters().get(2).getName());
+		assertEquals(28.383333333333, projectedCrs.getMapProjection().getParameters().get(2).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection().getParameters().get(2).getUnit().getType());
+		assertEquals("degree", projectedCrs.getMapProjection().getParameters().get(2).getUnit().getName());
+		assertEquals(0.0174532925199433, projectedCrs.getMapProjection().getParameters().get(2).getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters().get(2).getIdentifiers().get(0).getName());
+		assertEquals("8823", projectedCrs.getMapProjection().getParameters().get(2).getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Latitude of 2nd standard parallel", projectedCrs.getMapProjection().getParameters().get(3).getName());
+		assertEquals(30.283333333333, projectedCrs.getMapProjection().getParameters().get(3).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection().getParameters().get(3).getUnit().getType());
+		assertEquals("degree", projectedCrs.getMapProjection().getParameters().get(3).getUnit().getName());
+		assertEquals(0.0174532925199433, projectedCrs.getMapProjection().getParameters().get(3).getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters().get(3).getIdentifiers().get(0).getName());
+		assertEquals("8824", projectedCrs.getMapProjection().getParameters().get(3).getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Easting at false origin", projectedCrs.getMapProjection().getParameters().get(4).getName());
+		assertEquals(2000000.0, projectedCrs.getMapProjection().getParameters().get(4).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT, projectedCrs.getMapProjection().getParameters().get(4).getUnit().getType());
+		assertEquals("US survey foot", projectedCrs.getMapProjection().getParameters().get(4).getUnit().getName());
+		assertEquals(0.304800609601219, projectedCrs.getMapProjection().getParameters().get(4).getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters().get(4).getIdentifiers().get(0).getName());
+		assertEquals("8826", projectedCrs.getMapProjection().getParameters().get(4).getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Northing at false origin", projectedCrs.getMapProjection().getParameters().get(5).getName());
+		assertEquals(0.0, projectedCrs.getMapProjection().getParameters().get(5).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT, projectedCrs.getMapProjection().getParameters().get(5).getUnit().getType());
+		assertEquals("US survey foot", projectedCrs.getMapProjection().getParameters().get(5).getUnit().getName());
+		assertEquals(0.304800609601219, projectedCrs.getMapProjection().getParameters().get(5).getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters().get(5).getIdentifiers().get(0).getName());
+		assertEquals("8827", projectedCrs.getMapProjection().getParameters().get(5).getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Gulf of Mexico speculative survey bin grid", derivedCrs.getConversion().getName());
+		// TODO
+		assertEquals(CoordinateSystemType.ORDINAL,
+				derivedCrs.getCoordinateSystem().getType());
+		assertEquals(2, derivedCrs.getCoordinateSystem().getDimension());
+		assertEquals("Inline",
+				derivedCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals("I",
+				derivedCrs.getCoordinateSystem().getAxes().get(0).getAbbreviation());
+		assertEquals(AxisDirectionType.NORTH_NORTH_WEST, derivedCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals("Crossline",
+				derivedCrs.getCoordinateSystem().getAxes().get(1).getName());
+		assertEquals("J",
+				derivedCrs.getCoordinateSystem().getAxes().get(1).getAbbreviation());
+		assertEquals(AxisDirectionType.WEST_SOUTH_WEST, derivedCrs.getCoordinateSystem()
+				.getAxes().get(1).getDirection());
+
+		text = text.replace("20925832.164", "2.0925832164E7")
+				.replace(",5000,", ",5000.0,").replace(",0,", ",0.0,")
+				.replace("871200", "871200.0").replace("10280160", "1.028016E7")
+				.replace(",340,", ",340.0,");
 		assertEquals(text, derivedCrs.toString());
 		assertEquals(text, CRSWriter.write(derivedCrs));
 		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(derivedCrs));

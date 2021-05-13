@@ -48,6 +48,11 @@ public enum CoordinateReferenceSystemKeyword {
 	BASEGEOGCRS(),
 
 	/**
+	 * Base Projected CRS
+	 */
+	BASEPROJCRS(),
+
+	/**
 	 * Geographic bounding box
 	 */
 	BBOX(),
@@ -91,6 +96,11 @@ public enum CoordinateReferenceSystemKeyword {
 	 * Geodetic reference frame
 	 */
 	DATUM("GEODETICDATUM", "TRF"),
+
+	/**
+	 * Derived projected CRS
+	 */
+	DERIVEDPROJCRS(),
 
 	/**
 	 * Deriving Conversion
