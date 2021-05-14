@@ -39,7 +39,7 @@ public class EngineeringCoordinateReferenceSystem
 			CoordinateSystem coordinateSystem) {
 		super(name, CoordinateReferenceSystemType.ENGINEERING,
 				coordinateSystem);
-		setEngineeringDatum(engineeringDatum);
+		setDatum(engineeringDatum);
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class EngineeringCoordinateReferenceSystem
 	 * 
 	 * @return engineering datum
 	 */
-	public EngineeringDatum getEngineeringDatum() {
+	public EngineeringDatum getDatum() {
 		return datum;
 	}
 
@@ -57,7 +57,7 @@ public class EngineeringCoordinateReferenceSystem
 	 * @param datum
 	 *            engineering datum
 	 */
-	public void setEngineeringDatum(EngineeringDatum datum) {
+	public void setDatum(EngineeringDatum datum) {
 		this.datum = datum;
 	}
 

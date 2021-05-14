@@ -2595,9 +2595,9 @@ public class CRSReaderWriterTest {
 		assertEquals(CoordinateReferenceSystemType.ENGINEERING,
 				engineeringCrs.getType());
 		assertEquals("A construction site CRS", engineeringCrs.getName());
-		assertEquals("P1", engineeringCrs.getEngineeringDatum().getName());
+		assertEquals("P1", engineeringCrs.getDatum().getName());
 		assertEquals("Peg in south corner",
-				engineeringCrs.getEngineeringDatum().getAnchor());
+				engineeringCrs.getDatum().getAnchor());
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				engineeringCrs.getCoordinateSystem().getType());
 		assertEquals(2, engineeringCrs.getCoordinateSystem().getDimension());
@@ -2637,7 +2637,7 @@ public class CRSReaderWriterTest {
 				engineeringCrs.getType());
 		assertEquals("Astra Minas Grid", engineeringCrs.getName());
 		assertEquals("Astra Minas",
-				engineeringCrs.getEngineeringDatum().getName());
+				engineeringCrs.getDatum().getName());
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				engineeringCrs.getCoordinateSystem().getType());
 		assertEquals(2, engineeringCrs.getCoordinateSystem().getDimension());
@@ -2686,9 +2686,9 @@ public class CRSReaderWriterTest {
 				engineeringCrs.getType());
 		assertEquals("A ship-centred CRS", engineeringCrs.getName());
 		assertEquals("Ship reference point",
-				engineeringCrs.getEngineeringDatum().getName());
+				engineeringCrs.getDatum().getName());
 		assertEquals("Centre of buoyancy",
-				engineeringCrs.getEngineeringDatum().getAnchor());
+				engineeringCrs.getDatum().getAnchor());
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				engineeringCrs.getCoordinateSystem().getType());
 		assertEquals(3, engineeringCrs.getCoordinateSystem().getDimension());
@@ -2729,9 +2729,9 @@ public class CRSReaderWriterTest {
 				engineeringCrs.getType());
 		assertEquals("An analogue image CRS", engineeringCrs.getName());
 		assertEquals("Image reference point",
-				engineeringCrs.getEngineeringDatum().getName());
+				engineeringCrs.getDatum().getName());
 		assertEquals("Top left corner of image = 0,0",
-				engineeringCrs.getEngineeringDatum().getAnchor());
+				engineeringCrs.getDatum().getAnchor());
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				engineeringCrs.getCoordinateSystem().getType());
 		assertEquals(2, engineeringCrs.getCoordinateSystem().getDimension());
@@ -2773,9 +2773,9 @@ public class CRSReaderWriterTest {
 				engineeringCrs.getType());
 		assertEquals("A digital image CRS", engineeringCrs.getName());
 		assertEquals("Image reference point",
-				engineeringCrs.getEngineeringDatum().getName());
+				engineeringCrs.getDatum().getName());
 		assertEquals("Top left corner of image = 0,0",
-				engineeringCrs.getEngineeringDatum().getAnchor());
+				engineeringCrs.getDatum().getAnchor());
 		assertEquals(CoordinateSystemType.ORDINAL,
 				engineeringCrs.getCoordinateSystem().getType());
 		assertEquals(2, engineeringCrs.getCoordinateSystem().getDimension());
@@ -3709,6 +3709,71 @@ public class CRSReaderWriterTest {
 				+ "PARAMETER[\"elt_0_0\",10.0],PARAMETER[\"elt_0_1\",100.0]],"
 				+ "CS[vertical,1],"
 				+ "AXIS[\"Pseudo-pression (H)\",down],UNIT[\"Unity\",1.0]]";
+		assertEquals(text, derivedCrs.toString());
+		assertEquals(text, CRSWriter.write(derivedCrs));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(derivedCrs));
+
+	}
+
+	/**
+	 * Test derived engineering coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testDerivedEngineeringCoordinateReferenceSystem()
+			throws IOException {
+
+		String text = "ENGCRS[\"A construction site CRS\","
+				+ "BASEENGCRS[\"A construction site Base CRS\","
+				+ "EDATUM[\"P1\",ANCHOR[\"Peg in south corner\"]]],"
+				+ "DERIVINGCONVERSION[\"Deriving Conversion\","
+				+ "METHOD[\"Method\"],"
+				+ "PARAMETER[\"param1\",1.0],PARAMETER[\"param2\",2.0]],"
+				+ "CS[Cartesian,2]," + "AXIS[\"site east\",southWest,ORDER[1]],"
+				+ "AXIS[\"site north\",southEast,ORDER[2]]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		DerivedCoordinateReferenceSystem derivedCrs = CRSReader
+				.readDerived(text);
+		assertEquals(crs, derivedCrs);
+		assertEquals(CoordinateReferenceSystemType.DERIVED,
+				derivedCrs.getType());
+		assertEquals("A construction site CRS", derivedCrs.getName());
+		assertEquals(CoordinateReferenceSystemType.ENGINEERING,
+				derivedCrs.getBaseType());
+		assertEquals("A construction site Base CRS", derivedCrs.getBaseName());
+		EngineeringCoordinateReferenceSystem engineeringCrs = (EngineeringCoordinateReferenceSystem) derivedCrs
+				.getBase();
+		assertEquals("P1", engineeringCrs.getDatum().getName());
+		assertEquals("Peg in south corner",
+				engineeringCrs.getDatum().getAnchor());
+		assertEquals("Deriving Conversion",
+				derivedCrs.getConversion().getName());
+		assertEquals("Method",
+				derivedCrs.getConversion().getMethod().getName());
+		assertEquals("param1",
+				derivedCrs.getConversion().getParameters().get(0).getName());
+		assertEquals(1, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(0)).getValue(), 0);
+		assertEquals("param2",
+				derivedCrs.getConversion().getParameters().get(1).getName());
+		assertEquals(2, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(1)).getValue(), 0);
+		assertEquals("site east",
+				derivedCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals(AxisDirectionType.SOUTH_WEST, derivedCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals(1, derivedCrs.getCoordinateSystem().getAxes().get(0)
+				.getOrder().intValue());
+		assertEquals("site north",
+				derivedCrs.getCoordinateSystem().getAxes().get(1).getName());
+		assertEquals(AxisDirectionType.SOUTH_EAST, derivedCrs
+				.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals(2, derivedCrs.getCoordinateSystem().getAxes().get(1)
+				.getOrder().intValue());
+
 		assertEquals(text, derivedCrs.toString());
 		assertEquals(text, CRSWriter.write(derivedCrs));
 		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(derivedCrs));

@@ -295,15 +295,8 @@ public class CRSReader implements Closeable {
 	 */
 	public static EngineeringCoordinateReferenceSystem readEngineering(
 			String text) throws IOException {
-		EngineeringCoordinateReferenceSystem crs = null;
-		CRSReader reader = new CRSReader(text);
-		try {
-			crs = reader.readEngineering();
-			reader.readEnd();
-		} finally {
-			reader.close();
-		}
-		return crs;
+		return (EngineeringCoordinateReferenceSystem) read(text,
+				CoordinateReferenceSystemType.ENGINEERING);
 	}
 
 	/**
@@ -1277,7 +1270,6 @@ public class CRSReader implements Closeable {
 		}
 
 		readSeparator();
-
 		crs.setCoordinateSystem(readCoordinateSystem());
 
 		readScopeExtentIdentifierRemark(crs);
@@ -1402,11 +1394,9 @@ public class CRSReader implements Closeable {
 		readRightDelimiter();
 
 		readSeparator();
-
 		crs.setMapProjection(readMapProjection());
 
 		readSeparator();
-
 		crs.setCoordinateSystem(readCoordinateSystem());
 
 		readScopeExtentIdentifierRemark(crs);
@@ -1485,7 +1475,6 @@ public class CRSReader implements Closeable {
 		}
 
 		readSeparator();
-
 		crs.setCoordinateSystem(readCoordinateSystem());
 
 		if (derivedCrs == null
@@ -1516,23 +1505,50 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public EngineeringCoordinateReferenceSystem readEngineering()
-			throws IOException {
+	public CoordinateReferenceSystem readEngineering() throws IOException {
 
-		EngineeringCoordinateReferenceSystem crs = new EngineeringCoordinateReferenceSystem();
+		EngineeringCoordinateReferenceSystem baseCrs = new EngineeringCoordinateReferenceSystem();
+		CoordinateReferenceSystem crs = baseCrs;
+		DerivedCoordinateReferenceSystem derivedCrs = null;
 
 		readKeyword(CoordinateReferenceSystemKeyword.ENGCRS);
 
 		readLeftDelimiter();
 
-		crs.setName(reader.readExpectedToken());
+		String name = reader.readExpectedToken();
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.BASEENGCRS)) {
+			readKeyword(CoordinateReferenceSystemKeyword.BASEENGCRS);
+
+			derivedCrs = new DerivedCoordinateReferenceSystem();
+			derivedCrs.setBase(baseCrs);
+			crs = derivedCrs;
+
+			readLeftDelimiter();
+			baseCrs.setName(reader.readExpectedToken());
+		}
+
+		crs.setName(name);
 
 		readSeparator();
+		baseCrs.setDatum(readEngineeringDatum());
 
-		crs.setEngineeringDatum(readEngineeringDatum());
+		if (derivedCrs != null) {
+
+			CoordinateReferenceSystemKeyword keyword = readToKeyword(
+					CoordinateReferenceSystemKeyword.ID);
+			if (keyword == CoordinateReferenceSystemKeyword.ID) {
+				baseCrs.setIdentifiers(readIdentifiers());
+			}
+
+			readRightDelimiter();
+
+			readSeparator();
+			derivedCrs.setConversion(readDerivingConversion());
+
+		}
 
 		readSeparator();
-
 		crs.setCoordinateSystem(readCoordinateSystem());
 
 		readScopeExtentIdentifierRemark(crs);
@@ -1561,11 +1577,9 @@ public class CRSReader implements Closeable {
 		crs.setName(reader.readExpectedToken());
 
 		readSeparator();
-
 		crs.setDatum(readParametricDatum());
 
 		readSeparator();
-
 		crs.setCoordinateSystem(readCoordinateSystem());
 
 		readScopeExtentIdentifierRemark(crs);
@@ -1593,11 +1607,9 @@ public class CRSReader implements Closeable {
 		crs.setName(reader.readExpectedToken());
 
 		readSeparator();
-
 		crs.setTemporalDatum(readTemporalDatum());
 
 		readSeparator();
-
 		crs.setCoordinateSystem(readCoordinateSystem());
 
 		readScopeExtentIdentifierRemark(crs);
@@ -1628,7 +1640,6 @@ public class CRSReader implements Closeable {
 		crs.setName(reader.readExpectedToken());
 
 		readSeparator();
-
 		readKeyword(CoordinateReferenceSystemKeyword.BASEPROJCRS);
 
 		readLeftDelimiter();
@@ -1636,7 +1647,6 @@ public class CRSReader implements Closeable {
 		projectedCrs.setName(reader.readExpectedToken());
 
 		readSeparator();
-
 		CoordinateReferenceSystemKeyword keyword = readKeyword(
 				CoordinateReferenceSystemKeyword.BASEGEODCRS,
 				CoordinateReferenceSystemKeyword.BASEGEOGCRS);
@@ -1677,7 +1687,6 @@ public class CRSReader implements Closeable {
 		readRightDelimiter();
 
 		readSeparator();
-
 		projectedCrs.setMapProjection(readMapProjection());
 
 		keyword = readToKeyword(CoordinateReferenceSystemKeyword.ID);
@@ -1688,11 +1697,9 @@ public class CRSReader implements Closeable {
 		readRightDelimiter();
 
 		readSeparator();
-
 		crs.setConversion(readDerivingConversion());
 
 		readSeparator();
-
 		crs.setCoordinateSystem(readCoordinateSystem());
 
 		readScopeExtentIdentifierRemark(crs);
@@ -1922,7 +1929,6 @@ public class CRSReader implements Closeable {
 		do {
 
 			readSeparator();
-
 			members.add(readDatumEnsembleMember());
 
 		} while (isKeywordNext(CoordinateReferenceSystemKeyword.MEMBER));
@@ -2064,7 +2070,6 @@ public class CRSReader implements Closeable {
 		primeMeridian.setName(reader.readExpectedToken());
 
 		readSeparator();
-
 		primeMeridian.setIrmLongitude(reader.readNumber());
 
 		CoordinateReferenceSystemKeyword keyword = readToKeyword(
@@ -2103,11 +2108,9 @@ public class CRSReader implements Closeable {
 		ellipsoid.setName(reader.readExpectedToken());
 
 		readSeparator();
-
 		ellipsoid.setSemiMajorAxis(reader.readUnsignedNumber());
 
 		readSeparator();
-
 		ellipsoid.setInverseFlattening(reader.readUnsignedNumber());
 
 		CoordinateReferenceSystemKeyword keyword = readToKeyword(
@@ -2282,7 +2285,6 @@ public class CRSReader implements Closeable {
 		identifier.setName(reader.readExpectedToken());
 
 		readSeparator();
-
 		identifier.setUniqueIdentifier(reader.readExpectedToken());
 
 		if (isNonKeywordNext()) {
@@ -2334,7 +2336,6 @@ public class CRSReader implements Closeable {
 		coordinateSystem.setType(csType);
 
 		readSeparator();
-
 		coordinateSystem.setDimension(reader.readUnsignedInteger());
 
 		CoordinateReferenceSystemKeyword keyword = readToKeyword(
@@ -2353,7 +2354,6 @@ public class CRSReader implements Closeable {
 			if (isUnitNext()) {
 
 				readSeparator();
-
 				coordinateSystem.setUnit(readUnit());
 
 			}
@@ -2483,7 +2483,6 @@ public class CRSReader implements Closeable {
 					axis.setMeridian(reader.readNumber());
 
 					readSeparator();
-
 					axis.setMeridianUnit(readAngleUnit());
 
 					readRightDelimiter();
@@ -2496,7 +2495,6 @@ public class CRSReader implements Closeable {
 			case COUNTER_CLOCKWISE:
 
 				readSeparator();
-
 				readKeyword(CoordinateReferenceSystemKeyword.BEARING);
 
 				readLeftDelimiter();
@@ -2528,7 +2526,6 @@ public class CRSReader implements Closeable {
 				if (isSpatialUnitNext()) {
 
 					readSeparator();
-
 					axis.setUnit(readUnit());
 
 				}
@@ -2538,7 +2535,6 @@ public class CRSReader implements Closeable {
 				if (isTimeUnitNext()) {
 
 					readSeparator();
-
 					axis.setUnit(readTimeUnit());
 
 				}
@@ -2712,15 +2708,12 @@ public class CRSReader implements Closeable {
 		boundingBox.setLowerLeftLatitude(reader.readNumber());
 
 		readSeparator();
-
 		boundingBox.setLowerLeftLongitude(reader.readNumber());
 
 		readSeparator();
-
 		boundingBox.setUpperRightLatitude(reader.readNumber());
 
 		readSeparator();
-
 		boundingBox.setUpperRightLongitude(reader.readNumber());
 
 		readRightDelimiter();
@@ -2746,7 +2739,6 @@ public class CRSReader implements Closeable {
 		verticalExtent.setMinimumHeight(reader.readNumber());
 
 		readSeparator();
-
 		verticalExtent.setMaximumHeight(reader.readNumber());
 
 		CoordinateReferenceSystemKeyword keyword = readToKeyword(
@@ -2778,7 +2770,6 @@ public class CRSReader implements Closeable {
 		temporalExtent.setStart(reader.readExpectedToken());
 
 		readSeparator();
-
 		temporalExtent.setEnd(reader.readExpectedToken());
 
 		readRightDelimiter();
@@ -2804,7 +2795,6 @@ public class CRSReader implements Closeable {
 		mapProjection.setName(reader.readExpectedToken());
 
 		readSeparator();
-
 		mapProjection.setMethod(readMethod());
 
 		CoordinateReferenceSystemKeyword keyword = readToKeyword(
@@ -2915,7 +2905,6 @@ public class CRSReader implements Closeable {
 		parameter.setName(reader.readExpectedToken());
 
 		readSeparator();
-
 		parameter.setValue(reader.readNumber());
 
 		CoordinateReferenceSystemKeyword[] keywords = null;
@@ -3023,7 +3012,6 @@ public class CRSReader implements Closeable {
 		derivingConversion.setName(reader.readExpectedToken());
 
 		readSeparator();
-
 		derivingConversion.setMethod(readMethod());
 
 		CoordinateReferenceSystemKeyword keyword = readToKeyword(
@@ -3108,7 +3096,6 @@ public class CRSReader implements Closeable {
 		parameterFile.setName(reader.readExpectedToken());
 
 		readSeparator();
-
 		parameterFile.setFileName(reader.readExpectedToken());
 
 		CoordinateReferenceSystemKeyword keyword = readToKeyword(
@@ -3279,7 +3266,6 @@ public class CRSReader implements Closeable {
 		crs.setName(reader.readExpectedToken());
 
 		readSeparator();
-
 		crs.setBase(readGeoCompat(expectedBaseType));
 
 		// Not spec based, but some implementations provide the unit here
@@ -3388,11 +3374,10 @@ public class CRSReader implements Closeable {
 		crs.setName(reader.readExpectedToken());
 
 		readSeparator();
-		crs.setEngineeringDatum(readEngineeringDatumCompat());
+		crs.setDatum(readEngineeringDatumCompat());
 
 		crs.setCoordinateSystem(readCoordinateSystemCompat(
-				CoordinateReferenceSystemType.ENGINEERING,
-				crs.getEngineeringDatum()));
+				CoordinateReferenceSystemType.ENGINEERING, crs.getDatum()));
 
 		CoordinateReferenceSystemKeyword keyword = readToKeyword(
 				CoordinateReferenceSystemKeyword.EXTENSION,

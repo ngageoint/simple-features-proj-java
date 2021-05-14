@@ -617,7 +617,7 @@ public class CRSWriter implements Closeable {
 		writeQuotedText(crs.getName());
 
 		writeSeparator();
-		write(crs.getEngineeringDatum());
+		write(crs.getDatum());
 
 		writeSeparator();
 		write(crs.getCoordinateSystem());
@@ -704,6 +704,9 @@ public class CRSWriter implements Closeable {
 			break;
 		case VERTICAL:
 			writeDerivedVerticalCRS(crs);
+			break;
+		case ENGINEERING:
+			writeDerivedEngineeringCRS(crs);
 			break;
 		default:
 			throw new ProjectionException(
@@ -912,6 +915,54 @@ public class CRSWriter implements Closeable {
 		} else {
 			write(baseCrs.getDatumEnsemble());
 		}
+
+		if (baseCrs.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(baseCrs.getIdentifiers());
+		}
+
+		writeRightDelimiter();
+
+		writeSeparator();
+		write(crs.getConversion());
+
+		writeSeparator();
+		write(crs.getCoordinateSystem());
+
+		writeScopeExtentIdentifierRemark(crs);
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write a derived engineering CRS to well-known text
+	 * 
+	 * @param crs
+	 *            derived engineering coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeDerivedEngineeringCRS(DerivedCoordinateReferenceSystem crs)
+			throws IOException {
+
+		EngineeringCoordinateReferenceSystem baseCrs = (EngineeringCoordinateReferenceSystem) crs
+				.getBase();
+
+		write(CoordinateReferenceSystemKeyword.ENGCRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(crs.getName());
+
+		writeSeparator();
+		write(CoordinateReferenceSystemKeyword.BASEENGCRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(baseCrs.getName());
+
+		writeSeparator();
+		write(baseCrs.getDatum());
 
 		if (baseCrs.hasIdentifiers()) {
 			writeSeparator();

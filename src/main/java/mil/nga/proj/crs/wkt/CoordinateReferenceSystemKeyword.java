@@ -38,6 +38,11 @@ public enum CoordinateReferenceSystemKeyword {
 	AXIS(),
 
 	/**
+	 * Base Engineering CRS
+	 */
+	BASEENGCRS(),
+
+	/**
 	 * Base Geodetic CRS
 	 */
 	BASEGEODCRS(),
