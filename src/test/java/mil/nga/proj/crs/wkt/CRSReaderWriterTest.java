@@ -3308,89 +3308,316 @@ public class CRSReaderWriterTest {
 				+ "SCALEUNIT[\"Bin\",1.0],ID[\"EPSG\",8741]],"
 				+ "PARAMETER[\"Bin node increment on J-axis\",1.0,"
 				+ "SCALEUNIT[\"Bin\",1.0],ID[\"EPSG\",8742]]],"
-				+ "CS[ordinal,2]," 
+				+ "CS[ordinal,2],"
 				+ "AXIS[\"Inline (I)\",northNorthWest],AXIS[\"Crossline (J)\",westSouthWest]]";
 
 		CoordinateReferenceSystem crs = CRSReader.read(text, true);
-		DerivedCoordinateReferenceSystem derivedCrs = CRSReader.readDerived(text);
+		DerivedCoordinateReferenceSystem derivedCrs = CRSReader
+				.readDerived(text);
 		assertEquals(crs, derivedCrs);
-		assertEquals(CoordinateReferenceSystemType.DERIVED,derivedCrs.getType());
-		assertEquals("Gulf of Mexico speculative seismic survey bin grid",derivedCrs.getName());
-		assertEquals(CoordinateReferenceSystemType.PROJECTED,derivedCrs.getBaseType());
+		assertEquals(CoordinateReferenceSystemType.DERIVED,
+				derivedCrs.getType());
+		assertEquals("Gulf of Mexico speculative seismic survey bin grid",
+				derivedCrs.getName());
+		assertEquals(CoordinateReferenceSystemType.PROJECTED,
+				derivedCrs.getBaseType());
 		assertEquals("NAD27 / Texas South Central", derivedCrs.getBaseName());
-		ProjectedCoordinateReferenceSystem projectedCrs = (ProjectedCoordinateReferenceSystem) derivedCrs.getBase();
-		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,projectedCrs.getBaseType());
+		ProjectedCoordinateReferenceSystem projectedCrs = (ProjectedCoordinateReferenceSystem) derivedCrs
+				.getBase();
+		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
+				projectedCrs.getBaseType());
 		assertEquals("NAD27", projectedCrs.getBaseName());
-		assertEquals("North American Datum 1927", projectedCrs.getReferenceFrame().getName());
-		assertEquals("Clarke 1866", projectedCrs.getReferenceFrame().getEllipsoid().getName());
-		assertEquals(20925832.164, projectedCrs.getReferenceFrame().getEllipsoid().getSemiMajorAxis(), 0);
-		assertEquals(294.97869821, projectedCrs.getReferenceFrame().getEllipsoid().getInverseFlattening(), 0);
-		assertEquals(UnitType.LENGTHUNIT, projectedCrs.getReferenceFrame().getEllipsoid().getUnit().getType());
-		assertEquals("US survey foot", projectedCrs.getReferenceFrame().getEllipsoid().getUnit().getName());
-		assertEquals(0.304800609601219, projectedCrs.getReferenceFrame().getEllipsoid().getUnit().getConversionFactor(), 0);
-		assertEquals("Texas South CentralSPCS27", projectedCrs.getMapProjection().getName());
-		assertEquals("Lambert Conic Conformal (2SP)", projectedCrs.getMapProjection().getMethod().getName());
-		assertEquals("EPSG", projectedCrs.getMapProjection().getMethod().getIdentifiers().get(0).getName());
-		assertEquals("9802", projectedCrs.getMapProjection().getMethod().getIdentifiers().get(0).getUniqueIdentifier());
-		assertEquals("Latitude of false origin", projectedCrs.getMapProjection().getParameters().get(0).getName());
-		assertEquals(27.83333333333333, projectedCrs.getMapProjection().getParameters().get(0).getValue(), 0);
-		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection().getParameters().get(0).getUnit().getType());
-		assertEquals("degree", projectedCrs.getMapProjection().getParameters().get(0).getUnit().getName());
-		assertEquals(0.0174532925199433, projectedCrs.getMapProjection().getParameters().get(0).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters().get(0).getIdentifiers().get(0).getName());
-		assertEquals("8821", projectedCrs.getMapProjection().getParameters().get(0).getIdentifiers().get(0).getUniqueIdentifier());
-		assertEquals("Longitude of false origin", projectedCrs.getMapProjection().getParameters().get(1).getName());
-		assertEquals(-99.0, projectedCrs.getMapProjection().getParameters().get(1).getValue(), 0);
-		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection().getParameters().get(1).getUnit().getType());
-		assertEquals("degree", projectedCrs.getMapProjection().getParameters().get(1).getUnit().getName());
-		assertEquals(0.0174532925199433, projectedCrs.getMapProjection().getParameters().get(1).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters().get(1).getIdentifiers().get(0).getName());
-		assertEquals("8822", projectedCrs.getMapProjection().getParameters().get(1).getIdentifiers().get(0).getUniqueIdentifier());
-		assertEquals("Latitude of 1st standard parallel", projectedCrs.getMapProjection().getParameters().get(2).getName());
-		assertEquals(28.383333333333, projectedCrs.getMapProjection().getParameters().get(2).getValue(), 0);
-		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection().getParameters().get(2).getUnit().getType());
-		assertEquals("degree", projectedCrs.getMapProjection().getParameters().get(2).getUnit().getName());
-		assertEquals(0.0174532925199433, projectedCrs.getMapProjection().getParameters().get(2).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters().get(2).getIdentifiers().get(0).getName());
-		assertEquals("8823", projectedCrs.getMapProjection().getParameters().get(2).getIdentifiers().get(0).getUniqueIdentifier());
-		assertEquals("Latitude of 2nd standard parallel", projectedCrs.getMapProjection().getParameters().get(3).getName());
-		assertEquals(30.283333333333, projectedCrs.getMapProjection().getParameters().get(3).getValue(), 0);
-		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection().getParameters().get(3).getUnit().getType());
-		assertEquals("degree", projectedCrs.getMapProjection().getParameters().get(3).getUnit().getName());
-		assertEquals(0.0174532925199433, projectedCrs.getMapProjection().getParameters().get(3).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters().get(3).getIdentifiers().get(0).getName());
-		assertEquals("8824", projectedCrs.getMapProjection().getParameters().get(3).getIdentifiers().get(0).getUniqueIdentifier());
-		assertEquals("Easting at false origin", projectedCrs.getMapProjection().getParameters().get(4).getName());
-		assertEquals(2000000.0, projectedCrs.getMapProjection().getParameters().get(4).getValue(), 0);
-		assertEquals(UnitType.LENGTHUNIT, projectedCrs.getMapProjection().getParameters().get(4).getUnit().getType());
-		assertEquals("US survey foot", projectedCrs.getMapProjection().getParameters().get(4).getUnit().getName());
-		assertEquals(0.304800609601219, projectedCrs.getMapProjection().getParameters().get(4).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters().get(4).getIdentifiers().get(0).getName());
-		assertEquals("8826", projectedCrs.getMapProjection().getParameters().get(4).getIdentifiers().get(0).getUniqueIdentifier());
-		assertEquals("Northing at false origin", projectedCrs.getMapProjection().getParameters().get(5).getName());
-		assertEquals(0.0, projectedCrs.getMapProjection().getParameters().get(5).getValue(), 0);
-		assertEquals(UnitType.LENGTHUNIT, projectedCrs.getMapProjection().getParameters().get(5).getUnit().getType());
-		assertEquals("US survey foot", projectedCrs.getMapProjection().getParameters().get(5).getUnit().getName());
-		assertEquals(0.304800609601219, projectedCrs.getMapProjection().getParameters().get(5).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters().get(5).getIdentifiers().get(0).getName());
-		assertEquals("8827", projectedCrs.getMapProjection().getParameters().get(5).getIdentifiers().get(0).getUniqueIdentifier());
-		assertEquals("Gulf of Mexico speculative survey bin grid", derivedCrs.getConversion().getName());
-		// TODO
+		assertEquals("North American Datum 1927",
+				projectedCrs.getReferenceFrame().getName());
+		assertEquals("Clarke 1866",
+				projectedCrs.getReferenceFrame().getEllipsoid().getName());
+		assertEquals(20925832.164, projectedCrs.getReferenceFrame()
+				.getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(294.97869821, projectedCrs.getReferenceFrame()
+				.getEllipsoid().getInverseFlattening(), 0);
+		assertEquals(UnitType.LENGTHUNIT, projectedCrs.getReferenceFrame()
+				.getEllipsoid().getUnit().getType());
+		assertEquals("US survey foot", projectedCrs.getReferenceFrame()
+				.getEllipsoid().getUnit().getName());
+		assertEquals(0.304800609601219, projectedCrs.getReferenceFrame()
+				.getEllipsoid().getUnit().getConversionFactor(), 0);
+		assertEquals("Texas South CentralSPCS27",
+				projectedCrs.getMapProjection().getName());
+		assertEquals("Lambert Conic Conformal (2SP)",
+				projectedCrs.getMapProjection().getMethod().getName());
+		assertEquals("EPSG", projectedCrs.getMapProjection().getMethod()
+				.getIdentifiers().get(0).getName());
+		assertEquals("9802", projectedCrs.getMapProjection().getMethod()
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Latitude of false origin", projectedCrs.getMapProjection()
+				.getParameters().get(0).getName());
+		assertEquals(27.83333333333333, projectedCrs.getMapProjection()
+				.getParameters().get(0).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection()
+				.getParameters().get(0).getUnit().getType());
+		assertEquals("degree", projectedCrs.getMapProjection().getParameters()
+				.get(0).getUnit().getName());
+		assertEquals(
+				0.0174532925199433, projectedCrs.getMapProjection()
+						.getParameters().get(0).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters()
+				.get(0).getIdentifiers().get(0).getName());
+		assertEquals("8821", projectedCrs.getMapProjection().getParameters()
+				.get(0).getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Longitude of false origin", projectedCrs
+				.getMapProjection().getParameters().get(1).getName());
+		assertEquals(-99.0, projectedCrs.getMapProjection().getParameters()
+				.get(1).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection()
+				.getParameters().get(1).getUnit().getType());
+		assertEquals("degree", projectedCrs.getMapProjection().getParameters()
+				.get(1).getUnit().getName());
+		assertEquals(
+				0.0174532925199433, projectedCrs.getMapProjection()
+						.getParameters().get(1).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters()
+				.get(1).getIdentifiers().get(0).getName());
+		assertEquals("8822", projectedCrs.getMapProjection().getParameters()
+				.get(1).getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Latitude of 1st standard parallel", projectedCrs
+				.getMapProjection().getParameters().get(2).getName());
+		assertEquals(28.383333333333, projectedCrs.getMapProjection()
+				.getParameters().get(2).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection()
+				.getParameters().get(2).getUnit().getType());
+		assertEquals("degree", projectedCrs.getMapProjection().getParameters()
+				.get(2).getUnit().getName());
+		assertEquals(
+				0.0174532925199433, projectedCrs.getMapProjection()
+						.getParameters().get(2).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters()
+				.get(2).getIdentifiers().get(0).getName());
+		assertEquals("8823", projectedCrs.getMapProjection().getParameters()
+				.get(2).getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Latitude of 2nd standard parallel", projectedCrs
+				.getMapProjection().getParameters().get(3).getName());
+		assertEquals(30.283333333333, projectedCrs.getMapProjection()
+				.getParameters().get(3).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection()
+				.getParameters().get(3).getUnit().getType());
+		assertEquals("degree", projectedCrs.getMapProjection().getParameters()
+				.get(3).getUnit().getName());
+		assertEquals(
+				0.0174532925199433, projectedCrs.getMapProjection()
+						.getParameters().get(3).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters()
+				.get(3).getIdentifiers().get(0).getName());
+		assertEquals("8824", projectedCrs.getMapProjection().getParameters()
+				.get(3).getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Easting at false origin", projectedCrs.getMapProjection()
+				.getParameters().get(4).getName());
+		assertEquals(2000000.0, projectedCrs.getMapProjection().getParameters()
+				.get(4).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT, projectedCrs.getMapProjection()
+				.getParameters().get(4).getUnit().getType());
+		assertEquals("US survey foot", projectedCrs.getMapProjection()
+				.getParameters().get(4).getUnit().getName());
+		assertEquals(
+				0.304800609601219, projectedCrs.getMapProjection()
+						.getParameters().get(4).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters()
+				.get(4).getIdentifiers().get(0).getName());
+		assertEquals("8826", projectedCrs.getMapProjection().getParameters()
+				.get(4).getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Northing at false origin", projectedCrs.getMapProjection()
+				.getParameters().get(5).getName());
+		assertEquals(0.0, projectedCrs.getMapProjection().getParameters().get(5)
+				.getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT, projectedCrs.getMapProjection()
+				.getParameters().get(5).getUnit().getType());
+		assertEquals("US survey foot", projectedCrs.getMapProjection()
+				.getParameters().get(5).getUnit().getName());
+		assertEquals(
+				0.304800609601219, projectedCrs.getMapProjection()
+						.getParameters().get(5).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getParameters()
+				.get(5).getIdentifiers().get(0).getName());
+		assertEquals("8827", projectedCrs.getMapProjection().getParameters()
+				.get(5).getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Gulf of Mexico speculative survey bin grid",
+				derivedCrs.getConversion().getName());
+		assertEquals("P6 (I = J-90°) seismic bin grid transformation",
+				derivedCrs.getConversion().getMethod().getName());
+		assertEquals("EPSG", derivedCrs.getConversion().getMethod()
+				.getIdentifiers().get(0).getName());
+		assertEquals("1049", derivedCrs.getConversion().getMethod()
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Bin grid origin I",
+				derivedCrs.getConversion().getParameters().get(0).getName());
+		assertEquals(5000, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(0)).getValue(), 0);
+		assertEquals(UnitType.SCALEUNIT, ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(0)).getUnit().getType());
+		assertEquals("Bin", ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(0)).getUnit().getName());
+		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(0)).getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", derivedCrs.getConversion().getParameters().get(0)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8733", derivedCrs.getConversion().getParameters().get(0)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Bin grid origin J",
+				derivedCrs.getConversion().getParameters().get(1).getName());
+		assertEquals(0, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(1)).getValue(), 0);
+		assertEquals(UnitType.SCALEUNIT, ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(1)).getUnit().getType());
+		assertEquals("Bin", ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(1)).getUnit().getName());
+		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(1)).getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", derivedCrs.getConversion().getParameters().get(1)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8734", derivedCrs.getConversion().getParameters().get(1)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Bin grid origin Easting",
+				derivedCrs.getConversion().getParameters().get(2).getName());
+		assertEquals(871200, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(2)).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT, ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(2)).getUnit().getType());
+		assertEquals("US survey foot", ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(2)).getUnit().getName());
+		assertEquals(0.304800609601219,
+				((OperationParameter) derivedCrs.getConversion().getParameters()
+						.get(2)).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", derivedCrs.getConversion().getParameters().get(2)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8735", derivedCrs.getConversion().getParameters().get(2)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Bin grid origin Northing",
+				derivedCrs.getConversion().getParameters().get(3).getName());
+		assertEquals(10280160, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(3)).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT, ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(3)).getUnit().getType());
+		assertEquals("US survey foot", ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(3)).getUnit().getName());
+		assertEquals(0.304800609601219,
+				((OperationParameter) derivedCrs.getConversion().getParameters()
+						.get(3)).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", derivedCrs.getConversion().getParameters().get(3)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8736", derivedCrs.getConversion().getParameters().get(3)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Scale factor of bin grid",
+				derivedCrs.getConversion().getParameters().get(4).getName());
+		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(4)).getValue(), 0);
+		assertEquals(UnitType.SCALEUNIT, ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(4)).getUnit().getType());
+		assertEquals("Unity", ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(4)).getUnit().getName());
+		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(4)).getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", derivedCrs.getConversion().getParameters().get(4)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8737", derivedCrs.getConversion().getParameters().get(4)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Bin width on I-axis",
+				derivedCrs.getConversion().getParameters().get(5).getName());
+		assertEquals(82.5, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(5)).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT, ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(5)).getUnit().getType());
+		assertEquals("US survey foot", ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(5)).getUnit().getName());
+		assertEquals(0.304800609601219,
+				((OperationParameter) derivedCrs.getConversion().getParameters()
+						.get(5)).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", derivedCrs.getConversion().getParameters().get(5)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8738", derivedCrs.getConversion().getParameters().get(5)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Bin width on J-axis",
+				derivedCrs.getConversion().getParameters().get(6).getName());
+		assertEquals(41.25, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(6)).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT, ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(6)).getUnit().getType());
+		assertEquals("US survey foot", ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(6)).getUnit().getName());
+		assertEquals(0.304800609601219,
+				((OperationParameter) derivedCrs.getConversion().getParameters()
+						.get(6)).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", derivedCrs.getConversion().getParameters().get(6)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8739", derivedCrs.getConversion().getParameters().get(6)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Map grid bearing of bin grid J-axis",
+				derivedCrs.getConversion().getParameters().get(7).getName());
+		assertEquals(340, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(7)).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT, ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(7)).getUnit().getType());
+		assertEquals("degree", ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(7)).getUnit().getName());
+		assertEquals(0.0174532925199433,
+				((OperationParameter) derivedCrs.getConversion().getParameters()
+						.get(7)).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", derivedCrs.getConversion().getParameters().get(7)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8740", derivedCrs.getConversion().getParameters().get(7)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Bin node increment on I-axis",
+				derivedCrs.getConversion().getParameters().get(8).getName());
+		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(8)).getValue(), 0);
+		assertEquals(UnitType.SCALEUNIT, ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(8)).getUnit().getType());
+		assertEquals("Bin", ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(8)).getUnit().getName());
+		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(8)).getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", derivedCrs.getConversion().getParameters().get(8)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8741", derivedCrs.getConversion().getParameters().get(8)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Bin node increment on J-axis",
+				derivedCrs.getConversion().getParameters().get(9).getName());
+		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(9)).getValue(), 0);
+		assertEquals(UnitType.SCALEUNIT, ((OperationParameter) derivedCrs
+				.getConversion().getParameters().get(9)).getUnit().getType());
+		assertEquals("Bin", ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(9)).getUnit().getName());
+		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(9)).getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", derivedCrs.getConversion().getParameters().get(9)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8742", derivedCrs.getConversion().getParameters().get(9)
+				.getIdentifiers().get(0).getUniqueIdentifier());
 		assertEquals(CoordinateSystemType.ORDINAL,
 				derivedCrs.getCoordinateSystem().getType());
 		assertEquals(2, derivedCrs.getCoordinateSystem().getDimension());
 		assertEquals("Inline",
 				derivedCrs.getCoordinateSystem().getAxes().get(0).getName());
-		assertEquals("I",
-				derivedCrs.getCoordinateSystem().getAxes().get(0).getAbbreviation());
-		assertEquals(AxisDirectionType.NORTH_NORTH_WEST, derivedCrs.getCoordinateSystem()
-				.getAxes().get(0).getDirection());
+		assertEquals("I", derivedCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.NORTH_NORTH_WEST, derivedCrs
+				.getCoordinateSystem().getAxes().get(0).getDirection());
 		assertEquals("Crossline",
 				derivedCrs.getCoordinateSystem().getAxes().get(1).getName());
-		assertEquals("J",
-				derivedCrs.getCoordinateSystem().getAxes().get(1).getAbbreviation());
-		assertEquals(AxisDirectionType.WEST_SOUTH_WEST, derivedCrs.getCoordinateSystem()
-				.getAxes().get(1).getDirection());
+		assertEquals("J", derivedCrs.getCoordinateSystem().getAxes().get(1)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.WEST_SOUTH_WEST, derivedCrs
+				.getCoordinateSystem().getAxes().get(1).getDirection());
 
 		text = text.replace("20925832.164", "2.0925832164E7")
 				.replace(",5000,", ",5000.0,").replace(",0,", ",0.0,")
