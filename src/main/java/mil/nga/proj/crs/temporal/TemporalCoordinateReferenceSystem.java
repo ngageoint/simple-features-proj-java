@@ -37,7 +37,7 @@ public class TemporalCoordinateReferenceSystem
 	public TemporalCoordinateReferenceSystem(String name,
 			TemporalDatum temporalDatum, CoordinateSystem coordinateSystem) {
 		super(name, CoordinateReferenceSystemType.TEMPORAL, coordinateSystem);
-		setTemporalDatum(temporalDatum);
+		setDatum(temporalDatum);
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class TemporalCoordinateReferenceSystem
 	 * @param datum
 	 *            temporal datum
 	 */
-	public void setTemporalDatum(TemporalDatum datum) {
+	public void setDatum(TemporalDatum datum) {
 		this.datum = datum;
 	}
 

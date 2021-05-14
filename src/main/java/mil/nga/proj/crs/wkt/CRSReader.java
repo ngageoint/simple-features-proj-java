@@ -310,15 +310,8 @@ public class CRSReader implements Closeable {
 	 */
 	public static ParametricCoordinateReferenceSystem readParametric(
 			String text) throws IOException {
-		ParametricCoordinateReferenceSystem crs = null;
-		CRSReader reader = new CRSReader(text);
-		try {
-			crs = reader.readParametric();
-			reader.readEnd();
-		} finally {
-			reader.close();
-		}
-		return crs;
+		return (ParametricCoordinateReferenceSystem) read(text,
+				CoordinateReferenceSystemType.PARAMETRIC);
 	}
 
 	/**
@@ -332,15 +325,8 @@ public class CRSReader implements Closeable {
 	 */
 	public static TemporalCoordinateReferenceSystem readTemporal(String text)
 			throws IOException {
-		TemporalCoordinateReferenceSystem crs = null;
-		CRSReader reader = new CRSReader(text);
-		try {
-			crs = reader.readTemporal();
-			reader.readEnd();
-		} finally {
-			reader.close();
-		}
-		return crs;
+		return (TemporalCoordinateReferenceSystem) read(text,
+				CoordinateReferenceSystemType.TEMPORAL);
 	}
 
 	/**
@@ -1565,19 +1551,48 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public ParametricCoordinateReferenceSystem readParametric()
-			throws IOException {
+	public CoordinateReferenceSystem readParametric() throws IOException {
 
-		ParametricCoordinateReferenceSystem crs = new ParametricCoordinateReferenceSystem();
+		ParametricCoordinateReferenceSystem baseCrs = new ParametricCoordinateReferenceSystem();
+		CoordinateReferenceSystem crs = baseCrs;
+		DerivedCoordinateReferenceSystem derivedCrs = null;
 
 		readKeyword(CoordinateReferenceSystemKeyword.PARAMETRICCRS);
 
 		readLeftDelimiter();
 
-		crs.setName(reader.readExpectedToken());
+		String name = reader.readExpectedToken();
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.BASEPARAMCRS)) {
+			readKeyword(CoordinateReferenceSystemKeyword.BASEPARAMCRS);
+
+			derivedCrs = new DerivedCoordinateReferenceSystem();
+			derivedCrs.setBase(baseCrs);
+			crs = derivedCrs;
+
+			readLeftDelimiter();
+			baseCrs.setName(reader.readExpectedToken());
+		}
+
+		crs.setName(name);
 
 		readSeparator();
-		crs.setDatum(readParametricDatum());
+		baseCrs.setDatum(readParametricDatum());
+
+		if (derivedCrs != null) {
+
+			CoordinateReferenceSystemKeyword keyword = readToKeyword(
+					CoordinateReferenceSystemKeyword.ID);
+			if (keyword == CoordinateReferenceSystemKeyword.ID) {
+				baseCrs.setIdentifiers(readIdentifiers());
+			}
+
+			readRightDelimiter();
+
+			readSeparator();
+			derivedCrs.setConversion(readDerivingConversion());
+
+		}
 
 		readSeparator();
 		crs.setCoordinateSystem(readCoordinateSystem());
@@ -1596,18 +1611,48 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public TemporalCoordinateReferenceSystem readTemporal() throws IOException {
+	public CoordinateReferenceSystem readTemporal() throws IOException {
 
-		TemporalCoordinateReferenceSystem crs = new TemporalCoordinateReferenceSystem();
+		TemporalCoordinateReferenceSystem baseCrs = new TemporalCoordinateReferenceSystem();
+		CoordinateReferenceSystem crs = baseCrs;
+		DerivedCoordinateReferenceSystem derivedCrs = null;
 
 		readKeyword(CoordinateReferenceSystemKeyword.TIMECRS);
 
 		readLeftDelimiter();
 
-		crs.setName(reader.readExpectedToken());
+		String name = reader.readExpectedToken();
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.BASETIMECRS)) {
+			readKeyword(CoordinateReferenceSystemKeyword.BASETIMECRS);
+
+			derivedCrs = new DerivedCoordinateReferenceSystem();
+			derivedCrs.setBase(baseCrs);
+			crs = derivedCrs;
+
+			readLeftDelimiter();
+			baseCrs.setName(reader.readExpectedToken());
+		}
+
+		crs.setName(name);
 
 		readSeparator();
-		crs.setTemporalDatum(readTemporalDatum());
+		baseCrs.setDatum(readTemporalDatum());
+
+		if (derivedCrs != null) {
+
+			CoordinateReferenceSystemKeyword keyword = readToKeyword(
+					CoordinateReferenceSystemKeyword.ID);
+			if (keyword == CoordinateReferenceSystemKeyword.ID) {
+				baseCrs.setIdentifiers(readIdentifiers());
+			}
+
+			readRightDelimiter();
+
+			readSeparator();
+			derivedCrs.setConversion(readDerivingConversion());
+
+		}
 
 		readSeparator();
 		crs.setCoordinateSystem(readCoordinateSystem());

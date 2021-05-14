@@ -708,6 +708,12 @@ public class CRSWriter implements Closeable {
 		case ENGINEERING:
 			writeDerivedEngineeringCRS(crs);
 			break;
+		case PARAMETRIC:
+			writeDerivedParametricCRS(crs);
+			break;
+		case TEMPORAL:
+			writeDerivedTemporalCRS(crs);
+			break;
 		default:
 			throw new ProjectionException(
 					"Unsupported derived base CRS type: " + crs.getBaseType());
@@ -956,6 +962,102 @@ public class CRSWriter implements Closeable {
 
 		writeSeparator();
 		write(CoordinateReferenceSystemKeyword.BASEENGCRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(baseCrs.getName());
+
+		writeSeparator();
+		write(baseCrs.getDatum());
+
+		if (baseCrs.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(baseCrs.getIdentifiers());
+		}
+
+		writeRightDelimiter();
+
+		writeSeparator();
+		write(crs.getConversion());
+
+		writeSeparator();
+		write(crs.getCoordinateSystem());
+
+		writeScopeExtentIdentifierRemark(crs);
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write a derived parametric CRS to well-known text
+	 * 
+	 * @param crs
+	 *            derived parametric coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeDerivedParametricCRS(DerivedCoordinateReferenceSystem crs)
+			throws IOException {
+
+		ParametricCoordinateReferenceSystem baseCrs = (ParametricCoordinateReferenceSystem) crs
+				.getBase();
+
+		write(CoordinateReferenceSystemKeyword.PARAMETRICCRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(crs.getName());
+
+		writeSeparator();
+		write(CoordinateReferenceSystemKeyword.BASEPARAMCRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(baseCrs.getName());
+
+		writeSeparator();
+		write(baseCrs.getDatum());
+
+		if (baseCrs.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(baseCrs.getIdentifiers());
+		}
+
+		writeRightDelimiter();
+
+		writeSeparator();
+		write(crs.getConversion());
+
+		writeSeparator();
+		write(crs.getCoordinateSystem());
+
+		writeScopeExtentIdentifierRemark(crs);
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write a derived temporal CRS to well-known text
+	 * 
+	 * @param crs
+	 *            derived temporal coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeDerivedTemporalCRS(DerivedCoordinateReferenceSystem crs)
+			throws IOException {
+
+		TemporalCoordinateReferenceSystem baseCrs = (TemporalCoordinateReferenceSystem) crs
+				.getBase();
+
+		write(CoordinateReferenceSystemKeyword.TIMECRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(crs.getName());
+
+		writeSeparator();
+		write(CoordinateReferenceSystemKeyword.BASETIMECRS);
 
 		writeLeftDelimiter();
 

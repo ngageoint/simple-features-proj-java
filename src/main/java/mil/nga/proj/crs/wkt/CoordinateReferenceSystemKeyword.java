@@ -53,9 +53,19 @@ public enum CoordinateReferenceSystemKeyword {
 	BASEGEOGCRS(),
 
 	/**
+	 * Base Parametric CRS
+	 */
+	BASEPARAMCRS(),
+
+	/**
 	 * Base Projected CRS
 	 */
 	BASEPROJCRS(),
+
+	/**
+	 * Base Temporal CRS
+	 */
+	BASETIMECRS(),
 
 	/**
 	 * Base Derived CRS

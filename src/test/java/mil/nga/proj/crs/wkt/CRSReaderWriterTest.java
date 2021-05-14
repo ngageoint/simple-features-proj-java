@@ -2636,8 +2636,7 @@ public class CRSReaderWriterTest {
 		assertEquals(CoordinateReferenceSystemType.ENGINEERING,
 				engineeringCrs.getType());
 		assertEquals("Astra Minas Grid", engineeringCrs.getName());
-		assertEquals("Astra Minas",
-				engineeringCrs.getDatum().getName());
+		assertEquals("Astra Minas", engineeringCrs.getDatum().getName());
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				engineeringCrs.getCoordinateSystem().getType());
 		assertEquals(2, engineeringCrs.getCoordinateSystem().getDimension());
@@ -3731,8 +3730,8 @@ public class CRSReaderWriterTest {
 				+ "DERIVINGCONVERSION[\"Deriving Conversion\","
 				+ "METHOD[\"Method\"],"
 				+ "PARAMETER[\"param1\",1.0],PARAMETER[\"param2\",2.0]],"
-				+ "CS[Cartesian,2]," + "AXIS[\"site east\",southWest,ORDER[1]],"
-				+ "AXIS[\"site north\",southEast,ORDER[2]]]";
+				+ "CS[Cartesian,2],"
+				+ "AXIS[\"site east\",southWest,ORDER[1]],AXIS[\"site north\",southEast,ORDER[2]]]";
 
 		CoordinateReferenceSystem crs = CRSReader.read(text, true);
 		DerivedCoordinateReferenceSystem derivedCrs = CRSReader
@@ -3761,6 +3760,9 @@ public class CRSReaderWriterTest {
 				derivedCrs.getConversion().getParameters().get(1).getName());
 		assertEquals(2, ((OperationParameter) derivedCrs.getConversion()
 				.getParameters().get(1)).getValue(), 0);
+		assertEquals(CoordinateSystemType.CARTESIAN,
+				derivedCrs.getCoordinateSystem().getType());
+		assertEquals(2, derivedCrs.getCoordinateSystem().getDimension());
 		assertEquals("site east",
 				derivedCrs.getCoordinateSystem().getAxes().get(0).getName());
 		assertEquals(AxisDirectionType.SOUTH_WEST, derivedCrs
@@ -3773,6 +3775,133 @@ public class CRSReaderWriterTest {
 				.getCoordinateSystem().getAxes().get(1).getDirection());
 		assertEquals(2, derivedCrs.getCoordinateSystem().getAxes().get(1)
 				.getOrder().intValue());
+
+		assertEquals(text, derivedCrs.toString());
+		assertEquals(text, CRSWriter.write(derivedCrs));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(derivedCrs));
+
+	}
+
+	/**
+	 * Test derived parametric coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testDerivedParametricCoordinateReferenceSystem()
+			throws IOException {
+
+		String text = "PARAMETRICCRS[\"WMO standard atmosphere layer 0\","
+				+ "BASEPARAMCRS[\"WMO standard atmosphere layer 0 Base\","
+				+ "PDATUM[\"Mean Sea Level\",ANCHOR[\"1013.25 hPa at 15°C\"]]],"
+				+ "DERIVINGCONVERSION[\"Deriving Conversion\","
+				+ "METHOD[\"Method\"],"
+				+ "PARAMETER[\"param1\",1.0],PARAMETER[\"param2\",2.0]],"
+				+ "CS[parametric,1],"
+				+ "AXIS[\"pressure (hPa)\",up],PARAMETRICUNIT[\"HectoPascal\",100.0]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		DerivedCoordinateReferenceSystem derivedCrs = CRSReader
+				.readDerived(text);
+		assertEquals(crs, derivedCrs);
+		assertEquals(CoordinateReferenceSystemType.DERIVED,
+				derivedCrs.getType());
+		assertEquals("WMO standard atmosphere layer 0", derivedCrs.getName());
+		assertEquals(CoordinateReferenceSystemType.PARAMETRIC,
+				derivedCrs.getBaseType());
+		assertEquals("WMO standard atmosphere layer 0 Base",
+				derivedCrs.getBaseName());
+		ParametricCoordinateReferenceSystem parametricCrs = (ParametricCoordinateReferenceSystem) derivedCrs
+				.getBase();
+		assertEquals("Mean Sea Level", parametricCrs.getDatum().getName());
+		assertEquals("1013.25 hPa at 15°C",
+				parametricCrs.getDatum().getAnchor());
+		assertEquals("Deriving Conversion",
+				derivedCrs.getConversion().getName());
+		assertEquals("Method",
+				derivedCrs.getConversion().getMethod().getName());
+		assertEquals("param1",
+				derivedCrs.getConversion().getParameters().get(0).getName());
+		assertEquals(1, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(0)).getValue(), 0);
+		assertEquals("param2",
+				derivedCrs.getConversion().getParameters().get(1).getName());
+		assertEquals(2, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(1)).getValue(), 0);
+		assertEquals(CoordinateSystemType.PARAMETRIC,
+				derivedCrs.getCoordinateSystem().getType());
+		assertEquals(1, derivedCrs.getCoordinateSystem().getDimension());
+		assertEquals("pressure",
+				derivedCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals("hPa", derivedCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.UP, derivedCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals(UnitType.PARAMETRICUNIT,
+				derivedCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("HectoPascal",
+				derivedCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(100.0, derivedCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+
+		assertEquals(text, derivedCrs.toString());
+		assertEquals(text, CRSWriter.write(derivedCrs));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(derivedCrs));
+
+	}
+
+	/**
+	 * Test derived temporal coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testDerivedTemporalCoordinateReferenceSystem()
+			throws IOException {
+
+		String text = "TIMECRS[\"DateTime\",BASETIMECRS[\"DateTime Base\","
+				+ "TDATUM[\"Gregorian Calendar\"]],"
+				+ "DERIVINGCONVERSION[\"Deriving Conversion\","
+				+ "METHOD[\"Method\"],"
+				+ "PARAMETER[\"param1\",1.0],PARAMETER[\"param2\",2.0]],"
+				+ "CS[temporalDateTime,1],AXIS[\"Time (T)\",future]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		DerivedCoordinateReferenceSystem derivedCrs = CRSReader
+				.readDerived(text);
+		assertEquals(crs, derivedCrs);
+		assertEquals(CoordinateReferenceSystemType.DERIVED,
+				derivedCrs.getType());
+		assertEquals("DateTime", derivedCrs.getName());
+		assertEquals(CoordinateReferenceSystemType.TEMPORAL,
+				derivedCrs.getBaseType());
+		assertEquals("DateTime Base", derivedCrs.getBaseName());
+		TemporalCoordinateReferenceSystem temporalCrs = (TemporalCoordinateReferenceSystem) derivedCrs
+				.getBase();
+		assertEquals("Gregorian Calendar", temporalCrs.getDatum().getName());
+		assertEquals("Deriving Conversion",
+				derivedCrs.getConversion().getName());
+		assertEquals("Method",
+				derivedCrs.getConversion().getMethod().getName());
+		assertEquals("param1",
+				derivedCrs.getConversion().getParameters().get(0).getName());
+		assertEquals(1, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(0)).getValue(), 0);
+		assertEquals("param2",
+				derivedCrs.getConversion().getParameters().get(1).getName());
+		assertEquals(2, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(1)).getValue(), 0);
+		assertEquals(CoordinateSystemType.TEMPORAL_DATE_TIME,
+				derivedCrs.getCoordinateSystem().getType());
+		assertEquals(1, derivedCrs.getCoordinateSystem().getDimension());
+		assertEquals("Time",
+				derivedCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals("T", derivedCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.FUTURE, derivedCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
 
 		assertEquals(text, derivedCrs.toString());
 		assertEquals(text, CRSWriter.write(derivedCrs));
