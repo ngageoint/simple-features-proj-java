@@ -53,6 +53,11 @@ public enum CoordinateReferenceSystemKeyword {
 	BASEPROJCRS(),
 
 	/**
+	 * Base Derived CRS
+	 */
+	BASEVERTCRS(),
+
+	/**
 	 * Geographic bounding box
 	 */
 	BBOX(),

@@ -196,7 +196,7 @@ public class TextReader {
 
 					// If in a quoted string
 					if (isQuote) {
-						boolean charQuote = character == '"';
+						boolean charQuote = isQuoteCharacter(character);
 						if (previousCharQuote) {
 							if (charQuote) {
 								builder.append(character);
@@ -228,7 +228,7 @@ public class TextReader {
 
 					// First non whitespace character in the token
 					builder = new StringBuilder();
-					if (character == '"') {
+					if (isQuoteCharacter(character)) {
 						isQuote = true;
 					} else {
 
@@ -434,6 +434,23 @@ public class TextReader {
 		return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
 				|| (c >= '0' && c <= '9') || c == '-' || c == '.' || c == '+'
 				|| c == ':' || c == '_';
+	}
+
+	/**
+	 * Check if the character is a quote character
+	 * 
+	 * @param c
+	 *            character
+	 * @return true if quote character
+	 */
+	private static boolean isQuoteCharacter(char c) {
+		boolean quote = c == '"';
+		if (!quote) {
+			int type = Character.getType(c);
+			quote = type == Character.INITIAL_QUOTE_PUNCTUATION
+					|| type == Character.FINAL_QUOTE_PUNCTUATION;
+		}
+		return quote;
 	}
 
 }

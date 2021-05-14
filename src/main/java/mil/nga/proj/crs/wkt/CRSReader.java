@@ -280,15 +280,8 @@ public class CRSReader implements Closeable {
 	 */
 	public static VerticalCoordinateReferenceSystem readVertical(String text)
 			throws IOException {
-		VerticalCoordinateReferenceSystem crs = null;
-		CRSReader reader = new CRSReader(text);
-		try {
-			crs = reader.readVertical();
-			reader.readEnd();
-		} finally {
-			reader.close();
-		}
-		return crs;
+		return (VerticalCoordinateReferenceSystem) read(text,
+				CoordinateReferenceSystemType.VERTICAL);
 	}
 
 	/**
@@ -1430,30 +1423,45 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public VerticalCoordinateReferenceSystem readVertical() throws IOException {
+	public CoordinateReferenceSystem readVertical() throws IOException {
 
-		VerticalCoordinateReferenceSystem crs = new VerticalCoordinateReferenceSystem();
+		VerticalCoordinateReferenceSystem baseCrs = new VerticalCoordinateReferenceSystem();
+		CoordinateReferenceSystem crs = baseCrs;
+		DerivedCoordinateReferenceSystem derivedCrs = null;
 
 		readKeyword(CoordinateReferenceSystemKeyword.VERTCRS);
 
 		readLeftDelimiter();
 
-		crs.setName(reader.readExpectedToken());
+		String name = reader.readExpectedToken();
+
+		if (isKeywordNext(CoordinateReferenceSystemKeyword.BASEVERTCRS)) {
+			readKeyword(CoordinateReferenceSystemKeyword.BASEVERTCRS);
+
+			derivedCrs = new DerivedCoordinateReferenceSystem();
+			derivedCrs.setBase(baseCrs);
+			crs = derivedCrs;
+
+			readLeftDelimiter();
+			baseCrs.setName(reader.readExpectedToken());
+		}
+
+		crs.setName(name);
 
 		boolean isDynamic = isKeywordNext(
 				CoordinateReferenceSystemKeyword.DYNAMIC);
 		if (isDynamic) {
 			readSeparator();
-			crs.setDynamic(readDynamic());
+			baseCrs.setDynamic(readDynamic());
 		}
 
 		if (isDynamic
 				|| isKeywordNext(CoordinateReferenceSystemKeyword.VDATUM)) {
 			readSeparator();
-			crs.setVerticalReferenceFrame(readVerticalReferenceFrame());
+			baseCrs.setReferenceFrame(readVerticalReferenceFrame());
 		} else if (isKeywordNext(CoordinateReferenceSystemKeyword.ENSEMBLE)) {
 			readSeparator();
-			crs.setVerticalDatumEnsemble(readVerticalDatumEnsemble());
+			baseCrs.setDatumEnsemble(readVerticalDatumEnsemble());
 		} else {
 			// Validation error
 			readSeparator();
@@ -1461,19 +1469,35 @@ public class CRSReader implements Closeable {
 					CoordinateReferenceSystemKeyword.ENSEMBLE);
 		}
 
+		if (derivedCrs != null) {
+
+			CoordinateReferenceSystemKeyword keyword = readToKeyword(
+					CoordinateReferenceSystemKeyword.ID);
+			if (keyword == CoordinateReferenceSystemKeyword.ID) {
+				baseCrs.setIdentifiers(readIdentifiers());
+			}
+
+			readRightDelimiter();
+
+			readSeparator();
+			derivedCrs.setConversion(readDerivingConversion());
+
+		}
+
 		readSeparator();
 
 		crs.setCoordinateSystem(readCoordinateSystem());
 
-		if (isKeywordNext(CoordinateReferenceSystemKeyword.GEOIDMODEL)) {
+		if (derivedCrs == null
+				&& isKeywordNext(CoordinateReferenceSystemKeyword.GEOIDMODEL)) {
 			readSeparator();
 			readKeyword(CoordinateReferenceSystemKeyword.GEOIDMODEL);
 			readLeftDelimiter();
-			crs.setGeoidModelName(reader.readExpectedToken());
+			baseCrs.setGeoidModelName(reader.readExpectedToken());
 			CoordinateReferenceSystemKeyword keyword = readToKeyword(
 					CoordinateReferenceSystemKeyword.ID);
 			if (keyword == CoordinateReferenceSystemKeyword.ID) {
-				crs.setGeoidModelIdentifier(readIdentifier());
+				baseCrs.setGeoidModelIdentifier(readIdentifier());
 			}
 			readRightDelimiter();
 		}
@@ -3319,11 +3343,11 @@ public class CRSReader implements Closeable {
 		crs.setName(reader.readExpectedToken());
 
 		readSeparator();
-		crs.setVerticalReferenceFrame(readVerticalDatumCompat());
+		crs.setReferenceFrame(readVerticalDatumCompat());
 
 		crs.setCoordinateSystem(readCoordinateSystemCompat(
 				CoordinateReferenceSystemType.VERTICAL,
-				crs.getVerticalReferenceFrame()));
+				crs.getReferenceFrame()));
 
 		CoordinateReferenceSystemKeyword keyword = readToKeyword(
 				CoordinateReferenceSystemKeyword.EXTENSION,

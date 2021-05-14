@@ -2476,7 +2476,7 @@ public class CRSReaderWriterTest {
 				verticalCrs.getType());
 		assertEquals("NAVD88", verticalCrs.getName());
 		assertEquals("North American Vertical Datum 1988",
-				verticalCrs.getVerticalReferenceFrame().getName());
+				verticalCrs.getReferenceFrame().getName());
 		assertEquals(CoordinateSystemType.VERTICAL,
 				verticalCrs.getCoordinateSystem().getType());
 		assertEquals(1, verticalCrs.getCoordinateSystem().getDimension());
@@ -2509,7 +2509,7 @@ public class CRSReaderWriterTest {
 				verticalCrs.getType());
 		assertEquals("CGVD2013", verticalCrs.getName());
 		assertEquals("Canadian Geodetic Vertical Datum of 2013",
-				verticalCrs.getVerticalReferenceFrame().getName());
+				verticalCrs.getReferenceFrame().getName());
 		assertEquals(CoordinateSystemType.VERTICAL,
 				verticalCrs.getCoordinateSystem().getType());
 		assertEquals(1, verticalCrs.getCoordinateSystem().getDimension());
@@ -2550,7 +2550,7 @@ public class CRSReaderWriterTest {
 		assertEquals("NKG2016LU",
 				verticalCrs.getDynamic().getDeformationModelName());
 		assertEquals("Rikets Hojdsystem 2000",
-				verticalCrs.getVerticalReferenceFrame().getName());
+				verticalCrs.getReferenceFrame().getName());
 		assertEquals(CoordinateSystemType.VERTICAL,
 				verticalCrs.getCoordinateSystem().getType());
 		assertEquals(1, verticalCrs.getCoordinateSystem().getDimension());
@@ -3623,6 +3623,92 @@ public class CRSReaderWriterTest {
 				.replace(",5000,", ",5000.0,").replace(",0,", ",0.0,")
 				.replace("871200", "871200.0").replace("10280160", "1.028016E7")
 				.replace(",340,", ",340.0,");
+		assertEquals(text, derivedCrs.toString());
+		assertEquals(text, CRSWriter.write(derivedCrs));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(derivedCrs));
+
+	}
+
+	/**
+	 * Test derived vertical coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testDerivedVerticalCoordinateReferenceSystem()
+			throws IOException {
+
+		String text = "VERTCRS[\"Pseudo-pression en kPa\","
+				+ "BASEVERTCRS[\"Profondeur sous la surface de la mer\","
+				+ "VDATUM[\"Niveau moyen de la mer\"]],"
+				+ "DERIVINGCONVERSION[“De la profondeur vers PP”,"
+				+ "METHOD[\"Affine\"],"
+				+ "PARAMETER[\"num_row\",2],PARAMETER[\"num_col\",2],"
+				+ "PARAMETER[\"elt_0_0\",10],PARAMETER[\"elt_0_1”,100]],"
+				+ "CS[vertical,1],"
+				+ "AXIS[“Pseudo-pression (H)”,down],UNIT[“Unity”,1]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		DerivedCoordinateReferenceSystem derivedCrs = CRSReader
+				.readDerived(text);
+		assertEquals(crs, derivedCrs);
+		assertEquals(CoordinateReferenceSystemType.DERIVED,
+				derivedCrs.getType());
+		assertEquals("Pseudo-pression en kPa", derivedCrs.getName());
+		assertEquals(CoordinateReferenceSystemType.VERTICAL,
+				derivedCrs.getBaseType());
+		assertEquals("Profondeur sous la surface de la mer",
+				derivedCrs.getBaseName());
+		VerticalCoordinateReferenceSystem verticalCrs = (VerticalCoordinateReferenceSystem) derivedCrs
+				.getBase();
+		assertEquals("Niveau moyen de la mer",
+				verticalCrs.getReferenceFrame().getName());
+		assertEquals("De la profondeur vers PP",
+				derivedCrs.getConversion().getName());
+		assertEquals("Affine",
+				derivedCrs.getConversion().getMethod().getName());
+		assertEquals("num_row",
+				derivedCrs.getConversion().getParameters().get(0).getName());
+		assertEquals(2, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(0)).getValue(), 0);
+		assertEquals("num_col",
+				derivedCrs.getConversion().getParameters().get(1).getName());
+		assertEquals(2, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(1)).getValue(), 0);
+		assertEquals("elt_0_0",
+				derivedCrs.getConversion().getParameters().get(2).getName());
+		assertEquals(10, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(2)).getValue(), 0);
+		assertEquals("elt_0_1",
+				derivedCrs.getConversion().getParameters().get(3).getName());
+		assertEquals(100, ((OperationParameter) derivedCrs.getConversion()
+				.getParameters().get(3)).getValue(), 0);
+		assertEquals(CoordinateSystemType.VERTICAL,
+				derivedCrs.getCoordinateSystem().getType());
+		assertEquals(1, derivedCrs.getCoordinateSystem().getDimension());
+		assertEquals("Pseudo-pression",
+				derivedCrs.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals("H", derivedCrs.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.DOWN, derivedCrs.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals(UnitType.UNIT,
+				derivedCrs.getCoordinateSystem().getUnit().getType());
+		assertEquals("Unity",
+				derivedCrs.getCoordinateSystem().getUnit().getName());
+		assertEquals(1.0, derivedCrs.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+
+		text = "VERTCRS[\"Pseudo-pression en kPa\","
+				+ "BASEVERTCRS[\"Profondeur sous la surface de la mer\","
+				+ "VDATUM[\"Niveau moyen de la mer\"]],"
+				+ "DERIVINGCONVERSION[\"De la profondeur vers PP\","
+				+ "METHOD[\"Affine\"],"
+				+ "PARAMETER[\"num_row\",2.0],PARAMETER[\"num_col\",2.0],"
+				+ "PARAMETER[\"elt_0_0\",10.0],PARAMETER[\"elt_0_1\",100.0]],"
+				+ "CS[vertical,1],"
+				+ "AXIS[\"Pseudo-pression (H)\",down],UNIT[\"Unity\",1.0]]";
 		assertEquals(text, derivedCrs.toString());
 		assertEquals(text, CRSWriter.write(derivedCrs));
 		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(derivedCrs));

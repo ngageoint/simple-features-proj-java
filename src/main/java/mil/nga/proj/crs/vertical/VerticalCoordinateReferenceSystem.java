@@ -17,12 +17,12 @@ public class VerticalCoordinateReferenceSystem
 	/**
 	 * Vertical Reference Frame
 	 */
-	private VerticalReferenceFrame verticalReferenceFrame = null;
+	private VerticalReferenceFrame referenceFrame = null;
 
 	/**
 	 * Vertical Datum Ensemble
 	 */
-	private VerticalDatumEnsemble verticalDatumEnsemble = null;
+	private VerticalDatumEnsemble datumEnsemble = null;
 
 	/**
 	 * Dynamic coordinate reference system
@@ -51,16 +51,16 @@ public class VerticalCoordinateReferenceSystem
 	 * 
 	 * @param name
 	 *            name
-	 * @param verticalReferenceFrame
+	 * @param referenceFrame
 	 *            vertical reference frame
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
 	public VerticalCoordinateReferenceSystem(String name,
-			VerticalReferenceFrame verticalReferenceFrame,
+			VerticalReferenceFrame referenceFrame,
 			CoordinateSystem coordinateSystem) {
 		super(name, CoordinateReferenceSystemType.VERTICAL, coordinateSystem);
-		setVerticalReferenceFrame(verticalReferenceFrame);
+		setReferenceFrame(referenceFrame);
 	}
 
 	/**
@@ -68,16 +68,16 @@ public class VerticalCoordinateReferenceSystem
 	 * 
 	 * @param name
 	 *            name
-	 * @param verticalDatumEnsemble
+	 * @param datumEnsemble
 	 *            vertical datum ensemble
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
 	public VerticalCoordinateReferenceSystem(String name,
-			VerticalDatumEnsemble verticalDatumEnsemble,
+			VerticalDatumEnsemble datumEnsemble,
 			CoordinateSystem coordinateSystem) {
 		super(name, CoordinateReferenceSystemType.VERTICAL, coordinateSystem);
-		setVerticalDatumEnsemble(verticalDatumEnsemble);
+		setDatumEnsemble(datumEnsemble);
 	}
 
 	/**
@@ -87,17 +87,17 @@ public class VerticalCoordinateReferenceSystem
 	 *            name
 	 * @param dynamic
 	 *            dynamic
-	 * @param verticalReferenceFrame
+	 * @param referenceFrame
 	 *            vertical reference frame
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
 	public VerticalCoordinateReferenceSystem(String name, Dynamic dynamic,
-			VerticalReferenceFrame verticalReferenceFrame,
+			VerticalReferenceFrame referenceFrame,
 			CoordinateSystem coordinateSystem) {
 		super(name, CoordinateReferenceSystemType.VERTICAL, coordinateSystem);
 		setDynamic(dynamic);
-		setVerticalReferenceFrame(verticalReferenceFrame);
+		setReferenceFrame(referenceFrame);
 	}
 
 	/**
@@ -105,8 +105,8 @@ public class VerticalCoordinateReferenceSystem
 	 * 
 	 * @return vertical reference frame
 	 */
-	public VerticalReferenceFrame getVerticalReferenceFrame() {
-		return verticalReferenceFrame;
+	public VerticalReferenceFrame getReferenceFrame() {
+		return referenceFrame;
 	}
 
 	/**
@@ -114,19 +114,18 @@ public class VerticalCoordinateReferenceSystem
 	 * 
 	 * @return true if has vertical reference frame
 	 */
-	public boolean hasVerticalReferenceFrame() {
-		return getVerticalReferenceFrame() != null;
+	public boolean hasReferenceFrame() {
+		return getReferenceFrame() != null;
 	}
 
 	/**
 	 * Set the vertical reference frame
 	 * 
-	 * @param verticalReferenceFrame
+	 * @param referenceFrame
 	 *            vertical reference frame
 	 */
-	public void setVerticalReferenceFrame(
-			VerticalReferenceFrame verticalReferenceFrame) {
-		this.verticalReferenceFrame = verticalReferenceFrame;
+	public void setReferenceFrame(VerticalReferenceFrame referenceFrame) {
+		this.referenceFrame = referenceFrame;
 	}
 
 	/**
@@ -134,8 +133,8 @@ public class VerticalCoordinateReferenceSystem
 	 * 
 	 * @return vertical datum ensemble
 	 */
-	public VerticalDatumEnsemble getVerticalDatumEnsemble() {
-		return verticalDatumEnsemble;
+	public VerticalDatumEnsemble getDatumEnsemble() {
+		return datumEnsemble;
 	}
 
 	/**
@@ -143,19 +142,18 @@ public class VerticalCoordinateReferenceSystem
 	 * 
 	 * @return true if has vertical datum ensemble
 	 */
-	public boolean hasVerticalDatumEnsemble() {
-		return getVerticalDatumEnsemble() != null;
+	public boolean hasDatumEnsemble() {
+		return getDatumEnsemble() != null;
 	}
 
 	/**
 	 * Set the vertical datum ensemble
 	 * 
-	 * @param verticalDatumEnsemble
+	 * @param datumEnsemble
 	 *            vertical datum ensemble
 	 */
-	public void setVerticalDatumEnsemble(
-			VerticalDatumEnsemble verticalDatumEnsemble) {
-		this.verticalDatumEnsemble = verticalDatumEnsemble;
+	public void setDatumEnsemble(VerticalDatumEnsemble datumEnsemble) {
+		this.datumEnsemble = datumEnsemble;
 	}
 
 	/**
@@ -254,10 +252,10 @@ public class VerticalCoordinateReferenceSystem
 				: geoidModelIdentifier.hashCode());
 		result = prime * result
 				+ ((geoidModelName == null) ? 0 : geoidModelName.hashCode());
-		result = prime * result + ((verticalDatumEnsemble == null) ? 0
-				: verticalDatumEnsemble.hashCode());
-		result = prime * result + ((verticalReferenceFrame == null) ? 0
-				: verticalReferenceFrame.hashCode());
+		result = prime * result
+				+ ((datumEnsemble == null) ? 0 : datumEnsemble.hashCode());
+		result = prime * result
+				+ ((referenceFrame == null) ? 0 : referenceFrame.hashCode());
 		return result;
 	}
 
@@ -288,15 +286,15 @@ public class VerticalCoordinateReferenceSystem
 				return false;
 		} else if (!geoidModelName.equals(other.geoidModelName))
 			return false;
-		if (verticalDatumEnsemble == null) {
-			if (other.verticalDatumEnsemble != null)
+		if (datumEnsemble == null) {
+			if (other.datumEnsemble != null)
 				return false;
-		} else if (!verticalDatumEnsemble.equals(other.verticalDatumEnsemble))
+		} else if (!datumEnsemble.equals(other.datumEnsemble))
 			return false;
-		if (verticalReferenceFrame == null) {
-			if (other.verticalReferenceFrame != null)
+		if (referenceFrame == null) {
+			if (other.referenceFrame != null)
 				return false;
-		} else if (!verticalReferenceFrame.equals(other.verticalReferenceFrame))
+		} else if (!referenceFrame.equals(other.referenceFrame))
 			return false;
 		return true;
 	}

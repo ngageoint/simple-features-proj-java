@@ -573,10 +573,10 @@ public class CRSWriter implements Closeable {
 		}
 
 		writeSeparator();
-		if (crs.hasDynamic() || crs.hasVerticalReferenceFrame()) {
-			write(crs.getVerticalReferenceFrame());
+		if (crs.hasDynamic() || crs.hasReferenceFrame()) {
+			write(crs.getReferenceFrame());
 		} else {
-			write(crs.getVerticalDatumEnsemble());
+			write(crs.getDatumEnsemble());
 		}
 
 		writeSeparator();
@@ -701,6 +701,9 @@ public class CRSWriter implements Closeable {
 			break;
 		case PROJECTED:
 			writeDerivedProjectedCRS(crs);
+			break;
+		case VERTICAL:
+			writeDerivedVerticalCRS(crs);
 			break;
 		default:
 			throw new ProjectionException(
@@ -856,6 +859,63 @@ public class CRSWriter implements Closeable {
 		if (projectedCrs.hasIdentifiers()) {
 			writeSeparator();
 			writeIdentifiers(projectedCrs.getIdentifiers());
+		}
+
+		writeRightDelimiter();
+
+		writeSeparator();
+		write(crs.getConversion());
+
+		writeSeparator();
+		write(crs.getCoordinateSystem());
+
+		writeScopeExtentIdentifierRemark(crs);
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write a derived vertical CRS to well-known text
+	 * 
+	 * @param crs
+	 *            derived vertical coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeDerivedVerticalCRS(DerivedCoordinateReferenceSystem crs)
+			throws IOException {
+
+		VerticalCoordinateReferenceSystem baseCrs = (VerticalCoordinateReferenceSystem) crs
+				.getBase();
+
+		write(CoordinateReferenceSystemKeyword.VERTCRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(crs.getName());
+
+		writeSeparator();
+		write(CoordinateReferenceSystemKeyword.BASEVERTCRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(baseCrs.getName());
+
+		if (baseCrs.hasDynamic()) {
+			writeSeparator();
+			write(baseCrs.getDynamic());
+		}
+
+		writeSeparator();
+		if (baseCrs.hasDynamic() || baseCrs.hasReferenceFrame()) {
+			write(baseCrs.getReferenceFrame());
+		} else {
+			write(baseCrs.getDatumEnsemble());
+		}
+
+		if (baseCrs.hasIdentifiers()) {
+			writeSeparator();
+			writeIdentifiers(baseCrs.getIdentifiers());
 		}
 
 		writeRightDelimiter();
