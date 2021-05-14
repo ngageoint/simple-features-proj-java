@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.ProjectionException;
+import mil.nga.proj.crs.CompoundCoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.common.Axis;
 import mil.nga.proj.crs.common.CoordinateSystem;
@@ -311,6 +312,9 @@ public class CRSWriter implements Closeable {
 			break;
 		case DERIVED:
 			writeCRS((DerivedCoordinateReferenceSystem) crs);
+			break;
+		case COMPOUND:
+			writeCRS((CompoundCoordinateReferenceSystem) crs);
 			break;
 		default:
 			throw new ProjectionException(
@@ -1078,6 +1082,34 @@ public class CRSWriter implements Closeable {
 
 		writeSeparator();
 		write(crs.getCoordinateSystem());
+
+		writeScopeExtentIdentifierRemark(crs);
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write a compound CRS to well-known text
+	 * 
+	 * @param crs
+	 *            compound coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeCRS(CompoundCoordinateReferenceSystem crs)
+			throws IOException {
+
+		write(CoordinateReferenceSystemKeyword.COMPOUNDCRS);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(crs.getName());
+
+		for (CoordinateReferenceSystem coordinateReferenceSystem : crs
+				.getCoordinateReferenceSystems()) {
+			writeSeparator();
+			writeCRS(coordinateReferenceSystem);
+		}
 
 		writeScopeExtentIdentifierRemark(crs);
 

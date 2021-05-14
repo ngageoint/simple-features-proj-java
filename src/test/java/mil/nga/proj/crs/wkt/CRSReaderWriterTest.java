@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import mil.nga.proj.crs.CompoundCoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystemType;
 import mil.nga.proj.crs.common.Axis;
@@ -3906,6 +3907,265 @@ public class CRSReaderWriterTest {
 		assertEquals(text, derivedCrs.toString());
 		assertEquals(text, CRSWriter.write(derivedCrs));
 		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(derivedCrs));
+
+	}
+
+	/**
+	 * Test compound coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testCompoundCoordinateReferenceSystem() throws IOException {
+
+		String text = "COMPOUNDCRS[\"NAD83 + NAVD88\","
+				+ "GEOGCRS[\"NAD83\",DATUM[\"North American Datum 1983\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137,298.257222101,"
+				+ "LENGTHUNIT[\"metre\",1.0]]],"
+				+ "PRIMEMERIDIAN[\"Greenwich\",0],CS[ellipsoidal,2],"
+				+ "AXIS[\"latitude\",north,ORDER[1]],AXIS[\"longitude\",east,ORDER[2]],"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "VERTCRS[\"NAVD88\","
+				+ "VDATUM[\"North American Vertical Datum 1983\"],"
+				+ "CS[vertical,1],"
+				+ "AXIS[\"gravity-related height (H)\",up],LENGTHUNIT[\"metre\",1]]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CompoundCoordinateReferenceSystem compoundCrs = CRSReader
+				.readCompound(text);
+		assertEquals(crs, compoundCrs);
+		assertEquals(CoordinateReferenceSystemType.COMPOUND,
+				compoundCrs.getType());
+		assertEquals("NAD83 + NAVD88", compoundCrs.getName());
+		GeoCoordinateReferenceSystem geo = (GeoCoordinateReferenceSystem) compoundCrs
+				.getCoordinateReferenceSystems().get(0);
+		assertEquals("NAD83", geo.getName());
+		assertEquals("North American Datum 1983",
+				geo.getReferenceFrame().getName());
+		assertEquals("GRS 1980",
+				geo.getReferenceFrame().getEllipsoid().getName());
+		assertEquals(6378137,
+				geo.getReferenceFrame().getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(298.257222101,
+				geo.getReferenceFrame().getEllipsoid().getInverseFlattening(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				geo.getReferenceFrame().getEllipsoid().getUnit().getType());
+		assertEquals("metre",
+				geo.getReferenceFrame().getEllipsoid().getUnit().getName());
+		assertEquals(1.0, geo.getReferenceFrame().getEllipsoid().getUnit()
+				.getConversionFactor(), 0);
+		assertEquals("Greenwich",
+				geo.getReferenceFrame().getPrimeMeridian().getName());
+		assertEquals(0,
+				geo.getReferenceFrame().getPrimeMeridian().getIrmLongitude(),
+				0);
+		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
+				geo.getCoordinateSystem().getType());
+		assertEquals(2, geo.getCoordinateSystem().getDimension());
+		assertEquals("latitude",
+				geo.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals(AxisDirectionType.NORTH,
+				geo.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals(1, geo.getCoordinateSystem().getAxes().get(0).getOrder()
+				.intValue());
+		assertEquals("longitude",
+				geo.getCoordinateSystem().getAxes().get(1).getName());
+		assertEquals(AxisDirectionType.EAST,
+				geo.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals(2, geo.getCoordinateSystem().getAxes().get(1).getOrder()
+				.intValue());
+		assertEquals(UnitType.ANGLEUNIT,
+				geo.getCoordinateSystem().getUnit().getType());
+		assertEquals("degree", geo.getCoordinateSystem().getUnit().getName());
+		assertEquals(0.0174532925199433,
+				geo.getCoordinateSystem().getUnit().getConversionFactor(), 0);
+		VerticalCoordinateReferenceSystem vertical = (VerticalCoordinateReferenceSystem) compoundCrs
+				.getCoordinateReferenceSystems().get(1);
+		assertEquals("NAVD88", vertical.getName());
+		assertEquals("North American Vertical Datum 1983",
+				vertical.getReferenceFrame().getName());
+		assertEquals(CoordinateSystemType.VERTICAL,
+				vertical.getCoordinateSystem().getType());
+		assertEquals(1, vertical.getCoordinateSystem().getDimension());
+		assertEquals("gravity-related height",
+				vertical.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals("H", vertical.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.UP,
+				vertical.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals(UnitType.LENGTHUNIT,
+				vertical.getCoordinateSystem().getUnit().getType());
+		assertEquals("metre",
+				vertical.getCoordinateSystem().getUnit().getName());
+		assertEquals(1,
+				vertical.getCoordinateSystem().getUnit().getConversionFactor(),
+				0);
+
+		text = text.replace("6378137", "6378137.0")
+				.replace("PRIMEMERIDIAN", "PRIMEM").replace(",0]", ",0.0]")
+				.replace("\",1]", "\",1.0]");
+		assertEquals(text, compoundCrs.toString());
+		assertEquals(text, CRSWriter.write(compoundCrs));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(compoundCrs));
+
+		text = "COMPOUNDCRS[\"ICAO layer 0\","
+				+ "GEOGRAPHICCRS[\"WGS 84\",DYNAMIC[FRAMEEPOCH[2005]],"
+				+ "DATUM[\"World Geodetic System 1984\","
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,"
+				+ "LENGTHUNIT[\"metre\",1.0]]],"
+				+ "CS[ellipsoidal,2],AXIS[\"latitude\",north,ORDER[1]],AXIS[\"longitude\",east,ORDER[2]],"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETRICCRS[\"WMO standard atmosphere\","
+				+ "PARAMETRICDATUM[\"Mean Sea Level\","
+				+ "ANCHOR[\"Mean Sea Level = 1013.25 hPa\"]],"
+				+ "CS[parametric,1],AXIS[\"pressure (P)\",unspecified],"
+				+ "PARAMETRICUNIT[\"HectoPascal\",100]]]";
+
+		crs = CRSReader.read(text, true);
+		compoundCrs = CRSReader.readCompound(text);
+		assertEquals(crs, compoundCrs);
+		assertEquals(CoordinateReferenceSystemType.COMPOUND,
+				compoundCrs.getType());
+		assertEquals("ICAO layer 0", compoundCrs.getName());
+		geo = (GeoCoordinateReferenceSystem) compoundCrs
+				.getCoordinateReferenceSystems().get(0);
+		assertEquals("WGS 84", geo.getName());
+		assertEquals(2005, geo.getDynamic().getReferenceEpoch(), 0);
+		assertEquals("World Geodetic System 1984",
+				geo.getReferenceFrame().getName());
+		assertEquals("WGS 84",
+				geo.getReferenceFrame().getEllipsoid().getName());
+		assertEquals(6378137,
+				geo.getReferenceFrame().getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(298.257223563,
+				geo.getReferenceFrame().getEllipsoid().getInverseFlattening(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				geo.getReferenceFrame().getEllipsoid().getUnit().getType());
+		assertEquals("metre",
+				geo.getReferenceFrame().getEllipsoid().getUnit().getName());
+		assertEquals(1.0, geo.getReferenceFrame().getEllipsoid().getUnit()
+				.getConversionFactor(), 0);
+		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
+				geo.getCoordinateSystem().getType());
+		assertEquals(2, geo.getCoordinateSystem().getDimension());
+		assertEquals("latitude",
+				geo.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals(AxisDirectionType.NORTH,
+				geo.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals(1, geo.getCoordinateSystem().getAxes().get(0).getOrder()
+				.intValue());
+		assertEquals("longitude",
+				geo.getCoordinateSystem().getAxes().get(1).getName());
+		assertEquals(AxisDirectionType.EAST,
+				geo.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals(2, geo.getCoordinateSystem().getAxes().get(1).getOrder()
+				.intValue());
+		assertEquals(UnitType.ANGLEUNIT,
+				geo.getCoordinateSystem().getUnit().getType());
+		assertEquals("degree", geo.getCoordinateSystem().getUnit().getName());
+		assertEquals(0.0174532925199433,
+				geo.getCoordinateSystem().getUnit().getConversionFactor(), 0);
+		ParametricCoordinateReferenceSystem parametric = (ParametricCoordinateReferenceSystem) compoundCrs
+				.getCoordinateReferenceSystems().get(1);
+		assertEquals("WMO standard atmosphere", parametric.getName());
+		assertEquals("Mean Sea Level", parametric.getDatum().getName());
+		assertEquals("Mean Sea Level = 1013.25 hPa",
+				parametric.getDatum().getAnchor());
+		assertEquals(CoordinateSystemType.PARAMETRIC,
+				parametric.getCoordinateSystem().getType());
+		assertEquals(1, parametric.getCoordinateSystem().getDimension());
+		assertEquals("pressure",
+				parametric.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals("P", parametric.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.UNSPECIFIED, parametric
+				.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals(UnitType.PARAMETRICUNIT,
+				parametric.getCoordinateSystem().getUnit().getType());
+		assertEquals("HectoPascal",
+				parametric.getCoordinateSystem().getUnit().getName());
+		assertEquals(100, parametric.getCoordinateSystem().getUnit()
+				.getConversionFactor(), 0);
+
+		text = text.replace("GEOGRAPHICCRS", "GEOGCRS")
+				.replace("2005", "2005.0").replace("6378137", "6378137.0")
+				.replace("PARAMETRICDATUM", "PDATUM")
+				.replace(",100]", ",100.0]");
+		assertEquals(text, compoundCrs.toString());
+		assertEquals(text, CRSWriter.write(compoundCrs));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(compoundCrs));
+
+		text = "COMPOUNDCRS[\"2D GPS position with civil time in ISO 8601 format\","
+				+ "GEOGCRS[\"WGS 84 (G1762)\"," + "DYNAMIC[FRAMEEPOCH[2005]],"
+				+ "DATUM[\"World Geodetic System 1984 (G1762)\","
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563]],"
+				+ "CS[ellipsoidal,2]," + "AXIS[\"(lat)\",north,ORDER[1]],"
+				+ "AXIS[\"(lon)\",east,ORDER[2]],"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "TIMECRS[\"DateTime\"," + "TDATUM[\"Gregorian Calendar\"],"
+				+ "CS[TemporalDateTime,1],AXIS[\"Time (T)\",future]]]";
+
+		crs = CRSReader.read(text, true);
+		compoundCrs = CRSReader.readCompound(text);
+		assertEquals(crs, compoundCrs);
+		assertEquals(CoordinateReferenceSystemType.COMPOUND,
+				compoundCrs.getType());
+		assertEquals("2D GPS position with civil time in ISO 8601 format",
+				compoundCrs.getName());
+		geo = (GeoCoordinateReferenceSystem) compoundCrs
+				.getCoordinateReferenceSystems().get(0);
+		assertEquals("WGS 84 (G1762)", geo.getName());
+		assertEquals(2005, geo.getDynamic().getReferenceEpoch(), 0);
+		assertEquals("World Geodetic System 1984 (G1762)",
+				geo.getReferenceFrame().getName());
+		assertEquals("WGS 84",
+				geo.getReferenceFrame().getEllipsoid().getName());
+		assertEquals(6378137,
+				geo.getReferenceFrame().getEllipsoid().getSemiMajorAxis(), 0);
+		assertEquals(298.257223563,
+				geo.getReferenceFrame().getEllipsoid().getInverseFlattening(),
+				0);
+		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
+				geo.getCoordinateSystem().getType());
+		assertEquals(2, geo.getCoordinateSystem().getDimension());
+		assertEquals("lat",
+				geo.getCoordinateSystem().getAxes().get(0).getAbbreviation());
+		assertEquals(AxisDirectionType.NORTH,
+				geo.getCoordinateSystem().getAxes().get(0).getDirection());
+		assertEquals(1, geo.getCoordinateSystem().getAxes().get(0).getOrder()
+				.intValue());
+		assertEquals("lon",
+				geo.getCoordinateSystem().getAxes().get(1).getAbbreviation());
+		assertEquals(AxisDirectionType.EAST,
+				geo.getCoordinateSystem().getAxes().get(1).getDirection());
+		assertEquals(2, geo.getCoordinateSystem().getAxes().get(1).getOrder()
+				.intValue());
+		assertEquals(UnitType.ANGLEUNIT,
+				geo.getCoordinateSystem().getUnit().getType());
+		assertEquals("degree", geo.getCoordinateSystem().getUnit().getName());
+		assertEquals(0.0174532925199433,
+				geo.getCoordinateSystem().getUnit().getConversionFactor(), 0);
+		TemporalCoordinateReferenceSystem temporal = (TemporalCoordinateReferenceSystem) compoundCrs
+				.getCoordinateReferenceSystems().get(1);
+		assertEquals("DateTime", temporal.getName());
+		assertEquals(CoordinateSystemType.TEMPORAL_DATE_TIME,
+				temporal.getCoordinateSystem().getType());
+		assertEquals(1, temporal.getCoordinateSystem().getDimension());
+		assertEquals("Time",
+				temporal.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals("T", temporal.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.FUTURE,
+				temporal.getCoordinateSystem().getAxes().get(0).getDirection());
+
+		text = text.replace("2005", "2005.0").replace("6378137", "6378137.0")
+				.replace("TemporalDateTime", "temporalDateTime");
+		assertEquals(text, compoundCrs.toString());
+		assertEquals(text, CRSWriter.write(compoundCrs));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(compoundCrs));
 
 	}
 

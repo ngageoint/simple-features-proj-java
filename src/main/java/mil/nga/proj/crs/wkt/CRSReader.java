@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.ProjectionException;
+import mil.nga.proj.crs.CompoundCoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystemType;
 import mil.nga.proj.crs.common.Axis;
@@ -345,6 +346,28 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read a Compound Coordinate Reference System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Compound Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static CompoundCoordinateReferenceSystem readCompound(String text)
+			throws IOException {
+		CompoundCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readCompound();
+			reader.readEnd();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
 	 * Read a Backward Compatible Geodetic or Geographic Coordinate Reference
 	 * System from the well-known text
 	 * 
@@ -635,6 +658,9 @@ public class CRSReader implements Closeable {
 			break;
 		case DERIVEDPROJCRS:
 			crs = readDerivedProjected();
+			break;
+		case COMPOUNDCRS:
+			crs = readCompound();
 			break;
 		default:
 			throw new ProjectionException(
@@ -1750,6 +1776,57 @@ public class CRSReader implements Closeable {
 		readScopeExtentIdentifierRemark(crs);
 
 		readRightDelimiter();
+
+		return crs;
+	}
+
+	/**
+	 * Read a Compound CRS
+	 * 
+	 * @return compound coordinate reference system
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CompoundCoordinateReferenceSystem readCompound() throws IOException {
+
+		CompoundCoordinateReferenceSystem crs = new CompoundCoordinateReferenceSystem();
+
+		readKeyword(CoordinateReferenceSystemKeyword.COMPOUNDCRS);
+
+		readLeftDelimiter();
+
+		crs.setName(reader.readExpectedToken());
+
+		while (isKeywordNext(CoordinateReferenceSystemKeyword.GEODCRS,
+				CoordinateReferenceSystemKeyword.GEOGCRS,
+				CoordinateReferenceSystemKeyword.GEOCCS,
+				CoordinateReferenceSystemKeyword.GEOGCS,
+				CoordinateReferenceSystemKeyword.PROJCRS,
+				CoordinateReferenceSystemKeyword.PROJCS,
+				CoordinateReferenceSystemKeyword.VERTCRS,
+				CoordinateReferenceSystemKeyword.VERT_CS,
+				CoordinateReferenceSystemKeyword.ENGCRS,
+				CoordinateReferenceSystemKeyword.LOCAL_CS,
+				CoordinateReferenceSystemKeyword.PARAMETRICCRS,
+				CoordinateReferenceSystemKeyword.TIMECRS,
+				CoordinateReferenceSystemKeyword.DERIVEDPROJCRS)) {
+
+			readSeparator();
+			crs.addCoordinateReferenceSystem(read());
+		}
+
+		readScopeExtentIdentifierRemark(crs);
+
+		readRightDelimiter();
+
+		if (crs.getCoordinateReferenceSystems().size() < 2) {
+			String message = "Compound Coordinate Reference System requires at least two Coordinate Reference Systems";
+			if (strict) {
+				throw new ProjectionException(message);
+			} else {
+				logger.log(Level.WARNING, message);
+			}
+		}
 
 		return crs;
 	}

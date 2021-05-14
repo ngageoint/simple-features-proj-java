@@ -13,6 +13,11 @@ public enum CoordinateReferenceSystemType {
 	BOUND,
 
 	/**
+	 * Compound
+	 */
+	COMPOUND,
+
+	/**
 	 * Coordinate Operation
 	 */
 	COORDINATE_OPERATION,

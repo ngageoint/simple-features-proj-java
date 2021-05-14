@@ -103,6 +103,11 @@ public enum CoordinateReferenceSystemKeyword {
 	CONVERSION(),
 
 	/**
+	 * Compound CRS
+	 */
+	COMPOUNDCRS(),
+
+	/**
 	 * Coordinate Operation
 	 */
 	COORDINATEOPERATION(),

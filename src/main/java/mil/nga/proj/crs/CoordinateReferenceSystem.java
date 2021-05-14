@@ -78,6 +78,20 @@ public abstract class CoordinateReferenceSystem {
 	 *            name
 	 * @param type
 	 *            coordinate reference system type
+	 */
+	public CoordinateReferenceSystem(String name,
+			CoordinateReferenceSystemType type) {
+		setName(name);
+		setType(type);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param name
+	 *            name
+	 * @param type
+	 *            coordinate reference system type
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
