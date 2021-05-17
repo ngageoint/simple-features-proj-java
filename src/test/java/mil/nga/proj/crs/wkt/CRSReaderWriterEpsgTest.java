@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import mil.nga.proj.crs.CRS;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 
 /**
@@ -94,7 +95,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Northing (Y)\",north],AXIS[\"Easting (X)\",east],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3035]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("6378137", "6378137.0")
 				.replace(",52", ",52.0").replace(",10", ",10.0")
@@ -293,7 +294,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3395]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("6378137", "6378137.0")
 				.replace("ENSEMBLEACCURACY[2]", "ENSEMBLEACCURACY[2.0]")
@@ -390,7 +391,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],"
 				+ "ID[\"EPSG\",3855]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("\"metre\",1,", "\"metre\",1.0,");
 
@@ -405,7 +406,9 @@ public class CRSReaderWriterEpsgTest {
 				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
 				+ "AXIS[\"Up\",UP],AUTHORITY[\"EPSG\",\"3855\"]]";
 
-		crs = CRSReader.read(text, true);
+		CoordinateReferenceSystem coordinateReferenceSystem = CRSReader
+				.readCoordinateReferenceSystem(text, true);
+		crs = coordinateReferenceSystem;
 
 		expectedText = "VERTCRS[\"EGM2008 geoid height\","
 				+ "VDATUM[\"EGM2008 geoid\",ID[\"EPSG\",1027]],"
@@ -420,12 +423,14 @@ public class CRSReaderWriterEpsgTest {
 
 		assertEquals(
 				"[\"datumType\",\"2005.0\"],[\"PROJ4_GRIDS\",\"egm08_25.gtx\"]",
-				crs.getRemark());
-		Map<String, String> extras = CRSReader.readExtras(crs.getRemark());
+				coordinateReferenceSystem.getRemark());
+		Map<String, String> extras = CRSReader
+				.readExtras(coordinateReferenceSystem.getRemark());
 		assertEquals(2, extras.size());
 		assertEquals("2005.0", extras.get(WKTConstants.DATUM_TYPE));
 		assertEquals("egm08_25.gtx", extras.get("PROJ4_GRIDS"));
-		assertEquals(crs.getRemark(), CRSReader.writeExtras(extras));
+		assertEquals(coordinateReferenceSystem.getRemark(),
+				CRSReader.writeExtras(extras));
 
 		text = "VERTCRS[\"EGM2008 geoid height\","
 				+ "VDATUM[\"EGM2008 geoid\",ANCHOR[\"WGS 84 ellipsoid\"]],"
@@ -472,7 +477,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Easting (X)\",east],AXIS[\"Northing (Y)\",north],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3857]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("6378137", "6378137.0")
 				.replace("ENSEMBLEACCURACY[2]", "ENSEMBLEACCURACY[2.0]")
@@ -587,7 +592,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3978]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("6378137", "6378137.0")
 				.replace(",49,", ",49.0,").replace(",-95,", ",-95.0,")
@@ -712,7 +717,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],"
 				+ "ID[\"EPSG\",4326]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("6378137", "6378137.0")
 				.replace("ENSEMBLEACCURACY[2]", "ENSEMBLEACCURACY[2.0]");
@@ -787,7 +792,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Geodetic longitude (Lon)\",east,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
 				+ "AXIS[\"Ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",4979]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("6378137", "6378137.0")
 				.replace("ENSEMBLEACCURACY[2]", "ENSEMBLEACCURACY[2.0]")
@@ -876,7 +881,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Northing (N)\",South,MERIDIAN[180.0,ANGLEUNIT[\"degree\",0.0174532925199433]]],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5041]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("6378137", "6378137.0")
 				.replace("ENSEMBLEACCURACY[2]", "ENSEMBLEACCURACY[2.0]")
@@ -997,7 +1002,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Northing (N)\",North,MERIDIAN[0.0,ANGLEUNIT[\"degree\",0.0174532925199433]]],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5042]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("6378137", "6378137.0")
 				.replace("ENSEMBLEACCURACY[2]", "ENSEMBLEACCURACY[2.0]")
@@ -1104,7 +1109,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],"
 				+ "ID[\"EPSG\",5714]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("\",1,", "\",1.0,");
 
@@ -1161,7 +1166,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],"
 				+ "ID[\"EPSG\",5715]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("\",1,", "\",1.0,");
 
@@ -1217,7 +1222,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],"
 				+ "ID[\"EPSG\",5773]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("\",1,", "\",1.0,");
 
@@ -1287,7 +1292,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5701]],"
 				+ "ID[\"EPSG\",7405]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("\",1,", "\",1.0,")
 				.replace("\",49,", "\",49.0,").replace("\",-2,", "\",-2.0,")
@@ -1378,7 +1383,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"standard_parallel_1\",25],"
 				+ "UNIT[\"Meter\",1],AUTHORITY[\"EPSG\",\"9801\"]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = "PROJCRS[\"Lambert_Conformal_Conic (1SP)\","
 				+ "BASEGEODCRS[\"GCS_North_American_1983\","
@@ -1426,7 +1431,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"false_northing\",0],"
 				+ "AUTHORITY[\"EPSG\",\"9802\"]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = "PROJCRS[\"Lambert Conic Conformal (2SP)\","
 				+ "BASEGEODCRS[\"GCS_North_American_1983\","
@@ -1478,7 +1483,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "CS[Cartesian,2,ID[\"EPSG\",4400]],AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",32660]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("6378137", "6378137.0")
 				.replace("ENSEMBLEACCURACY[2]", "ENSEMBLEACCURACY[2.0]")

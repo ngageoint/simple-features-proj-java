@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.common.ReferenceFrame;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
@@ -25,7 +25,7 @@ public class VerticalReferenceFrame extends ReferenceFrame {
 	 * Constructor
 	 */
 	public VerticalReferenceFrame() {
-		super(CoordinateReferenceSystemType.VERTICAL);
+		super(CRSType.VERTICAL);
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class VerticalReferenceFrame extends ReferenceFrame {
 	 *            name
 	 */
 	public VerticalReferenceFrame(String name) {
-		super(name, CoordinateReferenceSystemType.VERTICAL);
+		super(name, CRSType.VERTICAL);
 	}
 
 	/**

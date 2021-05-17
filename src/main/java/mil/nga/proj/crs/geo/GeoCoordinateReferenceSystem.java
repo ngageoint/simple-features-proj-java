@@ -1,7 +1,7 @@
 package mil.nga.proj.crs.geo;
 
-import mil.nga.proj.crs.CoordinateReferenceSystem;
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.SimpleCoordinateReferenceSystem;
+import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.common.CoordinateSystem;
 import mil.nga.proj.crs.common.Dynamic;
 
@@ -11,7 +11,7 @@ import mil.nga.proj.crs.common.Dynamic;
  * @author osbornb
  */
 public class GeoCoordinateReferenceSystem
-		extends CoordinateReferenceSystem {
+		extends SimpleCoordinateReferenceSystem {
 
 	/**
 	 * Reference Frame
@@ -42,7 +42,7 @@ public class GeoCoordinateReferenceSystem
 	 *            coordinate reference system type
 	 */
 	public GeoCoordinateReferenceSystem(
-			CoordinateReferenceSystemType type) {
+			CRSType type) {
 		super(type);
 	}
 
@@ -59,7 +59,7 @@ public class GeoCoordinateReferenceSystem
 	 *            coordinate system
 	 */
 	public GeoCoordinateReferenceSystem(String name,
-			CoordinateReferenceSystemType type,
+			CRSType type,
 			GeoReferenceFrame referenceFrame,
 			CoordinateSystem coordinateSystem) {
 		super(name, type, coordinateSystem);
@@ -79,7 +79,7 @@ public class GeoCoordinateReferenceSystem
 	 *            coordinate system
 	 */
 	public GeoCoordinateReferenceSystem(String name,
-			CoordinateReferenceSystemType type,
+			CRSType type,
 			GeoDatumEnsemble datumEnsemble,
 			CoordinateSystem coordinateSystem) {
 		super(name, type, coordinateSystem);
@@ -101,7 +101,7 @@ public class GeoCoordinateReferenceSystem
 	 *            coordinate system
 	 */
 	public GeoCoordinateReferenceSystem(String name,
-			CoordinateReferenceSystemType type, Dynamic dynamic,
+			CRSType type, Dynamic dynamic,
 			GeoReferenceFrame referenceFrame,
 			CoordinateSystem coordinateSystem) {
 		super(name, type, coordinateSystem);

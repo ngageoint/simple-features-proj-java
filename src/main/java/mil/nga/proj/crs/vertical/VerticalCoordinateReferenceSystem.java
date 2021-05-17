@@ -1,7 +1,7 @@
 package mil.nga.proj.crs.vertical;
 
-import mil.nga.proj.crs.CoordinateReferenceSystem;
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.SimpleCoordinateReferenceSystem;
+import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.common.CoordinateSystem;
 import mil.nga.proj.crs.common.Dynamic;
 import mil.nga.proj.crs.common.Identifier;
@@ -12,7 +12,7 @@ import mil.nga.proj.crs.common.Identifier;
  * @author osbornb
  */
 public class VerticalCoordinateReferenceSystem
-		extends CoordinateReferenceSystem {
+		extends SimpleCoordinateReferenceSystem {
 
 	/**
 	 * Vertical Reference Frame
@@ -43,7 +43,7 @@ public class VerticalCoordinateReferenceSystem
 	 * Constructor
 	 */
 	public VerticalCoordinateReferenceSystem() {
-		super(CoordinateReferenceSystemType.VERTICAL);
+		super(CRSType.VERTICAL);
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class VerticalCoordinateReferenceSystem
 	public VerticalCoordinateReferenceSystem(String name,
 			VerticalReferenceFrame referenceFrame,
 			CoordinateSystem coordinateSystem) {
-		super(name, CoordinateReferenceSystemType.VERTICAL, coordinateSystem);
+		super(name, CRSType.VERTICAL, coordinateSystem);
 		setReferenceFrame(referenceFrame);
 	}
 
@@ -76,7 +76,7 @@ public class VerticalCoordinateReferenceSystem
 	public VerticalCoordinateReferenceSystem(String name,
 			VerticalDatumEnsemble datumEnsemble,
 			CoordinateSystem coordinateSystem) {
-		super(name, CoordinateReferenceSystemType.VERTICAL, coordinateSystem);
+		super(name, CRSType.VERTICAL, coordinateSystem);
 		setDatumEnsemble(datumEnsemble);
 	}
 
@@ -95,7 +95,7 @@ public class VerticalCoordinateReferenceSystem
 	public VerticalCoordinateReferenceSystem(String name, Dynamic dynamic,
 			VerticalReferenceFrame referenceFrame,
 			CoordinateSystem coordinateSystem) {
-		super(name, CoordinateReferenceSystemType.VERTICAL, coordinateSystem);
+		super(name, CRSType.VERTICAL, coordinateSystem);
 		setDynamic(dynamic);
 		setReferenceFrame(referenceFrame);
 	}

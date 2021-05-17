@@ -1,7 +1,7 @@
 package mil.nga.proj.crs.engineering;
 
-import mil.nga.proj.crs.CoordinateReferenceSystem;
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.SimpleCoordinateReferenceSystem;
+import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.common.CoordinateSystem;
 
 /**
@@ -10,7 +10,7 @@ import mil.nga.proj.crs.common.CoordinateSystem;
  * @author osbornb
  */
 public class EngineeringCoordinateReferenceSystem
-		extends CoordinateReferenceSystem {
+		extends SimpleCoordinateReferenceSystem {
 
 	/**
 	 * Engineering Datum
@@ -21,7 +21,7 @@ public class EngineeringCoordinateReferenceSystem
 	 * Constructor
 	 */
 	public EngineeringCoordinateReferenceSystem() {
-		super(CoordinateReferenceSystemType.ENGINEERING);
+		super(CRSType.ENGINEERING);
 	}
 
 	/**
@@ -37,7 +37,7 @@ public class EngineeringCoordinateReferenceSystem
 	public EngineeringCoordinateReferenceSystem(String name,
 			EngineeringDatum engineeringDatum,
 			CoordinateSystem coordinateSystem) {
-		super(name, CoordinateReferenceSystemType.ENGINEERING,
+		super(name, CRSType.ENGINEERING,
 				coordinateSystem);
 		setDatum(engineeringDatum);
 	}

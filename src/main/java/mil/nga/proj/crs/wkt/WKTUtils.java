@@ -3,7 +3,7 @@ package mil.nga.proj.crs.wkt;
 import java.io.IOException;
 
 import mil.nga.proj.ProjectionException;
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.common.CoordinateSystemType;
 import mil.nga.proj.crs.common.UnitType;
 
@@ -131,23 +131,23 @@ public class WKTUtils {
 	 *            coordinate reference system keyword
 	 * @return coordinate reference system type
 	 */
-	public static CoordinateReferenceSystemType getCoordinateReferenceSystemType(
+	public static CRSType getCoordinateReferenceSystemType(
 			CoordinateReferenceSystemKeyword keyword) {
 
-		CoordinateReferenceSystemType crsType = null;
+		CRSType crsType = null;
 
 		switch (keyword) {
 
 		case GEODCRS:
 		case BASEGEODCRS:
 		case GEOCCS:
-			crsType = CoordinateReferenceSystemType.GEODETIC;
+			crsType = CRSType.GEODETIC;
 			break;
 
 		case GEOGCRS:
 		case BASEGEOGCRS:
 		case GEOGCS:
-			crsType = CoordinateReferenceSystemType.GEOGRAPHIC;
+			crsType = CRSType.GEOGRAPHIC;
 			break;
 
 		default:

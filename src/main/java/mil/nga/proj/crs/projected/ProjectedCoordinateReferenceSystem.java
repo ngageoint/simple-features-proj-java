@@ -2,8 +2,8 @@ package mil.nga.proj.crs.projected;
 
 import java.util.List;
 
-import mil.nga.proj.crs.CoordinateReferenceSystem;
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.SimpleCoordinateReferenceSystem;
+import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.common.CoordinateSystem;
 import mil.nga.proj.crs.common.Dynamic;
 import mil.nga.proj.crs.common.Identifier;
@@ -18,7 +18,7 @@ import mil.nga.proj.crs.geo.GeoReferenceFrame;
  * @author osbornb
  */
 public class ProjectedCoordinateReferenceSystem
-		extends CoordinateReferenceSystem {
+		extends SimpleCoordinateReferenceSystem {
 
 	/**
 	 * Base
@@ -34,7 +34,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * Constructor
 	 */
 	public ProjectedCoordinateReferenceSystem() {
-		super(CoordinateReferenceSystemType.PROJECTED);
+		super(CRSType.PROJECTED);
 	}
 
 	/**
@@ -54,10 +54,10 @@ public class ProjectedCoordinateReferenceSystem
 	 *            coordinate system
 	 */
 	public ProjectedCoordinateReferenceSystem(String name, String baseName,
-			CoordinateReferenceSystemType baseType,
+			CRSType baseType,
 			GeoReferenceFrame referenceFrame, MapProjection mapProjection,
 			CoordinateSystem coordinateSystem) {
-		super(name, CoordinateReferenceSystemType.PROJECTED, coordinateSystem);
+		super(name, CRSType.PROJECTED, coordinateSystem);
 		setBaseName(baseName);
 		setBaseType(baseType);
 		setReferenceFrame(referenceFrame);
@@ -81,10 +81,10 @@ public class ProjectedCoordinateReferenceSystem
 	 *            coordinate system
 	 */
 	public ProjectedCoordinateReferenceSystem(String name, String baseName,
-			CoordinateReferenceSystemType baseType,
+			CRSType baseType,
 			GeoDatumEnsemble datumEnsemble, MapProjection mapProjection,
 			CoordinateSystem coordinateSystem) {
-		super(name, CoordinateReferenceSystemType.PROJECTED, coordinateSystem);
+		super(name, CRSType.PROJECTED, coordinateSystem);
 		setBaseName(baseName);
 		setBaseType(baseType);
 		setDatumEnsemble(datumEnsemble);
@@ -110,10 +110,10 @@ public class ProjectedCoordinateReferenceSystem
 	 *            coordinate system
 	 */
 	public ProjectedCoordinateReferenceSystem(String name, String baseName,
-			CoordinateReferenceSystemType baseType, Dynamic dynamic,
+			CRSType baseType, Dynamic dynamic,
 			GeoReferenceFrame referenceFrame, MapProjection mapProjection,
 			CoordinateSystem coordinateSystem) {
-		super(name, CoordinateReferenceSystemType.PROJECTED, coordinateSystem);
+		super(name, CRSType.PROJECTED, coordinateSystem);
 		setBaseName(baseName);
 		setBaseType(baseType);
 		setDynamic(dynamic);
@@ -164,7 +164,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * 
 	 * @return base type
 	 */
-	public CoordinateReferenceSystemType getBaseType() {
+	public CRSType getBaseType() {
 		return getBase().getType();
 	}
 
@@ -174,7 +174,7 @@ public class ProjectedCoordinateReferenceSystem
 	 * @param baseType
 	 *            base type
 	 */
-	public void setBaseType(CoordinateReferenceSystemType baseType) {
+	public void setBaseType(CRSType baseType) {
 		getBase().setType(baseType);
 	}
 

@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import mil.nga.proj.crs.CoordinateReferenceSystem;
+import mil.nga.proj.crs.CRS;
 
 /**
  * CRS Reader and Writer NGA tests
@@ -30,7 +30,7 @@ public class CRSReaderWriterNgaTest {
 				+ "AXIS[\"Gravity-related depth (D)\",down],"
 				+ "LENGTHUNIT[\"metre\",1.0],ID[\"NSG\",\"8047\"]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("\"8047\"", "8047");
 
@@ -55,7 +55,7 @@ public class CRSReaderWriterNgaTest {
 				+ "AXIS[\"Gravity-related depth (D)\",down],"
 				+ "LENGTHUNIT[\"metre\",1.0],ID[\"NSG\",\"8056\"]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = text.replace("\"8056\"", "8056");
 
@@ -88,7 +88,7 @@ public class CRSReaderWriterNgaTest {
 				+ "LENGTHUNIT[\"metre\",1.0]ID[\"EPSG\",\"3855\"]],"
 				+ "ID[“NSG”,”8101”]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String expectedText = "COMPOUNDCRS[\"WGS84 Height (EGM08)\","
 				+ "GEODCRS[\"WGS 84\","

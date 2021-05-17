@@ -1,7 +1,7 @@
 package mil.nga.proj.crs.temporal;
 
-import mil.nga.proj.crs.CoordinateReferenceSystem;
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.SimpleCoordinateReferenceSystem;
+import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.common.CoordinateSystem;
 
 /**
@@ -10,7 +10,7 @@ import mil.nga.proj.crs.common.CoordinateSystem;
  * @author osbornb
  */
 public class TemporalCoordinateReferenceSystem
-		extends CoordinateReferenceSystem {
+		extends SimpleCoordinateReferenceSystem {
 
 	/**
 	 * Temporal Datum
@@ -21,7 +21,7 @@ public class TemporalCoordinateReferenceSystem
 	 * Constructor
 	 */
 	public TemporalCoordinateReferenceSystem() {
-		super(CoordinateReferenceSystemType.TEMPORAL);
+		super(CRSType.TEMPORAL);
 	}
 
 	/**
@@ -36,7 +36,7 @@ public class TemporalCoordinateReferenceSystem
 	 */
 	public TemporalCoordinateReferenceSystem(String name,
 			TemporalDatum temporalDatum, CoordinateSystem coordinateSystem) {
-		super(name, CoordinateReferenceSystemType.TEMPORAL, coordinateSystem);
+		super(name, CRSType.TEMPORAL, coordinateSystem);
 		setDatum(temporalDatum);
 	}
 

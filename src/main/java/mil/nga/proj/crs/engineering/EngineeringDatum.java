@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.common.ReferenceFrame;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
@@ -25,7 +25,7 @@ public class EngineeringDatum extends ReferenceFrame {
 	 * Constructor
 	 */
 	public EngineeringDatum() {
-		super(CoordinateReferenceSystemType.ENGINEERING);
+		super(CRSType.ENGINEERING);
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class EngineeringDatum extends ReferenceFrame {
 	 *            name
 	 */
 	public EngineeringDatum(String name) {
-		super(name, CoordinateReferenceSystemType.ENGINEERING);
+		super(name, CRSType.ENGINEERING);
 	}
 
 	/**

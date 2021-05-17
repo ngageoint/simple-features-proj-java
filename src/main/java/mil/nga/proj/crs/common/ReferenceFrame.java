@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
@@ -30,7 +30,7 @@ public abstract class ReferenceFrame {
 	/**
 	 * Type
 	 */
-	private CoordinateReferenceSystemType type = null;
+	private CRSType type = null;
 
 	/**
 	 * Datum anchor description
@@ -48,7 +48,7 @@ public abstract class ReferenceFrame {
 	 * @param type
 	 *            type
 	 */
-	public ReferenceFrame(CoordinateReferenceSystemType type) {
+	public ReferenceFrame(CRSType type) {
 		setType(type);
 	}
 
@@ -60,7 +60,7 @@ public abstract class ReferenceFrame {
 	 * @param type
 	 *            type
 	 */
-	public ReferenceFrame(String name, CoordinateReferenceSystemType type) {
+	public ReferenceFrame(String name, CRSType type) {
 		setName(name);
 		setType(type);
 	}
@@ -89,7 +89,7 @@ public abstract class ReferenceFrame {
 	 * 
 	 * @return type
 	 */
-	public CoordinateReferenceSystemType getType() {
+	public CRSType getType() {
 		return type;
 	}
 
@@ -99,7 +99,7 @@ public abstract class ReferenceFrame {
 	 * @param type
 	 *            type
 	 */
-	public void setType(CoordinateReferenceSystemType type) {
+	public void setType(CRSType type) {
 		this.type = type;
 	}
 

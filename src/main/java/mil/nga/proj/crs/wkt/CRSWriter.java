@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.ProjectionException;
+import mil.nga.proj.crs.CRS;
 import mil.nga.proj.crs.CompoundCoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.common.Axis;
@@ -65,8 +66,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public static String write(CoordinateReferenceSystem crs)
-			throws IOException {
+	public static String write(CRS crs) throws IOException {
 		String value = null;
 		CRSWriter writer = new CRSWriter();
 		try {
@@ -88,8 +88,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public static String writePretty(CoordinateReferenceSystem crs)
-			throws IOException {
+	public static String writePretty(CRS crs) throws IOException {
 		return writePretty(write(crs));
 	}
 
@@ -103,8 +102,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public static String writePrettyTabIndent(CoordinateReferenceSystem crs)
-			throws IOException {
+	public static String writePrettyTabIndent(CRS crs) throws IOException {
 		return writePrettyTabIndent(write(crs));
 	}
 
@@ -117,8 +115,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public static String writePrettyNoIndent(CoordinateReferenceSystem crs)
-			throws IOException {
+	public static String writePrettyNoIndent(CRS crs) throws IOException {
 		return writePrettyNoIndent(write(crs));
 	}
 
@@ -133,8 +130,8 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public static String writePretty(CoordinateReferenceSystem crs,
-			String indent) throws IOException {
+	public static String writePretty(CRS crs, String indent)
+			throws IOException {
 		return writePretty(write(crs), indent);
 	}
 
@@ -151,8 +148,8 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public static String writePretty(CoordinateReferenceSystem crs,
-			String newline, String indent) throws IOException {
+	public static String writePretty(CRS crs, String newline, String indent)
+			throws IOException {
 		return writePretty(write(crs), newline, indent);
 	}
 
@@ -288,7 +285,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeCRS(CoordinateReferenceSystem crs) throws IOException {
+	public void writeCRS(CRS crs) throws IOException {
 
 		switch (crs.getType()) {
 		case GEODETIC:
@@ -1105,7 +1102,7 @@ public class CRSWriter implements Closeable {
 
 		writeQuotedText(crs.getName());
 
-		for (CoordinateReferenceSystem coordinateReferenceSystem : crs
+		for (CRS coordinateReferenceSystem : crs
 				.getCoordinateReferenceSystems()) {
 			writeSeparator();
 			writeCRS(coordinateReferenceSystem);

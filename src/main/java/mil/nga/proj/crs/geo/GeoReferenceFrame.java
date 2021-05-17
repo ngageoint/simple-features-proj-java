@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.common.ReferenceFrame;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
@@ -35,7 +35,7 @@ public class GeoReferenceFrame extends ReferenceFrame {
 	 * Constructor
 	 */
 	public GeoReferenceFrame() {
-		this(CoordinateReferenceSystemType.GEODETIC);
+		this(CRSType.GEODETIC);
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class GeoReferenceFrame extends ReferenceFrame {
 	 * @param type
 	 *            geo crs type
 	 */
-	public GeoReferenceFrame(CoordinateReferenceSystemType type) {
+	public GeoReferenceFrame(CRSType type) {
 		super(type);
 	}
 
@@ -57,7 +57,7 @@ public class GeoReferenceFrame extends ReferenceFrame {
 	 *            ellipsoid
 	 */
 	public GeoReferenceFrame(String name, Ellipsoid ellipsoid) {
-		this(name, CoordinateReferenceSystemType.GEODETIC, ellipsoid);
+		this(name, CRSType.GEODETIC, ellipsoid);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class GeoReferenceFrame extends ReferenceFrame {
 	 * @param ellipsoid
 	 *            ellipsoid
 	 */
-	public GeoReferenceFrame(String name, CoordinateReferenceSystemType type,
+	public GeoReferenceFrame(String name, CRSType type,
 			Ellipsoid ellipsoid) {
 		super(name, type);
 		setEllipsoid(ellipsoid);

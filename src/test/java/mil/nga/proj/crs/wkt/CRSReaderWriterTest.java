@@ -11,9 +11,10 @@ import java.util.List;
 
 import org.junit.Test;
 
+import mil.nga.proj.crs.CRS;
+import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.CompoundCoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
 import mil.nga.proj.crs.common.Axis;
 import mil.nga.proj.crs.common.AxisDirectionType;
 import mil.nga.proj.crs.common.CoordinateSystem;
@@ -369,7 +370,8 @@ public class CRSReaderWriterTest {
 				+ "]";
 		String remarkText = "REMARK[\"Система Геодеэических Координвт года 1995(СК-95)\"]";
 		remark = "Система Геодеэических Координвт года 1995(СК-95)";
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CoordinateReferenceSystem crs = CRSReader
+				.readCoordinateReferenceSystem(text, true);
 		assertEquals(remark, crs.getRemark());
 		writer = new CRSWriter();
 		writer.writeRemark(crs.getRemark());
@@ -1398,14 +1400,13 @@ public class CRSReaderWriterTest {
 				+ "ID[\"EPSG\",4946,URI[\"urn:ogc:def:crs:EPSG::4946\"]],"
 				+ "REMARK[\"注：JGD2000ジオセントリックは現在JGD2011に代わりました。\"]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		GeoCoordinateReferenceSystem geodeticOrGeographicCrs = CRSReader
 				.readGeo(text);
 		assertEquals(crs, geodeticOrGeographicCrs);
 		GeoCoordinateReferenceSystem geodeticCrs = CRSReader.readGeodetic(text);
 		assertEquals(crs, geodeticCrs);
-		assertEquals(CoordinateReferenceSystemType.GEODETIC,
-				geodeticCrs.getType());
+		assertEquals(CRSType.GEODETIC, geodeticCrs.getType());
 		assertEquals("JGD2000", geodeticCrs.getName());
 		assertEquals("Japanese Geodetic Datum 2000",
 				geodeticCrs.getReferenceFrame().getName());
@@ -1494,15 +1495,14 @@ public class CRSReaderWriterTest {
 				+ "AXIS[\"(lon)\",east,ANGLEUNIT[\"degree\",0.0174532925199433]],"
 				+ "AXIS[\"ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1.0]]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		GeoCoordinateReferenceSystem geodeticOrGeographicCrs = CRSReader
 				.readGeo(text);
 		assertEquals(crs, geodeticOrGeographicCrs);
 		GeoCoordinateReferenceSystem geographicCrs = CRSReader
 				.readGeographic(text);
 		assertEquals(crs, geographicCrs);
-		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
-				geographicCrs.getType());
+		assertEquals(CRSType.GEOGRAPHIC, geographicCrs.getType());
 		assertEquals("WGS 84 (G1762)", geographicCrs.getName());
 		assertEquals(2005.0, geographicCrs.getDynamic().getReferenceEpoch(), 0);
 		assertEquals("World Geodetic System 1984 (G1762)",
@@ -1574,8 +1574,7 @@ public class CRSReaderWriterTest {
 		assertEquals(crs, geodeticOrGeographicCrs);
 		geographicCrs = CRSReader.readGeographic(text);
 		assertEquals(crs, geographicCrs);
-		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
-				geographicCrs.getType());
+		assertEquals(CRSType.GEOGRAPHIC, geographicCrs.getType());
 		assertEquals("NAD83", geographicCrs.getName());
 		assertEquals("North American Datum 1983",
 				geographicCrs.getReferenceFrame().getName());
@@ -1633,8 +1632,7 @@ public class CRSReaderWriterTest {
 		assertEquals(crs, geodeticOrGeographicCrs);
 		geographicCrs = CRSReader.readGeographic(text);
 		assertEquals(crs, geographicCrs);
-		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
-				geographicCrs.getType());
+		assertEquals(CRSType.GEOGRAPHIC, geographicCrs.getType());
 		assertEquals("NTF (Paris)", geographicCrs.getName());
 		assertEquals("Nouvelle Triangulation Francaise",
 				geographicCrs.getReferenceFrame().getName());
@@ -1882,19 +1880,17 @@ public class CRSReaderWriterTest {
 				+ "USAGE[SCOPE[\"Description of a purpose\"],AREA[\"An area description\"]],"
 				+ "ID[\"EuroGeographics\",\"ETRS-LAEA\"]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		ProjectedCoordinateReferenceSystem projectedCrs = CRSReader
 				.readProjected(text);
 		assertEquals(crs, projectedCrs);
 		ProjectedCoordinateReferenceSystem projectedGeographicCrs = CRSReader
 				.readProjectedGeographic(text);
 		assertEquals(crs, projectedGeographicCrs);
-		assertEquals(CoordinateReferenceSystemType.PROJECTED,
-				projectedGeographicCrs.getType());
+		assertEquals(CRSType.PROJECTED, projectedGeographicCrs.getType());
 		assertEquals("ETRS89 Lambert Azimuthal Equal Area CRS",
 				projectedGeographicCrs.getName());
-		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
-				projectedGeographicCrs.getBaseType());
+		assertEquals(CRSType.GEOGRAPHIC, projectedGeographicCrs.getBaseType());
 		assertEquals("ETRS89", projectedGeographicCrs.getBaseName());
 		assertEquals("ETRS89",
 				projectedGeographicCrs.getReferenceFrame().getName());
@@ -2031,12 +2027,10 @@ public class CRSReaderWriterTest {
 		assertEquals(crs, projectedCrs);
 		projectedGeographicCrs = CRSReader.readProjectedGeographic(text);
 		assertEquals(crs, projectedGeographicCrs);
-		assertEquals(CoordinateReferenceSystemType.PROJECTED,
-				projectedGeographicCrs.getType());
+		assertEquals(CRSType.PROJECTED, projectedGeographicCrs.getType());
 		assertEquals("NAD27 / Texas South Central",
 				projectedGeographicCrs.getName());
-		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
-				projectedGeographicCrs.getBaseType());
+		assertEquals(CRSType.GEOGRAPHIC, projectedGeographicCrs.getBaseType());
 		assertEquals("NAD27", projectedGeographicCrs.getBaseName());
 		assertEquals("North American Datum 1927",
 				projectedGeographicCrs.getReferenceFrame().getName());
@@ -2210,11 +2204,9 @@ public class CRSReaderWriterTest {
 		assertEquals(crs, projectedCrs);
 		projectedGeographicCrs = CRSReader.readProjectedGeographic(text);
 		assertEquals(crs, projectedGeographicCrs);
-		assertEquals(CoordinateReferenceSystemType.PROJECTED,
-				projectedGeographicCrs.getType());
+		assertEquals(CRSType.PROJECTED, projectedGeographicCrs.getType());
 		assertEquals("NAD83 UTM 10", projectedGeographicCrs.getName());
-		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
-				projectedGeographicCrs.getBaseType());
+		assertEquals(CRSType.GEOGRAPHIC, projectedGeographicCrs.getBaseType());
 		assertEquals("NAD83(86)", projectedGeographicCrs.getBaseName());
 		assertEquals("North American Datum 1983",
 				projectedGeographicCrs.getReferenceFrame().getName());
@@ -2309,12 +2301,10 @@ public class CRSReaderWriterTest {
 		assertEquals(crs, projectedCrs);
 		projectedGeographicCrs = CRSReader.readProjectedGeographic(text);
 		assertEquals(crs, projectedGeographicCrs);
-		assertEquals(CoordinateReferenceSystemType.PROJECTED,
-				projectedGeographicCrs.getType());
+		assertEquals(CRSType.PROJECTED, projectedGeographicCrs.getType());
 		assertEquals("WGS 84 (G1762) / UTM zone 31N 3D",
 				projectedGeographicCrs.getName());
-		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
-				projectedGeographicCrs.getBaseType());
+		assertEquals(CRSType.GEOGRAPHIC, projectedGeographicCrs.getBaseType());
 		assertEquals("WGS 84", projectedGeographicCrs.getBaseName());
 		assertEquals("World Geodetic System of 1984 (G1762)",
 				projectedGeographicCrs.getReferenceFrame().getName());
@@ -2469,12 +2459,11 @@ public class CRSReaderWriterTest {
 				+ "CS[vertical,1],AXIS[\"gravity-related height (H)\",up],"
 				+ "LENGTHUNIT[\"metre\",1.0]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		VerticalCoordinateReferenceSystem verticalCrs = CRSReader
 				.readVertical(text);
 		assertEquals(crs, verticalCrs);
-		assertEquals(CoordinateReferenceSystemType.VERTICAL,
-				verticalCrs.getType());
+		assertEquals(CRSType.VERTICAL, verticalCrs.getType());
 		assertEquals("NAVD88", verticalCrs.getName());
 		assertEquals("North American Vertical Datum 1988",
 				verticalCrs.getReferenceFrame().getName());
@@ -2506,8 +2495,7 @@ public class CRSReaderWriterTest {
 		crs = CRSReader.read(text, true);
 		verticalCrs = CRSReader.readVertical(text);
 		assertEquals(crs, verticalCrs);
-		assertEquals(CoordinateReferenceSystemType.VERTICAL,
-				verticalCrs.getType());
+		assertEquals(CRSType.VERTICAL, verticalCrs.getType());
 		assertEquals("CGVD2013", verticalCrs.getName());
 		assertEquals("Canadian Geodetic Vertical Datum of 2013",
 				verticalCrs.getReferenceFrame().getName());
@@ -2544,8 +2532,7 @@ public class CRSReaderWriterTest {
 		crs = CRSReader.read(text, true);
 		verticalCrs = CRSReader.readVertical(text);
 		assertEquals(crs, verticalCrs);
-		assertEquals(CoordinateReferenceSystemType.VERTICAL,
-				verticalCrs.getType());
+		assertEquals(CRSType.VERTICAL, verticalCrs.getType());
 		assertEquals("RH2000", verticalCrs.getName());
 		assertEquals(2000.0, verticalCrs.getDynamic().getReferenceEpoch(), 0);
 		assertEquals("NKG2016LU",
@@ -2589,12 +2576,11 @@ public class CRSReaderWriterTest {
 				+ "LENGTHUNIT[\"metre\",1.0],"
 				+ "USAGE[SCOPE[\"Construction\"],TIMEEXTENT[\"date/time t1\",\"date/time t2\"]]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		EngineeringCoordinateReferenceSystem engineeringCrs = CRSReader
 				.readEngineering(text);
 		assertEquals(crs, engineeringCrs);
-		assertEquals(CoordinateReferenceSystemType.ENGINEERING,
-				engineeringCrs.getType());
+		assertEquals(CRSType.ENGINEERING, engineeringCrs.getType());
 		assertEquals("A construction site CRS", engineeringCrs.getName());
 		assertEquals("P1", engineeringCrs.getDatum().getName());
 		assertEquals("Peg in south corner",
@@ -2634,8 +2620,7 @@ public class CRSReaderWriterTest {
 		crs = CRSReader.read(text, true);
 		engineeringCrs = CRSReader.readEngineering(text);
 		assertEquals(crs, engineeringCrs);
-		assertEquals(CoordinateReferenceSystemType.ENGINEERING,
-				engineeringCrs.getType());
+		assertEquals(CRSType.ENGINEERING, engineeringCrs.getType());
 		assertEquals("Astra Minas Grid", engineeringCrs.getName());
 		assertEquals("Astra Minas", engineeringCrs.getDatum().getName());
 		assertEquals(CoordinateSystemType.CARTESIAN,
@@ -2682,8 +2667,7 @@ public class CRSReaderWriterTest {
 		crs = CRSReader.read(text, true);
 		engineeringCrs = CRSReader.readEngineering(text);
 		assertEquals(crs, engineeringCrs);
-		assertEquals(CoordinateReferenceSystemType.ENGINEERING,
-				engineeringCrs.getType());
+		assertEquals(CRSType.ENGINEERING, engineeringCrs.getType());
 		assertEquals("A ship-centred CRS", engineeringCrs.getName());
 		assertEquals("Ship reference point",
 				engineeringCrs.getDatum().getName());
@@ -2725,8 +2709,7 @@ public class CRSReaderWriterTest {
 		crs = CRSReader.read(text, true);
 		engineeringCrs = CRSReader.readEngineering(text);
 		assertEquals(crs, engineeringCrs);
-		assertEquals(CoordinateReferenceSystemType.ENGINEERING,
-				engineeringCrs.getType());
+		assertEquals(CRSType.ENGINEERING, engineeringCrs.getType());
 		assertEquals("An analogue image CRS", engineeringCrs.getName());
 		assertEquals("Image reference point",
 				engineeringCrs.getDatum().getName());
@@ -2769,8 +2752,7 @@ public class CRSReaderWriterTest {
 		crs = CRSReader.read(text, true);
 		engineeringCrs = CRSReader.readEngineering(text);
 		assertEquals(crs, engineeringCrs);
-		assertEquals(CoordinateReferenceSystemType.ENGINEERING,
-				engineeringCrs.getType());
+		assertEquals(CRSType.ENGINEERING, engineeringCrs.getType());
 		assertEquals("A digital image CRS", engineeringCrs.getName());
 		assertEquals("Image reference point",
 				engineeringCrs.getDatum().getName());
@@ -2816,12 +2798,11 @@ public class CRSReaderWriterTest {
 				+ "CS[parametric,1],"
 				+ "AXIS[\"pressure (hPa)\",up],PARAMETRICUNIT[\"HectoPascal\",100.0]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		ParametricCoordinateReferenceSystem parametricCrs = CRSReader
 				.readParametric(text);
 		assertEquals(crs, parametricCrs);
-		assertEquals(CoordinateReferenceSystemType.PARAMETRIC,
-				parametricCrs.getType());
+		assertEquals(CRSType.PARAMETRIC, parametricCrs.getType());
 		assertEquals("WMO standard atmosphere layer 0",
 				parametricCrs.getName());
 		assertEquals("Mean Sea Level", parametricCrs.getDatum().getName());
@@ -2906,12 +2887,11 @@ public class CRSReaderWriterTest {
 				+ "TDATUM[\"Gregorian Calendar\"],"
 				+ "CS[TemporalDateTime,1],AXIS[\"Time (T)\",future]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		TemporalCoordinateReferenceSystem temporalCrs = CRSReader
 				.readTemporal(text);
 		assertEquals(crs, temporalCrs);
-		assertEquals(CoordinateReferenceSystemType.TEMPORAL,
-				temporalCrs.getType());
+		assertEquals(CRSType.TEMPORAL, temporalCrs.getType());
 		assertEquals("DateTime", temporalCrs.getName());
 		assertEquals("Gregorian Calendar", temporalCrs.getDatum().getName());
 		assertEquals(CoordinateSystemType.TEMPORAL_DATE_TIME,
@@ -2935,8 +2915,7 @@ public class CRSReaderWriterTest {
 		crs = CRSReader.read(text, true);
 		temporalCrs = CRSReader.readTemporal(text);
 		assertEquals(crs, temporalCrs);
-		assertEquals(CoordinateReferenceSystemType.TEMPORAL,
-				temporalCrs.getType());
+		assertEquals(CRSType.TEMPORAL, temporalCrs.getType());
 		assertEquals("GPS milliseconds", temporalCrs.getName());
 		assertEquals("GPS time origin", temporalCrs.getDatum().getName());
 		assertEquals("1980-01-01T00:00:00.0Z",
@@ -2969,8 +2948,7 @@ public class CRSReaderWriterTest {
 		crs = CRSReader.read(text, true);
 		temporalCrs = CRSReader.readTemporal(text);
 		assertEquals(crs, temporalCrs);
-		assertEquals(CoordinateReferenceSystemType.TEMPORAL,
-				temporalCrs.getType());
+		assertEquals(CRSType.TEMPORAL, temporalCrs.getType());
 		assertEquals("Calendar hours from 1979-12-29", temporalCrs.getName());
 		assertEquals("29 December 1979", temporalCrs.getDatum().getName());
 		assertEquals("1979-12-29T00Z", temporalCrs.getDatum().getOrigin());
@@ -3000,8 +2978,7 @@ public class CRSReaderWriterTest {
 		crs = CRSReader.read(text, true);
 		temporalCrs = CRSReader.readTemporal(text);
 		assertEquals(crs, temporalCrs);
-		assertEquals(CoordinateReferenceSystemType.TEMPORAL,
-				temporalCrs.getType());
+		assertEquals(CRSType.TEMPORAL, temporalCrs.getType());
 		assertEquals("Decimal Years CE", temporalCrs.getName());
 		assertEquals("Common Era", temporalCrs.getDatum().getName());
 		assertEquals("0000", temporalCrs.getDatum().getOrigin());
@@ -3033,8 +3010,7 @@ public class CRSReaderWriterTest {
 		crs = CRSReader.read(text, true);
 		temporalCrs = CRSReader.readTemporal(text);
 		assertEquals(crs, temporalCrs);
-		assertEquals(CoordinateReferenceSystemType.TEMPORAL,
-				temporalCrs.getType());
+		assertEquals(CRSType.TEMPORAL, temporalCrs.getType());
 		assertEquals("Unix time", temporalCrs.getName());
 		assertEquals("Unix epoch", temporalCrs.getDatum().getName());
 		assertEquals("1970-01-01T00:00:00Z",
@@ -3158,15 +3134,13 @@ public class CRSReaderWriterTest {
 				+ "AXIS[\"latitude\",north,ORDER[1]],AXIS[\"longitude\",east,ORDER[2]],"
 				+ "ANGLEUNIT[\"degree\",0.0174532925199433]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		DerivedCoordinateReferenceSystem derivedCrs = CRSReader
 				.readDerived(text);
 		assertEquals(crs, derivedCrs);
-		assertEquals(CoordinateReferenceSystemType.DERIVED,
-				derivedCrs.getType());
+		assertEquals(CRSType.DERIVED, derivedCrs.getType());
 		assertEquals("WMO Atlantic Pole", derivedCrs.getName());
-		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
-				derivedCrs.getBaseType());
+		assertEquals(CRSType.GEOGRAPHIC, derivedCrs.getBaseType());
 		assertEquals("WGS 84 (G1762)", derivedCrs.getBaseName());
 		GeoCoordinateReferenceSystem baseCrs = (GeoCoordinateReferenceSystem) derivedCrs
 				.getBase();
@@ -3311,21 +3285,18 @@ public class CRSReaderWriterTest {
 				+ "CS[ordinal,2],"
 				+ "AXIS[\"Inline (I)\",northNorthWest],AXIS[\"Crossline (J)\",westSouthWest]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		DerivedCoordinateReferenceSystem derivedCrs = CRSReader
 				.readDerived(text);
 		assertEquals(crs, derivedCrs);
-		assertEquals(CoordinateReferenceSystemType.DERIVED,
-				derivedCrs.getType());
+		assertEquals(CRSType.DERIVED, derivedCrs.getType());
 		assertEquals("Gulf of Mexico speculative seismic survey bin grid",
 				derivedCrs.getName());
-		assertEquals(CoordinateReferenceSystemType.PROJECTED,
-				derivedCrs.getBaseType());
+		assertEquals(CRSType.PROJECTED, derivedCrs.getBaseType());
 		assertEquals("NAD27 / Texas South Central", derivedCrs.getBaseName());
 		ProjectedCoordinateReferenceSystem projectedCrs = (ProjectedCoordinateReferenceSystem) derivedCrs
 				.getBase();
-		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
-				projectedCrs.getBaseType());
+		assertEquals(CRSType.GEOGRAPHIC, projectedCrs.getBaseType());
 		assertEquals("NAD27", projectedCrs.getBaseName());
 		assertEquals("North American Datum 1927",
 				projectedCrs.getReferenceFrame().getName());
@@ -3649,15 +3620,13 @@ public class CRSReaderWriterTest {
 				+ "CS[vertical,1],"
 				+ "AXIS[“Pseudo-pression (H)”,down],UNIT[“Unity”,1]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		DerivedCoordinateReferenceSystem derivedCrs = CRSReader
 				.readDerived(text);
 		assertEquals(crs, derivedCrs);
-		assertEquals(CoordinateReferenceSystemType.DERIVED,
-				derivedCrs.getType());
+		assertEquals(CRSType.DERIVED, derivedCrs.getType());
 		assertEquals("Pseudo-pression en kPa", derivedCrs.getName());
-		assertEquals(CoordinateReferenceSystemType.VERTICAL,
-				derivedCrs.getBaseType());
+		assertEquals(CRSType.VERTICAL, derivedCrs.getBaseType());
 		assertEquals("Profondeur sous la surface de la mer",
 				derivedCrs.getBaseName());
 		VerticalCoordinateReferenceSystem verticalCrs = (VerticalCoordinateReferenceSystem) derivedCrs
@@ -3734,15 +3703,13 @@ public class CRSReaderWriterTest {
 				+ "CS[Cartesian,2],"
 				+ "AXIS[\"site east\",southWest,ORDER[1]],AXIS[\"site north\",southEast,ORDER[2]]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		DerivedCoordinateReferenceSystem derivedCrs = CRSReader
 				.readDerived(text);
 		assertEquals(crs, derivedCrs);
-		assertEquals(CoordinateReferenceSystemType.DERIVED,
-				derivedCrs.getType());
+		assertEquals(CRSType.DERIVED, derivedCrs.getType());
 		assertEquals("A construction site CRS", derivedCrs.getName());
-		assertEquals(CoordinateReferenceSystemType.ENGINEERING,
-				derivedCrs.getBaseType());
+		assertEquals(CRSType.ENGINEERING, derivedCrs.getBaseType());
 		assertEquals("A construction site Base CRS", derivedCrs.getBaseName());
 		EngineeringCoordinateReferenceSystem engineeringCrs = (EngineeringCoordinateReferenceSystem) derivedCrs
 				.getBase();
@@ -3802,15 +3769,13 @@ public class CRSReaderWriterTest {
 				+ "CS[parametric,1],"
 				+ "AXIS[\"pressure (hPa)\",up],PARAMETRICUNIT[\"HectoPascal\",100.0]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		DerivedCoordinateReferenceSystem derivedCrs = CRSReader
 				.readDerived(text);
 		assertEquals(crs, derivedCrs);
-		assertEquals(CoordinateReferenceSystemType.DERIVED,
-				derivedCrs.getType());
+		assertEquals(CRSType.DERIVED, derivedCrs.getType());
 		assertEquals("WMO standard atmosphere layer 0", derivedCrs.getName());
-		assertEquals(CoordinateReferenceSystemType.PARAMETRIC,
-				derivedCrs.getBaseType());
+		assertEquals(CRSType.PARAMETRIC, derivedCrs.getBaseType());
 		assertEquals("WMO standard atmosphere layer 0 Base",
 				derivedCrs.getBaseName());
 		ParametricCoordinateReferenceSystem parametricCrs = (ParametricCoordinateReferenceSystem) derivedCrs
@@ -3869,15 +3834,13 @@ public class CRSReaderWriterTest {
 				+ "PARAMETER[\"param1\",1.0],PARAMETER[\"param2\",2.0]],"
 				+ "CS[temporalDateTime,1],AXIS[\"Time (T)\",future]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		DerivedCoordinateReferenceSystem derivedCrs = CRSReader
 				.readDerived(text);
 		assertEquals(crs, derivedCrs);
-		assertEquals(CoordinateReferenceSystemType.DERIVED,
-				derivedCrs.getType());
+		assertEquals(CRSType.DERIVED, derivedCrs.getType());
 		assertEquals("DateTime", derivedCrs.getName());
-		assertEquals(CoordinateReferenceSystemType.TEMPORAL,
-				derivedCrs.getBaseType());
+		assertEquals(CRSType.TEMPORAL, derivedCrs.getBaseType());
 		assertEquals("DateTime Base", derivedCrs.getBaseName());
 		TemporalCoordinateReferenceSystem temporalCrs = (TemporalCoordinateReferenceSystem) derivedCrs
 				.getBase();
@@ -3931,12 +3894,11 @@ public class CRSReaderWriterTest {
 				+ "CS[vertical,1],"
 				+ "AXIS[\"gravity-related height (H)\",up],LENGTHUNIT[\"metre\",1]]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		CompoundCoordinateReferenceSystem compoundCrs = CRSReader
 				.readCompound(text);
 		assertEquals(crs, compoundCrs);
-		assertEquals(CoordinateReferenceSystemType.COMPOUND,
-				compoundCrs.getType());
+		assertEquals(CRSType.COMPOUND, compoundCrs.getType());
 		assertEquals("NAD83 + NAVD88", compoundCrs.getName());
 		GeoCoordinateReferenceSystem geo = (GeoCoordinateReferenceSystem) compoundCrs
 				.getCoordinateReferenceSystems().get(0);
@@ -4026,8 +3988,7 @@ public class CRSReaderWriterTest {
 		crs = CRSReader.read(text, true);
 		compoundCrs = CRSReader.readCompound(text);
 		assertEquals(crs, compoundCrs);
-		assertEquals(CoordinateReferenceSystemType.COMPOUND,
-				compoundCrs.getType());
+		assertEquals(CRSType.COMPOUND, compoundCrs.getType());
 		assertEquals("ICAO layer 0", compoundCrs.getName());
 		geo = (GeoCoordinateReferenceSystem) compoundCrs
 				.getCoordinateReferenceSystems().get(0);
@@ -4111,8 +4072,7 @@ public class CRSReaderWriterTest {
 		crs = CRSReader.read(text, true);
 		compoundCrs = CRSReader.readCompound(text);
 		assertEquals(crs, compoundCrs);
-		assertEquals(CoordinateReferenceSystemType.COMPOUND,
-				compoundCrs.getType());
+		assertEquals(CRSType.COMPOUND, compoundCrs.getType());
 		assertEquals("2D GPS position with civil time in ISO 8601 format",
 				compoundCrs.getName());
 		geo = (GeoCoordinateReferenceSystem) compoundCrs
@@ -4315,15 +4275,14 @@ public class CRSReaderWriterTest {
 				+ "PRIMEM[\"Greenwich\",0],"
 				+ "UNIT[\"degree\",0.0174532925199433]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		GeoCoordinateReferenceSystem geodeticOrGeographicCrs = CRSReader
 				.readGeoCompat(text);
 		assertEquals(crs, geodeticOrGeographicCrs);
 		GeoCoordinateReferenceSystem geographicCrs = CRSReader
 				.readGeographicCompat(text);
 		assertEquals(crs, geographicCrs);
-		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
-				geographicCrs.getType());
+		assertEquals(CRSType.GEOGRAPHIC, geographicCrs.getType());
 		assertEquals("NAD83", geographicCrs.getName());
 		assertEquals("North American Datum 1983",
 				geographicCrs.getReferenceFrame().getName());
@@ -4374,8 +4333,7 @@ public class CRSReaderWriterTest {
 		assertEquals(crs, geodeticOrGeographicCrs);
 		geographicCrs = CRSReader.readGeographicCompat(text);
 		assertEquals(crs, geographicCrs);
-		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
-				geographicCrs.getType());
+		assertEquals(CRSType.GEOGRAPHIC, geographicCrs.getType());
 		assertEquals("NAD83", geographicCrs.getName());
 		assertEquals("North American Datum 1983",
 				geographicCrs.getReferenceFrame().getName());
@@ -4438,15 +4396,13 @@ public class CRSReaderWriterTest {
 				+ "PARAMETER[\"False easting\",500000],"
 				+ "PARAMETER[\"False northing\",0],UNIT[\"metre\",1.0]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 		ProjectedCoordinateReferenceSystem projectedCrs = CRSReader
 				.readProjectedCompat(text);
 		assertEquals(crs, projectedCrs);
-		assertEquals(CoordinateReferenceSystemType.PROJECTED,
-				projectedCrs.getType());
+		assertEquals(CRSType.PROJECTED, projectedCrs.getType());
 		assertEquals("NAD83 / UTM zone 10N", projectedCrs.getName());
-		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
-				projectedCrs.getBaseType());
+		assertEquals(CRSType.GEOGRAPHIC, projectedCrs.getBaseType());
 		assertEquals("NAD83", projectedCrs.getBaseName());
 		assertEquals("North American Datum 1983",
 				projectedCrs.getReferenceFrame().getName());
@@ -4525,11 +4481,9 @@ public class CRSReaderWriterTest {
 		crs = CRSReader.read(text, true);
 		projectedCrs = CRSReader.readProjectedCompat(text);
 		assertEquals(crs, projectedCrs);
-		assertEquals(CoordinateReferenceSystemType.PROJECTED,
-				projectedCrs.getType());
+		assertEquals(CRSType.PROJECTED, projectedCrs.getType());
 		assertEquals("NAD83 / UTM zone 10N", projectedCrs.getName());
-		assertEquals(CoordinateReferenceSystemType.GEOGRAPHIC,
-				projectedCrs.getBaseType());
+		assertEquals(CRSType.GEOGRAPHIC, projectedCrs.getBaseType());
 		assertEquals("NAD83", projectedCrs.getBaseName());
 		assertEquals("North American Datum 1983",
 				projectedCrs.getReferenceFrame().getName());

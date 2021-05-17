@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import mil.nga.proj.ProjectionException;
-import mil.nga.proj.crs.common.CoordinateSystem;
 
 /**
  * Compound Coordinate Reference System
@@ -18,13 +17,13 @@ public class CompoundCoordinateReferenceSystem
 	/**
 	 * Coordinate Reference Systems
 	 */
-	private List<CoordinateReferenceSystem> coordinateReferenceSystems = new ArrayList<>();
+	private List<SimpleCoordinateReferenceSystem> coordinateReferenceSystems = new ArrayList<>();
 
 	/**
 	 * Constructor
 	 */
 	public CompoundCoordinateReferenceSystem() {
-		super(CoordinateReferenceSystemType.COMPOUND);
+		super(CRSType.COMPOUND);
 	}
 
 	/**
@@ -35,27 +34,8 @@ public class CompoundCoordinateReferenceSystem
 	 * @param type
 	 *            coordinate reference system type
 	 */
-	public CompoundCoordinateReferenceSystem(String name,
-			CoordinateReferenceSystemType type) {
+	public CompoundCoordinateReferenceSystem(String name, CRSType type) {
 		super(name, type);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public CoordinateSystem getCoordinateSystem() {
-		throw new UnsupportedOperationException(
-				"Coordinate System not supported for Compound CRS");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setCoordinateSystem(CoordinateSystem coordinateSystem) {
-		throw new UnsupportedOperationException(
-				"Coordinate System not supported for Compound CRS");
 	}
 
 	/**
@@ -63,7 +43,7 @@ public class CompoundCoordinateReferenceSystem
 	 * 
 	 * @return coordinate reference systems
 	 */
-	public List<CoordinateReferenceSystem> getCoordinateReferenceSystems() {
+	public List<SimpleCoordinateReferenceSystem> getCoordinateReferenceSystems() {
 		return Collections.unmodifiableList(coordinateReferenceSystems);
 	}
 
@@ -74,7 +54,7 @@ public class CompoundCoordinateReferenceSystem
 	 *            coordinate reference systems
 	 */
 	public void setCoordinateReferenceSystems(
-			List<CoordinateReferenceSystem> coordinateReferenceSystems) {
+			List<SimpleCoordinateReferenceSystem> coordinateReferenceSystems) {
 		this.coordinateReferenceSystems.clear();
 		addCoordinateReferenceSystems(coordinateReferenceSystems);
 	}
@@ -85,7 +65,8 @@ public class CompoundCoordinateReferenceSystem
 	 * @param crs
 	 *            coordinate reference system
 	 */
-	public void addCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
+	public void addCoordinateReferenceSystem(
+			SimpleCoordinateReferenceSystem crs) {
 		switch (crs.getType()) {
 		case GEODETIC:
 		case GEOGRAPHIC:
@@ -111,8 +92,8 @@ public class CompoundCoordinateReferenceSystem
 	 *            coordinate reference systems
 	 */
 	public void addCoordinateReferenceSystems(
-			List<CoordinateReferenceSystem> crss) {
-		for (CoordinateReferenceSystem crs : crss) {
+			List<SimpleCoordinateReferenceSystem> crss) {
+		for (SimpleCoordinateReferenceSystem crs : crss) {
 			addCoordinateReferenceSystem(crs);
 		}
 	}

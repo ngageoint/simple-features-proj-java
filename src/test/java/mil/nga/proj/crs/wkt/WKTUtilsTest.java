@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import mil.nga.proj.crs.CoordinateReferenceSystem;
+import mil.nga.proj.crs.CRS;
 
 /**
  * Well-Known Text Utility tests
@@ -45,7 +45,7 @@ public class WKTUtilsTest {
 				+ "AXIS[\"Easting (X)\",east],AXIS[\"Northing (Y)\",north],"
 				+ "LENGTHUNIT[\"metre\",1.0,ID[\"EPSG\",9001]],ID[\"EPSG\",3857]]";
 
-		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+		CRS crs = CRSReader.read(text, true);
 
 		String wkt = CRSWriter.write(crs);
 		String pretty = CRSWriter.writePretty(crs);
@@ -94,14 +94,11 @@ public class WKTUtilsTest {
 		assertEquals(prettyCustom, prettyCustom3);
 		assertEquals(prettyNewline, prettyNewline3);
 
-		CoordinateReferenceSystem prettyCrs = CRSReader.read(pretty, true);
-		CoordinateReferenceSystem prettyTabCrs = CRSReader.read(prettyTab,
-				true);
-		CoordinateReferenceSystem prettyNoCrs = CRSReader.read(prettyNo, true);
-		CoordinateReferenceSystem prettyCustomCrs = CRSReader.read(prettyCustom,
-				true);
-		CoordinateReferenceSystem prettyNewlineCrs = CRSReader
-				.read(prettyNewline, true);
+		CRS prettyCrs = CRSReader.read(pretty, true);
+		CRS prettyTabCrs = CRSReader.read(prettyTab, true);
+		CRS prettyNoCrs = CRSReader.read(prettyNo, true);
+		CRS prettyCustomCrs = CRSReader.read(prettyCustom, true);
+		CRS prettyNewlineCrs = CRSReader.read(prettyNewline, true);
 
 		assertEquals(crs, prettyCrs);
 		assertEquals(crs, prettyTabCrs);

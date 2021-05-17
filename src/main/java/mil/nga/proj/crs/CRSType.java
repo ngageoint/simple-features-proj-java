@@ -1,11 +1,11 @@
 package mil.nga.proj.crs;
 
 /**
- * Coordinate Reference System Type
+ * Well-known text representation of coordinate reference systems Type
  * 
  * @author osbornb
  */
-public enum CoordinateReferenceSystemType {
+public enum CRSType {
 
 	/**
 	 * Bound

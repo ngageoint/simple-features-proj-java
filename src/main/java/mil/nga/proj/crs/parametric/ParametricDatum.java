@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.common.ReferenceFrame;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
@@ -25,7 +25,7 @@ public class ParametricDatum extends ReferenceFrame {
 	 * Constructor
 	 */
 	public ParametricDatum() {
-		super(CoordinateReferenceSystemType.PARAMETRIC);
+		super(CRSType.PARAMETRIC);
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class ParametricDatum extends ReferenceFrame {
 	 *            name
 	 */
 	public ParametricDatum(String name) {
-		super(name, CoordinateReferenceSystemType.PARAMETRIC);
+		super(name, CRSType.PARAMETRIC);
 	}
 
 	/**

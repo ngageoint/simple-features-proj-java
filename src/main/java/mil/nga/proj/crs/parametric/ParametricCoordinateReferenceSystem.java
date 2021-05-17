@@ -1,7 +1,7 @@
 package mil.nga.proj.crs.parametric;
 
-import mil.nga.proj.crs.CoordinateReferenceSystem;
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.SimpleCoordinateReferenceSystem;
+import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.common.CoordinateSystem;
 
 /**
@@ -10,7 +10,7 @@ import mil.nga.proj.crs.common.CoordinateSystem;
  * @author osbornb
  */
 public class ParametricCoordinateReferenceSystem
-		extends CoordinateReferenceSystem {
+		extends SimpleCoordinateReferenceSystem {
 
 	/**
 	 * Parametric Datum
@@ -21,7 +21,7 @@ public class ParametricCoordinateReferenceSystem
 	 * Constructor
 	 */
 	public ParametricCoordinateReferenceSystem() {
-		super(CoordinateReferenceSystemType.PARAMETRIC);
+		super(CRSType.PARAMETRIC);
 	}
 
 	/**
@@ -36,7 +36,7 @@ public class ParametricCoordinateReferenceSystem
 	 */
 	public ParametricCoordinateReferenceSystem(String name,
 			ParametricDatum datum, CoordinateSystem coordinateSystem) {
-		super(name, CoordinateReferenceSystemType.PARAMETRIC, coordinateSystem);
+		super(name, CRSType.PARAMETRIC, coordinateSystem);
 		setDatum(datum);
 	}
 

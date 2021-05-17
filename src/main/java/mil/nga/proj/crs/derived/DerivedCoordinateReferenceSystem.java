@@ -2,8 +2,9 @@ package mil.nga.proj.crs.derived;
 
 import java.util.List;
 
+import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.SimpleCoordinateReferenceSystem;
 import mil.nga.proj.crs.common.CoordinateSystem;
 import mil.nga.proj.crs.common.Identifier;
 
@@ -13,7 +14,7 @@ import mil.nga.proj.crs.common.Identifier;
  * @author osbornb
  */
 public class DerivedCoordinateReferenceSystem
-		extends CoordinateReferenceSystem {
+		extends SimpleCoordinateReferenceSystem {
 
 	/**
 	 * Base
@@ -29,7 +30,7 @@ public class DerivedCoordinateReferenceSystem
 	 * Constructor
 	 */
 	public DerivedCoordinateReferenceSystem() {
-		super(CoordinateReferenceSystemType.DERIVED);
+		super(CRSType.DERIVED);
 	}
 
 	/**
@@ -47,7 +48,7 @@ public class DerivedCoordinateReferenceSystem
 	public DerivedCoordinateReferenceSystem(String name,
 			CoordinateReferenceSystem base, DerivingConversion conversion,
 			CoordinateSystem coordinateSystem) {
-		super(name, CoordinateReferenceSystemType.DERIVED, coordinateSystem);
+		super(name, CRSType.DERIVED, coordinateSystem);
 		setBase(base);
 		setConversion(conversion);
 	}
@@ -85,7 +86,7 @@ public class DerivedCoordinateReferenceSystem
 	 * 
 	 * @return base type
 	 */
-	public CoordinateReferenceSystemType getBaseType() {
+	public CRSType getBaseType() {
 		return getBase().getType();
 	}
 

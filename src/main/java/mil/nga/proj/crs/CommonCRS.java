@@ -1,43 +1,22 @@
 package mil.nga.proj.crs;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import mil.nga.proj.crs.common.CoordinateSystem;
 import mil.nga.proj.crs.common.Identifier;
 import mil.nga.proj.crs.common.Usage;
-import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
- * Coordinate Reference System
+ * Common coordinate reference system and coordinate operations object
  * 
  * @author osbornb
  */
-public abstract class CoordinateReferenceSystem {
-
-	/**
-	 * Logger
-	 */
-	private static final Logger logger = Logger
-			.getLogger(CoordinateReferenceSystem.class.getName());
+public class CommonCRS extends CRS {
 
 	/**
 	 * Name
 	 */
 	private String name = null;
-
-	/**
-	 * Type
-	 */
-	private CoordinateReferenceSystemType type = null;
-
-	/**
-	 * Coordinate System
-	 */
-	private CoordinateSystem coordinateSystem = null;
 
 	/**
 	 * Usages
@@ -57,7 +36,7 @@ public abstract class CoordinateReferenceSystem {
 	/**
 	 * Constructor
 	 */
-	public CoordinateReferenceSystem() {
+	public CommonCRS() {
 
 	}
 
@@ -67,22 +46,8 @@ public abstract class CoordinateReferenceSystem {
 	 * @param type
 	 *            coordinate reference system type
 	 */
-	public CoordinateReferenceSystem(CoordinateReferenceSystemType type) {
-		setType(type);
-	}
-
-	/**
-	 * Constructor
-	 * 
-	 * @param name
-	 *            name
-	 * @param type
-	 *            coordinate reference system type
-	 */
-	public CoordinateReferenceSystem(String name,
-			CoordinateReferenceSystemType type) {
-		setName(name);
-		setType(type);
+	public CommonCRS(CRSType type) {
+		super(type);
 	}
 
 	/**
@@ -92,15 +57,10 @@ public abstract class CoordinateReferenceSystem {
 	 *            name
 	 * @param type
 	 *            coordinate reference system type
-	 * @param coordinateSystem
-	 *            coordinate system
 	 */
-	public CoordinateReferenceSystem(String name,
-			CoordinateReferenceSystemType type,
-			CoordinateSystem coordinateSystem) {
+	public CommonCRS(String name, CRSType type) {
+		super(type);
 		setName(name);
-		setType(type);
-		setCoordinateSystem(coordinateSystem);
 	}
 
 	/**
@@ -120,44 +80,6 @@ public abstract class CoordinateReferenceSystem {
 	 */
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	/**
-	 * Get the type
-	 * 
-	 * @return type
-	 */
-	public CoordinateReferenceSystemType getType() {
-		return type;
-	}
-
-	/**
-	 * Set the type
-	 * 
-	 * @param type
-	 *            type
-	 */
-	public void setType(CoordinateReferenceSystemType type) {
-		this.type = type;
-	}
-
-	/**
-	 * Get the coordinate system
-	 * 
-	 * @return coordinate system
-	 */
-	public CoordinateSystem getCoordinateSystem() {
-		return coordinateSystem;
-	}
-
-	/**
-	 * Set the coordinate system
-	 * 
-	 * @param coordinateSystem
-	 *            coordinate system
-	 */
-	public void setCoordinateSystem(CoordinateSystem coordinateSystem) {
-		this.coordinateSystem = coordinateSystem;
 	}
 
 	/**
@@ -302,14 +224,11 @@ public abstract class CoordinateReferenceSystem {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((coordinateSystem == null) ? 0
-				: coordinateSystem.hashCode());
+		int result = super.hashCode();
 		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((remark == null) ? 0 : remark.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		result = prime * result + ((usages == null) ? 0 : usages.hashCode());
 		return result;
 	}
@@ -321,16 +240,11 @@ public abstract class CoordinateReferenceSystem {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CoordinateReferenceSystem other = (CoordinateReferenceSystem) obj;
-		if (coordinateSystem == null) {
-			if (other.coordinateSystem != null)
-				return false;
-		} else if (!coordinateSystem.equals(other.coordinateSystem))
-			return false;
+		CommonCRS other = (CommonCRS) obj;
 		if (identifiers == null) {
 			if (other.identifiers != null)
 				return false;
@@ -346,31 +260,12 @@ public abstract class CoordinateReferenceSystem {
 				return false;
 		} else if (!remark.equals(other.remark))
 			return false;
-		if (type != other.type)
-			return false;
 		if (usages == null) {
 			if (other.usages != null)
 				return false;
 		} else if (!usages.equals(other.usages))
 			return false;
 		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		String value = null;
-		try {
-			value = CRSWriter.write(this);
-		} catch (IOException e) {
-			logger.log(Level.WARNING,
-					"Failed to write coordinate reference system as a string",
-					e);
-			value = super.toString();
-		}
-		return value;
 	}
 
 }

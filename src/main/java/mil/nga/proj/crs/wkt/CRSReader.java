@@ -15,9 +15,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.ProjectionException;
+import mil.nga.proj.crs.CRS;
+import mil.nga.proj.crs.CRSType;
+import mil.nga.proj.crs.CommonCRS;
 import mil.nga.proj.crs.CompoundCoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
-import mil.nga.proj.crs.CoordinateReferenceSystemType;
+import mil.nga.proj.crs.SimpleCoordinateReferenceSystem;
 import mil.nga.proj.crs.common.Axis;
 import mil.nga.proj.crs.common.AxisDirectionType;
 import mil.nga.proj.crs.common.CoordinateSystem;
@@ -84,8 +87,7 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public static CoordinateReferenceSystem read(String text)
-			throws IOException {
+	public static CRS read(String text) throws IOException {
 		return read(text, false);
 	}
 
@@ -100,9 +102,8 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public static CoordinateReferenceSystem read(String text, boolean strict)
-			throws IOException {
-		CoordinateReferenceSystem crs = null;
+	public static CRS read(String text, boolean strict) throws IOException {
+		CRS crs = null;
 		CRSReader reader = new CRSReader(text, strict);
 		try {
 			crs = reader.read();
@@ -124,8 +125,8 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public static CoordinateReferenceSystem read(String text,
-			CoordinateReferenceSystemType... expected) throws IOException {
+	public static CRS read(String text, CRSType... expected)
+			throws IOException {
 		return read(text, false, expected);
 	}
 
@@ -142,17 +143,82 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public static CoordinateReferenceSystem read(String text, boolean strict,
-			CoordinateReferenceSystemType... expected) throws IOException {
-		CoordinateReferenceSystem crs = read(text, strict);
-		Set<CoordinateReferenceSystemType> expectedSet = new HashSet<>(
-				Arrays.asList(expected));
+	public static CRS read(String text, boolean strict, CRSType... expected)
+			throws IOException {
+		CRS crs = read(text, strict);
+		Set<CRSType> expectedSet = new HashSet<>(Arrays.asList(expected));
 		if (!expectedSet.contains(crs.getType())) {
 			throw new ProjectionException(
 					"Unexpected Coordinate Reference System Type: "
 							+ crs.getType() + ", Expected: " + expectedSet);
 		}
 		return crs;
+	}
+
+	/**
+	 * Read a Coordinate Reference System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static CoordinateReferenceSystem readCoordinateReferenceSystem(
+			String text) throws IOException {
+		return readCoordinateReferenceSystem(text, false);
+	}
+
+	/**
+	 * Read a Coordinate Reference System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @param strict
+	 *            strict enforcement
+	 * @return Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static CoordinateReferenceSystem readCoordinateReferenceSystem(
+			String text, boolean strict) throws IOException {
+		return (CoordinateReferenceSystem) read(text, strict, CRSType.GEODETIC,
+				CRSType.GEOGRAPHIC, CRSType.PROJECTED, CRSType.VERTICAL,
+				CRSType.ENGINEERING, CRSType.PARAMETRIC, CRSType.TEMPORAL,
+				CRSType.DERIVED, CRSType.COMPOUND, CRSType.BOUND);
+	}
+
+	/**
+	 * Read a Simple Coordinate Reference System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Simple Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static SimpleCoordinateReferenceSystem readSimpleCoordinateReferenceSystem(
+			String text) throws IOException {
+		return readSimpleCoordinateReferenceSystem(text, false);
+	}
+
+	/**
+	 * Read a Simple Coordinate Reference System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @param strict
+	 *            strict enforcement
+	 * @return Simple Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static SimpleCoordinateReferenceSystem readSimpleCoordinateReferenceSystem(
+			String text, boolean strict) throws IOException {
+		return (SimpleCoordinateReferenceSystem) read(text, strict,
+				CRSType.GEODETIC, CRSType.GEOGRAPHIC, CRSType.PROJECTED,
+				CRSType.VERTICAL, CRSType.ENGINEERING, CRSType.PARAMETRIC,
+				CRSType.TEMPORAL, CRSType.DERIVED);
 	}
 
 	/**
@@ -167,9 +233,8 @@ public class CRSReader implements Closeable {
 	 */
 	public static GeoCoordinateReferenceSystem readGeo(String text)
 			throws IOException {
-		return (GeoCoordinateReferenceSystem) read(text,
-				CoordinateReferenceSystemType.GEODETIC,
-				CoordinateReferenceSystemType.GEOGRAPHIC);
+		return (GeoCoordinateReferenceSystem) read(text, CRSType.GEODETIC,
+				CRSType.GEOGRAPHIC);
 	}
 
 	/**
@@ -183,8 +248,7 @@ public class CRSReader implements Closeable {
 	 */
 	public static GeoCoordinateReferenceSystem readGeodetic(String text)
 			throws IOException {
-		return (GeoCoordinateReferenceSystem) read(text,
-				CoordinateReferenceSystemType.GEODETIC);
+		return (GeoCoordinateReferenceSystem) read(text, CRSType.GEODETIC);
 	}
 
 	/**
@@ -198,8 +262,7 @@ public class CRSReader implements Closeable {
 	 */
 	public static GeoCoordinateReferenceSystem readGeographic(String text)
 			throws IOException {
-		return (GeoCoordinateReferenceSystem) read(text,
-				CoordinateReferenceSystemType.GEOGRAPHIC);
+		return (GeoCoordinateReferenceSystem) read(text, CRSType.GEOGRAPHIC);
 	}
 
 	/**
@@ -281,8 +344,7 @@ public class CRSReader implements Closeable {
 	 */
 	public static VerticalCoordinateReferenceSystem readVertical(String text)
 			throws IOException {
-		return (VerticalCoordinateReferenceSystem) read(text,
-				CoordinateReferenceSystemType.VERTICAL);
+		return (VerticalCoordinateReferenceSystem) read(text, CRSType.VERTICAL);
 	}
 
 	/**
@@ -297,7 +359,7 @@ public class CRSReader implements Closeable {
 	public static EngineeringCoordinateReferenceSystem readEngineering(
 			String text) throws IOException {
 		return (EngineeringCoordinateReferenceSystem) read(text,
-				CoordinateReferenceSystemType.ENGINEERING);
+				CRSType.ENGINEERING);
 	}
 
 	/**
@@ -312,7 +374,7 @@ public class CRSReader implements Closeable {
 	public static ParametricCoordinateReferenceSystem readParametric(
 			String text) throws IOException {
 		return (ParametricCoordinateReferenceSystem) read(text,
-				CoordinateReferenceSystemType.PARAMETRIC);
+				CRSType.PARAMETRIC);
 	}
 
 	/**
@@ -326,8 +388,7 @@ public class CRSReader implements Closeable {
 	 */
 	public static TemporalCoordinateReferenceSystem readTemporal(String text)
 			throws IOException {
-		return (TemporalCoordinateReferenceSystem) read(text,
-				CoordinateReferenceSystemType.TEMPORAL);
+		return (TemporalCoordinateReferenceSystem) read(text, CRSType.TEMPORAL);
 	}
 
 	/**
@@ -341,8 +402,7 @@ public class CRSReader implements Closeable {
 	 */
 	public static DerivedCoordinateReferenceSystem readDerived(String text)
 			throws IOException {
-		return (DerivedCoordinateReferenceSystem) read(text,
-				CoordinateReferenceSystemType.DERIVED);
+		return (DerivedCoordinateReferenceSystem) read(text, CRSType.DERIVED);
 	}
 
 	/**
@@ -618,9 +678,9 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public CoordinateReferenceSystem read() throws IOException {
+	public CRS read() throws IOException {
 
-		CoordinateReferenceSystem crs = null;
+		CRS crs = null;
 
 		CoordinateReferenceSystemKeyword keyword = peekKeyword();
 		switch (keyword) {
@@ -1206,7 +1266,7 @@ public class CRSReader implements Closeable {
 	public CoordinateReferenceSystem readGeo() throws IOException {
 
 		GeoCoordinateReferenceSystem baseCrs = new GeoCoordinateReferenceSystem();
-		CoordinateReferenceSystem crs = baseCrs;
+		SimpleCoordinateReferenceSystem crs = baseCrs;
 		DerivedCoordinateReferenceSystem derivedCrs = null;
 
 		CoordinateReferenceSystemKeyword keyword = readKeyword(
@@ -1300,7 +1360,7 @@ public class CRSReader implements Closeable {
 	 */
 	public ProjectedCoordinateReferenceSystem readProjected()
 			throws IOException {
-		CoordinateReferenceSystemType expectedType = null;
+		CRSType expectedType = null;
 		return readProjected(expectedType);
 	}
 
@@ -1313,7 +1373,7 @@ public class CRSReader implements Closeable {
 	 */
 	public ProjectedCoordinateReferenceSystem readProjectedGeodetic()
 			throws IOException {
-		return readProjected(CoordinateReferenceSystemType.GEODETIC);
+		return readProjected(CRSType.GEODETIC);
 	}
 
 	/**
@@ -1325,7 +1385,7 @@ public class CRSReader implements Closeable {
 	 */
 	public ProjectedCoordinateReferenceSystem readProjectedGeographic()
 			throws IOException {
-		return readProjected(CoordinateReferenceSystemType.GEOGRAPHIC);
+		return readProjected(CRSType.GEOGRAPHIC);
 	}
 
 	/**
@@ -1339,7 +1399,7 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public ProjectedCoordinateReferenceSystem readProjected(
-			CoordinateReferenceSystemType expectedBaseType) throws IOException {
+			CRSType expectedBaseType) throws IOException {
 
 		ProjectedCoordinateReferenceSystem crs = new ProjectedCoordinateReferenceSystem();
 
@@ -1354,8 +1414,7 @@ public class CRSReader implements Closeable {
 		CoordinateReferenceSystemKeyword type = readKeyword(
 				CoordinateReferenceSystemKeyword.BASEGEODCRS,
 				CoordinateReferenceSystemKeyword.BASEGEOGCRS);
-		CoordinateReferenceSystemType crsType = WKTUtils
-				.getCoordinateReferenceSystemType(type);
+		CRSType crsType = WKTUtils.getCoordinateReferenceSystemType(type);
 		if (expectedBaseType != null && crsType != expectedBaseType) {
 			throw new ProjectionException(
 					"Unexpected Base Coordinate Reference System Type. expected: "
@@ -1428,7 +1487,7 @@ public class CRSReader implements Closeable {
 	public CoordinateReferenceSystem readVertical() throws IOException {
 
 		VerticalCoordinateReferenceSystem baseCrs = new VerticalCoordinateReferenceSystem();
-		CoordinateReferenceSystem crs = baseCrs;
+		SimpleCoordinateReferenceSystem crs = baseCrs;
 		DerivedCoordinateReferenceSystem derivedCrs = null;
 
 		readKeyword(CoordinateReferenceSystemKeyword.VERTCRS);
@@ -1520,7 +1579,7 @@ public class CRSReader implements Closeable {
 	public CoordinateReferenceSystem readEngineering() throws IOException {
 
 		EngineeringCoordinateReferenceSystem baseCrs = new EngineeringCoordinateReferenceSystem();
-		CoordinateReferenceSystem crs = baseCrs;
+		SimpleCoordinateReferenceSystem crs = baseCrs;
 		DerivedCoordinateReferenceSystem derivedCrs = null;
 
 		readKeyword(CoordinateReferenceSystemKeyword.ENGCRS);
@@ -1580,7 +1639,7 @@ public class CRSReader implements Closeable {
 	public CoordinateReferenceSystem readParametric() throws IOException {
 
 		ParametricCoordinateReferenceSystem baseCrs = new ParametricCoordinateReferenceSystem();
-		CoordinateReferenceSystem crs = baseCrs;
+		SimpleCoordinateReferenceSystem crs = baseCrs;
 		DerivedCoordinateReferenceSystem derivedCrs = null;
 
 		readKeyword(CoordinateReferenceSystemKeyword.PARAMETRICCRS);
@@ -1640,7 +1699,7 @@ public class CRSReader implements Closeable {
 	public CoordinateReferenceSystem readTemporal() throws IOException {
 
 		TemporalCoordinateReferenceSystem baseCrs = new TemporalCoordinateReferenceSystem();
-		CoordinateReferenceSystem crs = baseCrs;
+		SimpleCoordinateReferenceSystem crs = baseCrs;
 		DerivedCoordinateReferenceSystem derivedCrs = null;
 
 		readKeyword(CoordinateReferenceSystemKeyword.TIMECRS);
@@ -1812,7 +1871,8 @@ public class CRSReader implements Closeable {
 				CoordinateReferenceSystemKeyword.DERIVEDPROJCRS)) {
 
 			readSeparator();
-			crs.addCoordinateReferenceSystem(read());
+			crs.addCoordinateReferenceSystem(
+					(SimpleCoordinateReferenceSystem) read());
 		}
 
 		readScopeExtentIdentifierRemark(crs);
@@ -1839,7 +1899,7 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public void readScopeExtentIdentifierRemark(CoordinateReferenceSystem crs)
+	public void readScopeExtentIdentifierRemark(CommonCRS crs)
 			throws IOException {
 
 		CoordinateReferenceSystemKeyword keyword = readToKeyword(
@@ -2989,7 +3049,7 @@ public class CRSReader implements Closeable {
 	 */
 	public List<OperationParameter> readMapProjectionParameters()
 			throws IOException {
-		return readParameters(CoordinateReferenceSystemType.PROJECTED);
+		return readParameters(CRSType.PROJECTED);
 	}
 
 	/**
@@ -3002,8 +3062,8 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public List<OperationParameter> readParameters(
-			CoordinateReferenceSystemType type) throws IOException {
+	public List<OperationParameter> readParameters(CRSType type)
+			throws IOException {
 
 		List<OperationParameter> parameters = new ArrayList<>();
 
@@ -3030,8 +3090,7 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public OperationParameter readParameter(CoordinateReferenceSystemType type)
-			throws IOException {
+	public OperationParameter readParameter(CRSType type) throws IOException {
 
 		OperationParameter parameter = new OperationParameter();
 
@@ -3179,7 +3238,7 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public List<Parameter> readDerivedParameters() throws IOException {
-		return readParametersAndFiles(CoordinateReferenceSystemType.DERIVED);
+		return readParametersAndFiles(CRSType.DERIVED);
 	}
 
 	/**
@@ -3192,8 +3251,8 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public List<Parameter> readParametersAndFiles(
-			CoordinateReferenceSystemType type) throws IOException {
+	public List<Parameter> readParametersAndFiles(CRSType type)
+			throws IOException {
 
 		List<Parameter> parameters = new ArrayList<>();
 
@@ -3255,7 +3314,7 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public GeoCoordinateReferenceSystem readGeoCompat() throws IOException {
-		CoordinateReferenceSystemType expectedType = null;
+		CRSType expectedType = null;
 		return readGeoCompat(expectedType);
 	}
 
@@ -3268,7 +3327,7 @@ public class CRSReader implements Closeable {
 	 */
 	public GeoCoordinateReferenceSystem readGeodeticCompat()
 			throws IOException {
-		return readGeoCompat(CoordinateReferenceSystemType.GEODETIC);
+		return readGeoCompat(CRSType.GEODETIC);
 	}
 
 	/**
@@ -3280,7 +3339,7 @@ public class CRSReader implements Closeable {
 	 */
 	public GeoCoordinateReferenceSystem readGeographicCompat()
 			throws IOException {
-		return readGeoCompat(CoordinateReferenceSystemType.GEOGRAPHIC);
+		return readGeoCompat(CRSType.GEOGRAPHIC);
 	}
 
 	/**
@@ -3293,8 +3352,8 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public GeoCoordinateReferenceSystem readGeoCompat(
-			CoordinateReferenceSystemType expectedType) throws IOException {
+	public GeoCoordinateReferenceSystem readGeoCompat(CRSType expectedType)
+			throws IOException {
 
 		GeoCoordinateReferenceSystem crs = new GeoCoordinateReferenceSystem();
 
@@ -3303,8 +3362,7 @@ public class CRSReader implements Closeable {
 				CoordinateReferenceSystemKeyword.GEOGCS,
 				CoordinateReferenceSystemKeyword.GEODCRS,
 				CoordinateReferenceSystemKeyword.GEOGCRS);
-		CoordinateReferenceSystemType crsType = WKTUtils
-				.getCoordinateReferenceSystemType(type);
+		CRSType crsType = WKTUtils.getCoordinateReferenceSystemType(type);
 		if (expectedType != null && crsType != expectedType) {
 			throw new ProjectionException(
 					"Unexpected Coordinate Reference System Type. expected: "
@@ -3353,7 +3411,7 @@ public class CRSReader implements Closeable {
 	 */
 	public ProjectedCoordinateReferenceSystem readProjectedCompat()
 			throws IOException {
-		CoordinateReferenceSystemType expectedType = null;
+		CRSType expectedType = null;
 		return readProjectedCompat(expectedType);
 	}
 
@@ -3366,7 +3424,7 @@ public class CRSReader implements Closeable {
 	 */
 	public ProjectedCoordinateReferenceSystem readProjectedGeodeticCompat()
 			throws IOException {
-		return readProjectedCompat(CoordinateReferenceSystemType.GEODETIC);
+		return readProjectedCompat(CRSType.GEODETIC);
 	}
 
 	/**
@@ -3378,7 +3436,7 @@ public class CRSReader implements Closeable {
 	 */
 	public ProjectedCoordinateReferenceSystem readProjectedGeographicCompat()
 			throws IOException {
-		return readProjectedCompat(CoordinateReferenceSystemType.GEOGRAPHIC);
+		return readProjectedCompat(CRSType.GEOGRAPHIC);
 	}
 
 	/**
@@ -3392,7 +3450,7 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public ProjectedCoordinateReferenceSystem readProjectedCompat(
-			CoordinateReferenceSystemType expectedBaseType) throws IOException {
+			CRSType expectedBaseType) throws IOException {
 
 		ProjectedCoordinateReferenceSystem crs = new ProjectedCoordinateReferenceSystem();
 
@@ -3416,8 +3474,7 @@ public class CRSReader implements Closeable {
 		MapProjection mapProjection = readMapProjectionCompat();
 		crs.setMapProjection(mapProjection);
 
-		crs.setCoordinateSystem(readCoordinateSystemCompat(
-				CoordinateReferenceSystemType.PROJECTED,
+		crs.setCoordinateSystem(readCoordinateSystemCompat(CRSType.PROJECTED,
 				crs.getReferenceFrame()));
 
 		if (unit != null && !crs.getCoordinateSystem().hasUnit()) {
@@ -3468,8 +3525,7 @@ public class CRSReader implements Closeable {
 		readSeparator();
 		crs.setReferenceFrame(readVerticalDatumCompat());
 
-		crs.setCoordinateSystem(readCoordinateSystemCompat(
-				CoordinateReferenceSystemType.VERTICAL,
+		crs.setCoordinateSystem(readCoordinateSystemCompat(CRSType.VERTICAL,
 				crs.getReferenceFrame()));
 
 		CoordinateReferenceSystemKeyword keyword = readToKeyword(
@@ -3513,8 +3569,8 @@ public class CRSReader implements Closeable {
 		readSeparator();
 		crs.setDatum(readEngineeringDatumCompat());
 
-		crs.setCoordinateSystem(readCoordinateSystemCompat(
-				CoordinateReferenceSystemType.ENGINEERING, crs.getDatum()));
+		crs.setCoordinateSystem(readCoordinateSystemCompat(CRSType.ENGINEERING,
+				crs.getDatum()));
 
 		CoordinateReferenceSystemKeyword keyword = readToKeyword(
 				CoordinateReferenceSystemKeyword.EXTENSION,
@@ -3579,9 +3635,8 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public CoordinateSystem readCoordinateSystemCompat(
-			CoordinateReferenceSystemType type, ReferenceFrame datum)
-			throws IOException {
+	public CoordinateSystem readCoordinateSystemCompat(CRSType type,
+			ReferenceFrame datum) throws IOException {
 
 		CoordinateSystem coordinateSystem = new CoordinateSystem();
 
@@ -3846,7 +3901,7 @@ public class CRSReader implements Closeable {
 	/**
 	 * Read backwards compatible extras text (extensions, unsupported values)
 	 * that were saved as CRS remarks, retrievable by
-	 * {@link CoordinateReferenceSystem#getRemark()}
+	 * {@link CommonCRS#getRemark()}
 	 * 
 	 * @param text
 	 *            extras text
