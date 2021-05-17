@@ -1975,17 +1975,32 @@ public class CRSReader implements Closeable {
 		}
 
 		CoordinateReferenceSystemKeyword keyword = readToKeyword(
+				CoordinateReferenceSystemKeyword.TOWGS84,
 				CoordinateReferenceSystemKeyword.ANCHOR,
 				CoordinateReferenceSystemKeyword.ID);
+
+		if (keyword == CoordinateReferenceSystemKeyword.TOWGS84) {
+			extras.put(CoordinateReferenceSystemKeyword.TOWGS84.name(),
+					readToWGS84Compat());
+			keyword = readToKeyword(CoordinateReferenceSystemKeyword.ANCHOR,
+					CoordinateReferenceSystemKeyword.ID);
+		}
 
 		if (keyword == CoordinateReferenceSystemKeyword.ANCHOR) {
 			referenceFrame.setAnchor(readKeywordDelimitedToken(
 					CoordinateReferenceSystemKeyword.ANCHOR));
-			keyword = readToKeyword(CoordinateReferenceSystemKeyword.ID);
+			keyword = readToKeyword(CoordinateReferenceSystemKeyword.ID,
+					CoordinateReferenceSystemKeyword.TOWGS84);
 		}
 
 		if (keyword == CoordinateReferenceSystemKeyword.ID) {
 			referenceFrame.setIdentifiers(readIdentifiers());
+			keyword = readToKeyword(CoordinateReferenceSystemKeyword.TOWGS84);
+		}
+
+		if (keyword == CoordinateReferenceSystemKeyword.TOWGS84) {
+			extras.put(CoordinateReferenceSystemKeyword.TOWGS84.name(),
+					readToWGS84Compat());
 		}
 
 		readRightDelimiter();
@@ -3716,6 +3731,30 @@ public class CRSReader implements Closeable {
 		readRightDelimiter();
 
 		return referenceFrame;
+	}
+
+	/**
+	 * Read a Backward Compatible To WGS84 transformation
+	 * 
+	 * @return abridged transformation
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public String readToWGS84Compat() throws IOException {
+
+		StringBuilder value = new StringBuilder();
+
+		readKeyword(CoordinateReferenceSystemKeyword.TOWGS84);
+
+		readLeftDelimiter();
+
+		while (!peekRightDelimiter()) {
+			value.append(reader.readToken());
+		}
+
+		readRightDelimiter();
+
+		return value.toString();
 	}
 
 	/**

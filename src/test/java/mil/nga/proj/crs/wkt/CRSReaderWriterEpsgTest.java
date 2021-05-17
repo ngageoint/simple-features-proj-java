@@ -161,7 +161,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]],"
 				+ "ID[\"EPSG\",\"3035\"]]";
 
-		crs = CRSReader.read(text);
+		crs = CRSReader.read(text, true);
 
 		expectedText = "PROJCRS[\"ETRS89 / LAEA Europe\",BASEGEOGCRS[\"ETRS89\","
 				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
@@ -177,7 +177,8 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"false_northing\",3210000.0]],"
 				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
 				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
-				+ "ID[\"EPSG\",3035]]";
+				+ "ID[\"EPSG\",3035],"
+				+ "REMARK[\"[\"\"TOWGS84\"\",\"\"0,0,0,0,0,0,0\"\"]\"]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -199,7 +200,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]],"
 				+ "ID[\"EPSG\",\"3035\"]]";
 
-		crs = CRSReader.read(text);
+		crs = CRSReader.read(text, true);
 
 		expectedText = "PROJCRS[\"ETRS89 / LAEA Europe\",BASEGEOGCRS[\"ETRS89\","
 				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
@@ -215,7 +216,8 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"false_northing\",3210000.0]],"
 				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
 				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
-				+ "ID[\"EPSG\",3035]]";
+				+ "ID[\"EPSG\",3035],"
+				+ "REMARK[\"[\"\"TOWGS84\"\",\"\"0,0,0,0,0,0,0\"\"]\"]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -237,7 +239,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]],"
 				+ "ID[\"EPSG\",\"3035\"]]";
 
-		crs = CRSReader.read(text);
+		crs = CRSReader.read(text, true);
 
 		expectedText = "PROJCRS[\"ETRS89 / LAEA Europe\",BASEGEOGCRS[\"ETRS89\","
 				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
@@ -253,7 +255,8 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"false_northing\",3210000.0]],"
 				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
 				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
-				+ "ID[\"EPSG\",3035]]";
+				+ "ID[\"EPSG\",3035],"
+				+ "REMARK[\"[\"\"TOWGS84\"\",\"\"0,0,0,0,0,0,0\"\"]\"]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -614,7 +617,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
 				+ "AUTHORITY[\"EPSG\",\"3978\"]]";
 
-		crs = CRSReader.read(text);
+		crs = CRSReader.read(text, true);
 
 		expectedText = "PROJCRS[\"NAD83 / Canada Atlas Lambert\",BASEGEOGCRS[\"NAD83\","
 				+ "DATUM[\"North_American_Datum_1983\","
@@ -632,7 +635,8 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"false_northing\",0.0]],"
 				+ "CS[ellipsoidal,2],AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
 				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
-				+ "ID[\"EPSG\",3978]]";
+				+ "ID[\"EPSG\",3978],"
+				+ "REMARK[\"[\"\"TOWGS84\"\",\"\"0,0,0,0,0,0,0\"\"]\"]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -658,7 +662,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
 				+ "ID[\"EPSG\",\"3978\"]]";
 
-		crs = CRSReader.read(text);
+		crs = CRSReader.read(text, true);
 
 		expectedText = "PROJCRS[\"NAD83 / Canada Atlas Lambert\",BASEGEOGCRS[\"NAD83\","
 				+ "DATUM[\"North_American_Datum_1983\","
@@ -676,7 +680,8 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"false_northing\",0.0]],"
 				+ "CS[ellipsoidal,2],AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
 				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
-				+ "ID[\"EPSG\",3978]]";
+				+ "ID[\"EPSG\",3978],"
+				+ "REMARK[\"[\"\"TOWGS84\"\",\"\"0,0,0,0,0,0,0\"\"]\"]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -1246,6 +1251,102 @@ public class CRSReaderWriterEpsgTest {
 		crs = CRSReader.read(text, true);
 
 		expectedText = text.replace("\"5773\"", "5773");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+	}
+
+	/**
+	 * Test EPSG 7405
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void test7405() throws IOException {
+
+		String text = "COMPOUNDCRS[\"OSGB36 / British National Grid + ODN height\","
+				+ "PROJCRS[\"OSGB36 / British National Grid\",BASEGEOGCRS[\"OSGB36\","
+				+ "DATUM[\"Ordnance Survey of Great Britain 1936\","
+				+ "ELLIPSOID[\"Airy 1830\",6377563.396,299.3249646,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",7001]],ID[\"EPSG\",6277]],ID[\"EPSG\",4277]],"
+				+ "CONVERSION[\"British National Grid\",METHOD[\"Transverse Mercator\",ID[\"EPSG\",9807]],"
+				+ "PARAMETER[\"Latitude of natural origin\",49,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Longitude of natural origin\",-2,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.999601272,SCALEUNIT[\"unity\",1,ID[\"EPSG\",9201]]],"
+				+ "PARAMETER[\"False easting\",400000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "PARAMETER[\"False northing\",-100000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",19916]],"
+				+ "CS[Cartesian,2,ID[\"EPSG\",4400]],"
+				+ "AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",27700]],"
+				+ "VERTCRS[\"ODN height\",VDATUM[\"Ordnance Datum Newlyn\",ID[\"EPSG\",5101]],"
+				+ "CS[vertical,1,ID[\"EPSG\",6499]],"
+				+ "AXIS[\"Gravity-related height (H)\",up],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5701]],"
+				+ "ID[\"EPSG\",7405]]";
+
+		CoordinateReferenceSystem crs = CRSReader.read(text, true);
+
+		String expectedText = text.replace("\",1,", "\",1.0,")
+				.replace("\",49,", "\",49.0,").replace("\",-2,", "\",-2.0,")
+				.replace("\",400000,", "\",400000.0,")
+				.replace("\",-100000,", "\",-100000.0,");
+
+		assertEquals(expectedText, crs.toString());
+		assertEquals(expectedText, CRSWriter.write(crs));
+		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
+
+		text = "COMPD_CS[\"OSGB 1936 / British National Grid + ODN height\","
+				+ "PROJCS[\"OSGB 1936 / British National Grid\",GEOGCS[\"OSGB 1936\","
+				+ "DATUM[\"OSGB_1936\","
+				+ "SPHEROID[\"Airy 1830\",6377563.396,299.3249646,"
+				+ "AUTHORITY[\"EPSG\",\"7001\"]],"
+				+ "TOWGS84[446.448,-125.157,542.06,0.15,0.247,0.842,-20.489],AUTHORITY[\"EPSG\",\"6277\"]],"
+				+ "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "AUTHORITY[\"EPSG\",\"9122\"]],"
+				+ "AUTHORITY[\"EPSG\",\"4277\"]],"
+				+ "PROJECTION[\"Transverse_Mercator\"],"
+				+ "PARAMETER[\"latitude_of_origin\",49],"
+				+ "PARAMETER[\"central_meridian\",-2],"
+				+ "PARAMETER[\"scale_factor\",0.9996012717],"
+				+ "PARAMETER[\"false_easting\",400000],"
+				+ "PARAMETER[\"false_northing\",-100000],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
+				+ "AUTHORITY[\"EPSG\",\"27700\"]],"
+				+ "VERT_CS[\"ODN height\",VERT_DATUM[\"Ordnance Datum Newlyn\",2005,"
+				+ "AUTHORITY[\"EPSG\",\"5101\"]],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "AXIS[\"Up\",UP],AUTHORITY[\"EPSG\",\"5701\"]],"
+				+ "AUTHORITY[\"EPSG\",\"7405\"]]";
+
+		crs = CRSReader.read(text, true);
+
+		expectedText = "COMPOUNDCRS[\"OSGB 1936 / British National Grid + ODN height\","
+				+ "PROJCRS[\"OSGB 1936 / British National Grid\",BASEGEOGCRS[\"OSGB 1936\","
+				+ "DATUM[\"OSGB_1936\","
+				+ "ELLIPSOID[\"Airy 1830\",6377563.396,299.3249646,"
+				+ "ID[\"EPSG\",7001]],ID[\"EPSG\",6277]],"
+				+ "PRIMEM[\"Greenwich\",0.0,ID[\"EPSG\",8901]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "ID[\"EPSG\",9122]],ID[\"EPSG\",4277]],"
+				+ "CONVERSION[\"Transverse_Mercator\",METHOD[\"Transverse_Mercator\"],"
+				+ "PARAMETER[\"latitude_of_origin\",49.0],"
+				+ "PARAMETER[\"central_meridian\",-2.0],"
+				+ "PARAMETER[\"scale_factor\",0.9996012717],"
+				+ "PARAMETER[\"false_easting\",400000.0],"
+				+ "PARAMETER[\"false_northing\",-100000.0]],"
+				+ "CS[ellipsoidal,2],AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],ID[\"EPSG\",27700],"
+				+ "REMARK[\"[\"\"TOWGS84\"\",\"\"446.448,-125.157,542.06,0.15,0.247,0.842,-20.489\"\"]\"]],"
+				+ "VERTCRS[\"ODN height\",VDATUM[\"Ordnance Datum Newlyn\","
+				+ "ID[\"EPSG\",5101]],"
+				+ "CS[vertical,1],AXIS[\"Up\",up],UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],ID[\"EPSG\",5701],"
+				+ "REMARK[\"[\"\"TOWGS84\"\",\"\"446.448,-125.157,542.06,0.15,0.247,0.842,-20.489\"\"],[\"\"datumType\"\",\"\"2005.0\"\"]\"]],"
+				+ "ID[\"EPSG\",7405]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));

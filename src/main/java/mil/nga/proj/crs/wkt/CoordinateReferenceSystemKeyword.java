@@ -18,6 +18,11 @@ import mil.nga.proj.ProjectionException;
 public enum CoordinateReferenceSystemKeyword {
 
 	/**
+	 * Abridged Transformation
+	 */
+	ABRIDGEDTRANSFORMATION(),
+
+	/**
 	 * Datum anchor
 	 */
 	ANCHOR(),
@@ -105,7 +110,7 @@ public enum CoordinateReferenceSystemKeyword {
 	/**
 	 * Compound CRS
 	 */
-	COMPOUNDCRS(),
+	COMPOUNDCRS("COMPD_CS"),
 
 	/**
 	 * Coordinate Operation
@@ -316,6 +321,11 @@ public enum CoordinateReferenceSystemKeyword {
 	 * Time Unit
 	 */
 	TIMEUNIT("TEMPORALQUANTITY"),
+
+	/**
+	 * Backwards Compatibility To WGS84
+	 */
+	TOWGS84("ABRIDGEDTRANSFORMATION"),
 
 	/**
 	 * Usage
