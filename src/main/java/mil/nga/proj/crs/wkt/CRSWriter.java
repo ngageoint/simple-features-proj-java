@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import mil.nga.proj.ProjectionException;
 import mil.nga.proj.crs.CRS;
+import mil.nga.proj.crs.CommonCRS;
 import mil.nga.proj.crs.CompoundCoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.common.Axis;
@@ -34,6 +35,7 @@ import mil.nga.proj.crs.geo.GeoDatumEnsemble;
 import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
 import mil.nga.proj.crs.metadata.CoordinateMetadata;
+import mil.nga.proj.crs.operation.CoordinateOperation;
 import mil.nga.proj.crs.operation.OperationMethod;
 import mil.nga.proj.crs.operation.OperationParameter;
 import mil.nga.proj.crs.operation.OperationParameterFile;
@@ -291,31 +293,34 @@ public class CRSWriter implements Closeable {
 		switch (crs.getType()) {
 		case GEODETIC:
 		case GEOGRAPHIC:
-			writeCRS((GeoCoordinateReferenceSystem) crs);
+			writeGeo((GeoCoordinateReferenceSystem) crs);
 			break;
 		case PROJECTED:
-			writeCRS((ProjectedCoordinateReferenceSystem) crs);
+			writeProjected((ProjectedCoordinateReferenceSystem) crs);
 			break;
 		case VERTICAL:
-			writeCRS((VerticalCoordinateReferenceSystem) crs);
+			writeVertical((VerticalCoordinateReferenceSystem) crs);
 			break;
 		case ENGINEERING:
-			writeCRS((EngineeringCoordinateReferenceSystem) crs);
+			writeEngineering((EngineeringCoordinateReferenceSystem) crs);
 			break;
 		case PARAMETRIC:
-			writeCRS((ParametricCoordinateReferenceSystem) crs);
+			writeParametric((ParametricCoordinateReferenceSystem) crs);
 			break;
 		case TEMPORAL:
-			writeCRS((TemporalCoordinateReferenceSystem) crs);
+			writeTemporal((TemporalCoordinateReferenceSystem) crs);
 			break;
 		case DERIVED:
-			writeCRS((DerivedCoordinateReferenceSystem) crs);
+			writeDerived((DerivedCoordinateReferenceSystem) crs);
 			break;
 		case COMPOUND:
-			writeCRS((CompoundCoordinateReferenceSystem) crs);
+			writeCompound((CompoundCoordinateReferenceSystem) crs);
 			break;
 		case COORDINATE_METADATA:
 			writeCoordinateMetadata((CoordinateMetadata) crs);
+			break;
+		case COORDINATE_OPERATION:
+			writeCoordinateOperation((CoordinateOperation) crs);
 			break;
 		default:
 			throw new ProjectionException(
@@ -439,7 +444,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeCRS(GeoCoordinateReferenceSystem crs) throws IOException {
+	public void writeGeo(GeoCoordinateReferenceSystem crs) throws IOException {
 
 		CRSKeyword keyword = null;
 		switch (crs.getType()) {
@@ -488,7 +493,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeCRS(ProjectedCoordinateReferenceSystem crs)
+	public void writeProjected(ProjectedCoordinateReferenceSystem crs)
 			throws IOException {
 
 		write(CRSKeyword.PROJCRS);
@@ -561,7 +566,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeCRS(VerticalCoordinateReferenceSystem crs)
+	public void writeVertical(VerticalCoordinateReferenceSystem crs)
 			throws IOException {
 
 		write(CRSKeyword.VERTCRS);
@@ -610,7 +615,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeCRS(EngineeringCoordinateReferenceSystem crs)
+	public void writeEngineering(EngineeringCoordinateReferenceSystem crs)
 			throws IOException {
 
 		write(CRSKeyword.ENGCRS);
@@ -638,7 +643,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeCRS(ParametricCoordinateReferenceSystem crs)
+	public void writeParametric(ParametricCoordinateReferenceSystem crs)
 			throws IOException {
 
 		write(CRSKeyword.PARAMETRICCRS);
@@ -666,7 +671,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeCRS(TemporalCoordinateReferenceSystem crs)
+	public void writeTemporal(TemporalCoordinateReferenceSystem crs)
 			throws IOException {
 
 		write(CRSKeyword.TIMECRS);
@@ -694,7 +699,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeCRS(DerivedCoordinateReferenceSystem crs)
+	public void writeDerived(DerivedCoordinateReferenceSystem crs)
 			throws IOException {
 
 		switch (crs.getBaseType()) {
@@ -722,36 +727,6 @@ public class CRSWriter implements Closeable {
 					"Unsupported derived base CRS type: " + crs.getBaseType());
 		}
 
-	}
-
-	/**
-	 * Write coordinate metadata to well-known text
-	 * 
-	 * @param metadata
-	 *            coordinate metadata
-	 * @throws IOException
-	 *             upon failure to write
-	 */
-	public void writeCoordinateMetadata(CoordinateMetadata metadata)
-			throws IOException {
-
-		write(CRSKeyword.COORDINATEMETADATA);
-
-		writeLeftDelimiter();
-
-		writeCRS(metadata.getCoordinateReferenceSystem());
-
-		if (metadata.hasEpoch()) {
-
-			writeSeparator();
-			write(CRSKeyword.EPOCH);
-			writeLeftDelimiter();
-			write(metadata.getEpoch());
-			writeRightDelimiter();
-
-		}
-
-		writeRightDelimiter();
 	}
 
 	/**
@@ -1125,7 +1100,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeCRS(CompoundCoordinateReferenceSystem crs)
+	public void writeCompound(CompoundCoordinateReferenceSystem crs)
 			throws IOException {
 
 		write(CRSKeyword.COMPOUNDCRS);
@@ -1146,6 +1121,87 @@ public class CRSWriter implements Closeable {
 	}
 
 	/**
+	 * Write coordinate metadata to well-known text
+	 * 
+	 * @param metadata
+	 *            coordinate metadata
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeCoordinateMetadata(CoordinateMetadata metadata)
+			throws IOException {
+
+		write(CRSKeyword.COORDINATEMETADATA);
+
+		writeLeftDelimiter();
+
+		writeCRS(metadata.getCoordinateReferenceSystem());
+
+		if (metadata.hasEpoch()) {
+
+			writeSeparator();
+			write(CRSKeyword.EPOCH);
+			writeLeftDelimiter();
+			write(metadata.getEpoch());
+			writeRightDelimiter();
+
+		}
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write coordinate operation to well-known text
+	 * 
+	 * @param operation
+	 *            coordinate operation
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeCoordinateOperation(CoordinateOperation operation)
+			throws IOException {
+
+		write(CRSKeyword.COORDINATEOPERATION);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(operation.getName());
+
+		if (operation.hasVersion()) {
+			writeSeparator();
+			writeVersion(operation.getVersion());
+		}
+
+		writeSeparator();
+		writeSource(operation.getSource());
+
+		writeSeparator();
+		writeTarget(operation.getTarget());
+
+		writeSeparator();
+		write(operation.getMethod());
+
+		if (operation.hasParameters()) {
+			writeSeparator();
+			writeParametersAndFiles(operation.getParameters());
+		}
+
+		if (operation.hasInterpolation()) {
+			writeSeparator();
+			writeInterpolation(operation.getInterpolation());
+		}
+
+		if (operation.hasAccuracy()) {
+			writeSeparator();
+			writeAccuracy(operation.getAccuracy());
+		}
+
+		writeScopeExtentIdentifierRemark(operation);
+
+		writeRightDelimiter();
+	}
+
+	/**
 	 * Write the CRS usages (scope and extent), identifiers, and remark
 	 * 
 	 * @param crs
@@ -1153,7 +1209,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeScopeExtentIdentifierRemark(CoordinateReferenceSystem crs)
+	public void writeScopeExtentIdentifierRemark(CommonCRS crs)
 			throws IOException {
 
 		if (crs.hasUsages()) {
@@ -2113,6 +2169,102 @@ public class CRSWriter implements Closeable {
 			writeSeparator();
 			writeIdentifiers(file.getIdentifiers());
 		}
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write an operation version
+	 * 
+	 * @param version
+	 *            operation version
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeVersion(String version) throws IOException {
+
+		write(CRSKeyword.VERSION);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(version);
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write a source coordinate reference system
+	 * 
+	 * @param crs
+	 *            coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeSource(CoordinateReferenceSystem crs) throws IOException {
+		writeCoordinateReferenceSystem(CRSKeyword.SOURCECRS, crs);
+	}
+
+	/**
+	 * Write a target coordinate reference system
+	 * 
+	 * @param crs
+	 *            coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeTarget(CoordinateReferenceSystem crs) throws IOException {
+		writeCoordinateReferenceSystem(CRSKeyword.TARGETCRS, crs);
+	}
+
+	/**
+	 * Write a interpolation coordinate reference system
+	 * 
+	 * @param crs
+	 *            coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeInterpolation(CoordinateReferenceSystem crs)
+			throws IOException {
+		writeCoordinateReferenceSystem(CRSKeyword.INTERPOLATIONCRS, crs);
+	}
+
+	/**
+	 * Write a coordinate reference system with the keyword
+	 * 
+	 * @param keyword
+	 *            CRS keyword
+	 * @param crs
+	 *            coordinate reference system
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeCoordinateReferenceSystem(CRSKeyword keyword,
+			CoordinateReferenceSystem crs) throws IOException {
+
+		write(keyword);
+		writeLeftDelimiter();
+
+		writeCRS(crs);
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write an operation accuracy
+	 * 
+	 * @param accuracy
+	 *            operation accuracy
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeAccuracy(double accuracy) throws IOException {
+
+		write(CRSKeyword.OPERATIONACCURACY);
+
+		writeLeftDelimiter();
+
+		write(accuracy);
 
 		writeRightDelimiter();
 	}

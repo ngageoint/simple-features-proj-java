@@ -38,6 +38,7 @@ import mil.nga.proj.crs.geo.GeoDatumEnsemble;
 import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
 import mil.nga.proj.crs.metadata.CoordinateMetadata;
+import mil.nga.proj.crs.operation.CoordinateOperation;
 import mil.nga.proj.crs.operation.OperationParameter;
 import mil.nga.proj.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.proj.crs.projected.MapProjection;
@@ -4153,11 +4154,157 @@ public class CRSReaderWriterTest {
 		CoordinateMetadata metadata = CRSReader.readCoordinateMetadata(text);
 		assertEquals(crs, metadata);
 		assertEquals(CRSType.COORDINATE_METADATA, metadata.getType());
+		// TODO
 
 		text = text.replace("6378137", "6378137.0");
 		assertEquals(text, metadata.toString());
 		assertEquals(text, CRSWriter.write(metadata));
 		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(metadata));
+
+	}
+
+	/**
+	 * Test coordinate operation
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testCoordinateOperation() throws IOException {
+
+		String text = "COORDINATEOPERATION[\"Tokyo to JGD2000\",VERSION[\"GSI\"],"
+				+ "SOURCECRS[GEODCRS[\"Tokyo\",DATUM[\"Tokyo 1918\","
+				+ "ELLIPSOID[\"Bessel 1841\",6377397.155,299.1528128,LENGTHUNIT[\"metre\",1.0]]],"
+				+ "CS[Cartesian,3],AXIS[\"(X)\",geocentricX,ORDER[1]],"
+				+ "AXIS[\"(Y)\",geocentricY,ORDER[2]],AXIS[\"(Z)\",geocentricZ,ORDER[3]],"
+				+ "LENGTHUNIT[\"metre\",1.0]]],"
+				+ "TARGETCRS[GEODCRS[\"JGD2000\","
+				+ "DATUM[\"Japanese Geodetic Datum 2000\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101,LENGTHUNIT[\"metre\",1.0]]],"
+				+ "CS[Cartesian,3],AXIS[\"(X)\",geocentricX],"
+				+ "AXIS[\"(Y)\",geocentricY],AXIS[\"(Z)\",geocentricZ],"
+				+ "LENGTHUNIT[\"metre\",1.0]]],"
+				+ "METHOD[\"Geocentric translations\",ID[\"EPSG\",1031]],"
+				+ "PARAMETER[\"X-axis translation\",-146.414,"
+				+ "LENGTHUNIT[\"metre\",1.0],ID[\"EPSG\",8605]],"
+				+ "PARAMETER[\"Y-axis translation\",507.337,"
+				+ "LENGTHUNIT[\"metre\",1.0],ID[\"EPSG\",8606]],"
+				+ "PARAMETER[\"Z-axis translation\",680.507,"
+				+ "LENGTHUNIT[\"metre\",1.0],ID[\"EPSG\",8607]]]";
+
+		CRS crs = CRSReader.read(text, true);
+		CoordinateOperation operation = CRSReader.readCoordinateOperation(text);
+		assertEquals(crs, operation);
+		assertEquals(CRSType.COORDINATE_OPERATION, operation.getType());
+		assertEquals("Tokyo to JGD2000", operation.getName());
+		// TODO
+
+		assertEquals(text, operation.toString());
+		assertEquals(text, CRSWriter.write(operation));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(operation));
+
+		text = "COORDINATEOPERATION[\"AGD84 to GDA94\","
+				+ "SOURCECRS[GEOGCRS[\"AGD84\",DATUM[\"Australian Geodetic Datum 1984\",ELLIPSOID[\"Australian National Spheroid\",6378160,298.25,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7003]],ID[\"EPSG\",6203]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4203]]],"
+				+ "TARGETCRS[GEOGCRS[\"GDA94\",DATUM[\"Geocentric Datum of Australia 1994\",ELLIPSOID[\"GRS 1980\",6378137,298.2572221,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7019]],ID[\"EPSG\",6283]],CS[ellipsoidal,3,ID[\"EPSG\",6423]],AXIS[\"Geodetic latitude (Lat)\",north,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],AXIS[\"Geodetic longitude (Lon)\",east,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],AXIS[\"Ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",4939]]],"
+				+ "METHOD[\"Geocentric translations\",ID[\"EPSG\",1031]],"
+				+ "PARAMETER[\"X-axis translation\",-128.5,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"Y-axis translation\",-53.0,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"Z-axis translation\",153.4,LENGTHUNIT[\"metre\",1.0]],"
+				+ "OPERATIONACCURACY[5],"
+				+ "USAGE[SCOPE[\"Low accuracy applications.\"],"
+				+ "AREA[\"Australia onshore\"],BBOX[-43.7,112.85,-9.87,153.68]],"
+				+ "REMARK[\"Use NTv2 file for better accuracy\"]]";
+
+		crs = CRSReader.read(text, true);
+		operation = CRSReader.readCoordinateOperation(text);
+		assertEquals(crs, operation);
+		assertEquals(CRSType.COORDINATE_OPERATION, operation.getType());
+		assertEquals("AGD84 to GDA94", operation.getName());
+		// TODO
+
+		text = text.replace("6378160", "6378160.0")
+				.replace("6378137", "6378137.0").replace(",1,", ",1.0,")
+				.replace("[5]", "[5.0]");
+		assertEquals(text, operation.toString());
+		assertEquals(text, CRSWriter.write(operation));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(operation));
+
+		text = "COORDINATEOPERATION[\"NZGD49 to NZGD2000\","
+				+ "SOURCECRS[PROJCRS[\"NZGD49 / New Zealand Map Grid\",BASEGEOGCRS[\"NZGD49\",DATUM[\"New Zealand Geodetic Datum 1949\",ELLIPSOID[\"International 1924\",6378388,297,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7022]],ID[\"EPSG\",6272]],ID[\"EPSG\",4272]],CONVERSION[\"New Zealand Map Grid\",METHOD[\"New Zealand Map Grid\",ID[\"EPSG\",9811]],PARAMETER[\"Latitude of natural origin\",-41,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],PARAMETER[\"Longitude of natural origin\",173,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],PARAMETER[\"False easting\",2510000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],PARAMETER[\"False northing\",6023150,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",19917]],CS[Cartesian,2,ID[\"EPSG\",4400]],AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",27200]]],"
+				+ "TARGETCRS[GEOGCRS[\"NZGD2000\",DATUM[\"New Zealand Geodetic Datum 2000\",ELLIPSOID[\"GRS 1980\",6378137,298.2572221,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7019]],ID[\"EPSG\",6167]],CS[ellipsoidal,3,ID[\"EPSG\",6423]],AXIS[\"Geodetic latitude (Lat)\",north,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],AXIS[\"Geodetic longitude (Lon)\",east,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],AXIS[\"Ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",4959]]],"
+				+ "METHOD[\"NTv2\",ID[\"EPSG\",9615]],"
+				+ "PARAMETERFILE[\"Latitude and longitude difference file\",\"nzgd2kgrid0005.gsb\"],"
+				+ "ID[\"EPSG\",1568,CITATION[\"LINZS25000\"],"
+				+ "URI[\"http://www.linz.govt.nz/geodetic/software-downloads/\"]],"
+				+ "REMARK[\"Coordinate transformation accuracy 0.1-1.0m\"]]";
+
+		crs = CRSReader.read(text, true);
+		operation = CRSReader.readCoordinateOperation(text);
+		assertEquals(crs, operation);
+		assertEquals(CRSType.COORDINATE_OPERATION, operation.getType());
+		assertEquals("NZGD49 to NZGD2000", operation.getName());
+		// TODO
+
+		text = text.replace("6378388", "6378388.0").replace("297", "297.0")
+				.replace("6023150", "6023150.0").replace("6378137", "6378137.0")
+				.replace(",1,", ",1.0,").replace("-41", "-41.0")
+				.replace("173", "173.0").replace("2510000", "2510000.0");
+		assertEquals(text, operation.toString());
+		assertEquals(text, CRSWriter.write(operation));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(operation));
+
+		text = "COORDINATEOPERATION[\"Amersfoort to ETRS89 (3)\","
+				+ "SOURCECRS[GEOGCRS[\"Amersfoort\",DATUM[\"Amersfoort\",ELLIPSOID[\"Bessel 1841\",6377397.155,299.1528128,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7004]],ID[\"EPSG\",6289]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4289]]],"
+				+ "TARGETCRS[GEOGCRS[\"ETRS89\",ENSEMBLE[\"European Terrestrial Reference System 1989 ensemble\", MEMBER[\"European Terrestrial Reference Frame 1989\", ID[\"EPSG\",1178]], MEMBER[\"European Terrestrial Reference Frame 1990\", ID[\"EPSG\",1179]], MEMBER[\"European Terrestrial Reference Frame 1991\", ID[\"EPSG\",1180]], MEMBER[\"European Terrestrial Reference Frame 1992\", ID[\"EPSG\",1181]], MEMBER[\"European Terrestrial Reference Frame 1993\", ID[\"EPSG\",1182]], MEMBER[\"European Terrestrial Reference Frame 1994\", ID[\"EPSG\",1183]], MEMBER[\"European Terrestrial Reference Frame 1996\", ID[\"EPSG\",1184]], MEMBER[\"European Terrestrial Reference Frame 1997\", ID[\"EPSG\",1185]], MEMBER[\"European Terrestrial Reference Frame 2000\", ID[\"EPSG\",1186]], MEMBER[\"European Terrestrial Reference Frame 2005\", ID[\"EPSG\",1204]], MEMBER[\"European Terrestrial Reference Frame 2014\", ID[\"EPSG\",1206]], ELLIPSOID[\"GRS 1980\",6378137,298.2572221,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7019]], ENSEMBLEACCURACY[0.1],ID[\"EPSG\",6258]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4258]]],"
+				+ "METHOD[\"Coordinate Frame\"],"
+				+ "PARAMETER[\"X-axis translation\",565.2369,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"Y-axis translation\",50.0087,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"Z-axis translation\",465.658,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"X-axis rotation\",1.9725,ANGLEUNIT[\"microradian\",1E-06]],"
+				+ "PARAMETER[\"Y-axis rotation\",-1.7004,ANGLEUNIT[\"microradian\",1E-06]],"
+				+ "PARAMETER[\"Z-axis rotation\",9.0677,ANGLEUNIT[\"microradian\",1E-06]],"
+				+ "PARAMETER[\"Scale difference\",4.0812,SCALEUNIT[\"parts per million\",1E-06]],"
+				+ "ID[\"EPSG\",15739]]";
+
+		crs = CRSReader.read(text, true);
+		operation = CRSReader.readCoordinateOperation(text);
+		assertEquals(crs, operation);
+		assertEquals(CRSType.COORDINATE_OPERATION, operation.getType());
+		assertEquals("Amersfoort to ETRS89 (3)", operation.getName());
+		// TODO
+
+		assertEquals(text, operation.toString());
+		assertEquals(text, CRSWriter.write(operation));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(operation));
+
+		text = "COORDINATEOPERATION[\"DHHN92 height to EVRF2007 height\","
+				+ "SOURCECRS[…full WKT definition of DHHN92 required here but omitted for brevity…],"
+				+ "TARGETCRS[…full WKT definition of EVRF2007 required here but omitted for brevity…],"
+				+ "METHOD[\"Vertical Offset and Slope\",ID[\"EPSG\",1046]],"
+				+ "PARAMETER[\"Inclination in latitude\",-0.010,"
+				+ "ANGLEUNIT[\"arc-second\",4.84813681109535E-06]],"
+				+ "PARAMETER[\"Inclination in longitude\",0.002,"
+				+ "ANGLEUNIT[\"arc-second\",4.84813681109535E-06]],"
+				+ "PARAMETER[\"Vertical offset\",0.015,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"Ordinate 1 of evaluation point\",51.05,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"Ordinate 2 of evaluation point\",10.2166666666667,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "INTERPOLATIONCRS[\"ETRS89\""
+				+ "…full WKT definition of ETRS89 required here but omitted for brevity…],"
+				+ "OPERATIONACCURACY[0.1],"
+				+ "REMARK[\"Determined at 427 points. RMS residual 0.002m, maximum 0.007m\"]]";
+
+		crs = CRSReader.read(text, true);
+		operation = CRSReader.readCoordinateOperation(text);
+		assertEquals(crs, operation);
+		assertEquals(CRSType.COORDINATE_OPERATION, operation.getType());
+		assertEquals("DHHN92 height to EVRF2007 height", operation.getName());
+		// TODO
+
+		assertEquals(text, operation.toString());
+		assertEquals(text, CRSWriter.write(operation));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(operation));
 
 	}
 

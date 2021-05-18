@@ -47,6 +47,7 @@ import mil.nga.proj.crs.geo.GeoDatumEnsemble;
 import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
 import mil.nga.proj.crs.metadata.CoordinateMetadata;
+import mil.nga.proj.crs.operation.CoordinateOperation;
 import mil.nga.proj.crs.operation.OperationMethod;
 import mil.nga.proj.crs.operation.OperationParameter;
 import mil.nga.proj.crs.operation.OperationParameterFile;
@@ -451,6 +452,28 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read Coordinate Operation from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Coordinate Operation
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static CoordinateOperation readCoordinateOperation(String text)
+			throws IOException {
+		CoordinateOperation operation = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			operation = reader.readCoordinateOperation();
+			reader.readEnd();
+		} finally {
+			reader.close();
+		}
+		return operation;
+	}
+
+	/**
 	 * Read a Backward Compatible Geodetic or Geographic Coordinate Reference
 	 * System from the well-known text
 	 * 
@@ -747,6 +770,9 @@ public class CRSReader implements Closeable {
 			break;
 		case COORDINATEMETADATA:
 			crs = readCoordinateMetadata();
+			break;
+		case COORDINATEOPERATION:
+			crs = readCoordinateOperation();
 			break;
 		default:
 			throw new ProjectionException(
@@ -1928,6 +1954,59 @@ public class CRSReader implements Closeable {
 		readRightDelimiter();
 
 		return metadata;
+	}
+
+	/**
+	 * Read Coordinate Operation
+	 * 
+	 * @return coordinate operation
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CoordinateOperation readCoordinateOperation() throws IOException {
+
+		CoordinateOperation operation = new CoordinateOperation();
+
+		readKeyword(CRSKeyword.COORDINATEOPERATION);
+
+		readLeftDelimiter();
+
+		operation.setName(reader.readExpectedToken());
+
+		if (isKeywordNext(CRSKeyword.VERSION)) {
+			readSeparator();
+			operation.setVersion(readVersion());
+		}
+
+		readSeparator();
+		operation.setSource(readSource());
+
+		readSeparator();
+		operation.setTarget(readTarget());
+
+		readSeparator();
+		operation.setMethod(readMethod());
+
+		if (isKeywordNext(CRSKeyword.PARAMETER, CRSKeyword.PARAMETERFILE)) {
+			readSeparator();
+			operation.setParameters(readCoordinateOperationParameters());
+		}
+
+		if (isKeywordNext(CRSKeyword.INTERPOLATIONCRS)) {
+			readSeparator();
+			operation.setInterpolation(readInterpolation());
+		}
+
+		if (isKeywordNext(CRSKeyword.OPERATIONACCURACY)) {
+			readSeparator();
+			operation.setAccuracy(readAccuracy());
+		}
+
+		readScopeExtentIdentifierRemark(operation);
+
+		readRightDelimiter();
+
+		return operation;
 	}
 
 	/**
@@ -3249,7 +3328,7 @@ public class CRSReader implements Closeable {
 				readSeparator();
 			}
 
-			if (isKeywordNext(CRSKeyword.PARAMETERFILE)) {
+			if (peekKeyword() == CRSKeyword.PARAMETERFILE) {
 				parameters.add(readParameterFile());
 			} else {
 				parameters.add(readParameter(type));
@@ -3289,6 +3368,112 @@ public class CRSReader implements Closeable {
 		readRightDelimiter();
 
 		return parameterFile;
+	}
+
+	/**
+	 * Read Coordinate Operation parameters
+	 * 
+	 * @return parameters
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public List<Parameter> readCoordinateOperationParameters()
+			throws IOException {
+		return readParametersAndFiles(CRSType.COORDINATE_OPERATION);
+	}
+
+	/**
+	 * Read an operation version
+	 * 
+	 * @return operation version
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public String readVersion() throws IOException {
+
+		readKeyword(CRSKeyword.VERSION);
+		readLeftDelimiter();
+
+		String version = reader.readExpectedToken();
+
+		readRightDelimiter();
+
+		return version;
+	}
+
+	/**
+	 * Read a source coordinate reference system
+	 * 
+	 * @return source crs
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CoordinateReferenceSystem readSource() throws IOException {
+		return readCoordinateReferenceSystem(CRSKeyword.SOURCECRS);
+	}
+
+	/**
+	 * Read a target coordinate reference system
+	 * 
+	 * @return target crs
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CoordinateReferenceSystem readTarget() throws IOException {
+		return readCoordinateReferenceSystem(CRSKeyword.TARGETCRS);
+	}
+
+	/**
+	 * Read a interpolation coordinate reference system
+	 * 
+	 * @return interpolation crs
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CoordinateReferenceSystem readInterpolation() throws IOException {
+		return readCoordinateReferenceSystem(CRSKeyword.INTERPOLATIONCRS);
+	}
+
+	/**
+	 * Read a coordinate reference system with the keyword
+	 * 
+	 * @param keyword
+	 *            CRS keyword
+	 * 
+	 * @return crs
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CoordinateReferenceSystem readCoordinateReferenceSystem(
+			CRSKeyword keyword) throws IOException {
+
+		readKeyword(keyword);
+		readLeftDelimiter();
+
+		CoordinateReferenceSystem crs = readCoordinateReferenceSystem();
+
+		readRightDelimiter();
+
+		return crs;
+	}
+
+	/**
+	 * Read an operation accuracy
+	 * 
+	 * @return operation accuracy
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public double readAccuracy() throws IOException {
+
+		readKeyword(CRSKeyword.OPERATIONACCURACY);
+		readLeftDelimiter();
+
+		double accuracy = reader.readNumber();
+
+		readRightDelimiter();
+
+		return accuracy;
 	}
 
 	/**

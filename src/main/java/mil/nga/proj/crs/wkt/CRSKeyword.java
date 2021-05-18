@@ -23,7 +23,7 @@ public enum CRSKeyword {
 	ABRIDGEDTRANSFORMATION(),
 
 	/**
-	 * Datum anchor
+	 * Datum Anchor
 	 */
 	ANCHOR(),
 
@@ -33,7 +33,7 @@ public enum CRSKeyword {
 	ANGLEUNIT("UNIT"),
 
 	/**
-	 * Area description
+	 * Area Description
 	 */
 	AREA(),
 
@@ -78,7 +78,7 @@ public enum CRSKeyword {
 	BASEVERTCRS(),
 
 	/**
-	 * Geographic bounding box
+	 * Geographic Bounding Box
 	 */
 	BBOX(),
 
@@ -123,17 +123,17 @@ public enum CRSKeyword {
 	COORDINATEOPERATION(),
 
 	/**
-	 * Coordinate system
+	 * Coordinate System
 	 */
 	CS(),
 
 	/**
-	 * Geodetic reference frame
+	 * Geodetic Reference Frame
 	 */
 	DATUM("GEODETICDATUM", "TRF"),
 
 	/**
-	 * Derived projected CRS
+	 * Derived Projected CRS
 	 */
 	DERIVEDPROJCRS(),
 
@@ -143,12 +143,12 @@ public enum CRSKeyword {
 	DERIVINGCONVERSION(),
 
 	/**
-	 * Dynamic coordinate reference systems
+	 * Dynamic Coordinate Reference Systems
 	 */
 	DYNAMIC(),
 
 	/**
-	 * Engineering datum
+	 * Engineering Datum
 	 */
 	EDATUM("ENGINEERINGDATUM", "LOCAL_DATUM"),
 
@@ -163,17 +163,17 @@ public enum CRSKeyword {
 	ENGCRS("ENGINEERINGCRS"),
 
 	/**
-	 * Datum ensemble
+	 * Datum Ensemble
 	 */
 	ENSEMBLE(),
 
 	/**
-	 * Datum ensemble accuracy
+	 * Datum Ensemble Accuracy
 	 */
 	ENSEMBLEACCURACY(),
 
 	/**
-	 * Coordinate epoch
+	 * Coordinate Epoch
 	 */
 	EPOCH("COORDEPOCH"),
 
@@ -183,7 +183,7 @@ public enum CRSKeyword {
 	EXTENSION(),
 
 	/**
-	 * Frame reference epoch
+	 * Frame Reference Epoch
 	 */
 	FRAMEEPOCH(),
 
@@ -218,6 +218,11 @@ public enum CRSKeyword {
 	ID("AUTHORITY"),
 
 	/**
+	 * Interpolation CRS
+	 */
+	INTERPOLATIONCRS(),
+
+	/**
 	 * Length Unit
 	 */
 	LENGTHUNIT("UNIT"),
@@ -248,7 +253,12 @@ public enum CRSKeyword {
 	MODEL("VELOCITYGRID"),
 
 	/**
-	 * Axis order
+	 * Coordinate Operation Accuracy
+	 */
+	OPERATIONACCURACY(),
+
+	/**
+	 * Axis Order
 	 */
 	ORDER(),
 
@@ -273,12 +283,12 @@ public enum CRSKeyword {
 	PARAMETRICUNIT(),
 
 	/**
-	 * Parametric datum
+	 * Parametric Datum
 	 */
 	PDATUM("PARAMETRICDATUM"),
 
 	/**
-	 * Prime meridian
+	 * Prime Meridian
 	 */
 	PRIMEM("PRIMEMERIDIAN"),
 
@@ -308,6 +318,16 @@ public enum CRSKeyword {
 	SCOPE(),
 
 	/**
+	 * Source CRS
+	 */
+	SOURCECRS(),
+
+	/**
+	 * Target CRS
+	 */
+	TARGETCRS(),
+
+	/**
 	 * Temporal Datum
 	 */
 	TDATUM("TIMEDATUM"),
@@ -318,7 +338,7 @@ public enum CRSKeyword {
 	TIMECRS(),
 
 	/**
-	 * Temporal extent
+	 * Temporal Extent
 	 */
 	TIMEEXTENT(),
 
@@ -351,6 +371,11 @@ public enum CRSKeyword {
 	 * Vertical Reference Frame
 	 */
 	VDATUM("VRF", "VERTICALDATUM", "VERT_DATUM"),
+
+	/**
+	 * Operation Version
+	 */
+	VERSION(),
 
 	/**
 	 * Backwards Compatibility Vertical CRS
