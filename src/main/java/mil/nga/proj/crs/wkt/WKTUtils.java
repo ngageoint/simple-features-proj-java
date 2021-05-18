@@ -110,7 +110,7 @@ public class WKTUtils {
 	 * @return unit type
 	 */
 	public static UnitType getUnitType(
-			CoordinateReferenceSystemKeyword keyword) {
+			CRSKeyword keyword) {
 
 		UnitType unitType = null;
 
@@ -132,7 +132,7 @@ public class WKTUtils {
 	 * @return coordinate reference system type
 	 */
 	public static CRSType getCoordinateReferenceSystemType(
-			CoordinateReferenceSystemKeyword keyword) {
+			CRSKeyword keyword) {
 
 		CRSType crsType = null;
 

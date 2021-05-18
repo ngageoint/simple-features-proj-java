@@ -15,7 +15,7 @@ import mil.nga.proj.ProjectionException;
  * 
  * @author osbornb
  */
-public enum CoordinateReferenceSystemKeyword {
+public enum CRSKeyword {
 
 	/**
 	 * Abridged Transformation
@@ -360,12 +360,12 @@ public enum CoordinateReferenceSystemKeyword {
 	/**
 	 * Keyword to type mapping
 	 */
-	private static final Map<String, Set<CoordinateReferenceSystemKeyword>> keywordTypes = new HashMap<>();
+	private static final Map<String, Set<CRSKeyword>> keywordTypes = new HashMap<>();
 	static {
-		for (CoordinateReferenceSystemKeyword type : values()) {
+		for (CRSKeyword type : values()) {
 			for (String keyword : type.keywords) {
 				String keywordUpperCase = keyword.toUpperCase();
-				Set<CoordinateReferenceSystemKeyword> keywordSet = keywordTypes
+				Set<CRSKeyword> keywordSet = keywordTypes
 						.get(keywordUpperCase);
 				if (keywordSet == null) {
 					keywordSet = new HashSet<>();
@@ -387,7 +387,7 @@ public enum CoordinateReferenceSystemKeyword {
 	 * @param additionalKeywords
 	 *            additional keywords other than the name
 	 */
-	private CoordinateReferenceSystemKeyword(String... additionalKeywords) {
+	private CRSKeyword(String... additionalKeywords) {
 		keywords.add(name());
 		keywords.addAll(Arrays.asList(additionalKeywords));
 	}
@@ -408,9 +408,9 @@ public enum CoordinateReferenceSystemKeyword {
 	 *            CRS keyword
 	 * @return type
 	 */
-	public static CoordinateReferenceSystemKeyword getType(String keyword) {
-		CoordinateReferenceSystemKeyword type = null;
-		Set<CoordinateReferenceSystemKeyword> types = getTypes(keyword);
+	public static CRSKeyword getType(String keyword) {
+		CRSKeyword type = null;
+		Set<CRSKeyword> types = getTypes(keyword);
 		if (types != null && !types.isEmpty()) {
 			type = types.iterator().next();
 		}
@@ -424,9 +424,9 @@ public enum CoordinateReferenceSystemKeyword {
 	 *            CRS keyword
 	 * @return type
 	 */
-	public static CoordinateReferenceSystemKeyword getRequiredType(
+	public static CRSKeyword getRequiredType(
 			String keyword) {
-		CoordinateReferenceSystemKeyword type = getType(keyword);
+		CRSKeyword type = getType(keyword);
 		if (type == null) {
 			throw new ProjectionException(
 					"No Coordinate Reference System Keyword for value: "
@@ -442,9 +442,9 @@ public enum CoordinateReferenceSystemKeyword {
 	 *            CRS keyword
 	 * @return types
 	 */
-	public static Set<CoordinateReferenceSystemKeyword> getTypes(
+	public static Set<CRSKeyword> getTypes(
 			String keyword) {
-		Set<CoordinateReferenceSystemKeyword> types = null;
+		Set<CRSKeyword> types = null;
 		if (keyword != null) {
 			types = keywordTypes.get(keyword.toUpperCase());
 		}
@@ -458,9 +458,9 @@ public enum CoordinateReferenceSystemKeyword {
 	 *            CRS keyword
 	 * @return types
 	 */
-	public static Set<CoordinateReferenceSystemKeyword> getRequiredTypes(
+	public static Set<CRSKeyword> getRequiredTypes(
 			String keyword) {
-		Set<CoordinateReferenceSystemKeyword> types = getTypes(keyword);
+		Set<CRSKeyword> types = getTypes(keyword);
 		if (types == null || types.isEmpty()) {
 			throw new ProjectionException(
 					"No Coordinate Reference System Keywords for value: "
