@@ -46,6 +46,7 @@ import mil.nga.proj.crs.geo.GeoCoordinateReferenceSystem;
 import mil.nga.proj.crs.geo.GeoDatumEnsemble;
 import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
+import mil.nga.proj.crs.metadata.CoordinateMetadata;
 import mil.nga.proj.crs.operation.OperationMethod;
 import mil.nga.proj.crs.operation.OperationParameter;
 import mil.nga.proj.crs.operation.OperationParameterFile;
@@ -428,6 +429,28 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read Coordinate Metadata from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Coordinate Metadata
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static CoordinateMetadata readCoordinateMetadata(String text)
+			throws IOException {
+		CoordinateMetadata metadata = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			metadata = reader.readCoordinateMetadata();
+			reader.readEnd();
+		} finally {
+			reader.close();
+		}
+		return metadata;
+	}
+
+	/**
 	 * Read a Backward Compatible Geodetic or Geographic Coordinate Reference
 	 * System from the well-known text
 	 * 
@@ -672,9 +695,9 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
-	 * Read a Coordinate Reference System from the well-known text
+	 * Read a CRS object from the well-known text
 	 * 
-	 * @return Coordinate Reference System
+	 * @return CRS
 	 * @throws IOException
 	 *             upon failure to read
 	 */
@@ -722,12 +745,51 @@ public class CRSReader implements Closeable {
 		case COMPOUNDCRS:
 			crs = readCompound();
 			break;
+		case COORDINATEMETADATA:
+			crs = readCoordinateMetadata();
+			break;
 		default:
 			throw new ProjectionException(
 					"Unsupported WKT CRS keyword: " + keyword);
 		}
 
 		return crs;
+	}
+
+	/**
+	 * Read a Coordinate Reference System from the well-known text
+	 * 
+	 * @return Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CoordinateReferenceSystem readCoordinateReferenceSystem()
+			throws IOException {
+		CRS crs = read();
+		if (!(crs instanceof CoordinateReferenceSystem)) {
+			throw new ProjectionException(
+					"Unexpected Coordinate Reference System Type: "
+							+ crs.getType());
+		}
+		return (CoordinateReferenceSystem) crs;
+	}
+
+	/**
+	 * Read a Simple Coordinate Reference System from the well-known text
+	 * 
+	 * @return Simple Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public SimpleCoordinateReferenceSystem readSimpleCoordinateReferenceSystem()
+			throws IOException {
+		CRS crs = read();
+		if (!(crs instanceof SimpleCoordinateReferenceSystem)) {
+			throw new ProjectionException(
+					"Unexpected Simple Coordinate Reference System Type: "
+							+ crs.getType());
+		}
+		return (SimpleCoordinateReferenceSystem) crs;
 	}
 
 	/**
@@ -738,8 +800,7 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public CRSKeyword readKeyword() throws IOException {
-		return CRSKeyword
-				.getRequiredType(reader.readToken());
+		return CRSKeyword.getRequiredType(reader.readToken());
 	}
 
 	/**
@@ -749,10 +810,8 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public Set<CRSKeyword> readKeywords()
-			throws IOException {
-		return CRSKeyword
-				.getRequiredTypes(reader.readToken());
+	public Set<CRSKeyword> readKeywords() throws IOException {
+		return CRSKeyword.getRequiredTypes(reader.readToken());
 	}
 
 	/**
@@ -765,8 +824,7 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public CRSKeyword readKeyword(
-			CRSKeyword... keywords) throws IOException {
+	public CRSKeyword readKeyword(CRSKeyword... keywords) throws IOException {
 		return readKeyword(true, keywords);
 	}
 
@@ -779,8 +837,7 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public CRSKeyword readToKeyword(
-			CRSKeyword... keywords) throws IOException {
+	public CRSKeyword readToKeyword(CRSKeyword... keywords) throws IOException {
 		CRSKeyword keyword = readKeyword(false, keywords);
 		if (keyword != null) {
 			reader.pushToken(keyword.name());
@@ -801,12 +858,11 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public CRSKeyword readKeyword(boolean required,
-			CRSKeyword... keywords) throws IOException {
+	public CRSKeyword readKeyword(boolean required, CRSKeyword... keywords)
+			throws IOException {
 
 		CRSKeyword keyword = null;
-		Set<CRSKeyword> keywordSet = new HashSet<>(
-				Arrays.asList(keywords));
+		Set<CRSKeyword> keywordSet = new HashSet<>(Arrays.asList(keywords));
 
 		int delimiterCount = 0;
 
@@ -828,8 +884,7 @@ public class CRSReader implements Closeable {
 				}
 			}
 
-			Set<CRSKeyword> tokenKeywords = CRSKeyword
-					.getTypes(token);
+			Set<CRSKeyword> tokenKeywords = CRSKeyword.getTypes(token);
 			if (tokenKeywords != null) {
 				for (CRSKeyword kw : tokenKeywords) {
 					if (keywordSet.contains(kw)) {
@@ -898,8 +953,7 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public CRSKeyword peekKeyword() throws IOException {
-		return CRSKeyword
-				.getRequiredType(reader.peekToken());
+		return CRSKeyword.getRequiredType(reader.peekToken());
 	}
 
 	/**
@@ -909,10 +963,8 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public Set<CRSKeyword> peekKeywords()
-			throws IOException {
-		return CRSKeyword
-				.getRequiredTypes(reader.peekToken());
+	public Set<CRSKeyword> peekKeywords() throws IOException {
+		return CRSKeyword.getRequiredTypes(reader.peekToken());
 	}
 
 	/**
@@ -922,8 +974,7 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public CRSKeyword peekOptionalKeyword()
-			throws IOException {
+	public CRSKeyword peekOptionalKeyword() throws IOException {
 		return CRSKeyword.getType(reader.peekToken());
 	}
 
@@ -934,8 +985,7 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public Set<CRSKeyword> peekOptionalKeywords()
-			throws IOException {
+	public Set<CRSKeyword> peekOptionalKeywords() throws IOException {
 		return CRSKeyword.getTypes(reader.peekToken());
 	}
 
@@ -948,8 +998,7 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public CRSKeyword peekOptionalKeyword(int num)
-			throws IOException {
+	public CRSKeyword peekOptionalKeyword(int num) throws IOException {
 		return CRSKeyword.getType(reader.peekToken(num));
 	}
 
@@ -962,8 +1011,7 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public Set<CRSKeyword> peekOptionalKeywords(int num)
-			throws IOException {
+	public Set<CRSKeyword> peekOptionalKeywords(int num) throws IOException {
 		return CRSKeyword.getTypes(reader.peekToken(num));
 	}
 
@@ -1109,8 +1157,8 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public String readKeywordDelimitedToken(
-			CRSKeyword keyword) throws IOException {
+	public String readKeywordDelimitedToken(CRSKeyword keyword)
+			throws IOException {
 
 		readKeyword(keyword);
 
@@ -1132,12 +1180,10 @@ public class CRSReader implements Closeable {
 	 *            expected keywords
 	 * @return matching keyword
 	 */
-	private CRSKeyword validateKeyword(
-			Set<CRSKeyword> keywords,
+	private CRSKeyword validateKeyword(Set<CRSKeyword> keywords,
 			CRSKeyword... expected) {
 		CRSKeyword keyword = null;
-		Set<CRSKeyword> expectedSet = new HashSet<>(
-				Arrays.asList(expected));
+		Set<CRSKeyword> expectedSet = new HashSet<>(Arrays.asList(expected));
 		for (CRSKeyword kw : keywords) {
 			if (expectedSet.contains(kw)) {
 				keyword = kw;
@@ -1159,8 +1205,7 @@ public class CRSReader implements Closeable {
 	 *            keywords
 	 * @return set of names
 	 */
-	private Set<String> keywordNames(
-			Set<CRSKeyword> keywords) {
+	private Set<String> keywordNames(Set<CRSKeyword> keywords) {
 		Set<String> names = new LinkedHashSet<>();
 		for (CRSKeyword keyword : keywords) {
 			names.addAll(keyword.getKeywords());
@@ -1177,14 +1222,12 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	private boolean isKeywordNext(CRSKeyword... keywords)
-			throws IOException {
+	private boolean isKeywordNext(CRSKeyword... keywords) throws IOException {
 		boolean next = false;
 		boolean separator = peekSeparator();
 		if (separator || !strict) {
 			int num = separator ? 2 : 1;
-			Set<CRSKeyword> nextKeywords = peekOptionalKeywords(
-					num);
+			Set<CRSKeyword> nextKeywords = peekOptionalKeywords(num);
 			if (nextKeywords != null && !nextKeywords.isEmpty()) {
 				for (CRSKeyword keyword : keywords) {
 					next = nextKeywords.contains(keyword);
@@ -1209,8 +1252,7 @@ public class CRSReader implements Closeable {
 	private boolean isNonKeywordNext() throws IOException {
 		boolean next = false;
 		if (peekSeparator()) {
-			Set<CRSKeyword> nextKeywords = peekOptionalKeywords(
-					2);
+			Set<CRSKeyword> nextKeywords = peekOptionalKeywords(2);
 			next = nextKeywords == null || nextKeywords.isEmpty();
 		}
 		return next;
@@ -1224,10 +1266,8 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	private boolean isUnitNext() throws IOException {
-		return isKeywordNext(CRSKeyword.ANGLEUNIT,
-				CRSKeyword.LENGTHUNIT,
-				CRSKeyword.PARAMETRICUNIT,
-				CRSKeyword.SCALEUNIT,
+		return isKeywordNext(CRSKeyword.ANGLEUNIT, CRSKeyword.LENGTHUNIT,
+				CRSKeyword.PARAMETRICUNIT, CRSKeyword.SCALEUNIT,
 				CRSKeyword.TIMEUNIT);
 	}
 
@@ -1239,10 +1279,8 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	private boolean isSpatialUnitNext() throws IOException {
-		return isKeywordNext(CRSKeyword.ANGLEUNIT,
-				CRSKeyword.LENGTHUNIT,
-				CRSKeyword.PARAMETRICUNIT,
-				CRSKeyword.SCALEUNIT);
+		return isKeywordNext(CRSKeyword.ANGLEUNIT, CRSKeyword.LENGTHUNIT,
+				CRSKeyword.PARAMETRICUNIT, CRSKeyword.SCALEUNIT);
 	}
 
 	/**
@@ -1269,8 +1307,7 @@ public class CRSReader implements Closeable {
 		SimpleCoordinateReferenceSystem crs = baseCrs;
 		DerivedCoordinateReferenceSystem derivedCrs = null;
 
-		CRSKeyword keyword = readKeyword(
-				CRSKeyword.GEODCRS,
+		CRSKeyword keyword = readKeyword(CRSKeyword.GEODCRS,
 				CRSKeyword.GEOGCRS);
 		crs.setType(WKTUtils.getCoordinateReferenceSystemType(keyword));
 
@@ -1278,8 +1315,7 @@ public class CRSReader implements Closeable {
 
 		String name = reader.readExpectedToken();
 
-		if (isKeywordNext(CRSKeyword.BASEGEODCRS,
-				CRSKeyword.BASEGEOGCRS)) {
+		if (isKeywordNext(CRSKeyword.BASEGEODCRS, CRSKeyword.BASEGEOGCRS)) {
 
 			switch (keyword) {
 			case GEODCRS:
@@ -1304,15 +1340,13 @@ public class CRSReader implements Closeable {
 
 		crs.setName(name);
 
-		boolean isDynamic = isKeywordNext(
-				CRSKeyword.DYNAMIC);
+		boolean isDynamic = isKeywordNext(CRSKeyword.DYNAMIC);
 		if (isDynamic) {
 			readSeparator();
 			baseCrs.setDynamic(readDynamic());
 		}
 
-		if (isDynamic
-				|| isKeywordNext(CRSKeyword.DATUM)) {
+		if (isDynamic || isKeywordNext(CRSKeyword.DATUM)) {
 			readSeparator();
 			GeoReferenceFrame referenceFrame = readGeoReferenceFrame();
 			referenceFrame.setType(baseCrs.getType());
@@ -1323,8 +1357,7 @@ public class CRSReader implements Closeable {
 		} else {
 			// Validation error
 			readSeparator();
-			readKeyword(CRSKeyword.DATUM,
-					CRSKeyword.ENSEMBLE);
+			readKeyword(CRSKeyword.DATUM, CRSKeyword.ENSEMBLE);
 		}
 
 		if (derivedCrs != null) {
@@ -1411,8 +1444,7 @@ public class CRSReader implements Closeable {
 
 		readSeparator();
 
-		CRSKeyword type = readKeyword(
-				CRSKeyword.BASEGEODCRS,
+		CRSKeyword type = readKeyword(CRSKeyword.BASEGEODCRS,
 				CRSKeyword.BASEGEOGCRS);
 		CRSType crsType = WKTUtils.getCoordinateReferenceSystemType(type);
 		if (expectedBaseType != null && crsType != expectedBaseType) {
@@ -1426,15 +1458,13 @@ public class CRSReader implements Closeable {
 
 		crs.setBaseName(reader.readExpectedToken());
 
-		boolean isDynamic = isKeywordNext(
-				CRSKeyword.DYNAMIC);
+		boolean isDynamic = isKeywordNext(CRSKeyword.DYNAMIC);
 		if (isDynamic) {
 			readSeparator();
 			crs.setDynamic(readDynamic());
 		}
 
-		if (isDynamic
-				|| isKeywordNext(CRSKeyword.DATUM)) {
+		if (isDynamic || isKeywordNext(CRSKeyword.DATUM)) {
 			readSeparator();
 			GeoReferenceFrame referenceFrame = readGeoReferenceFrame();
 			referenceFrame.setType(crsType);
@@ -1445,13 +1475,10 @@ public class CRSReader implements Closeable {
 		} else {
 			// Validation error
 			readSeparator();
-			readKeyword(CRSKeyword.DATUM,
-					CRSKeyword.ENSEMBLE);
+			readKeyword(CRSKeyword.DATUM, CRSKeyword.ENSEMBLE);
 		}
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.ANGLEUNIT,
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.ANGLEUNIT, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.ANGLEUNIT) {
 			crs.setUnit(readAngleUnit());
@@ -1509,15 +1536,13 @@ public class CRSReader implements Closeable {
 
 		crs.setName(name);
 
-		boolean isDynamic = isKeywordNext(
-				CRSKeyword.DYNAMIC);
+		boolean isDynamic = isKeywordNext(CRSKeyword.DYNAMIC);
 		if (isDynamic) {
 			readSeparator();
 			baseCrs.setDynamic(readDynamic());
 		}
 
-		if (isDynamic
-				|| isKeywordNext(CRSKeyword.VDATUM)) {
+		if (isDynamic || isKeywordNext(CRSKeyword.VDATUM)) {
 			readSeparator();
 			baseCrs.setReferenceFrame(readVerticalReferenceFrame());
 		} else if (isKeywordNext(CRSKeyword.ENSEMBLE)) {
@@ -1526,14 +1551,12 @@ public class CRSReader implements Closeable {
 		} else {
 			// Validation error
 			readSeparator();
-			readKeyword(CRSKeyword.VDATUM,
-					CRSKeyword.ENSEMBLE);
+			readKeyword(CRSKeyword.VDATUM, CRSKeyword.ENSEMBLE);
 		}
 
 		if (derivedCrs != null) {
 
-			CRSKeyword keyword = readToKeyword(
-					CRSKeyword.ID);
+			CRSKeyword keyword = readToKeyword(CRSKeyword.ID);
 			if (keyword == CRSKeyword.ID) {
 				baseCrs.setIdentifiers(readIdentifiers());
 			}
@@ -1548,14 +1571,12 @@ public class CRSReader implements Closeable {
 		readSeparator();
 		crs.setCoordinateSystem(readCoordinateSystem());
 
-		if (derivedCrs == null
-				&& isKeywordNext(CRSKeyword.GEOIDMODEL)) {
+		if (derivedCrs == null && isKeywordNext(CRSKeyword.GEOIDMODEL)) {
 			readSeparator();
 			readKeyword(CRSKeyword.GEOIDMODEL);
 			readLeftDelimiter();
 			baseCrs.setGeoidModelName(reader.readExpectedToken());
-			CRSKeyword keyword = readToKeyword(
-					CRSKeyword.ID);
+			CRSKeyword keyword = readToKeyword(CRSKeyword.ID);
 			if (keyword == CRSKeyword.ID) {
 				baseCrs.setGeoidModelIdentifier(readIdentifier());
 			}
@@ -1606,8 +1627,7 @@ public class CRSReader implements Closeable {
 
 		if (derivedCrs != null) {
 
-			CRSKeyword keyword = readToKeyword(
-					CRSKeyword.ID);
+			CRSKeyword keyword = readToKeyword(CRSKeyword.ID);
 			if (keyword == CRSKeyword.ID) {
 				baseCrs.setIdentifiers(readIdentifiers());
 			}
@@ -1666,8 +1686,7 @@ public class CRSReader implements Closeable {
 
 		if (derivedCrs != null) {
 
-			CRSKeyword keyword = readToKeyword(
-					CRSKeyword.ID);
+			CRSKeyword keyword = readToKeyword(CRSKeyword.ID);
 			if (keyword == CRSKeyword.ID) {
 				baseCrs.setIdentifiers(readIdentifiers());
 			}
@@ -1726,8 +1745,7 @@ public class CRSReader implements Closeable {
 
 		if (derivedCrs != null) {
 
-			CRSKeyword keyword = readToKeyword(
-					CRSKeyword.ID);
+			CRSKeyword keyword = readToKeyword(CRSKeyword.ID);
 			if (keyword == CRSKeyword.ID) {
 				baseCrs.setIdentifiers(readIdentifiers());
 			}
@@ -1777,8 +1795,7 @@ public class CRSReader implements Closeable {
 		projectedCrs.setName(reader.readExpectedToken());
 
 		readSeparator();
-		CRSKeyword keyword = readKeyword(
-				CRSKeyword.BASEGEODCRS,
+		CRSKeyword keyword = readKeyword(CRSKeyword.BASEGEODCRS,
 				CRSKeyword.BASEGEOGCRS);
 		projectedCrs.setBaseType(
 				WKTUtils.getCoordinateReferenceSystemType(keyword));
@@ -1786,15 +1803,13 @@ public class CRSReader implements Closeable {
 		readLeftDelimiter();
 		projectedCrs.setBaseName(reader.readExpectedToken());
 
-		boolean isDynamic = isKeywordNext(
-				CRSKeyword.DYNAMIC);
+		boolean isDynamic = isKeywordNext(CRSKeyword.DYNAMIC);
 		if (isDynamic) {
 			readSeparator();
 			projectedCrs.setDynamic(readDynamic());
 		}
 
-		if (isDynamic
-				|| isKeywordNext(CRSKeyword.DATUM)) {
+		if (isDynamic || isKeywordNext(CRSKeyword.DATUM)) {
 			readSeparator();
 			GeoReferenceFrame referenceFrame = readGeoReferenceFrame();
 			referenceFrame.setType(projectedCrs.getBaseType());
@@ -1805,8 +1820,7 @@ public class CRSReader implements Closeable {
 		} else {
 			// Validation error
 			readSeparator();
-			readKeyword(CRSKeyword.DATUM,
-					CRSKeyword.ENSEMBLE);
+			readKeyword(CRSKeyword.DATUM, CRSKeyword.ENSEMBLE);
 		}
 
 		keyword = readToKeyword(CRSKeyword.ID);
@@ -1856,23 +1870,16 @@ public class CRSReader implements Closeable {
 
 		crs.setName(reader.readExpectedToken());
 
-		while (isKeywordNext(CRSKeyword.GEODCRS,
-				CRSKeyword.GEOGCRS,
-				CRSKeyword.GEOCCS,
-				CRSKeyword.GEOGCS,
-				CRSKeyword.PROJCRS,
-				CRSKeyword.PROJCS,
-				CRSKeyword.VERTCRS,
-				CRSKeyword.VERT_CS,
-				CRSKeyword.ENGCRS,
-				CRSKeyword.LOCAL_CS,
-				CRSKeyword.PARAMETRICCRS,
-				CRSKeyword.TIMECRS,
+		while (isKeywordNext(CRSKeyword.GEODCRS, CRSKeyword.GEOGCRS,
+				CRSKeyword.GEOCCS, CRSKeyword.GEOGCS, CRSKeyword.PROJCRS,
+				CRSKeyword.PROJCS, CRSKeyword.VERTCRS, CRSKeyword.VERT_CS,
+				CRSKeyword.ENGCRS, CRSKeyword.LOCAL_CS,
+				CRSKeyword.PARAMETRICCRS, CRSKeyword.TIMECRS,
 				CRSKeyword.DERIVEDPROJCRS)) {
 
 			readSeparator();
 			crs.addCoordinateReferenceSystem(
-					(SimpleCoordinateReferenceSystem) read());
+					readSimpleCoordinateReferenceSystem());
 		}
 
 		readScopeExtentIdentifierRemark(crs);
@@ -1892,6 +1899,38 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read Coordinate Metadata
+	 * 
+	 * @return coordinate metadata
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public CoordinateMetadata readCoordinateMetadata() throws IOException {
+
+		CoordinateMetadata metadata = new CoordinateMetadata();
+
+		readKeyword(CRSKeyword.COORDINATEMETADATA);
+
+		readLeftDelimiter();
+
+		metadata.setCoordinateReferenceSystem(readCoordinateReferenceSystem());
+
+		if (isKeywordNext(CRSKeyword.EPOCH)) {
+
+			readSeparator();
+			readKeyword(CRSKeyword.EPOCH);
+			readLeftDelimiter();
+			metadata.setEpoch(reader.readUnsignedNumber());
+			readRightDelimiter();
+
+		}
+
+		readRightDelimiter();
+
+		return metadata;
+	}
+
+	/**
 	 * Read the usages (scope and extent), identifiers, and remark into the CRS
 	 * 
 	 * @param crs
@@ -1902,15 +1941,12 @@ public class CRSReader implements Closeable {
 	public void readScopeExtentIdentifierRemark(CommonCRS crs)
 			throws IOException {
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.USAGE,
-				CRSKeyword.ID,
+		CRSKeyword keyword = readToKeyword(CRSKeyword.USAGE, CRSKeyword.ID,
 				CRSKeyword.REMARK);
 
 		if (keyword == CRSKeyword.USAGE) {
 			crs.setUsages(readUsages());
-			keyword = readToKeyword(CRSKeyword.ID,
-					CRSKeyword.REMARK);
+			keyword = readToKeyword(CRSKeyword.ID, CRSKeyword.REMARK);
 		}
 
 		if (keyword == CRSKeyword.ID) {
@@ -2001,11 +2037,8 @@ public class CRSReader implements Closeable {
 		ReferenceFrame referenceFrame = null;
 		GeoReferenceFrame geoReferenceFrame = null;
 
-		CRSKeyword type = readKeyword(
-				CRSKeyword.DATUM,
-				CRSKeyword.VDATUM,
-				CRSKeyword.EDATUM,
-				CRSKeyword.PDATUM);
+		CRSKeyword type = readKeyword(CRSKeyword.DATUM, CRSKeyword.VDATUM,
+				CRSKeyword.EDATUM, CRSKeyword.PDATUM);
 		switch (type) {
 		case DATUM:
 			geoReferenceFrame = new GeoReferenceFrame();
@@ -2034,23 +2067,18 @@ public class CRSReader implements Closeable {
 			geoReferenceFrame.setEllipsoid(readEllipsoid());
 		}
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.TOWGS84,
-				CRSKeyword.ANCHOR,
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.TOWGS84,
+				CRSKeyword.ANCHOR, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.TOWGS84) {
-			extras.put(CRSKeyword.TOWGS84.name(),
-					readToWGS84Compat());
-			keyword = readToKeyword(CRSKeyword.ANCHOR,
-					CRSKeyword.ID);
+			extras.put(CRSKeyword.TOWGS84.name(), readToWGS84Compat());
+			keyword = readToKeyword(CRSKeyword.ANCHOR, CRSKeyword.ID);
 		}
 
 		if (keyword == CRSKeyword.ANCHOR) {
-			referenceFrame.setAnchor(readKeywordDelimitedToken(
-					CRSKeyword.ANCHOR));
-			keyword = readToKeyword(CRSKeyword.ID,
-					CRSKeyword.TOWGS84);
+			referenceFrame
+					.setAnchor(readKeywordDelimitedToken(CRSKeyword.ANCHOR));
+			keyword = readToKeyword(CRSKeyword.ID, CRSKeyword.TOWGS84);
 		}
 
 		if (keyword == CRSKeyword.ID) {
@@ -2059,14 +2087,12 @@ public class CRSReader implements Closeable {
 		}
 
 		if (keyword == CRSKeyword.TOWGS84) {
-			extras.put(CRSKeyword.TOWGS84.name(),
-					readToWGS84Compat());
+			extras.put(CRSKeyword.TOWGS84.name(), readToWGS84Compat());
 		}
 
 		readRightDelimiter();
 
-		if (geoReferenceFrame != null
-				&& isKeywordNext(CRSKeyword.PRIMEM)) {
+		if (geoReferenceFrame != null && isKeywordNext(CRSKeyword.PRIMEM)) {
 			readSeparator();
 			geoReferenceFrame.setPrimeMeridian(readPrimeMeridian());
 		}
@@ -2157,16 +2183,14 @@ public class CRSReader implements Closeable {
 
 		readRightDelimiter();
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.ID);
 		if (keyword == CRSKeyword.ID) {
 			datumEnsemble.setIdentifiers(readIdentifiers());
 		}
 
 		readRightDelimiter();
 
-		if (geoDatumEnsemble != null
-				&& isKeywordNext(CRSKeyword.PRIMEM)) {
+		if (geoDatumEnsemble != null && isKeywordNext(CRSKeyword.PRIMEM)) {
 			// TODO http://ogc.standardstracker.org/show_request.cgi?id=672
 			readSeparator();
 			geoDatumEnsemble.setPrimeMeridian(readPrimeMeridian());
@@ -2192,8 +2216,7 @@ public class CRSReader implements Closeable {
 
 		member.setName(reader.readExpectedToken());
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.ID);
 		if (keyword == CRSKeyword.ID) {
 			member.setIdentifiers(readIdentifiers());
 		}
@@ -2226,8 +2249,7 @@ public class CRSReader implements Closeable {
 
 		readRightDelimiter();
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.MODEL);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.MODEL);
 		if (keyword == CRSKeyword.MODEL) {
 
 			readKeyword(CRSKeyword.MODEL);
@@ -2269,9 +2291,7 @@ public class CRSReader implements Closeable {
 		readSeparator();
 		primeMeridian.setIrmLongitude(reader.readNumber());
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.ANGLEUNIT,
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.ANGLEUNIT, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.ANGLEUNIT) {
 			primeMeridian.setIrmLongitudeUnit(readAngleUnit());
@@ -2310,8 +2330,7 @@ public class CRSReader implements Closeable {
 		readSeparator();
 		ellipsoid.setInverseFlattening(reader.readUnsignedNumber());
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.LENGTHUNIT,
+		CRSKeyword keyword = readToKeyword(CRSKeyword.LENGTHUNIT,
 				CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.LENGTHUNIT) {
@@ -2409,8 +2428,7 @@ public class CRSReader implements Closeable {
 
 		Set<CRSKeyword> keywords = readKeywords();
 		if (type != UnitType.UNIT) {
-			CRSKeyword crsType = CRSKeyword
-					.getType(type.name());
+			CRSKeyword crsType = CRSKeyword.getType(type.name());
 			validateKeyword(keywords, crsType);
 		} else if (keywords.size() == 1) {
 			type = WKTUtils.getUnitType(keywords.iterator().next());
@@ -2429,8 +2447,7 @@ public class CRSReader implements Closeable {
 			unit.setConversionFactor(reader.readUnsignedNumber());
 		}
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.ID);
 		if (keyword == CRSKeyword.ID) {
 			unit.setIdentifiers(readIdentifiers());
 		}
@@ -2489,19 +2506,16 @@ public class CRSReader implements Closeable {
 			identifier.setVersion(reader.readExpectedToken());
 		}
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.CITATION,
-				CRSKeyword.URI);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.CITATION, CRSKeyword.URI);
 
 		if (keyword == CRSKeyword.CITATION) {
-			identifier.setCitation(readKeywordDelimitedToken(
-					CRSKeyword.CITATION));
+			identifier.setCitation(
+					readKeywordDelimitedToken(CRSKeyword.CITATION));
 			keyword = readToKeyword(CRSKeyword.URI);
 		}
 
 		if (keyword == CRSKeyword.URI) {
-			identifier.setUri(readKeywordDelimitedToken(
-					CRSKeyword.URI));
+			identifier.setUri(readKeywordDelimitedToken(CRSKeyword.URI));
 		}
 
 		readRightDelimiter();
@@ -2535,8 +2549,7 @@ public class CRSReader implements Closeable {
 		readSeparator();
 		coordinateSystem.setDimension(reader.readUnsignedInteger());
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.ID);
 		if (keyword == CRSKeyword.ID) {
 			coordinateSystem.setIdentifiers(readIdentifiers());
 		}
@@ -2738,8 +2751,7 @@ public class CRSReader implements Closeable {
 
 			}
 
-			CRSKeyword keyword = readToKeyword(
-					CRSKeyword.ID);
+			CRSKeyword keyword = readToKeyword(CRSKeyword.ID);
 			if (keyword == CRSKeyword.ID) {
 				axis.setIdentifiers(readIdentifiers());
 			}
@@ -2759,8 +2771,7 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public String readRemark() throws IOException {
-		return readKeywordDelimitedToken(
-				CRSKeyword.REMARK);
+		return readKeywordDelimitedToken(CRSKeyword.REMARK);
 	}
 
 	/**
@@ -2819,8 +2830,7 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public String readScope() throws IOException {
-		return readKeywordDelimitedToken(
-				CRSKeyword.SCOPE);
+		return readKeywordDelimitedToken(CRSKeyword.SCOPE);
 	}
 
 	/**
@@ -2834,38 +2844,31 @@ public class CRSReader implements Closeable {
 
 		Extent extent = new Extent();
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.AREA,
-				CRSKeyword.BBOX,
-				CRSKeyword.VERTICALEXTENT,
-				CRSKeyword.TIMEEXTENT);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.AREA, CRSKeyword.BBOX,
+				CRSKeyword.VERTICALEXTENT, CRSKeyword.TIMEEXTENT);
 
 		if (keyword == null) {
-			throw new ProjectionException("Missing extent type of ["
-					+ CRSKeyword.AREA + ", "
-					+ CRSKeyword.BBOX + ", "
-					+ CRSKeyword.VERTICALEXTENT + ", "
-					+ CRSKeyword.TIMEEXTENT + "]");
+			throw new ProjectionException(
+					"Missing extent type of [" + CRSKeyword.AREA + ", "
+							+ CRSKeyword.BBOX + ", " + CRSKeyword.VERTICALEXTENT
+							+ ", " + CRSKeyword.TIMEEXTENT + "]");
 		}
 
 		if (keyword == CRSKeyword.AREA) {
 			extent.setAreaDescription(readAreaDescription());
-			keyword = readToKeyword(CRSKeyword.BBOX,
-					CRSKeyword.VERTICALEXTENT,
+			keyword = readToKeyword(CRSKeyword.BBOX, CRSKeyword.VERTICALEXTENT,
 					CRSKeyword.TIMEEXTENT);
 		}
 
 		if (keyword == CRSKeyword.BBOX) {
 			extent.setGeographicBoundingBox(readGeographicBoundingBox());
-			keyword = readToKeyword(
-					CRSKeyword.VERTICALEXTENT,
+			keyword = readToKeyword(CRSKeyword.VERTICALEXTENT,
 					CRSKeyword.TIMEEXTENT);
 		}
 
 		if (keyword == CRSKeyword.VERTICALEXTENT) {
 			extent.setVerticalExtent(readVerticalExtent());
-			keyword = readToKeyword(
-					CRSKeyword.TIMEEXTENT);
+			keyword = readToKeyword(CRSKeyword.TIMEEXTENT);
 		}
 
 		if (keyword == CRSKeyword.TIMEEXTENT) {
@@ -2938,8 +2941,7 @@ public class CRSReader implements Closeable {
 		readSeparator();
 		verticalExtent.setMaximumHeight(reader.readNumber());
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.LENGTHUNIT);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.LENGTHUNIT);
 		if (keyword == CRSKeyword.LENGTHUNIT) {
 			verticalExtent.setUnit(readLengthUnit());
 		}
@@ -2994,9 +2996,7 @@ public class CRSReader implements Closeable {
 		readSeparator();
 		mapProjection.setMethod(readMethod());
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.PARAMETER,
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.PARAMETER, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.PARAMETER) {
 			mapProjection.setParameters(readMapProjectionParameters());
@@ -3029,8 +3029,7 @@ public class CRSReader implements Closeable {
 
 		method.setName(reader.readExpectedToken());
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.ID);
 		if (keyword == CRSKeyword.ID) {
 			method.setIdentifiers(readIdentifiers());
 		}
@@ -3106,25 +3105,18 @@ public class CRSReader implements Closeable {
 		CRSKeyword[] keywords = null;
 		switch (type) {
 		case PROJECTED:
-			keywords = new CRSKeyword[] {
-					CRSKeyword.LENGTHUNIT,
-					CRSKeyword.ANGLEUNIT,
-					CRSKeyword.SCALEUNIT,
-					CRSKeyword.ID };
+			keywords = new CRSKeyword[] { CRSKeyword.LENGTHUNIT,
+					CRSKeyword.ANGLEUNIT, CRSKeyword.SCALEUNIT, CRSKeyword.ID };
 			break;
 		case DERIVED:
 		case COORDINATE_OPERATION:
-			keywords = new CRSKeyword[] {
-					CRSKeyword.LENGTHUNIT,
-					CRSKeyword.ANGLEUNIT,
-					CRSKeyword.SCALEUNIT,
-					CRSKeyword.TIMEUNIT,
-					CRSKeyword.PARAMETRICUNIT,
+			keywords = new CRSKeyword[] { CRSKeyword.LENGTHUNIT,
+					CRSKeyword.ANGLEUNIT, CRSKeyword.SCALEUNIT,
+					CRSKeyword.TIMEUNIT, CRSKeyword.PARAMETRICUNIT,
 					CRSKeyword.ID };
 			break;
 		case BOUND:
-			keywords = new CRSKeyword[] {
-					CRSKeyword.ID };
+			keywords = new CRSKeyword[] { CRSKeyword.ID };
 			break;
 		default:
 			throw new ProjectionException("Unsupported CRS Type: " + type);
@@ -3163,21 +3155,18 @@ public class CRSReader implements Closeable {
 
 		temporalDatum.setName(reader.readExpectedToken());
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.CALENDAR,
-				CRSKeyword.TIMEORIGIN,
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.CALENDAR,
+				CRSKeyword.TIMEORIGIN, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.CALENDAR) {
-			temporalDatum.setCalendar(readKeywordDelimitedToken(
-					CRSKeyword.CALENDAR));
-			keyword = readToKeyword(CRSKeyword.TIMEORIGIN,
-					CRSKeyword.ID);
+			temporalDatum.setCalendar(
+					readKeywordDelimitedToken(CRSKeyword.CALENDAR));
+			keyword = readToKeyword(CRSKeyword.TIMEORIGIN, CRSKeyword.ID);
 		}
 
 		if (keyword == CRSKeyword.TIMEORIGIN) {
-			temporalDatum.setOrigin(readKeywordDelimitedToken(
-					CRSKeyword.TIMEORIGIN));
+			temporalDatum.setOrigin(
+					readKeywordDelimitedToken(CRSKeyword.TIMEORIGIN));
 			keyword = readToKeyword(CRSKeyword.ID);
 		}
 
@@ -3210,10 +3199,8 @@ public class CRSReader implements Closeable {
 		readSeparator();
 		derivingConversion.setMethod(readMethod());
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.PARAMETER,
-				CRSKeyword.PARAMETERFILE,
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.PARAMETER,
+				CRSKeyword.PARAMETERFILE, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.PARAMETER
 				|| keyword == CRSKeyword.PARAMETERFILE) {
@@ -3268,8 +3255,7 @@ public class CRSReader implements Closeable {
 				parameters.add(readParameter(type));
 			}
 
-		} while (isKeywordNext(CRSKeyword.PARAMETER,
-				CRSKeyword.PARAMETERFILE));
+		} while (isKeywordNext(CRSKeyword.PARAMETER, CRSKeyword.PARAMETERFILE));
 
 		return parameters;
 	}
@@ -3294,8 +3280,7 @@ public class CRSReader implements Closeable {
 		readSeparator();
 		parameterFile.setFileName(reader.readExpectedToken());
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.ID) {
 			parameterFile.setIdentifiers(readIdentifiers());
@@ -3357,11 +3342,8 @@ public class CRSReader implements Closeable {
 
 		GeoCoordinateReferenceSystem crs = new GeoCoordinateReferenceSystem();
 
-		CRSKeyword type = readKeyword(
-				CRSKeyword.GEOCCS,
-				CRSKeyword.GEOGCS,
-				CRSKeyword.GEODCRS,
-				CRSKeyword.GEOGCRS);
+		CRSKeyword type = readKeyword(CRSKeyword.GEOCCS, CRSKeyword.GEOGCS,
+				CRSKeyword.GEODCRS, CRSKeyword.GEOGCRS);
 		CRSType crsType = WKTUtils.getCoordinateReferenceSystemType(type);
 		if (expectedType != null && crsType != expectedType) {
 			throw new ProjectionException(
@@ -3382,9 +3364,7 @@ public class CRSReader implements Closeable {
 		crs.setCoordinateSystem(
 				readCoordinateSystemCompat(crsType, crs.getReferenceFrame()));
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.EXTENSION,
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.EXTENSION, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.EXTENSION) {
 			extras.putAll(readExtensionsCompat());
@@ -3481,9 +3461,7 @@ public class CRSReader implements Closeable {
 			crs.getCoordinateSystem().setUnit(unit);
 		}
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.EXTENSION,
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.EXTENSION, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.EXTENSION) {
 			extras.putAll(readExtensionsCompat());
@@ -3528,9 +3506,7 @@ public class CRSReader implements Closeable {
 		crs.setCoordinateSystem(readCoordinateSystemCompat(CRSType.VERTICAL,
 				crs.getReferenceFrame()));
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.EXTENSION,
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.EXTENSION, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.EXTENSION) {
 			extras.putAll(readExtensionsCompat());
@@ -3572,9 +3548,7 @@ public class CRSReader implements Closeable {
 		crs.setCoordinateSystem(readCoordinateSystemCompat(CRSType.ENGINEERING,
 				crs.getDatum()));
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.EXTENSION,
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.EXTENSION, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.EXTENSION) {
 			extras.putAll(readExtensionsCompat());
@@ -3607,9 +3581,7 @@ public class CRSReader implements Closeable {
 		mapProjection.setName(method.getName());
 		mapProjection.setMethod(method);
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.PARAMETER,
-				CRSKeyword.ID);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.PARAMETER, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.PARAMETER) {
 			mapProjection.setParameters(readMapProjectionParameters());
@@ -3748,9 +3720,7 @@ public class CRSReader implements Closeable {
 
 		ReferenceFrame referenceFrame = null;
 
-		CRSKeyword type = readKeyword(
-				CRSKeyword.VDATUM,
-				CRSKeyword.EDATUM);
+		CRSKeyword type = readKeyword(CRSKeyword.VDATUM, CRSKeyword.EDATUM);
 		switch (type) {
 		case VDATUM:
 			referenceFrame = new VerticalReferenceFrame();
@@ -3770,9 +3740,7 @@ public class CRSReader implements Closeable {
 		extras.put(WKTConstants.DATUM_TYPE,
 				Double.toString(reader.readNumber()));
 
-		CRSKeyword keyword = readToKeyword(
-				CRSKeyword.ID,
-				CRSKeyword.EXTENSION);
+		CRSKeyword keyword = readToKeyword(CRSKeyword.ID, CRSKeyword.EXTENSION);
 
 		if (keyword == CRSKeyword.ID) {
 			referenceFrame.setIdentifiers(readIdentifiers());

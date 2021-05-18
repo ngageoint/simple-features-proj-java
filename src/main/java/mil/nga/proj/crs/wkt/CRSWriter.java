@@ -33,6 +33,7 @@ import mil.nga.proj.crs.geo.GeoCoordinateReferenceSystem;
 import mil.nga.proj.crs.geo.GeoDatumEnsemble;
 import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
+import mil.nga.proj.crs.metadata.CoordinateMetadata;
 import mil.nga.proj.crs.operation.OperationMethod;
 import mil.nga.proj.crs.operation.OperationParameter;
 import mil.nga.proj.crs.operation.OperationParameterFile;
@@ -313,6 +314,9 @@ public class CRSWriter implements Closeable {
 		case COMPOUND:
 			writeCRS((CompoundCoordinateReferenceSystem) crs);
 			break;
+		case COORDINATE_METADATA:
+			writeCoordinateMetadata((CoordinateMetadata) crs);
+			break;
 		default:
 			throw new ProjectionException(
 					"Unsupported CRS type: " + crs.getType());
@@ -328,8 +332,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void write(CRSKeyword keyword)
-			throws IOException {
+	public void write(CRSKeyword keyword) throws IOException {
 		writer.write(keyword.name());
 	}
 
@@ -416,8 +419,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeKeywordDelimitedQuotedText(
-			CRSKeyword keyword, String text)
+	public void writeKeywordDelimitedQuotedText(CRSKeyword keyword, String text)
 			throws IOException {
 
 		write(keyword);
@@ -720,6 +722,36 @@ public class CRSWriter implements Closeable {
 					"Unsupported derived base CRS type: " + crs.getBaseType());
 		}
 
+	}
+
+	/**
+	 * Write coordinate metadata to well-known text
+	 * 
+	 * @param metadata
+	 *            coordinate metadata
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeCoordinateMetadata(CoordinateMetadata metadata)
+			throws IOException {
+
+		write(CRSKeyword.COORDINATEMETADATA);
+
+		writeLeftDelimiter();
+
+		writeCRS(metadata.getCoordinateReferenceSystem());
+
+		if (metadata.hasEpoch()) {
+
+			writeSeparator();
+			write(CRSKeyword.EPOCH);
+			writeLeftDelimiter();
+			write(metadata.getEpoch());
+			writeRightDelimiter();
+
+		}
+
+		writeRightDelimiter();
 	}
 
 	/**
@@ -1187,8 +1219,7 @@ public class CRSWriter implements Closeable {
 
 		if (referenceFrame.hasAnchor()) {
 			writeSeparator();
-			writeKeywordDelimitedQuotedText(
-					CRSKeyword.ANCHOR,
+			writeKeywordDelimitedQuotedText(CRSKeyword.ANCHOR,
 					referenceFrame.getAnchor());
 		}
 
@@ -1475,15 +1506,14 @@ public class CRSWriter implements Closeable {
 
 		if (identifier.hasCitation()) {
 			writeSeparator();
-			writeKeywordDelimitedQuotedText(
-					CRSKeyword.CITATION,
+			writeKeywordDelimitedQuotedText(CRSKeyword.CITATION,
 					identifier.getCitation());
 		}
 
 		if (identifier.hasUri()) {
 			writeSeparator();
-			writeKeywordDelimitedQuotedText(
-					CRSKeyword.URI, identifier.getUri());
+			writeKeywordDelimitedQuotedText(CRSKeyword.URI,
+					identifier.getUri());
 		}
 
 		writeRightDelimiter();
@@ -1634,8 +1664,7 @@ public class CRSWriter implements Closeable {
 	 *             upon failure to write
 	 */
 	public void writeRemark(String remark) throws IOException {
-		writeKeywordDelimitedQuotedText(CRSKeyword.REMARK,
-				remark);
+		writeKeywordDelimitedQuotedText(CRSKeyword.REMARK, remark);
 	}
 
 	/**
@@ -1689,8 +1718,7 @@ public class CRSWriter implements Closeable {
 	 *             upon failure to write
 	 */
 	public void writeScope(String scope) throws IOException {
-		writeKeywordDelimitedQuotedText(CRSKeyword.SCOPE,
-				scope);
+		writeKeywordDelimitedQuotedText(CRSKeyword.SCOPE, scope);
 	}
 
 	/**
@@ -1735,8 +1763,7 @@ public class CRSWriter implements Closeable {
 	 */
 	public void writeAreaDescription(String areaDescription)
 			throws IOException {
-		writeKeywordDelimitedQuotedText(CRSKeyword.AREA,
-				areaDescription);
+		writeKeywordDelimitedQuotedText(CRSKeyword.AREA, areaDescription);
 	}
 
 	/**
@@ -1960,8 +1987,7 @@ public class CRSWriter implements Closeable {
 
 		if (temporalDatum.hasCalendar()) {
 			writeSeparator();
-			writeKeywordDelimitedQuotedText(
-					CRSKeyword.CALENDAR,
+			writeKeywordDelimitedQuotedText(CRSKeyword.CALENDAR,
 					temporalDatum.getCalendar());
 		}
 

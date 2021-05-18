@@ -18,6 +18,11 @@ public enum CRSType {
 	COMPOUND,
 
 	/**
+	 * Coordinate Metadata
+	 */
+	COORDINATE_METADATA,
+
+	/**
 	 * Coordinate Operation
 	 */
 	COORDINATE_OPERATION,

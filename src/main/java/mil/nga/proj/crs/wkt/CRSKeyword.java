@@ -113,6 +113,11 @@ public enum CRSKeyword {
 	COMPOUNDCRS("COMPD_CS"),
 
 	/**
+	 * Coordinate Metadata
+	 */
+	COORDINATEMETADATA(),
+
+	/**
 	 * Coordinate Operation
 	 */
 	COORDINATEOPERATION(),
@@ -166,6 +171,11 @@ public enum CRSKeyword {
 	 * Datum ensemble accuracy
 	 */
 	ENSEMBLEACCURACY(),
+
+	/**
+	 * Coordinate epoch
+	 */
+	EPOCH("COORDEPOCH"),
 
 	/**
 	 * Backwards Compatibility Extension
@@ -365,8 +375,7 @@ public enum CRSKeyword {
 		for (CRSKeyword type : values()) {
 			for (String keyword : type.keywords) {
 				String keywordUpperCase = keyword.toUpperCase();
-				Set<CRSKeyword> keywordSet = keywordTypes
-						.get(keywordUpperCase);
+				Set<CRSKeyword> keywordSet = keywordTypes.get(keywordUpperCase);
 				if (keywordSet == null) {
 					keywordSet = new HashSet<>();
 					keywordTypes.put(keywordUpperCase, keywordSet);
@@ -424,8 +433,7 @@ public enum CRSKeyword {
 	 *            CRS keyword
 	 * @return type
 	 */
-	public static CRSKeyword getRequiredType(
-			String keyword) {
+	public static CRSKeyword getRequiredType(String keyword) {
 		CRSKeyword type = getType(keyword);
 		if (type == null) {
 			throw new ProjectionException(
@@ -442,8 +450,7 @@ public enum CRSKeyword {
 	 *            CRS keyword
 	 * @return types
 	 */
-	public static Set<CRSKeyword> getTypes(
-			String keyword) {
+	public static Set<CRSKeyword> getTypes(String keyword) {
 		Set<CRSKeyword> types = null;
 		if (keyword != null) {
 			types = keywordTypes.get(keyword.toUpperCase());
@@ -458,8 +465,7 @@ public enum CRSKeyword {
 	 *            CRS keyword
 	 * @return types
 	 */
-	public static Set<CRSKeyword> getRequiredTypes(
-			String keyword) {
+	public static Set<CRSKeyword> getRequiredTypes(String keyword) {
 		Set<CRSKeyword> types = getTypes(keyword);
 		if (types == null || types.isEmpty()) {
 			throw new ProjectionException(

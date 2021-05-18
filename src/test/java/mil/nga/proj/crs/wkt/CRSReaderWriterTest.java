@@ -37,6 +37,7 @@ import mil.nga.proj.crs.geo.GeoCoordinateReferenceSystem;
 import mil.nga.proj.crs.geo.GeoDatumEnsemble;
 import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
+import mil.nga.proj.crs.metadata.CoordinateMetadata;
 import mil.nga.proj.crs.operation.OperationParameter;
 import mil.nga.proj.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.proj.crs.projected.MapProjection;
@@ -4126,6 +4127,37 @@ public class CRSReaderWriterTest {
 		assertEquals(text, compoundCrs.toString());
 		assertEquals(text, CRSWriter.write(compoundCrs));
 		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(compoundCrs));
+
+	}
+
+	/**
+	 * Test coordinate metadata
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testCoordinateMetadata() throws IOException {
+
+		String text = "COORDINATEMETADATA[GEOGCRS[\"WGS 84 (G1762)\","
+				+ "DYNAMIC[FRAMEEPOCH[2005.0]],"
+				+ "DATUM[\"World Geodetic System 1984 (G1762)\","
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1.0]]],"
+				+ "CS[ellipsoidal,3],"
+				+ "AXIS[\"(lat)\",north,ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "AXIS[\"(lon)\",east,ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "AXIS[\"ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1.0]]],"
+				+ "EPOCH[2016.47]]";
+
+		CRS crs = CRSReader.read(text, true);
+		CoordinateMetadata metadata = CRSReader.readCoordinateMetadata(text);
+		assertEquals(crs, metadata);
+		assertEquals(CRSType.COORDINATE_METADATA, metadata.getType());
+
+		text = text.replace("6378137", "6378137.0");
+		assertEquals(text, metadata.toString());
+		assertEquals(text, CRSWriter.write(metadata));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(metadata));
 
 	}
 
