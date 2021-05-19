@@ -1982,7 +1982,7 @@ public class CRSWriter implements Closeable {
 
 		if (mapProjection.hasParameters()) {
 			writeSeparator();
-			writeParameters(mapProjection.getParameters());
+			writeParameters(mapProjection.getOperationParameters());
 		}
 
 		if (mapProjection.hasIdentifiers()) {

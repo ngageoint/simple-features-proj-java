@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.crs.common.Identifier;
+import mil.nga.proj.crs.operation.ConcatenableOperation;
 import mil.nga.proj.crs.operation.OperationMethod;
 import mil.nga.proj.crs.operation.Parameter;
 import mil.nga.proj.crs.wkt.CRSWriter;
@@ -16,7 +17,7 @@ import mil.nga.proj.crs.wkt.CRSWriter;
  * 
  * @author osbornb
  */
-public class DerivingConversion {
+public class DerivingConversion implements ConcatenableOperation {
 
 	/**
 	 * Logger
@@ -65,77 +66,65 @@ public class DerivingConversion {
 	}
 
 	/**
-	 * Get the name
-	 * 
-	 * @return name
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * Set the name
-	 * 
-	 * @param name
-	 *            name
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/**
-	 * Get the method
-	 * 
-	 * @return method
+	 * {@inheritDoc}
 	 */
+	@Override
 	public OperationMethod getMethod() {
 		return method;
 	}
 
 	/**
-	 * Set the method
-	 * 
-	 * @param method
-	 *            method
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setMethod(OperationMethod method) {
 		this.method = method;
 	}
 
 	/**
-	 * Get the parameters
-	 * 
-	 * @return parameters
+	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Parameter> getParameters() {
 		return parameters;
 	}
 
 	/**
-	 * Has parameters
-	 * 
-	 * @return true if has parameters
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasParameters() {
 		return parameters != null && !parameters.isEmpty();
 	}
 
 	/**
-	 * Set the parameters
-	 * 
-	 * @param parameters
-	 *            parameters
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setParameters(List<Parameter> parameters) {
 		this.parameters = parameters;
 	}
 
 	/**
-	 * Add the parameter
-	 * 
-	 * @param parameter
-	 *            parameter
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addParameter(Parameter parameter) {
 		if (this.parameters == null) {
 			this.parameters = new ArrayList<>();
@@ -144,11 +133,9 @@ public class DerivingConversion {
 	}
 
 	/**
-	 * Add the parameters
-	 * 
-	 * @param parameters
-	 *            parameters
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addParameters(List<Parameter> parameters) {
 		if (this.parameters == null) {
 			this.parameters = new ArrayList<>();
@@ -157,39 +144,33 @@ public class DerivingConversion {
 	}
 
 	/**
-	 * Get the identifiers
-	 * 
-	 * @return identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Identifier> getIdentifiers() {
 		return identifiers;
 	}
 
 	/**
-	 * Has identifiers
-	 * 
-	 * @return true if has identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasIdentifiers() {
 		return identifiers != null && !identifiers.isEmpty();
 	}
 
 	/**
-	 * Set the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setIdentifiers(List<Identifier> identifiers) {
 		this.identifiers = identifiers;
 	}
 
 	/**
-	 * Add the identifier
-	 * 
-	 * @param identifier
-	 *            identifier
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifier(Identifier identifier) {
 		if (this.identifiers == null) {
 			this.identifiers = new ArrayList<>();
@@ -198,11 +179,9 @@ public class DerivingConversion {
 	}
 
 	/**
-	 * Add the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifiers(List<Identifier> identifiers) {
 		if (this.identifiers == null) {
 			this.identifiers = new ArrayList<>();

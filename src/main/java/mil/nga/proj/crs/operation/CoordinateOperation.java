@@ -8,7 +8,8 @@ import mil.nga.proj.crs.CoordinateReferenceSystem;
  * 
  * @author osbornb
  */
-public class CoordinateOperation extends Operation {
+public class CoordinateOperation extends Operation
+		implements ConcatenableOperation {
 
 	/**
 	 * Target Coordinate Reference System
@@ -71,20 +72,17 @@ public class CoordinateOperation extends Operation {
 	}
 
 	/**
-	 * Get the operation method
-	 * 
-	 * @return operation method
+	 * {@inheritDoc}
 	 */
+	@Override
 	public OperationMethod getMethod() {
 		return method;
 	}
 
 	/**
-	 * Set the operation method
-	 * 
-	 * @param method
-	 *            operation method
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setMethod(OperationMethod method) {
 		this.method = method;
 	}

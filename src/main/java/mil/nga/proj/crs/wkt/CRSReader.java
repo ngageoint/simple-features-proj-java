@@ -3149,7 +3149,7 @@ public class CRSReader implements Closeable {
 		CRSKeyword keyword = readToKeyword(CRSKeyword.PARAMETER, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.PARAMETER) {
-			mapProjection.setParameters(readMapProjectionParameters());
+			mapProjection.setOperationParameters(readMapProjectionParameters());
 			keyword = readToKeyword(CRSKeyword.ID);
 		}
 
@@ -3853,7 +3853,7 @@ public class CRSReader implements Closeable {
 		CRSKeyword keyword = readToKeyword(CRSKeyword.PARAMETER, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.PARAMETER) {
-			mapProjection.setParameters(readMapProjectionParameters());
+			mapProjection.setOperationParameters(readMapProjectionParameters());
 		}
 
 		if (isKeywordNext(CRSKeyword.ID)) {

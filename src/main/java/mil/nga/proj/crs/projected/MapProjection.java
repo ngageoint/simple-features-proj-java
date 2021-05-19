@@ -7,8 +7,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.proj.crs.common.Identifier;
+import mil.nga.proj.crs.operation.ConcatenableOperation;
 import mil.nga.proj.crs.operation.OperationMethod;
 import mil.nga.proj.crs.operation.OperationParameter;
+import mil.nga.proj.crs.operation.Parameter;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
 /**
@@ -16,7 +18,7 @@ import mil.nga.proj.crs.wkt.CRSWriter;
  * 
  * @author osbornb
  */
-public class MapProjection {
+public class MapProjection implements ConcatenableOperation {
 
 	/**
 	 * Logger
@@ -65,41 +67,45 @@ public class MapProjection {
 	}
 
 	/**
-	 * Get the name
-	 * 
-	 * @return name
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * Set the name
-	 * 
-	 * @param name
-	 *            name
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/**
-	 * Get the method
-	 * 
-	 * @return method
+	 * {@inheritDoc}
 	 */
+	@Override
 	public OperationMethod getMethod() {
 		return method;
 	}
 
 	/**
-	 * Set the method
-	 * 
-	 * @param method
-	 *            method
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setMethod(OperationMethod method) {
 		this.method = method;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<Parameter> getParameters() {
+		@SuppressWarnings("unchecked")
+		List<Parameter> parameters = (List<Parameter>) (List<?>) getOperationParameters();
+		return parameters;
 	}
 
 	/**
@@ -107,17 +113,26 @@ public class MapProjection {
 	 * 
 	 * @return parameters
 	 */
-	public List<OperationParameter> getParameters() {
+	public List<OperationParameter> getOperationParameters() {
 		return parameters;
 	}
 
 	/**
-	 * Has parameters
-	 * 
-	 * @return true if has parameters
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasParameters() {
 		return parameters != null && !parameters.isEmpty();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setParameters(List<Parameter> parameters) {
+		@SuppressWarnings("unchecked")
+		List<OperationParameter> operationParameters = (List<OperationParameter>) (List<?>) parameters;
+		setOperationParameters(operationParameters);
 	}
 
 	/**
@@ -126,8 +141,16 @@ public class MapProjection {
 	 * @param parameters
 	 *            parameters
 	 */
-	public void setParameters(List<OperationParameter> parameters) {
+	public void setOperationParameters(List<OperationParameter> parameters) {
 		this.parameters = parameters;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addParameter(Parameter parameter) {
+		addOperationParameter((OperationParameter) parameter);
 	}
 
 	/**
@@ -136,11 +159,21 @@ public class MapProjection {
 	 * @param parameter
 	 *            parameter
 	 */
-	public void addParameter(OperationParameter parameter) {
+	public void addOperationParameter(OperationParameter parameter) {
 		if (this.parameters == null) {
 			this.parameters = new ArrayList<>();
 		}
 		this.parameters.add(parameter);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addParameters(List<Parameter> parameters) {
+		@SuppressWarnings("unchecked")
+		List<OperationParameter> operationParameters = (List<OperationParameter>) (List<?>) parameters;
+		addOperationParameters(operationParameters);
 	}
 
 	/**
@@ -149,7 +182,7 @@ public class MapProjection {
 	 * @param parameters
 	 *            parameters
 	 */
-	public void addParameters(List<OperationParameter> parameters) {
+	public void addOperationParameters(List<OperationParameter> parameters) {
 		if (this.parameters == null) {
 			this.parameters = new ArrayList<>();
 		}
@@ -157,39 +190,33 @@ public class MapProjection {
 	}
 
 	/**
-	 * Get the identifiers
-	 * 
-	 * @return identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Identifier> getIdentifiers() {
 		return identifiers;
 	}
 
 	/**
-	 * Has identifiers
-	 * 
-	 * @return true if has identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasIdentifiers() {
 		return identifiers != null && !identifiers.isEmpty();
 	}
 
 	/**
-	 * Set the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setIdentifiers(List<Identifier> identifiers) {
 		this.identifiers = identifiers;
 	}
 
 	/**
-	 * Add the identifier
-	 * 
-	 * @param identifier
-	 *            identifier
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifier(Identifier identifier) {
 		if (this.identifiers == null) {
 			this.identifiers = new ArrayList<>();
@@ -198,11 +225,9 @@ public class MapProjection {
 	}
 
 	/**
-	 * Add the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifiers(List<Identifier> identifiers) {
 		if (this.identifiers == null) {
 			this.identifiers = new ArrayList<>();
