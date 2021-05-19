@@ -40,6 +40,7 @@ import mil.nga.proj.crs.operation.OperationMethod;
 import mil.nga.proj.crs.operation.OperationParameter;
 import mil.nga.proj.crs.operation.OperationParameterFile;
 import mil.nga.proj.crs.operation.Parameter;
+import mil.nga.proj.crs.operation.PointMotionOperation;
 import mil.nga.proj.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.proj.crs.projected.MapProjection;
 import mil.nga.proj.crs.projected.ProjectedCoordinateReferenceSystem;
@@ -321,6 +322,9 @@ public class CRSWriter implements Closeable {
 			break;
 		case COORDINATE_OPERATION:
 			writeCoordinateOperation((CoordinateOperation) crs);
+			break;
+		case POINT_MOTION_OPERATION:
+			writePointMotionOperation((PointMotionOperation) crs);
 			break;
 		default:
 			throw new ProjectionException(
@@ -1189,6 +1193,49 @@ public class CRSWriter implements Closeable {
 		if (operation.hasInterpolation()) {
 			writeSeparator();
 			writeInterpolation(operation.getInterpolation());
+		}
+
+		if (operation.hasAccuracy()) {
+			writeSeparator();
+			writeAccuracy(operation.getAccuracy());
+		}
+
+		writeScopeExtentIdentifierRemark(operation);
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write point motion operation to well-known text
+	 * 
+	 * @param operation
+	 *            coordinate operation
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writePointMotionOperation(PointMotionOperation operation)
+			throws IOException {
+
+		write(CRSKeyword.POINTMOTIONOPERATION);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(operation.getName());
+
+		if (operation.hasVersion()) {
+			writeSeparator();
+			writeVersion(operation.getVersion());
+		}
+
+		writeSeparator();
+		writeSource(operation.getSource());
+
+		writeSeparator();
+		write(operation.getMethod());
+
+		if (operation.hasParameters()) {
+			writeSeparator();
+			writeParametersAndFiles(operation.getParameters());
 		}
 
 		if (operation.hasAccuracy()) {

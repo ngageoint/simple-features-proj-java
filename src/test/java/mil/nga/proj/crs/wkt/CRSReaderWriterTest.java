@@ -41,6 +41,7 @@ import mil.nga.proj.crs.metadata.CoordinateMetadata;
 import mil.nga.proj.crs.operation.CoordinateOperation;
 import mil.nga.proj.crs.operation.OperationParameter;
 import mil.nga.proj.crs.operation.OperationParameterFile;
+import mil.nga.proj.crs.operation.PointMotionOperation;
 import mil.nga.proj.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.proj.crs.projected.MapProjection;
 import mil.nga.proj.crs.projected.ProjectedCoordinateReferenceSystem;
@@ -4766,6 +4767,47 @@ public class CRSReaderWriterTest {
 
 		text = text.replace("\",1,", "\",1.0,").replace("-0.010", "-0.01")
 				.replace("-06", "-6").replace("6378137", "6378137.0");
+		assertEquals(text, operation.toString());
+		assertEquals(text, CRSWriter.write(operation));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(operation));
+
+	}
+
+	/**
+	 * Test point motion operation
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testPointMotionOperation() throws IOException {
+
+		String text = "POINTMOTIONOPERATION[\"Canada velocity grid v6\","
+				+ "SOURCECRS[GEOGCRS[\"NAD83(CSRS)v6\",DATUM[\"North American Datum of 1983 (CSRS) version 6\",ELLIPSOID[\"GRS 1980\",6378137,298.2572221,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7019]],ID[\"EPSG\",1197]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",8252]]],"
+				+ "METHOD[\"Point motion by grid (Canada NTv2_Vel)\"],"
+				+ "PARAMETERFILE[\"Point motion velocity grid file\",\"cvg60.cvb\"],"
+				+ "OPERATIONACCURACY[0.01]]";
+
+		CRS crs = CRSReader.read(text, true);
+		PointMotionOperation operation = CRSReader
+				.readPointMotionOperation(text);
+		assertEquals(crs, operation);
+		assertEquals(CRSType.POINT_MOTION_OPERATION, operation.getType());
+		assertEquals("Canada velocity grid v6", operation.getName());
+		GeoCoordinateReferenceSystem geographic = (GeoCoordinateReferenceSystem) operation
+				.getSource();
+		assertEquals(CRSType.GEOGRAPHIC, geographic.getType());
+		assertEquals("NAD83(CSRS)v6", geographic.getName());
+		assertEquals("Point motion by grid (Canada NTv2_Vel)",
+				operation.getMethod().getName());
+		assertEquals("Point motion velocity grid file",
+				operation.getParameters().get(0).getName());
+		assertEquals("cvg60.cvb",
+				((OperationParameterFile) operation.getParameters().get(0))
+						.getFileName());
+		assertEquals(0.01, operation.getAccuracy(), 0);
+
+		text = text.replace("\",1,", "\",1.0,").replace("6378137", "6378137.0");
 		assertEquals(text, operation.toString());
 		assertEquals(text, CRSWriter.write(operation));
 		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(operation));

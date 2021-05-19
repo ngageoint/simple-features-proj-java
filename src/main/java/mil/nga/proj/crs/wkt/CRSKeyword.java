@@ -113,6 +113,11 @@ public enum CRSKeyword {
 	COMPOUNDCRS("COMPD_CS"),
 
 	/**
+	 * Concatenated Operation
+	 */
+	CONCATENATEDOPERATION(),
+
+	/**
 	 * Coordinate Metadata
 	 */
 	COORDINATEMETADATA(),
@@ -288,6 +293,11 @@ public enum CRSKeyword {
 	PDATUM("PARAMETRICDATUM"),
 
 	/**
+	 * Point Motion Operation
+	 */
+	POINTMOTIONOPERATION(),
+
+	/**
 	 * Prime Meridian
 	 */
 	PRIMEM("PRIMEMERIDIAN"),
@@ -321,6 +331,11 @@ public enum CRSKeyword {
 	 * Source CRS
 	 */
 	SOURCECRS(),
+
+	/**
+	 * Concatenated Operation Step
+	 */
+	STEP(),
 
 	/**
 	 * Target CRS

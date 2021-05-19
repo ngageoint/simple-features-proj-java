@@ -52,6 +52,7 @@ import mil.nga.proj.crs.operation.OperationMethod;
 import mil.nga.proj.crs.operation.OperationParameter;
 import mil.nga.proj.crs.operation.OperationParameterFile;
 import mil.nga.proj.crs.operation.Parameter;
+import mil.nga.proj.crs.operation.PointMotionOperation;
 import mil.nga.proj.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.proj.crs.parametric.ParametricDatum;
 import mil.nga.proj.crs.projected.MapProjection;
@@ -474,6 +475,28 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read Point Motion Operation from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Point Motion Operation
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static PointMotionOperation readPointMotionOperation(String text)
+			throws IOException {
+		PointMotionOperation operation = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			operation = reader.readPointMotionOperation();
+			reader.readEnd();
+		} finally {
+			reader.close();
+		}
+		return operation;
+	}
+
+	/**
 	 * Read a Backward Compatible Geodetic or Geographic Coordinate Reference
 	 * System from the well-known text
 	 * 
@@ -773,6 +796,9 @@ public class CRSReader implements Closeable {
 			break;
 		case COORDINATEOPERATION:
 			crs = readCoordinateOperation();
+			break;
+		case POINTMOTIONOPERATION:
+			crs = readPointMotionOperation();
 			break;
 		default:
 			throw new ProjectionException(
@@ -2010,6 +2036,51 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read Point Motion Operation
+	 * 
+	 * @return point motion operation
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public PointMotionOperation readPointMotionOperation() throws IOException {
+
+		PointMotionOperation operation = new PointMotionOperation();
+
+		readKeyword(CRSKeyword.POINTMOTIONOPERATION);
+
+		readLeftDelimiter();
+
+		operation.setName(reader.readExpectedToken());
+
+		if (isKeywordNext(CRSKeyword.VERSION)) {
+			readSeparator();
+			operation.setVersion(readVersion());
+		}
+
+		readSeparator();
+		operation.setSource(readSource());
+
+		readSeparator();
+		operation.setMethod(readMethod());
+
+		if (isKeywordNext(CRSKeyword.PARAMETER, CRSKeyword.PARAMETERFILE)) {
+			readSeparator();
+			operation.setParameters(readPointMotionOperationParameters());
+		}
+
+		if (isKeywordNext(CRSKeyword.OPERATIONACCURACY)) {
+			readSeparator();
+			operation.setAccuracy(readAccuracy());
+		}
+
+		readScopeExtentIdentifierRemark(operation);
+
+		readRightDelimiter();
+
+		return operation;
+	}
+
+	/**
 	 * Read the usages (scope and extent), identifiers, and remark into the CRS
 	 * 
 	 * @param crs
@@ -3189,6 +3260,7 @@ public class CRSReader implements Closeable {
 			break;
 		case DERIVED:
 		case COORDINATE_OPERATION:
+		case POINT_MOTION_OPERATION:
 			keywords = new CRSKeyword[] { CRSKeyword.LENGTHUNIT,
 					CRSKeyword.ANGLEUNIT, CRSKeyword.SCALEUNIT,
 					CRSKeyword.TIMEUNIT, CRSKeyword.PARAMETRICUNIT,
@@ -3474,6 +3546,18 @@ public class CRSReader implements Closeable {
 		readRightDelimiter();
 
 		return accuracy;
+	}
+
+	/**
+	 * Read Point Motion Operation parameters
+	 * 
+	 * @return parameters
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public List<Parameter> readPointMotionOperationParameters()
+			throws IOException {
+		return readParametersAndFiles(CRSType.POINT_MOTION_OPERATION);
 	}
 
 	/**

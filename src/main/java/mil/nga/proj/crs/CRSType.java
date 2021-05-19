@@ -18,6 +18,11 @@ public enum CRSType {
 	COMPOUND,
 
 	/**
+	 * Concatenated Operation
+	 */
+	CONCATENATED_OPERATION,
+
+	/**
 	 * Coordinate Metadata
 	 */
 	COORDINATE_METADATA,
@@ -51,6 +56,11 @@ public enum CRSType {
 	 * Parametric
 	 */
 	PARAMETRIC,
+
+	/**
+	 * Point Motion Operation
+	 */
+	POINT_MOTION_OPERATION,
 
 	/**
 	 * Projected
