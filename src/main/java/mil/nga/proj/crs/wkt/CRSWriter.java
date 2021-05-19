@@ -35,6 +35,8 @@ import mil.nga.proj.crs.geo.GeoDatumEnsemble;
 import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
 import mil.nga.proj.crs.metadata.CoordinateMetadata;
+import mil.nga.proj.crs.operation.ConcatenableOperation;
+import mil.nga.proj.crs.operation.ConcatenatedOperation;
 import mil.nga.proj.crs.operation.CoordinateOperation;
 import mil.nga.proj.crs.operation.OperationMethod;
 import mil.nga.proj.crs.operation.OperationParameter;
@@ -325,6 +327,9 @@ public class CRSWriter implements Closeable {
 			break;
 		case POINT_MOTION_OPERATION:
 			writePointMotionOperation((PointMotionOperation) crs);
+			break;
+		case CONCATENATED_OPERATION:
+			writeConcatenatedOperation((ConcatenatedOperation) crs);
 			break;
 		default:
 			throw new ProjectionException(
@@ -1209,7 +1214,7 @@ public class CRSWriter implements Closeable {
 	 * Write point motion operation to well-known text
 	 * 
 	 * @param operation
-	 *            coordinate operation
+	 *            point motion operation
 	 * @throws IOException
 	 *             upon failure to write
 	 */
@@ -1236,6 +1241,73 @@ public class CRSWriter implements Closeable {
 		if (operation.hasParameters()) {
 			writeSeparator();
 			writeParametersAndFiles(operation.getParameters());
+		}
+
+		if (operation.hasAccuracy()) {
+			writeSeparator();
+			writeAccuracy(operation.getAccuracy());
+		}
+
+		writeScopeExtentIdentifierRemark(operation);
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write concatenated operation to well-known text
+	 * 
+	 * @param operation
+	 *            concatenated operation
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeConcatenatedOperation(ConcatenatedOperation operation)
+			throws IOException {
+
+		write(CRSKeyword.CONCATENATEDOPERATION);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(operation.getName());
+
+		if (operation.hasVersion()) {
+			writeSeparator();
+			writeVersion(operation.getVersion());
+		}
+
+		writeSeparator();
+		writeSource(operation.getSource());
+
+		writeSeparator();
+		writeTarget(operation.getTarget());
+
+		for (ConcatenableOperation concatenable : operation.getOperations()) {
+
+			writeSeparator();
+			write(CRSKeyword.STEP);
+
+			writeLeftDelimiter();
+
+			switch (concatenable.getOperationType()) {
+			case COORDINATE_OPERATION:
+				writeCoordinateOperation((CoordinateOperation) concatenable);
+				break;
+			case POINT_MOTION_OPERATION:
+				writePointMotionOperation((PointMotionOperation) concatenable);
+				break;
+			case MAP_PROJECTION:
+				write((MapProjection) concatenable);
+				break;
+			case DERIVING_CONVERSION:
+				write((DerivingConversion) concatenable);
+				break;
+			default:
+				throw new ProjectionException(
+						"Unsupported concatenable operation type: "
+								+ concatenable.getOperationType());
+			}
+
+			writeRightDelimiter();
 		}
 
 		if (operation.hasAccuracy()) {
@@ -2181,13 +2253,16 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(Parameter parameter) throws IOException {
 
-		if (parameter instanceof OperationParameter) {
+		switch (parameter.getParameterType()) {
+		case PARAMETER:
 			write((OperationParameter) parameter);
-		} else if (parameter instanceof OperationParameterFile) {
+			break;
+		case PARAMETER_FILE:
 			write((OperationParameterFile) parameter);
-		} else {
+			break;
+		default:
 			throw new ProjectionException("Unsupported parameter type: "
-					+ parameter.getClass().getSimpleName());
+					+ parameter.getParameterType());
 		}
 
 	}

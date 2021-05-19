@@ -12,6 +12,13 @@ import mil.nga.proj.crs.common.Identifier;
 public interface ConcatenableOperation {
 
 	/**
+	 * Get the operation type
+	 * 
+	 * @return operation type
+	 */
+	public ConcatenableOperationType getOperationType();
+
+	/**
 	 * Get the name
 	 * 
 	 * @return name

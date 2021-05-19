@@ -8,18 +8,12 @@ import mil.nga.proj.crs.CoordinateReferenceSystem;
  * 
  * @author osbornb
  */
-public class CoordinateOperation extends Operation
-		implements ConcatenableOperation {
+public class CoordinateOperation extends SimpleOperation {
 
 	/**
 	 * Target Coordinate Reference System
 	 */
 	private CoordinateReferenceSystem target = null;
-
-	/**
-	 * Operation Method
-	 */
-	private OperationMethod method = null;
 
 	/**
 	 * Interpolation Coordinate Reference System
@@ -47,9 +41,16 @@ public class CoordinateOperation extends Operation
 	 */
 	public CoordinateOperation(String name, CoordinateReferenceSystem source,
 			CoordinateReferenceSystem target, OperationMethod method) {
-		super(name, CRSType.COORDINATE_OPERATION, source);
+		super(name, CRSType.COORDINATE_OPERATION, source, method);
 		setTarget(target);
-		setMethod(method);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ConcatenableOperationType getOperationType() {
+		return ConcatenableOperationType.COORDINATE_OPERATION;
 	}
 
 	/**
@@ -69,22 +70,6 @@ public class CoordinateOperation extends Operation
 	 */
 	public void setTarget(CoordinateReferenceSystem target) {
 		this.target = target;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public OperationMethod getMethod() {
-		return method;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setMethod(OperationMethod method) {
-		this.method = method;
 	}
 
 	/**
@@ -124,7 +109,6 @@ public class CoordinateOperation extends Operation
 		int result = super.hashCode();
 		result = prime * result
 				+ ((interpolation == null) ? 0 : interpolation.hashCode());
-		result = prime * result + ((method == null) ? 0 : method.hashCode());
 		result = prime * result + ((target == null) ? 0 : target.hashCode());
 		return result;
 	}
@@ -145,11 +129,6 @@ public class CoordinateOperation extends Operation
 			if (other.interpolation != null)
 				return false;
 		} else if (!interpolation.equals(other.interpolation))
-			return false;
-		if (method == null) {
-			if (other.method != null)
-				return false;
-		} else if (!method.equals(other.method))
 			return false;
 		if (target == null) {
 			if (other.target != null)

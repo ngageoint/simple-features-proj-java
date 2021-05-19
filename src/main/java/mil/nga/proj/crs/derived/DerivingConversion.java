@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import mil.nga.proj.crs.common.Identifier;
 import mil.nga.proj.crs.operation.ConcatenableOperation;
+import mil.nga.proj.crs.operation.ConcatenableOperationType;
 import mil.nga.proj.crs.operation.OperationMethod;
 import mil.nga.proj.crs.operation.Parameter;
 import mil.nga.proj.crs.wkt.CRSWriter;
@@ -63,6 +64,14 @@ public class DerivingConversion implements ConcatenableOperation {
 	public DerivingConversion(String name, OperationMethod method) {
 		setName(name);
 		setMethod(method);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ConcatenableOperationType getOperationType() {
+		return ConcatenableOperationType.DERIVING_CONVERSION;
 	}
 
 	/**

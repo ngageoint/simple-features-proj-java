@@ -38,6 +38,7 @@ import mil.nga.proj.crs.geo.GeoDatumEnsemble;
 import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
 import mil.nga.proj.crs.metadata.CoordinateMetadata;
+import mil.nga.proj.crs.operation.ConcatenatedOperation;
 import mil.nga.proj.crs.operation.CoordinateOperation;
 import mil.nga.proj.crs.operation.OperationParameter;
 import mil.nga.proj.crs.operation.OperationParameterFile;
@@ -4855,6 +4856,55 @@ public class CRSReaderWriterTest {
 		assertEquals(0.01, operation.getAccuracy(), 0);
 
 		text = text.replace("\",1,", "\",1.0,").replace("6378137", "6378137.0");
+		assertEquals(text, operation.toString());
+		assertEquals(text, CRSWriter.write(operation));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(operation));
+
+	}
+
+	/**
+	 * Test concatenated operation
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testConcatenatedOperation() throws IOException {
+
+		// TODO
+
+		String text = "CONCATENATEDOPERATION[\"RT90 to KKJ\","
+				+ "SOURCECRS[GEOGCRS[\"RT90\","
+				+ "…full WKT definition of concatenated operation source CRS required here but omitted for brevity…]],"
+				+ "TARGETCRS[GEOGCRS[\"KKJ\","
+				+ "…full WKT definition of concatenated operation target CRS required here but omitted for brevity…]],"
+				+ "STEP[COORDINATEOPERATION[\"RT90 to ETRS89\","
+				+ "SOURCECRS[GEOGCRS[\"RT90\""
+				+ "…full WKT definition of step 1 source CRS required here but omitted for brevity…]],"
+				+ "TARGETCRS[GEOGCRS[\"ETRS89\""
+				+ "…full WKT definition of step 1 target CRS required here but omitted for brevity…]],"
+				+ "METHOD["
+				+ "…full WKT definition of operation RT90 to ETRS89  required here but omitted for brevity…"
+				+ "ID[\"EPSG\",1437]],"
+				+ "STEP[COORDINATEOPERATION[\"KKJ to ETRS89\","
+				+ "SOURCECRS[GEOGCRS[\"KKJ\""
+				+ "…full WKT definition of step 2 source CRS required here but omitted for brevity…]],"
+				+ "TARGETCRS[GEOGCRS[\"ETRS89\""
+				+ "…full WKT definition of step 2 target CRS required here but omitted for brevity…]],"
+				+ "METHOD[[\"Coordinate Frame rotation\",ID[\"EPSG\",9607]]"
+				+ "PARAMETER[\"X-axis translation\",-96.062,LENGTHUNIT[\"metre\",1.0]],"
+				+ "…full WKT definition of operation KKJ  to ETRS89  required here but omitted for brevity…"
+				+ "ID[\"EPSG\",10098]],"
+				+ "USAGE[SCOPE[\"Concatenated operation scope description.\"],"
+				+ "AREA[\"Concatenated operation area description.\"]],"
+				+ "REMARK[\"Step 2 is applied in reverse direction\"]]";
+
+		CRS crs = CRSReader.read(text, true);
+		ConcatenatedOperation operation = CRSReader
+				.readConcatenatedOperation(text);
+		assertEquals(crs, operation);
+		assertEquals(CRSType.CONCATENATED_OPERATION, operation.getType());
+
 		assertEquals(text, operation.toString());
 		assertEquals(text, CRSWriter.write(operation));
 		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(operation));

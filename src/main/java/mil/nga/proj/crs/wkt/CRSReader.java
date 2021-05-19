@@ -47,6 +47,8 @@ import mil.nga.proj.crs.geo.GeoDatumEnsemble;
 import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
 import mil.nga.proj.crs.metadata.CoordinateMetadata;
+import mil.nga.proj.crs.operation.ConcatenableOperation;
+import mil.nga.proj.crs.operation.ConcatenatedOperation;
 import mil.nga.proj.crs.operation.CoordinateOperation;
 import mil.nga.proj.crs.operation.OperationMethod;
 import mil.nga.proj.crs.operation.OperationParameter;
@@ -497,6 +499,28 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read Concatenated Operation from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Concatenated Operation
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static ConcatenatedOperation readConcatenatedOperation(String text)
+			throws IOException {
+		ConcatenatedOperation operation = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			operation = reader.readConcatenatedOperation();
+			reader.readEnd();
+		} finally {
+			reader.close();
+		}
+		return operation;
+	}
+
+	/**
 	 * Read a Backward Compatible Geodetic or Geographic Coordinate Reference
 	 * System from the well-known text
 	 * 
@@ -799,6 +823,9 @@ public class CRSReader implements Closeable {
 			break;
 		case POINTMOTIONOPERATION:
 			crs = readPointMotionOperation();
+			break;
+		case CONCATENATEDOPERATION:
+			crs = readConcatenatedOperation();
 			break;
 		default:
 			throw new ProjectionException(
@@ -2067,6 +2094,84 @@ public class CRSReader implements Closeable {
 			readSeparator();
 			operation.setParameters(readPointMotionOperationParameters());
 		}
+
+		if (isKeywordNext(CRSKeyword.OPERATIONACCURACY)) {
+			readSeparator();
+			operation.setAccuracy(readAccuracy());
+		}
+
+		readScopeExtentIdentifierRemark(operation);
+
+		readRightDelimiter();
+
+		return operation;
+	}
+
+	/**
+	 * Read Concatenated Operation
+	 * 
+	 * @return concatenated operation
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ConcatenatedOperation readConcatenatedOperation()
+			throws IOException {
+
+		ConcatenatedOperation operation = new ConcatenatedOperation();
+
+		readKeyword(CRSKeyword.CONCATENATEDOPERATION);
+
+		readLeftDelimiter();
+
+		operation.setName(reader.readExpectedToken());
+
+		if (isKeywordNext(CRSKeyword.VERSION)) {
+			readSeparator();
+			operation.setVersion(readVersion());
+		}
+
+		readSeparator();
+		operation.setSource(readSource());
+
+		readSeparator();
+		operation.setTarget(readTarget());
+
+		do {
+
+			readSeparator();
+			readKeyword(CRSKeyword.STEP);
+
+			readLeftDelimiter();
+
+			CRSKeyword keyword = readKeyword(CRSKeyword.COORDINATEOPERATION,
+					CRSKeyword.POINTMOTIONOPERATION, CRSKeyword.CONVERSION,
+					CRSKeyword.DERIVINGCONVERSION);
+
+			ConcatenableOperation concatenable = null;
+
+			switch (keyword) {
+			case COORDINATEOPERATION:
+				concatenable = readCoordinateOperation();
+				break;
+			case POINTMOTIONOPERATION:
+				concatenable = readPointMotionOperation();
+				break;
+			case CONVERSION:
+				concatenable = readMapProjection();
+				break;
+			case DERIVINGCONVERSION:
+				concatenable = readDerivingConversion();
+				break;
+			default:
+				throw new ProjectionException(
+						"Unsupported concatenable operation type: " + keyword);
+			}
+
+			operation.addOperation(concatenable);
+
+			readRightDelimiter();
+
+		} while (isKeywordNext(CRSKeyword.STEP));
 
 		if (isKeywordNext(CRSKeyword.OPERATIONACCURACY)) {
 			readSeparator();

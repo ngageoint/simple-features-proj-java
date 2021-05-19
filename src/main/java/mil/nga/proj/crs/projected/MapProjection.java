@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import mil.nga.proj.crs.common.Identifier;
 import mil.nga.proj.crs.operation.ConcatenableOperation;
+import mil.nga.proj.crs.operation.ConcatenableOperationType;
 import mil.nga.proj.crs.operation.OperationMethod;
 import mil.nga.proj.crs.operation.OperationParameter;
 import mil.nga.proj.crs.operation.Parameter;
@@ -64,6 +65,14 @@ public class MapProjection implements ConcatenableOperation {
 	public MapProjection(String name, OperationMethod method) {
 		setName(name);
 		setMethod(method);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ConcatenableOperationType getOperationType() {
+		return ConcatenableOperationType.MAP_PROJECTION;
 	}
 
 	/**

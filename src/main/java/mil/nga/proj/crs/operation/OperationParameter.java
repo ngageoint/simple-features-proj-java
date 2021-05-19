@@ -67,6 +67,14 @@ public class OperationParameter implements Parameter {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public ParameterType getParameterType() {
+		return ParameterType.PARAMETER;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String getName() {
 		return name;
 	}

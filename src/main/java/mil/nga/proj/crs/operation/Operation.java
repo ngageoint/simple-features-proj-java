@@ -1,8 +1,5 @@
 package mil.nga.proj.crs.operation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.CommonCRS;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
@@ -23,11 +20,6 @@ public abstract class Operation extends CommonCRS {
 	 * Source Coordinate Reference System
 	 */
 	private CoordinateReferenceSystem source = null;
-
-	/**
-	 * Coordinate operation parameters and parameter files
-	 */
-	private List<Parameter> parameters = null;
 
 	/**
 	 * Coordinate operation accuracy
@@ -108,60 +100,6 @@ public abstract class Operation extends CommonCRS {
 	}
 
 	/**
-	 * Get the parameters
-	 * 
-	 * @return parameters
-	 */
-	public List<Parameter> getParameters() {
-		return parameters;
-	}
-
-	/**
-	 * Has parameters
-	 * 
-	 * @return true if has parameters
-	 */
-	public boolean hasParameters() {
-		return parameters != null && !parameters.isEmpty();
-	}
-
-	/**
-	 * Set the parameters
-	 * 
-	 * @param parameters
-	 *            parameters
-	 */
-	public void setParameters(List<Parameter> parameters) {
-		this.parameters = parameters;
-	}
-
-	/**
-	 * Add the parameter
-	 * 
-	 * @param parameter
-	 *            parameter
-	 */
-	public void addParameter(Parameter parameter) {
-		if (this.parameters == null) {
-			this.parameters = new ArrayList<>();
-		}
-		this.parameters.add(parameter);
-	}
-
-	/**
-	 * Add the parameters
-	 * 
-	 * @param parameters
-	 *            parameters
-	 */
-	public void addParameters(List<Parameter> parameters) {
-		if (this.parameters == null) {
-			this.parameters = new ArrayList<>();
-		}
-		this.parameters.addAll(parameters);
-	}
-
-	/**
 	 * Get the coordinate operation accuracy
 	 * 
 	 * @return coordinate operation accuracy
@@ -198,8 +136,6 @@ public abstract class Operation extends CommonCRS {
 		int result = super.hashCode();
 		result = prime * result
 				+ ((accuracy == null) ? 0 : accuracy.hashCode());
-		result = prime * result
-				+ ((parameters == null) ? 0 : parameters.hashCode());
 		result = prime * result + ((source == null) ? 0 : source.hashCode());
 		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		return result;
@@ -221,11 +157,6 @@ public abstract class Operation extends CommonCRS {
 			if (other.accuracy != null)
 				return false;
 		} else if (!accuracy.equals(other.accuracy))
-			return false;
-		if (parameters == null) {
-			if (other.parameters != null)
-				return false;
-		} else if (!parameters.equals(other.parameters))
 			return false;
 		if (source == null) {
 			if (other.source != null)

@@ -12,6 +12,13 @@ import mil.nga.proj.crs.common.Identifier;
 public interface Parameter {
 
 	/**
+	 * Get the parameter type
+	 * 
+	 * @return parameter type
+	 */
+	public ParameterType getParameterType();
+
+	/**
 	 * Get the name
 	 * 
 	 * @return name
