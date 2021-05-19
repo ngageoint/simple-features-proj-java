@@ -40,6 +40,7 @@ import mil.nga.proj.crs.geo.PrimeMeridian;
 import mil.nga.proj.crs.metadata.CoordinateMetadata;
 import mil.nga.proj.crs.operation.CoordinateOperation;
 import mil.nga.proj.crs.operation.OperationParameter;
+import mil.nga.proj.crs.operation.OperationParameterFile;
 import mil.nga.proj.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.proj.crs.projected.MapProjection;
 import mil.nga.proj.crs.projected.ProjectedCoordinateReferenceSystem;
@@ -4154,7 +4155,61 @@ public class CRSReaderWriterTest {
 		CoordinateMetadata metadata = CRSReader.readCoordinateMetadata(text);
 		assertEquals(crs, metadata);
 		assertEquals(CRSType.COORDINATE_METADATA, metadata.getType());
-		// TODO
+		GeoCoordinateReferenceSystem geographic = (GeoCoordinateReferenceSystem) metadata
+				.getCoordinateReferenceSystem();
+		assertEquals(CRSType.GEOGRAPHIC, geographic.getType());
+		assertEquals("WGS 84 (G1762)", geographic.getName());
+		assertEquals(2005.0, geographic.getDynamic().getReferenceEpoch(), 0);
+		assertEquals("World Geodetic System 1984 (G1762)",
+				geographic.getReferenceFrame().getName());
+		assertEquals("WGS 84",
+				geographic.getReferenceFrame().getEllipsoid().getName());
+		assertEquals(6378137, geographic.getReferenceFrame().getEllipsoid()
+				.getSemiMajorAxis(), 0);
+		assertEquals(298.257223563, geographic.getReferenceFrame()
+				.getEllipsoid().getInverseFlattening(), 0);
+		assertEquals(UnitType.LENGTHUNIT, geographic.getReferenceFrame()
+				.getEllipsoid().getUnit().getType());
+		assertEquals("metre", geographic.getReferenceFrame().getEllipsoid()
+				.getUnit().getName());
+		assertEquals(1.0, geographic.getReferenceFrame().getEllipsoid()
+				.getUnit().getConversionFactor(), 0);
+		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
+				geographic.getCoordinateSystem().getType());
+		assertEquals(3, geographic.getCoordinateSystem().getDimension());
+		assertEquals("lat", geographic.getCoordinateSystem().getAxes().get(0)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.NORTH, geographic.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals(UnitType.ANGLEUNIT, geographic.getCoordinateSystem()
+				.getAxes().get(0).getUnit().getType());
+		assertEquals("degree", geographic.getCoordinateSystem().getAxes().get(0)
+				.getUnit().getName());
+		assertEquals(0.0174532925199433, geographic.getCoordinateSystem()
+				.getAxes().get(0).getUnit().getConversionFactor(), 0);
+		assertEquals("lon", geographic.getCoordinateSystem().getAxes().get(1)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.EAST, geographic.getCoordinateSystem()
+				.getAxes().get(1).getDirection());
+		assertEquals(UnitType.ANGLEUNIT, geographic.getCoordinateSystem()
+				.getAxes().get(1).getUnit().getType());
+		assertEquals("degree", geographic.getCoordinateSystem().getAxes().get(1)
+				.getUnit().getName());
+		assertEquals(0.0174532925199433, geographic.getCoordinateSystem()
+				.getAxes().get(1).getUnit().getConversionFactor(), 0);
+		assertEquals("ellipsoidal height",
+				geographic.getCoordinateSystem().getAxes().get(2).getName());
+		assertEquals("h", geographic.getCoordinateSystem().getAxes().get(2)
+				.getAbbreviation());
+		assertEquals(AxisDirectionType.UP, geographic.getCoordinateSystem()
+				.getAxes().get(2).getDirection());
+		assertEquals(UnitType.LENGTHUNIT, geographic.getCoordinateSystem()
+				.getAxes().get(2).getUnit().getType());
+		assertEquals("metre", geographic.getCoordinateSystem().getAxes().get(2)
+				.getUnit().getName());
+		assertEquals(1.0, geographic.getCoordinateSystem().getAxes().get(2)
+				.getUnit().getConversionFactor(), 0);
+		assertEquals(2016.47, metadata.getEpoch(), 0);
 
 		text = text.replace("6378137", "6378137.0");
 		assertEquals(text, metadata.toString());
@@ -4197,7 +4252,87 @@ public class CRSReaderWriterTest {
 		assertEquals(crs, operation);
 		assertEquals(CRSType.COORDINATE_OPERATION, operation.getType());
 		assertEquals("Tokyo to JGD2000", operation.getName());
-		// TODO
+		assertEquals("GSI", operation.getVersion());
+		GeoCoordinateReferenceSystem geodetic1 = (GeoCoordinateReferenceSystem) operation
+				.getSource();
+		assertEquals(CRSType.GEODETIC, geodetic1.getType());
+		assertEquals("Tokyo", geodetic1.getName());
+		GeoCoordinateReferenceSystem geodetic2 = (GeoCoordinateReferenceSystem) operation
+				.getTarget();
+		assertEquals(CRSType.GEODETIC, geodetic2.getType());
+		assertEquals("JGD2000", geodetic2.getName());
+		assertEquals("Geocentric translations",
+				operation.getMethod().getName());
+		assertEquals("EPSG",
+				operation.getMethod().getIdentifiers().get(0).getName());
+		assertEquals("1031", operation.getMethod().getIdentifiers().get(0)
+				.getUniqueIdentifier());
+		assertEquals("X-axis translation",
+				operation.getParameters().get(0).getName());
+		assertEquals(-146.414,
+				((OperationParameter) operation.getParameters().get(0))
+						.getValue(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) operation.getParameters().get(0))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getParameters().get(0))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getParameters().get(0))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG",
+				((OperationParameter) operation.getParameters().get(0))
+						.getIdentifiers().get(0).getName());
+		assertEquals("8605",
+				((OperationParameter) operation.getParameters().get(0))
+						.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Y-axis translation",
+				operation.getParameters().get(1).getName());
+		assertEquals(507.337,
+				((OperationParameter) operation.getParameters().get(1))
+						.getValue(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) operation.getParameters().get(1))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getParameters().get(1))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getParameters().get(1))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG",
+				((OperationParameter) operation.getParameters().get(1))
+						.getIdentifiers().get(0).getName());
+		assertEquals("8606",
+				((OperationParameter) operation.getParameters().get(1))
+						.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Z-axis translation",
+				operation.getParameters().get(2).getName());
+		assertEquals(680.507,
+				((OperationParameter) operation.getParameters().get(2))
+						.getValue(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) operation.getParameters().get(2))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getParameters().get(2))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getParameters().get(2))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG",
+				((OperationParameter) operation.getParameters().get(2))
+						.getIdentifiers().get(0).getName());
+		assertEquals("8607",
+				((OperationParameter) operation.getParameters().get(2))
+						.getIdentifiers().get(0).getUniqueIdentifier());
 
 		assertEquals(text, operation.toString());
 		assertEquals(text, CRSWriter.write(operation));
@@ -4220,7 +4355,85 @@ public class CRSReaderWriterTest {
 		assertEquals(crs, operation);
 		assertEquals(CRSType.COORDINATE_OPERATION, operation.getType());
 		assertEquals("AGD84 to GDA94", operation.getName());
-		// TODO
+		GeoCoordinateReferenceSystem geographic1 = (GeoCoordinateReferenceSystem) operation
+				.getSource();
+		assertEquals(CRSType.GEOGRAPHIC, geographic1.getType());
+		assertEquals("AGD84", geographic1.getName());
+		GeoCoordinateReferenceSystem geographic2 = (GeoCoordinateReferenceSystem) operation
+				.getTarget();
+		assertEquals(CRSType.GEOGRAPHIC, geographic2.getType());
+		assertEquals("GDA94", geographic2.getName());
+		assertEquals("Geocentric translations",
+				operation.getMethod().getName());
+		assertEquals("EPSG",
+				operation.getMethod().getIdentifiers().get(0).getName());
+		assertEquals("1031", operation.getMethod().getIdentifiers().get(0)
+				.getUniqueIdentifier());
+		assertEquals("X-axis translation",
+				operation.getParameters().get(0).getName());
+		assertEquals(-128.5,
+				((OperationParameter) operation.getParameters().get(0))
+						.getValue(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) operation.getParameters().get(0))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getParameters().get(0))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getParameters().get(0))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Y-axis translation",
+				operation.getParameters().get(1).getName());
+		assertEquals(-53.0,
+				((OperationParameter) operation.getParameters().get(1))
+						.getValue(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) operation.getParameters().get(1))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getParameters().get(1))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getParameters().get(1))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Z-axis translation",
+				operation.getParameters().get(2).getName());
+		assertEquals(153.4,
+				((OperationParameter) operation.getParameters().get(2))
+						.getValue(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) operation.getParameters().get(2))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getParameters().get(2))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getParameters().get(2))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals(5, operation.getAccuracy(), 0);
+		assertEquals("Low accuracy applications.",
+				operation.getUsages().get(0).getScope());
+		assertEquals("Australia onshore",
+				operation.getUsages().get(0).getExtent().getAreaDescription());
+		assertEquals(-43.7, operation.getUsages().get(0).getExtent()
+				.getGeographicBoundingBox().getLowerLeftLatitude(), 0);
+		assertEquals(112.85, operation.getUsages().get(0).getExtent()
+				.getGeographicBoundingBox().getLowerLeftLongitude(), 0);
+		assertEquals(-9.87, operation.getUsages().get(0).getExtent()
+				.getGeographicBoundingBox().getUpperRightLatitude(), 0);
+		assertEquals(153.68,
+				operation.getUsages().get(0).getExtent()
+						.getGeographicBoundingBox().getUpperRightLongitude(),
+				0);
+		assertEquals("Use NTv2 file for better accuracy",
+				operation.getRemark());
 
 		text = text.replace("6378160", "6378160.0")
 				.replace("6378137", "6378137.0").replace(",1,", ",1.0,")
@@ -4243,7 +4456,33 @@ public class CRSReaderWriterTest {
 		assertEquals(crs, operation);
 		assertEquals(CRSType.COORDINATE_OPERATION, operation.getType());
 		assertEquals("NZGD49 to NZGD2000", operation.getName());
-		// TODO
+		ProjectedCoordinateReferenceSystem projected = (ProjectedCoordinateReferenceSystem) operation
+				.getSource();
+		assertEquals(CRSType.PROJECTED, projected.getType());
+		assertEquals("NZGD49 / New Zealand Map Grid", projected.getName());
+		GeoCoordinateReferenceSystem geographic = (GeoCoordinateReferenceSystem) operation
+				.getTarget();
+		assertEquals(CRSType.GEOGRAPHIC, geographic.getType());
+		assertEquals("NZGD2000", geographic.getName());
+		assertEquals("NTv2", operation.getMethod().getName());
+		assertEquals("EPSG",
+				operation.getMethod().getIdentifiers().get(0).getName());
+		assertEquals("9615", operation.getMethod().getIdentifiers().get(0)
+				.getUniqueIdentifier());
+		assertEquals("Latitude and longitude difference file",
+				operation.getParameters().get(0).getName());
+		assertEquals("nzgd2kgrid0005.gsb",
+				((OperationParameterFile) operation.getParameters().get(0))
+						.getFileName());
+		assertEquals("EPSG", operation.getIdentifiers().get(0).getName());
+		assertEquals("1568",
+				operation.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("LINZS25000",
+				operation.getIdentifiers().get(0).getCitation());
+		assertEquals("http://www.linz.govt.nz/geodetic/software-downloads/",
+				operation.getIdentifiers().get(0).getUri());
+		assertEquals("Coordinate transformation accuracy 0.1-1.0m",
+				operation.getRemark());
 
 		text = text.replace("6378388", "6378388.0").replace("297", "297.0")
 				.replace("6023150", "6023150.0").replace("6378137", "6378137.0")
@@ -4255,7 +4494,7 @@ public class CRSReaderWriterTest {
 
 		text = "COORDINATEOPERATION[\"Amersfoort to ETRS89 (3)\","
 				+ "SOURCECRS[GEOGCRS[\"Amersfoort\",DATUM[\"Amersfoort\",ELLIPSOID[\"Bessel 1841\",6377397.155,299.1528128,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7004]],ID[\"EPSG\",6289]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4289]]],"
-				+ "TARGETCRS[GEOGCRS[\"ETRS89\",ENSEMBLE[\"European Terrestrial Reference System 1989 ensemble\", MEMBER[\"European Terrestrial Reference Frame 1989\", ID[\"EPSG\",1178]], MEMBER[\"European Terrestrial Reference Frame 1990\", ID[\"EPSG\",1179]], MEMBER[\"European Terrestrial Reference Frame 1991\", ID[\"EPSG\",1180]], MEMBER[\"European Terrestrial Reference Frame 1992\", ID[\"EPSG\",1181]], MEMBER[\"European Terrestrial Reference Frame 1993\", ID[\"EPSG\",1182]], MEMBER[\"European Terrestrial Reference Frame 1994\", ID[\"EPSG\",1183]], MEMBER[\"European Terrestrial Reference Frame 1996\", ID[\"EPSG\",1184]], MEMBER[\"European Terrestrial Reference Frame 1997\", ID[\"EPSG\",1185]], MEMBER[\"European Terrestrial Reference Frame 2000\", ID[\"EPSG\",1186]], MEMBER[\"European Terrestrial Reference Frame 2005\", ID[\"EPSG\",1204]], MEMBER[\"European Terrestrial Reference Frame 2014\", ID[\"EPSG\",1206]], ELLIPSOID[\"GRS 1980\",6378137,298.2572221,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7019]], ENSEMBLEACCURACY[0.1],ID[\"EPSG\",6258]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4258]]],"
+				+ "TARGETCRS[GEOGCRS[\"ETRS89\",ENSEMBLE[\"European Terrestrial Reference System 1989 ensemble\",MEMBER[\"European Terrestrial Reference Frame 1989\",ID[\"EPSG\",1178]],MEMBER[\"European Terrestrial Reference Frame 1990\",ID[\"EPSG\",1179]],MEMBER[\"European Terrestrial Reference Frame 1991\",ID[\"EPSG\",1180]],MEMBER[\"European Terrestrial Reference Frame 1992\",ID[\"EPSG\",1181]],MEMBER[\"European Terrestrial Reference Frame 1993\",ID[\"EPSG\",1182]],MEMBER[\"European Terrestrial Reference Frame 1994\",ID[\"EPSG\",1183]],MEMBER[\"European Terrestrial Reference Frame 1996\",ID[\"EPSG\",1184]],MEMBER[\"European Terrestrial Reference Frame 1997\",ID[\"EPSG\",1185]],MEMBER[\"European Terrestrial Reference Frame 2000\",ID[\"EPSG\",1186]],MEMBER[\"European Terrestrial Reference Frame 2005\",ID[\"EPSG\",1204]],MEMBER[\"European Terrestrial Reference Frame 2014\",ID[\"EPSG\",1206]],ELLIPSOID[\"GRS 1980\",6378137,298.2572221,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7019]],ENSEMBLEACCURACY[0.1],ID[\"EPSG\",6258]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4258]]],"
 				+ "METHOD[\"Coordinate Frame\"],"
 				+ "PARAMETER[\"X-axis translation\",565.2369,LENGTHUNIT[\"metre\",1.0]],"
 				+ "PARAMETER[\"Y-axis translation\",50.0087,LENGTHUNIT[\"metre\",1.0]],"
@@ -4271,15 +4510,138 @@ public class CRSReaderWriterTest {
 		assertEquals(crs, operation);
 		assertEquals(CRSType.COORDINATE_OPERATION, operation.getType());
 		assertEquals("Amersfoort to ETRS89 (3)", operation.getName());
-		// TODO
+		geographic1 = (GeoCoordinateReferenceSystem) operation.getSource();
+		assertEquals(CRSType.GEOGRAPHIC, geographic1.getType());
+		assertEquals("Amersfoort", geographic1.getName());
+		geographic2 = (GeoCoordinateReferenceSystem) operation.getTarget();
+		assertEquals(CRSType.GEOGRAPHIC, geographic2.getType());
+		assertEquals("ETRS89", geographic2.getName());
+		assertEquals("Coordinate Frame", operation.getMethod().getName());
+		assertEquals("X-axis translation",
+				operation.getParameters().get(0).getName());
+		assertEquals(565.2369,
+				((OperationParameter) operation.getParameters().get(0))
+						.getValue(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) operation.getParameters().get(0))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getParameters().get(0))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getParameters().get(0))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Y-axis translation",
+				operation.getParameters().get(1).getName());
+		assertEquals(50.0087,
+				((OperationParameter) operation.getParameters().get(1))
+						.getValue(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) operation.getParameters().get(1))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getParameters().get(1))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getParameters().get(1))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Z-axis translation",
+				operation.getParameters().get(2).getName());
+		assertEquals(465.658,
+				((OperationParameter) operation.getParameters().get(2))
+						.getValue(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) operation.getParameters().get(2))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getParameters().get(2))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getParameters().get(2))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("X-axis rotation",
+				operation.getParameters().get(3).getName());
+		assertEquals(1.9725,
+				((OperationParameter) operation.getParameters().get(3))
+						.getValue(),
+				0);
+		assertEquals(UnitType.ANGLEUNIT,
+				((OperationParameter) operation.getParameters().get(3))
+						.getUnit().getType());
+		assertEquals("microradian",
+				((OperationParameter) operation.getParameters().get(3))
+						.getUnit().getName());
+		assertEquals(1E-06,
+				((OperationParameter) operation.getParameters().get(3))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Y-axis rotation",
+				operation.getParameters().get(4).getName());
+		assertEquals(-1.7004,
+				((OperationParameter) operation.getParameters().get(4))
+						.getValue(),
+				0);
+		assertEquals(UnitType.ANGLEUNIT,
+				((OperationParameter) operation.getParameters().get(4))
+						.getUnit().getType());
+		assertEquals("microradian",
+				((OperationParameter) operation.getParameters().get(4))
+						.getUnit().getName());
+		assertEquals(1E-06,
+				((OperationParameter) operation.getParameters().get(4))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Z-axis rotation",
+				operation.getParameters().get(5).getName());
+		assertEquals(9.0677,
+				((OperationParameter) operation.getParameters().get(5))
+						.getValue(),
+				0);
+		assertEquals(UnitType.ANGLEUNIT,
+				((OperationParameter) operation.getParameters().get(5))
+						.getUnit().getType());
+		assertEquals("microradian",
+				((OperationParameter) operation.getParameters().get(5))
+						.getUnit().getName());
+		assertEquals(1E-06,
+				((OperationParameter) operation.getParameters().get(5))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Scale difference",
+				operation.getParameters().get(6).getName());
+		assertEquals(4.0812,
+				((OperationParameter) operation.getParameters().get(6))
+						.getValue(),
+				0);
+		assertEquals(UnitType.SCALEUNIT,
+				((OperationParameter) operation.getParameters().get(6))
+						.getUnit().getType());
+		assertEquals("parts per million",
+				((OperationParameter) operation.getParameters().get(6))
+						.getUnit().getName());
+		assertEquals(1E-06,
+				((OperationParameter) operation.getParameters().get(6))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", operation.getIdentifiers().get(0).getName());
+		assertEquals("15739",
+				operation.getIdentifiers().get(0).getUniqueIdentifier());
 
+		text = text.replace(",1,", ",1.0,").replace("6378137", "6378137.0")
+				.replace("1E-06", "1.0E-6");
 		assertEquals(text, operation.toString());
 		assertEquals(text, CRSWriter.write(operation));
 		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(operation));
 
 		text = "COORDINATEOPERATION[\"DHHN92 height to EVRF2007 height\","
-				+ "SOURCECRS[…full WKT definition of DHHN92 required here but omitted for brevity…],"
-				+ "TARGETCRS[…full WKT definition of EVRF2007 required here but omitted for brevity…],"
+				+ "SOURCECRS[VERTCRS[\"DHHN92 height\",VDATUM[\"Deutsches Haupthoehennetz 1992\",ID[\"EPSG\",5181]],CS[vertical,1,ID[\"EPSG\",6499]],AXIS[\"Gravity-related height (H)\",up],LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5783]]],"
+				+ "TARGETCRS[VERTCRS[\"EVRF2007 height\",VDATUM[\"European Vertical Reference Frame 2007\",ID[\"EPSG\",5215]],CS[vertical,1,ID[\"EPSG\",6499]],AXIS[\"Gravity-related height (H)\",up],LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5621]]],"
 				+ "METHOD[\"Vertical Offset and Slope\",ID[\"EPSG\",1046]],"
 				+ "PARAMETER[\"Inclination in latitude\",-0.010,"
 				+ "ANGLEUNIT[\"arc-second\",4.84813681109535E-06]],"
@@ -4290,8 +4652,7 @@ public class CRSReaderWriterTest {
 				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
 				+ "PARAMETER[\"Ordinate 2 of evaluation point\",10.2166666666667,"
 				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
-				+ "INTERPOLATIONCRS[\"ETRS89\""
-				+ "…full WKT definition of ETRS89 required here but omitted for brevity…],"
+				+ "INTERPOLATIONCRS[GEOGCRS[\"ETRS89\",ENSEMBLE[\"European Terrestrial Reference System 1989 ensemble\",MEMBER[\"European Terrestrial Reference Frame 1989\",ID[\"EPSG\",1178]],MEMBER[\"European Terrestrial Reference Frame 1990\",ID[\"EPSG\",1179]],MEMBER[\"European Terrestrial Reference Frame 1991\",ID[\"EPSG\",1180]],MEMBER[\"European Terrestrial Reference Frame 1992\",ID[\"EPSG\",1181]],MEMBER[\"European Terrestrial Reference Frame 1993\",ID[\"EPSG\",1182]],MEMBER[\"European Terrestrial Reference Frame 1994\",ID[\"EPSG\",1183]],MEMBER[\"European Terrestrial Reference Frame 1996\",ID[\"EPSG\",1184]],MEMBER[\"European Terrestrial Reference Frame 1997\",ID[\"EPSG\",1185]],MEMBER[\"European Terrestrial Reference Frame 2000\",ID[\"EPSG\",1186]],MEMBER[\"European Terrestrial Reference Frame 2005\",ID[\"EPSG\",1204]],MEMBER[\"European Terrestrial Reference Frame 2014\",ID[\"EPSG\",1206]],ELLIPSOID[\"GRS 1980\",6378137,298.2572221,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7019]],ENSEMBLEACCURACY[0.1],ID[\"EPSG\",6258]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4258]]],"
 				+ "OPERATIONACCURACY[0.1],"
 				+ "REMARK[\"Determined at 427 points. RMS residual 0.002m, maximum 0.007m\"]]";
 
@@ -4300,8 +4661,111 @@ public class CRSReaderWriterTest {
 		assertEquals(crs, operation);
 		assertEquals(CRSType.COORDINATE_OPERATION, operation.getType());
 		assertEquals("DHHN92 height to EVRF2007 height", operation.getName());
-		// TODO
+		VerticalCoordinateReferenceSystem vertical1 = (VerticalCoordinateReferenceSystem) operation
+				.getSource();
+		assertEquals(CRSType.VERTICAL, vertical1.getType());
+		assertEquals("DHHN92 height", vertical1.getName());
+		VerticalCoordinateReferenceSystem vertical2 = (VerticalCoordinateReferenceSystem) operation
+				.getTarget();
+		assertEquals(CRSType.VERTICAL, vertical2.getType());
+		assertEquals("EVRF2007 height", vertical2.getName());
+		assertEquals("Vertical Offset and Slope",
+				operation.getMethod().getName());
+		assertEquals("EPSG",
+				operation.getMethod().getIdentifiers().get(0).getName());
+		assertEquals("1046", operation.getMethod().getIdentifiers().get(0)
+				.getUniqueIdentifier());
+		assertEquals("Inclination in latitude",
+				operation.getParameters().get(0).getName());
+		assertEquals(-0.010,
+				((OperationParameter) operation.getParameters().get(0))
+						.getValue(),
+				0);
+		assertEquals(UnitType.ANGLEUNIT,
+				((OperationParameter) operation.getParameters().get(0))
+						.getUnit().getType());
+		assertEquals("arc-second",
+				((OperationParameter) operation.getParameters().get(0))
+						.getUnit().getName());
+		assertEquals(4.84813681109535E-06,
+				((OperationParameter) operation.getParameters().get(0))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Inclination in longitude",
+				operation.getParameters().get(1).getName());
+		assertEquals(0.002,
+				((OperationParameter) operation.getParameters().get(1))
+						.getValue(),
+				0);
+		assertEquals(UnitType.ANGLEUNIT,
+				((OperationParameter) operation.getParameters().get(1))
+						.getUnit().getType());
+		assertEquals("arc-second",
+				((OperationParameter) operation.getParameters().get(1))
+						.getUnit().getName());
+		assertEquals(4.84813681109535E-06,
+				((OperationParameter) operation.getParameters().get(1))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Vertical offset",
+				operation.getParameters().get(2).getName());
+		assertEquals(0.015,
+				((OperationParameter) operation.getParameters().get(2))
+						.getValue(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) operation.getParameters().get(2))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getParameters().get(2))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getParameters().get(2))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Ordinate 1 of evaluation point",
+				operation.getParameters().get(3).getName());
+		assertEquals(51.05,
+				((OperationParameter) operation.getParameters().get(3))
+						.getValue(),
+				0);
+		assertEquals(UnitType.ANGLEUNIT,
+				((OperationParameter) operation.getParameters().get(3))
+						.getUnit().getType());
+		assertEquals("degree",
+				((OperationParameter) operation.getParameters().get(3))
+						.getUnit().getName());
+		assertEquals(0.0174532925199433,
+				((OperationParameter) operation.getParameters().get(3))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Ordinate 2 of evaluation point",
+				operation.getParameters().get(4).getName());
+		assertEquals(10.2166666666667,
+				((OperationParameter) operation.getParameters().get(4))
+						.getValue(),
+				0);
+		assertEquals(UnitType.ANGLEUNIT,
+				((OperationParameter) operation.getParameters().get(4))
+						.getUnit().getType());
+		assertEquals("degree",
+				((OperationParameter) operation.getParameters().get(4))
+						.getUnit().getName());
+		assertEquals(0.0174532925199433,
+				((OperationParameter) operation.getParameters().get(4))
+						.getUnit().getConversionFactor(),
+				0);
+		geographic = (GeoCoordinateReferenceSystem) operation
+				.getInterpolation();
+		assertEquals(CRSType.GEOGRAPHIC, geographic.getType());
+		assertEquals("ETRS89", geographic.getName());
+		assertEquals(0.1, operation.getAccuracy(), 0);
+		assertEquals(
+				"Determined at 427 points. RMS residual 0.002m, maximum 0.007m",
+				operation.getRemark());
 
+		text = text.replace("\",1,", "\",1.0,").replace("-0.010", "-0.01")
+				.replace("-06", "-6").replace("6378137", "6378137.0");
 		assertEquals(text, operation.toString());
 		assertEquals(text, CRSWriter.write(operation));
 		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(operation));
