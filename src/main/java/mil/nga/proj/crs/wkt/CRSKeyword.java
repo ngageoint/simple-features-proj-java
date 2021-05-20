@@ -373,6 +373,11 @@ public enum CRSKeyword {
 	TOWGS84("ABRIDGEDTRANSFORMATION"),
 
 	/**
+	 * Triaxial ellipsoid
+	 */
+	TRIAXIAL(),
+
+	/**
 	 * Usage
 	 */
 	USAGE(),

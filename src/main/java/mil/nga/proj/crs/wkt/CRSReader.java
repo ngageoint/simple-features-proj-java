@@ -49,6 +49,7 @@ import mil.nga.proj.crs.geo.GeoCoordinateReferenceSystem;
 import mil.nga.proj.crs.geo.GeoDatumEnsemble;
 import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
+import mil.nga.proj.crs.geo.TriaxialEllipsoid;
 import mil.nga.proj.crs.metadata.CoordinateMetadata;
 import mil.nga.proj.crs.operation.ConcatenableOperation;
 import mil.nga.proj.crs.operation.ConcatenatedOperation;
@@ -2630,9 +2631,18 @@ public class CRSReader implements Closeable {
 	 */
 	public Ellipsoid readEllipsoid() throws IOException {
 
-		Ellipsoid ellipsoid = new Ellipsoid();
+		Ellipsoid ellipsoid = null;
+		TriaxialEllipsoid triaxial = null;
 
-		readKeyword(CRSKeyword.ELLIPSOID);
+		CRSKeyword keyword = readKeyword(CRSKeyword.ELLIPSOID,
+				CRSKeyword.TRIAXIAL);
+
+		if (keyword == CRSKeyword.TRIAXIAL) {
+			triaxial = new TriaxialEllipsoid();
+			ellipsoid = triaxial;
+		} else {
+			ellipsoid = new Ellipsoid();
+		}
 
 		readLeftDelimiter();
 
@@ -2641,11 +2651,22 @@ public class CRSReader implements Closeable {
 		readSeparator();
 		ellipsoid.setSemiMajorAxis(reader.readUnsignedNumber());
 
-		readSeparator();
-		ellipsoid.setInverseFlattening(reader.readUnsignedNumber());
+		if (triaxial != null) {
 
-		CRSKeyword keyword = readToKeyword(CRSKeyword.LENGTHUNIT,
-				CRSKeyword.ID);
+			readSeparator();
+			triaxial.setSemiMedianAxis(reader.readUnsignedNumber());
+
+			readSeparator();
+			triaxial.setSemiMinorAxis(reader.readUnsignedNumber());
+
+		} else {
+
+			readSeparator();
+			ellipsoid.setInverseFlattening(reader.readUnsignedNumber());
+
+		}
+
+		keyword = readToKeyword(CRSKeyword.LENGTHUNIT, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.LENGTHUNIT) {
 			ellipsoid.setUnit(readLengthUnit());

@@ -39,6 +39,7 @@ import mil.nga.proj.crs.geo.GeoCoordinateReferenceSystem;
 import mil.nga.proj.crs.geo.GeoDatumEnsemble;
 import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
+import mil.nga.proj.crs.geo.TriaxialEllipsoid;
 import mil.nga.proj.crs.metadata.CoordinateMetadata;
 import mil.nga.proj.crs.operation.ConcatenatedOperation;
 import mil.nga.proj.crs.operation.CoordinateOperation;
@@ -5507,6 +5508,35 @@ public class CRSReaderWriterTest {
 		assertEquals(expectedText, CRSWriter.write(projectedCrs));
 		assertEquals(WKTUtils.pretty(expectedText),
 				CRSWriter.writePretty(projectedCrs));
+
+	}
+
+	/**
+	 * Test triaxial ellipsoid
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testTriaxialEllipsoid() throws IOException {
+
+		String text = "TRIAXIAL[\"Io 2009 IAU IAG\",1829400,1819400,1815700,"
+				+ "LENGTHUNIT[\"metre\",1]]";
+		CRSReader reader = new CRSReader(text);
+		TriaxialEllipsoid ellipsoid = (TriaxialEllipsoid) reader
+				.readEllipsoid();
+		assertEquals("Io 2009 IAU IAG", ellipsoid.getName());
+		assertEquals(1829400, ellipsoid.getSemiMajorAxis(), 0);
+		assertEquals(1819400, ellipsoid.getSemiMedianAxis(), 0);
+		assertEquals(1815700, ellipsoid.getSemiMinorAxis(), 0);
+		assertEquals(UnitType.LENGTHUNIT, ellipsoid.getUnit().getType());
+		assertEquals("metre", ellipsoid.getUnit().getName());
+		assertEquals(1.0, ellipsoid.getUnit().getConversionFactor(), 0);
+		reader.close();
+		text = text.replaceAll("1829400", "1829400.0")
+				.replaceAll("1819400", "1819400.0")
+				.replaceAll("1815700", "1815700.0").replace("\",1]", "\",1.0]");
+		assertEquals(text, ellipsoid.toString());
 
 	}
 

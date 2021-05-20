@@ -36,6 +36,7 @@ import mil.nga.proj.crs.geo.GeoCoordinateReferenceSystem;
 import mil.nga.proj.crs.geo.GeoDatumEnsemble;
 import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
+import mil.nga.proj.crs.geo.TriaxialEllipsoid;
 import mil.nga.proj.crs.metadata.CoordinateMetadata;
 import mil.nga.proj.crs.operation.ConcatenableOperation;
 import mil.nga.proj.crs.operation.ConcatenatedOperation;
@@ -1583,7 +1584,6 @@ public class CRSWriter implements Closeable {
 		writeQuotedText(primeMeridian.getName());
 
 		writeSeparator();
-
 		write(primeMeridian.getIrmLongitude());
 
 		if (primeMeridian.hasIrmLongitudeUnit()) {
@@ -1609,19 +1609,36 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(Ellipsoid ellipsoid) throws IOException {
 
-		write(CRSKeyword.ELLIPSOID);
+		TriaxialEllipsoid triaxial = null;
+
+		if (ellipsoid instanceof TriaxialEllipsoid) {
+			triaxial = (TriaxialEllipsoid) ellipsoid;
+			write(CRSKeyword.TRIAXIAL);
+		} else {
+			write(CRSKeyword.ELLIPSOID);
+		}
 
 		writeLeftDelimiter();
 
 		writeQuotedText(ellipsoid.getName());
 
 		writeSeparator();
-
 		write(ellipsoid.getSemiMajorAxis());
 
-		writeSeparator();
+		if (triaxial != null) {
 
-		write(ellipsoid.getInverseFlattening());
+			writeSeparator();
+			write(triaxial.getSemiMedianAxis());
+
+			writeSeparator();
+			write(triaxial.getSemiMinorAxis());
+
+		} else {
+
+			writeSeparator();
+			write(ellipsoid.getInverseFlattening());
+
+		}
 
 		if (ellipsoid.hasUnit()) {
 			writeSeparator();
@@ -1704,7 +1721,6 @@ public class CRSWriter implements Closeable {
 		writeQuotedText(identifier.getName());
 
 		writeSeparator();
-
 		writeNumberOrQuotedText(identifier.getUniqueIdentifier());
 
 		if (identifier.hasVersion()) {
@@ -1744,7 +1760,6 @@ public class CRSWriter implements Closeable {
 		writer.write(coordinateSystem.getType().getName());
 
 		writeSeparator();
-
 		write(coordinateSystem.getDimension());
 
 		if (coordinateSystem.hasIdentifiers()) {
@@ -1795,7 +1810,6 @@ public class CRSWriter implements Closeable {
 		writeQuotedText(nameAbbrev.toString());
 
 		writeSeparator();
-
 		writer.write(axis.getDirection().getName());
 
 		switch (axis.getDirection()) {
@@ -1813,7 +1827,6 @@ public class CRSWriter implements Closeable {
 				write(axis.getMeridian());
 
 				writeSeparator();
-
 				write(axis.getMeridianUnit());
 
 				writeRightDelimiter();
@@ -1992,15 +2005,12 @@ public class CRSWriter implements Closeable {
 		write(geographicBoundingBox.getLowerLeftLatitude());
 
 		writeSeparator();
-
 		write(geographicBoundingBox.getLowerLeftLongitude());
 
 		writeSeparator();
-
 		write(geographicBoundingBox.getUpperRightLatitude());
 
 		writeSeparator();
-
 		write(geographicBoundingBox.getUpperRightLongitude());
 
 		writeRightDelimiter();
@@ -2023,7 +2033,6 @@ public class CRSWriter implements Closeable {
 		write(verticalExtent.getMinimumHeight());
 
 		writeSeparator();
-
 		write(verticalExtent.getMaximumHeight());
 
 		if (verticalExtent.hasUnit()) {
@@ -2082,7 +2091,6 @@ public class CRSWriter implements Closeable {
 		writeQuotedText(mapProjection.getName());
 
 		writeSeparator();
-
 		write(mapProjection.getMethod());
 
 		if (mapProjection.hasParameters()) {
@@ -2161,7 +2169,6 @@ public class CRSWriter implements Closeable {
 		writeQuotedText(parameter.getName());
 
 		writeSeparator();
-
 		write(parameter.getValue());
 
 		if (parameter.hasUnit()) {
@@ -2237,7 +2244,6 @@ public class CRSWriter implements Closeable {
 		writeQuotedText(derivingConversion.getName());
 
 		writeSeparator();
-
 		write(derivingConversion.getMethod());
 
 		if (derivingConversion.hasParameters()) {
@@ -2317,7 +2323,6 @@ public class CRSWriter implements Closeable {
 		writeQuotedText(file.getName());
 
 		writeSeparator();
-
 		writeQuotedText(file.getFileName());
 
 		if (file.hasIdentifiers()) {
