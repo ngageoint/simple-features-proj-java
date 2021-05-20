@@ -4871,30 +4871,33 @@ public class CRSReaderWriterTest {
 	@Test
 	public void testConcatenatedOperation() throws IOException {
 
-		// TODO
-
 		String text = "CONCATENATEDOPERATION[\"RT90 to KKJ\","
-				+ "SOURCECRS[GEOGCRS[\"RT90\","
-				+ "…full WKT definition of concatenated operation source CRS required here but omitted for brevity…]],"
-				+ "TARGETCRS[GEOGCRS[\"KKJ\","
-				+ "…full WKT definition of concatenated operation target CRS required here but omitted for brevity…]],"
+				+ "SOURCECRS[GEOGCRS[\"RT90\",DATUM[\"Rikets koordinatsystem 1990\",ELLIPSOID[\"Bessel 1841\",6377397.155,299.1528128,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7004]],ID[\"EPSG\",6124]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4124]]],"
+				+ "TARGETCRS[GEOGCRS[\"KKJ\",DATUM[\"Kartastokoordinaattijarjestelma (1966)\",ELLIPSOID[\"International 1924\",6378388,297,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7022]],ID[\"EPSG\",6123]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4123]]],"
 				+ "STEP[COORDINATEOPERATION[\"RT90 to ETRS89\","
-				+ "SOURCECRS[GEOGCRS[\"RT90\""
-				+ "…full WKT definition of step 1 source CRS required here but omitted for brevity…]],"
-				+ "TARGETCRS[GEOGCRS[\"ETRS89\""
-				+ "…full WKT definition of step 1 target CRS required here but omitted for brevity…]],"
-				+ "METHOD["
-				+ "…full WKT definition of operation RT90 to ETRS89  required here but omitted for brevity…"
-				+ "ID[\"EPSG\",1437]],"
+				+ "SOURCECRS[GEOGCRS[\"RT90\",DATUM[\"Rikets koordinatsystem 1990\",ELLIPSOID[\"Bessel 1841\",6377397.155,299.1528128,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7004]],ID[\"EPSG\",6124]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4124]]],"
+				+ "TARGETCRS[GEOGCRS[\"ETRS89\",ENSEMBLE[\"European Terrestrial Reference System 1989 ensemble\",MEMBER[\"European Terrestrial Reference Frame 1989\",ID[\"EPSG\",1178]],MEMBER[\"European Terrestrial Reference Frame 1990\",ID[\"EPSG\",1179]],MEMBER[\"European Terrestrial Reference Frame 1991\",ID[\"EPSG\",1180]],MEMBER[\"European Terrestrial Reference Frame 1992\",ID[\"EPSG\",1181]],MEMBER[\"European Terrestrial Reference Frame 1993\",ID[\"EPSG\",1182]],MEMBER[\"European Terrestrial Reference Frame 1994\",ID[\"EPSG\",1183]],MEMBER[\"European Terrestrial Reference Frame 1996\",ID[\"EPSG\",1184]],MEMBER[\"European Terrestrial Reference Frame 1997\",ID[\"EPSG\",1185]],MEMBER[\"European Terrestrial Reference Frame 2000\",ID[\"EPSG\",1186]],MEMBER[\"European Terrestrial Reference Frame 2005\",ID[\"EPSG\",1204]],MEMBER[\"European Terrestrial Reference Frame 2014\",ID[\"EPSG\",1206]],ELLIPSOID[\"GRS 1980\",6378137,298.2572221,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7019]],ENSEMBLEACCURACY[0.1],ID[\"EPSG\",6258]],CS[ellipsoidal,3,ID[\"EPSG\",6423]],AXIS[\"Geodetic latitude (Lat)\",north,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],AXIS[\"Geodetic longitude (Lon)\",east,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],AXIS[\"Ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",4937]]],"
+				+ "METHOD[\"Coordinate Frame rotation\",ID[\"EPSG\",9607]],"
+				+ "PARAMETER[\"X-axis translation\",414.1,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"Y-axis translation\",41.3,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"Z-axis translation\",603.1,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"X-axis rotation\",0.855,ANGLEUNIT[\"arc-second\",4.84813681109535E-6]],"
+				+ "PARAMETER[\"Y-axis rotation\",-2.141,ANGLEUNIT[\"arc-second\",4.84813681109535E-6]],"
+				+ "PARAMETER[\"Z-axis rotation\",7.023,ANGLEUNIT[\"arc-second\",4.84813681109535E-6]],"
+				+ "PARAMETER[\"Scale difference\",0.0,SCALEUNIT[\"parts per million\",1.0E-6]],"
+				+ "ID[\"EPSG\",1437]]],"
 				+ "STEP[COORDINATEOPERATION[\"KKJ to ETRS89\","
-				+ "SOURCECRS[GEOGCRS[\"KKJ\""
-				+ "…full WKT definition of step 2 source CRS required here but omitted for brevity…]],"
-				+ "TARGETCRS[GEOGCRS[\"ETRS89\""
-				+ "…full WKT definition of step 2 target CRS required here but omitted for brevity…]],"
-				+ "METHOD[[\"Coordinate Frame rotation\",ID[\"EPSG\",9607]]"
+				+ "SOURCECRS[GEOGCRS[\"KKJ\",DATUM[\"Kartastokoordinaattijarjestelma (1966)\",ELLIPSOID[\"International 1924\",6378388,297,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7022]],ID[\"EPSG\",6123]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4123]]],"
+				+ "TARGETCRS[GEOGCRS[\"ETRS89\",ENSEMBLE[\"European Terrestrial Reference System 1989 ensemble\",MEMBER[\"European Terrestrial Reference Frame 1989\",ID[\"EPSG\",1178]],MEMBER[\"European Terrestrial Reference Frame 1990\",ID[\"EPSG\",1179]],MEMBER[\"European Terrestrial Reference Frame 1991\",ID[\"EPSG\",1180]],MEMBER[\"European Terrestrial Reference Frame 1992\",ID[\"EPSG\",1181]],MEMBER[\"European Terrestrial Reference Frame 1993\",ID[\"EPSG\",1182]],MEMBER[\"European Terrestrial Reference Frame 1994\",ID[\"EPSG\",1183]],MEMBER[\"European Terrestrial Reference Frame 1996\",ID[\"EPSG\",1184]],MEMBER[\"European Terrestrial Reference Frame 1997\",ID[\"EPSG\",1185]],MEMBER[\"European Terrestrial Reference Frame 2000\",ID[\"EPSG\",1186]],MEMBER[\"European Terrestrial Reference Frame 2005\",ID[\"EPSG\",1204]],MEMBER[\"European Terrestrial Reference Frame 2014\",ID[\"EPSG\",1206]],ELLIPSOID[\"GRS 1980\",6378137,298.2572221,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7019]],ENSEMBLEACCURACY[0.1],ID[\"EPSG\",6258]],CS[ellipsoidal,3,ID[\"EPSG\",6423]],AXIS[\"Geodetic latitude (Lat)\",north,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],AXIS[\"Geodetic longitude (Lon)\",east,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],AXIS[\"Ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",4937]]],"
+				+ "METHOD[\"Position Vector transformation\",ID[\"EPSG\",9606]],"
 				+ "PARAMETER[\"X-axis translation\",-96.062,LENGTHUNIT[\"metre\",1.0]],"
-				+ "…full WKT definition of operation KKJ  to ETRS89  required here but omitted for brevity…"
-				+ "ID[\"EPSG\",10098]],"
+				+ "PARAMETER[\"Y-axis translation\",-106.1,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"Z-axis translation\",-119.2,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"X-axis rotation\",4.09,ANGLEUNIT[\"arc-second\",4.84813681109535E-6]],"
+				+ "PARAMETER[\"Y-axis rotation\",0.218,ANGLEUNIT[\"arc-second\",4.84813681109535E-6]],"
+				+ "PARAMETER[\"Z-axis rotation\",-1.05,ANGLEUNIT[\"arc-second\",4.84813681109535E-6]],"
+				+ "PARAMETER[\"Scale difference\",1.37,SCALEUNIT[\"parts per million\",1.0E-6]],"
+				+ "ID[\"EPSG\",10098]]],"
 				+ "USAGE[SCOPE[\"Concatenated operation scope description.\"],"
 				+ "AREA[\"Concatenated operation area description.\"]],"
 				+ "REMARK[\"Step 2 is applied in reverse direction\"]]";
@@ -4905,6 +4908,45 @@ public class CRSReaderWriterTest {
 		assertEquals(crs, operation);
 		assertEquals(CRSType.CONCATENATED_OPERATION, operation.getType());
 
+		text = text.replace("\",1,", "\",1.0,").replace("6378388", "6378388.0")
+				.replace("297", "297.0").replace("6378137", "6378137.0");
+		assertEquals(text, operation.toString());
+		assertEquals(text, CRSWriter.write(operation));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(operation));
+
+		text = "CONCATENATEDOPERATION[\"RT90 to KKJ\","
+				+ "SOURCECRS[GEOGCRS[\"RT90\",DATUM[\"Rikets koordinatsystem 1990\",ELLIPSOID[\"Bessel 1841\",6377397.155,299.1528128,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7004]],ID[\"EPSG\",6124]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4124]]],"
+				+ "TARGETCRS[GEOGCRS[\"KKJ\",DATUM[\"Kartastokoordinaattijarjestelma (1966)\",ELLIPSOID[\"International 1924\",6378388,297,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7022]],ID[\"EPSG\",6123]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4123]]],"
+				+ "STEP[COORDINATEOPERATION[\"RT90 to ETRS89\","
+				+ "SOURCECRS[GEOGCRS[\"RT90\",DATUM[\"Rikets koordinatsystem 1990\",ELLIPSOID[\"Bessel 1841\",6377397.155,299.1528128,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7004]],ID[\"EPSG\",6124]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4124]]],"
+				+ "TARGETCRS[GEOGCRS[\"ETRS89\",ENSEMBLE[\"European Terrestrial Reference System 1989 ensemble\",MEMBER[\"European Terrestrial Reference Frame 1989\",ID[\"EPSG\",1178]],MEMBER[\"European Terrestrial Reference Frame 1990\",ID[\"EPSG\",1179]],MEMBER[\"European Terrestrial Reference Frame 1991\",ID[\"EPSG\",1180]],MEMBER[\"European Terrestrial Reference Frame 1992\",ID[\"EPSG\",1181]],MEMBER[\"European Terrestrial Reference Frame 1993\",ID[\"EPSG\",1182]],MEMBER[\"European Terrestrial Reference Frame 1994\",ID[\"EPSG\",1183]],MEMBER[\"European Terrestrial Reference Frame 1996\",ID[\"EPSG\",1184]],MEMBER[\"European Terrestrial Reference Frame 1997\",ID[\"EPSG\",1185]],MEMBER[\"European Terrestrial Reference Frame 2000\",ID[\"EPSG\",1186]],MEMBER[\"European Terrestrial Reference Frame 2005\",ID[\"EPSG\",1204]],MEMBER[\"European Terrestrial Reference Frame 2014\",ID[\"EPSG\",1206]],ELLIPSOID[\"GRS 1980\",6378137,298.2572221,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7019]],ENSEMBLEACCURACY[0.1],ID[\"EPSG\",6258]],CS[ellipsoidal,3,ID[\"EPSG\",6423]],AXIS[\"Geodetic latitude (Lat)\",north,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],AXIS[\"Geodetic longitude (Lon)\",east,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],AXIS[\"Ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",4937]]],"
+				+ "METHOD[\"Coordinate Frame rotation\",ID[\"EPSG\",9607]],"
+				+ "PARAMETER[\"X-axis translation\",414.1,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"Y-axis translation\",41.3,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"Z-axis translation\",603.1,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"X-axis rotation\",0.855,ANGLEUNIT[\"arc-second\",4.84813681109535E-6]],"
+				+ "PARAMETER[\"Y-axis rotation\",-2.141,ANGLEUNIT[\"arc-second\",4.84813681109535E-6]],"
+				+ "PARAMETER[\"Z-axis rotation\",7.023,ANGLEUNIT[\"arc-second\",4.84813681109535E-6]],"
+				+ "PARAMETER[\"Scale difference\",0.0,SCALEUNIT[\"parts per million\",1.0E-6]]]],"
+				+ "STEP[COORDINATEOPERATION[\"ETRS89 to KKJ\","
+				+ "SOURCECRS[GEOGCRS[\"ETRS89\",ENSEMBLE[\"European Terrestrial Reference System 1989 ensemble\",MEMBER[\"European Terrestrial Reference Frame 1989\",ID[\"EPSG\",1178]],MEMBER[\"European Terrestrial Reference Frame 1990\",ID[\"EPSG\",1179]],MEMBER[\"European Terrestrial Reference Frame 1991\",ID[\"EPSG\",1180]],MEMBER[\"European Terrestrial Reference Frame 1992\",ID[\"EPSG\",1181]],MEMBER[\"European Terrestrial Reference Frame 1993\",ID[\"EPSG\",1182]],MEMBER[\"European Terrestrial Reference Frame 1994\",ID[\"EPSG\",1183]],MEMBER[\"European Terrestrial Reference Frame 1996\",ID[\"EPSG\",1184]],MEMBER[\"European Terrestrial Reference Frame 1997\",ID[\"EPSG\",1185]],MEMBER[\"European Terrestrial Reference Frame 2000\",ID[\"EPSG\",1186]],MEMBER[\"European Terrestrial Reference Frame 2005\",ID[\"EPSG\",1204]],MEMBER[\"European Terrestrial Reference Frame 2014\",ID[\"EPSG\",1206]],ELLIPSOID[\"GRS 1980\",6378137,298.2572221,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7019]],ENSEMBLEACCURACY[0.1],ID[\"EPSG\",6258]],CS[ellipsoidal,3,ID[\"EPSG\",6423]],AXIS[\"Geodetic latitude (Lat)\",north,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],AXIS[\"Geodetic longitude (Lon)\",east,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],AXIS[\"Ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",4937]]],"
+				+ "TARGETCRS[GEOGCRS[\"KKJ\",DATUM[\"Kartastokoordinaattijarjestelma (1966)\",ELLIPSOID[\"International 1924\",6378388,297,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7022]],ID[\"EPSG\",6123]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4123]]],"
+				+ "METHOD[\"Position Vector transformation\"],"
+				+ "PARAMETER[\"X-axis translation\",96.062,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"Y-axis translation\",106.1,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"Z-axis translation\",119.2,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"X-axis rotation\",-4.09,ANGLEUNIT[\"arc-second\",4.84813681109535E-6]],"
+				+ "PARAMETER[\"Y-axis rotation\",-0.218,ANGLEUNIT[\"arc-second\",4.84813681109535E-6]],"
+				+ "PARAMETER[\"Z-axis rotation\",1.05,ANGLEUNIT[\"arc-second\",4.84813681109535E-6]],"
+				+ "PARAMETER[\"Scale difference\",-1.37,SCALEUNIT[\"parts per million\",1.0E-6]]]]]";
+
+		crs = CRSReader.read(text, true);
+		operation = CRSReader.readConcatenatedOperation(text);
+		assertEquals(crs, operation);
+		assertEquals(CRSType.CONCATENATED_OPERATION, operation.getType());
+
+		text = text.replace("\",1,", "\",1.0,").replace("6378388", "6378388.0")
+				.replace("297", "297.0").replace("6378137", "6378137.0");
 		assertEquals(text, operation.toString());
 		assertEquals(text, CRSWriter.write(operation));
 		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(operation));
