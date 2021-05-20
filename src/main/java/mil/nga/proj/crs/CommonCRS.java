@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mil.nga.proj.crs.common.Identifier;
+import mil.nga.proj.crs.common.ScopeExtentIdentifierRemark;
 import mil.nga.proj.crs.common.Usage;
 
 /**
@@ -11,7 +12,7 @@ import mil.nga.proj.crs.common.Usage;
  * 
  * @author osbornb
  */
-public class CommonCRS extends CRS {
+public class CommonCRS extends CRS implements ScopeExtentIdentifierRemark {
 
 	/**
 	 * Name
@@ -83,39 +84,33 @@ public class CommonCRS extends CRS {
 	}
 
 	/**
-	 * Get the usages
-	 * 
-	 * @return usages
+	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Usage> getUsages() {
 		return usages;
 	}
 
 	/**
-	 * Has usages
-	 * 
-	 * @return true if has usages
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasUsages() {
 		return usages != null && !usages.isEmpty();
 	}
 
 	/**
-	 * Set the usages
-	 * 
-	 * @param usages
-	 *            usages
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setUsages(List<Usage> usages) {
 		this.usages = usages;
 	}
 
 	/**
-	 * Add the usage
-	 * 
-	 * @param usage
-	 *            usage
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addUsage(Usage usage) {
 		if (this.usages == null) {
 			this.usages = new ArrayList<>();
@@ -124,11 +119,9 @@ public class CommonCRS extends CRS {
 	}
 
 	/**
-	 * Add the usages
-	 * 
-	 * @param usages
-	 *            usages
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addUsages(List<Usage> usages) {
 		if (this.usages == null) {
 			this.usages = new ArrayList<>();
@@ -137,39 +130,33 @@ public class CommonCRS extends CRS {
 	}
 
 	/**
-	 * Get the identifiers
-	 * 
-	 * @return identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Identifier> getIdentifiers() {
 		return identifiers;
 	}
 
 	/**
-	 * Has identifiers
-	 * 
-	 * @return true if has identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasIdentifiers() {
 		return identifiers != null && !identifiers.isEmpty();
 	}
 
 	/**
-	 * Set the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setIdentifiers(List<Identifier> identifiers) {
 		this.identifiers = identifiers;
 	}
 
 	/**
-	 * Add the identifier
-	 * 
-	 * @param identifier
-	 *            identifier
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifier(Identifier identifier) {
 		if (this.identifiers == null) {
 			this.identifiers = new ArrayList<>();
@@ -178,11 +165,9 @@ public class CommonCRS extends CRS {
 	}
 
 	/**
-	 * Add the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifiers(List<Identifier> identifiers) {
 		if (this.identifiers == null) {
 			this.identifiers = new ArrayList<>();
@@ -191,29 +176,25 @@ public class CommonCRS extends CRS {
 	}
 
 	/**
-	 * Get the remark
-	 * 
-	 * @return remark
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String getRemark() {
 		return remark;
 	}
 
 	/**
-	 * Has remark
-	 * 
-	 * @return true if has remark
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasRemark() {
 		return getRemark() != null;
 	}
 
 	/**
-	 * Set the remark
-	 * 
-	 * @param remark
-	 *            remark
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}

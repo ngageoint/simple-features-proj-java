@@ -15,6 +15,8 @@ import mil.nga.proj.crs.CRS;
 import mil.nga.proj.crs.CRSType;
 import mil.nga.proj.crs.CompoundCoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
+import mil.nga.proj.crs.bound.AbridgedCoordinateTransformation;
+import mil.nga.proj.crs.bound.BoundCoordinateReferenceSystem;
 import mil.nga.proj.crs.common.Axis;
 import mil.nga.proj.crs.common.AxisDirectionType;
 import mil.nga.proj.crs.common.CoordinateSystem;
@@ -4907,6 +4909,7 @@ public class CRSReaderWriterTest {
 				.readConcatenatedOperation(text);
 		assertEquals(crs, operation);
 		assertEquals(CRSType.CONCATENATED_OPERATION, operation.getType());
+		// TODO
 
 		text = text.replace("\",1,", "\",1.0,").replace("6378388", "6378388.0")
 				.replace("297", "297.0").replace("6378137", "6378137.0");
@@ -4944,12 +4947,142 @@ public class CRSReaderWriterTest {
 		operation = CRSReader.readConcatenatedOperation(text);
 		assertEquals(crs, operation);
 		assertEquals(CRSType.CONCATENATED_OPERATION, operation.getType());
+		// TODO
 
 		text = text.replace("\",1,", "\",1.0,").replace("6378388", "6378388.0")
 				.replace("297", "297.0").replace("6378137", "6378137.0");
 		assertEquals(text, operation.toString());
 		assertEquals(text, CRSWriter.write(operation));
 		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(operation));
+
+	}
+
+	/**
+	 * Test abridged coordinate transformation
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testAbridgedCoordinateTransformation() throws IOException {
+
+		String text = "ABRIDGEDTRANSFORMATION[\"Tokyo to JGD2000 (GSI)\","
+				+ "METHOD[\"Geocentric translations\",ID[\"EPSG\",1031]],"
+				+ "PARAMETER[\"X-axis translation\",-146.414],"
+				+ "PARAMETER[\"Y-axis translation\",507.337],"
+				+ "PARAMETER[\"Z-axis translation\",680.507]]";
+		CRSReader reader = new CRSReader(text);
+		AbridgedCoordinateTransformation transformation = reader
+				.readAbridgedCoordinateTransformation();
+		assertEquals("Tokyo to JGD2000 (GSI)", transformation.getName());
+		assertEquals("Geocentric translations",
+				transformation.getMethod().getName());
+		assertEquals("EPSG",
+				transformation.getMethod().getIdentifiers().get(0).getName());
+		assertEquals("1031", transformation.getMethod().getIdentifiers().get(0)
+				.getUniqueIdentifier());
+		assertEquals("X-axis translation",
+				transformation.getParameters().get(0).getName());
+		assertEquals(-146.414,
+				((OperationParameter) transformation.getParameters().get(0))
+						.getValue(),
+				0);
+		assertEquals("Y-axis translation",
+				transformation.getParameters().get(1).getName());
+		assertEquals(507.337,
+				((OperationParameter) transformation.getParameters().get(1))
+						.getValue(),
+				0);
+		assertEquals("Z-axis translation",
+				transformation.getParameters().get(2).getName());
+		assertEquals(680.507,
+				((OperationParameter) transformation.getParameters().get(2))
+						.getValue(),
+				0);
+		reader.close();
+		assertEquals(text, transformation.toString());
+
+	}
+
+	/**
+	 * Test bound coordinate reference system
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void testBoundCoordinateReferenceSystem() throws IOException {
+
+		String text = "BOUNDCRS[SOURCECRS[GEODCRS[\"NAD27\","
+				+ "DATUM[\"North American Datum 1927\","
+				+ "ELLIPSOID[\"Clarke 1866\",6378206.4,294.978698213]],"
+				+ "CS[ellipsoidal,2],"
+				+ "AXIS[\"latitude\",north],AXIS[\"longitude\",east],"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]]],"
+				+ "TARGETCRS[GEODCRS[\"NAD83\","
+				+ "DATUM[\"North American Datum 1983\","
+				+ "ELLIPSOID[\"GRS 1980\",6378137,298.2572221]],"
+				+ "CS[ellipsoidal,2],"
+				+ "AXIS[\"latitude\",north],AXIS[\"longitude\",east],"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]]],"
+				+ "ABRIDGEDTRANSFORMATION[\"NAD27 to NAD83 Alaska\","
+				+ "METHOD[\"NADCON\",ID[\"EPSG\",9613]],"
+				+ "PARAMETERFILE[\"Latitude difference file\",\"alaska.las\"],"
+				+ "PARAMETERFILE[\"Longitude difference file\",\"alaska.los\"]]]";
+
+		CRS crs = CRSReader.read(text, true);
+		BoundCoordinateReferenceSystem bound = CRSReader.readBound(text);
+		assertEquals(crs, bound);
+		assertEquals(CRSType.BOUND, bound.getType());
+		// TODO
+
+		text = text.replace("6378137", "6378137.0");
+		assertEquals(text, bound.toString());
+		assertEquals(text, CRSWriter.write(bound));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(bound));
+
+		text = "BOUNDCRS["
+				+ "SOURCECRS[GEOGCRS[\"NAD27\",DATUM[\"North American Datum 1927\",ELLIPSOID[\"Clarke 1866\",6378206.4,294.9786982,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7008]],ID[\"EPSG\",6267]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4267]]],"
+				+ "TARGETCRS[GEOGCRS[\"NAD83\",DATUM[\"North American Datum 1983\",ELLIPSOID[\"GRS 1980\",6378137,298.2572221,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7019]],ID[\"EPSG\",6269]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4269]]],"
+				+ "ABRIDGEDTRANSFORMATION[\"NAD27 to NAD83(86) National\","
+				+ "METHOD[\"NTv2\",ID[\"EPSG\",9615]],"
+				+ "PARAMETERFILE[\"Latitude and longitude difference file\",\"NTv2_0.gsb\"]]]";
+
+		crs = CRSReader.read(text, true);
+		bound = CRSReader.readBound(text);
+		assertEquals(crs, bound);
+		assertEquals(CRSType.BOUND, bound.getType());
+		// TODO
+
+		text = text.replace("6378137", "6378137.0").replace("\",1,", "\",1.0,");
+		assertEquals(text, bound.toString());
+		assertEquals(text, CRSWriter.write(bound));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(bound));
+
+		text = "BOUNDCRS["
+				+ "SOURCECRS[GEOGCRS[\"Amersfoort\",DATUM[\"Amersfoort\",ELLIPSOID[\"Bessel 1841\",6377397.155,299.1528128,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7004]],ID[\"EPSG\",6289]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4289]]],"
+				+ "TARGETCRS[GEOGCRS[\"ETRS89\",ENSEMBLE[\"European Terrestrial Reference System 1989 ensemble\",MEMBER[\"European Terrestrial Reference Frame 1989\",ID[\"EPSG\",1178]],MEMBER[\"European Terrestrial Reference Frame 1990\",ID[\"EPSG\",1179]],MEMBER[\"European Terrestrial Reference Frame 1991\",ID[\"EPSG\",1180]],MEMBER[\"European Terrestrial Reference Frame 1992\",ID[\"EPSG\",1181]],MEMBER[\"European Terrestrial Reference Frame 1993\",ID[\"EPSG\",1182]],MEMBER[\"European Terrestrial Reference Frame 1994\",ID[\"EPSG\",1183]],MEMBER[\"European Terrestrial Reference Frame 1996\",ID[\"EPSG\",1184]],MEMBER[\"European Terrestrial Reference Frame 1997\",ID[\"EPSG\",1185]],MEMBER[\"European Terrestrial Reference Frame 2000\",ID[\"EPSG\",1186]],MEMBER[\"European Terrestrial Reference Frame 2005\",ID[\"EPSG\",1204]],MEMBER[\"European Terrestrial Reference Frame 2014\",ID[\"EPSG\",1206]],ELLIPSOID[\"GRS 1980\",6378137,298.2572221,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",7019]],ENSEMBLEACCURACY[0.1],ID[\"EPSG\",6258]],CS[ellipsoidal,2,ID[\"EPSG\",6422]],AXIS[\"Geodetic latitude (Lat)\",north],AXIS[\"Geodetic longitude (Lon)\",east],ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],ID[\"EPSG\",4258]]],"
+				+ "ABRIDGEDTRANSFORMATION[\"Amersfoort to ETRS89 (3)\","
+				+ "METHOD[\"Coordinate Frame\",ID[\"EPSG\",1032]],"
+				+ "PARAMETER[\"X-axis translation\",565.2369,ID[\"EPSG\",8605]],"
+				+ "PARAMETER[\"Y-axis translation\",50.0087,ID[\"EPSG\",8606]],"
+				+ "PARAMETER[\"Z-axis translation\",465.658,ID[\"EPSG\",8607]],"
+				+ "PARAMETER[\"X-axis rotation\",0.407,ID[\"EPSG\",8608]],"
+				+ "PARAMETER[\"Y-axis rotation\",-0.351,ID[\"EPSG\",8609]],"
+				+ "PARAMETER[\"Z-axis rotation\",1.870,ID[\"EPSG\",8610]],"
+				+ "PARAMETER[\"Scale difference\",1.000004812,ID[\"EPSG\",8611]]]]";
+
+		crs = CRSReader.read(text, true);
+		bound = CRSReader.readBound(text);
+		assertEquals(crs, bound);
+		assertEquals(CRSType.BOUND, bound.getType());
+		// TODO
+
+		text = text.replace("6378137", "6378137.0")
+				.replaceAll("\",1,", "\",1.0,").replace("1.870", "1.87");
+		assertEquals(text, bound.toString());
+		assertEquals(text, CRSWriter.write(bound));
+		assertEquals(WKTUtils.pretty(text), CRSWriter.writePretty(bound));
 
 	}
 

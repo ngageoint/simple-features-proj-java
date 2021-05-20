@@ -21,6 +21,8 @@ import mil.nga.proj.crs.CommonCRS;
 import mil.nga.proj.crs.CompoundCoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
 import mil.nga.proj.crs.SimpleCoordinateReferenceSystem;
+import mil.nga.proj.crs.bound.AbridgedCoordinateTransformation;
+import mil.nga.proj.crs.bound.BoundCoordinateReferenceSystem;
 import mil.nga.proj.crs.common.Axis;
 import mil.nga.proj.crs.common.AxisDirectionType;
 import mil.nga.proj.crs.common.CoordinateSystem;
@@ -32,6 +34,7 @@ import mil.nga.proj.crs.common.Extent;
 import mil.nga.proj.crs.common.GeographicBoundingBox;
 import mil.nga.proj.crs.common.Identifier;
 import mil.nga.proj.crs.common.ReferenceFrame;
+import mil.nga.proj.crs.common.ScopeExtentIdentifierRemark;
 import mil.nga.proj.crs.common.TemporalExtent;
 import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.common.UnitType;
@@ -521,6 +524,28 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
+	 * Read Bound Coordinate Reference System from the well-known text
+	 * 
+	 * @param text
+	 *            well-known text
+	 * @return Bound Coordinate Reference System
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public static BoundCoordinateReferenceSystem readBound(String text)
+			throws IOException {
+		BoundCoordinateReferenceSystem crs = null;
+		CRSReader reader = new CRSReader(text);
+		try {
+			crs = reader.readBound();
+			reader.readEnd();
+		} finally {
+			reader.close();
+		}
+		return crs;
+	}
+
+	/**
 	 * Read a Backward Compatible Geodetic or Geographic Coordinate Reference
 	 * System from the well-known text
 	 * 
@@ -826,6 +851,9 @@ public class CRSReader implements Closeable {
 			break;
 		case CONCATENATEDOPERATION:
 			crs = readConcatenatedOperation();
+			break;
+		case BOUNDCRS:
+			crs = readBound();
 			break;
 		default:
 			throw new ProjectionException(
@@ -2186,31 +2214,62 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
-	 * Read the usages (scope and extent), identifiers, and remark into the CRS
+	 * Read a Bound CRS
 	 * 
-	 * @param crs
-	 *            coordinate reference system
+	 * @return bound coordinate reference system
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public void readScopeExtentIdentifierRemark(CommonCRS crs)
-			throws IOException {
+	public BoundCoordinateReferenceSystem readBound() throws IOException {
+
+		BoundCoordinateReferenceSystem crs = new BoundCoordinateReferenceSystem();
+
+		readKeyword(CRSKeyword.BOUNDCRS);
+
+		readLeftDelimiter();
+
+		crs.setSource(readSource());
+
+		readSeparator();
+		crs.setTarget(readTarget());
+
+		readSeparator();
+		crs.setTransformation(readAbridgedCoordinateTransformation());
+
+		readScopeExtentIdentifierRemark(crs);
+
+		readRightDelimiter();
+
+		return crs;
+	}
+
+	/**
+	 * Read the usages (scope and extent), identifiers, and remark into the
+	 * object
+	 * 
+	 * @param object
+	 *            scope extent identifier remark object
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public void readScopeExtentIdentifierRemark(
+			ScopeExtentIdentifierRemark object) throws IOException {
 
 		CRSKeyword keyword = readToKeyword(CRSKeyword.USAGE, CRSKeyword.ID,
 				CRSKeyword.REMARK);
 
 		if (keyword == CRSKeyword.USAGE) {
-			crs.setUsages(readUsages());
+			object.setUsages(readUsages());
 			keyword = readToKeyword(CRSKeyword.ID, CRSKeyword.REMARK);
 		}
 
 		if (keyword == CRSKeyword.ID) {
-			crs.setIdentifiers(readIdentifiers());
+			object.setIdentifiers(readIdentifiers());
 			keyword = readToKeyword(CRSKeyword.REMARK);
 		}
 
 		if (keyword == CRSKeyword.REMARK) {
-			crs.setRemark(readRemark());
+			object.setRemark(readRemark());
 		}
 
 	}
@@ -3663,6 +3722,55 @@ public class CRSReader implements Closeable {
 	public List<Parameter> readPointMotionOperationParameters()
 			throws IOException {
 		return readParametersAndFiles(CRSType.POINT_MOTION_OPERATION);
+	}
+
+	/**
+	 * Read an Abridged Coordinate Transformation
+	 * 
+	 * @return abridged coordinate transformation
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public AbridgedCoordinateTransformation readAbridgedCoordinateTransformation()
+			throws IOException {
+
+		AbridgedCoordinateTransformation transformation = new AbridgedCoordinateTransformation();
+
+		readKeyword(CRSKeyword.ABRIDGEDTRANSFORMATION);
+
+		readLeftDelimiter();
+
+		transformation.setName(reader.readExpectedToken());
+
+		if (isKeywordNext(CRSKeyword.VERSION)) {
+			readSeparator();
+			transformation.setVersion(readVersion());
+		}
+
+		readSeparator();
+		transformation.setMethod(readMethod());
+
+		if (isKeywordNext(CRSKeyword.PARAMETER, CRSKeyword.PARAMETERFILE)) {
+			readSeparator();
+			transformation.setParameters(readBoundParameters());
+		}
+
+		readScopeExtentIdentifierRemark(transformation);
+
+		readRightDelimiter();
+
+		return transformation;
+	}
+
+	/**
+	 * Read Bound CRS Abridged Transformation parameters
+	 * 
+	 * @return parameters
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public List<Parameter> readBoundParameters() throws IOException {
+		return readParametersAndFiles(CRSType.BOUND);
 	}
 
 	/**

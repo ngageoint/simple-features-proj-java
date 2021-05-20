@@ -10,9 +10,10 @@ import java.util.logging.Logger;
 
 import mil.nga.proj.ProjectionException;
 import mil.nga.proj.crs.CRS;
-import mil.nga.proj.crs.CommonCRS;
 import mil.nga.proj.crs.CompoundCoordinateReferenceSystem;
 import mil.nga.proj.crs.CoordinateReferenceSystem;
+import mil.nga.proj.crs.bound.AbridgedCoordinateTransformation;
+import mil.nga.proj.crs.bound.BoundCoordinateReferenceSystem;
 import mil.nga.proj.crs.common.Axis;
 import mil.nga.proj.crs.common.CoordinateSystem;
 import mil.nga.proj.crs.common.DatumEnsemble;
@@ -22,6 +23,7 @@ import mil.nga.proj.crs.common.Extent;
 import mil.nga.proj.crs.common.GeographicBoundingBox;
 import mil.nga.proj.crs.common.Identifier;
 import mil.nga.proj.crs.common.ReferenceFrame;
+import mil.nga.proj.crs.common.ScopeExtentIdentifierRemark;
 import mil.nga.proj.crs.common.TemporalExtent;
 import mil.nga.proj.crs.common.Unit;
 import mil.nga.proj.crs.common.Usage;
@@ -330,6 +332,9 @@ public class CRSWriter implements Closeable {
 			break;
 		case CONCATENATED_OPERATION:
 			writeConcatenatedOperation((ConcatenatedOperation) crs);
+			break;
+		case BOUND:
+			writeBound((BoundCoordinateReferenceSystem) crs);
 			break;
 		default:
 			throw new ProjectionException(
@@ -1321,29 +1326,57 @@ public class CRSWriter implements Closeable {
 	}
 
 	/**
-	 * Write the CRS usages (scope and extent), identifiers, and remark
+	 * Write a bound CRS to well-known text
 	 * 
 	 * @param crs
-	 *            coordinate reference system
+	 *            bound coordinate reference system
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeScopeExtentIdentifierRemark(CommonCRS crs)
+	public void writeBound(BoundCoordinateReferenceSystem crs)
 			throws IOException {
 
-		if (crs.hasUsages()) {
+		write(CRSKeyword.BOUNDCRS);
+
+		writeLeftDelimiter();
+
+		writeSource(crs.getSource());
+
+		writeSeparator();
+		writeTarget(crs.getTarget());
+
+		writeSeparator();
+		write(crs.getTransformation());
+
+		writeScopeExtentIdentifierRemark(crs);
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write the CRS usages (scope and extent), identifiers, and remark
+	 * 
+	 * @param object
+	 *            scope extent identifier remark object
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void writeScopeExtentIdentifierRemark(
+			ScopeExtentIdentifierRemark object) throws IOException {
+
+		if (object.hasUsages()) {
 			writeSeparator();
-			writeUsages(crs.getUsages());
+			writeUsages(object.getUsages());
 		}
 
-		if (crs.hasIdentifiers()) {
+		if (object.hasIdentifiers()) {
 			writeSeparator();
-			writeIdentifiers(crs.getIdentifiers());
+			writeIdentifiers(object.getIdentifiers());
 		}
 
-		if (crs.hasRemark()) {
+		if (object.hasRemark()) {
 			writeSeparator();
-			writeRemark(crs.getRemark());
+			writeRemark(object.getRemark());
 		}
 
 	}
@@ -2387,6 +2420,41 @@ public class CRSWriter implements Closeable {
 		writeLeftDelimiter();
 
 		write(accuracy);
+
+		writeRightDelimiter();
+	}
+
+	/**
+	 * Write an abridged coordinate transformation
+	 * 
+	 * @param transformation
+	 *            abridged coordinate transformation
+	 * @throws IOException
+	 *             upon failure to write
+	 */
+	public void write(AbridgedCoordinateTransformation transformation)
+			throws IOException {
+
+		write(CRSKeyword.ABRIDGEDTRANSFORMATION);
+
+		writeLeftDelimiter();
+
+		writeQuotedText(transformation.getName());
+
+		if (transformation.hasVersion()) {
+			writeSeparator();
+			writeVersion(transformation.getVersion());
+		}
+
+		writeSeparator();
+		write(transformation.getMethod());
+
+		if (transformation.hasParameters()) {
+			writeSeparator();
+			writeParametersAndFiles(transformation.getParameters());
+		}
+
+		writeScopeExtentIdentifierRemark(transformation);
 
 		writeRightDelimiter();
 	}
