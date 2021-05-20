@@ -2143,7 +2143,7 @@ public class CRSReader implements Closeable {
 
 			readLeftDelimiter();
 
-			CRSKeyword keyword = readKeyword(CRSKeyword.COORDINATEOPERATION,
+			CRSKeyword keyword = readToKeyword(CRSKeyword.COORDINATEOPERATION,
 					CRSKeyword.POINTMOTIONOPERATION, CRSKeyword.CONVERSION,
 					CRSKeyword.DERIVINGCONVERSION);
 
