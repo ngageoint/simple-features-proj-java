@@ -140,7 +140,7 @@ public enum CRSKeyword {
 	/**
 	 * Derived Projected CRS
 	 */
-	DERIVEDPROJCRS(),
+	DERIVEDPROJCRS("DERIVEDPROJECTEDCRS"),
 
 	/**
 	 * Deriving Conversion
