@@ -112,8 +112,6 @@ public class GeoDatumEnsemble extends DatumEnsemble {
 	/**
 	 * Has a prime meridian
 	 * 
-	 * TODO http://ogc.standardstracker.org/show_request.cgi?id=672
-	 * 
 	 * @return true if has prime meridian
 	 */
 	public boolean hasPrimeMeridian() {

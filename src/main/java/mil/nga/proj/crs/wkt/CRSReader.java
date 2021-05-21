@@ -2506,7 +2506,6 @@ public class CRSReader implements Closeable {
 		readRightDelimiter();
 
 		if (geoDatumEnsemble != null && isKeywordNext(CRSKeyword.PRIMEM)) {
-			// TODO http://ogc.standardstracker.org/show_request.cgi?id=672
 			readSeparator();
 			geoDatumEnsemble.setPrimeMeridian(readPrimeMeridian());
 		}

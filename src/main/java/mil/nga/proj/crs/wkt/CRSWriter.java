@@ -1493,7 +1493,6 @@ public class CRSWriter implements Closeable {
 
 		if (geodeticDatumEnsemble != null
 				&& geodeticDatumEnsemble.hasPrimeMeridian()) {
-			// TODO http://ogc.standardstracker.org/show_request.cgi?id=672
 			writeSeparator();
 			write(geodeticDatumEnsemble.getPrimeMeridian());
 		}
