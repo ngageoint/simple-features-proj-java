@@ -60,6 +60,19 @@ public abstract class CRS {
 	}
 
 	/**
+	 * Get the category type
+	 * 
+	 * @return category type
+	 */
+	public CategoryType getCategoryType() {
+		CategoryType categoryType = null;
+		if (type != null) {
+			categoryType = type.getCategoryType();
+		}
+		return categoryType;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
