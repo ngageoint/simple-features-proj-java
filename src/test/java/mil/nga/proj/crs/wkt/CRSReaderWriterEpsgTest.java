@@ -17,51 +17,6 @@ import mil.nga.proj.crs.CoordinateReferenceSystem;
  */
 public class CRSReaderWriterEpsgTest {
 
-	// TODO temp
-	/**
-	 * Test EPSG 0000
-	 * 
-	 * @throws IOException
-	 *             upon error
-	 */
-	// @Test
-	// public void test0000() throws IOException {
-	//
-	// String text = "";
-	//
-	// CoordinateReferenceSystem crs = CRSReader.read(text, true);
-	//
-	// String expectedText = text;
-	//
-	// assertEquals(expectedText, crs.toString());
-	// assertEquals(expectedText, CRSWriter.write(crs));
-	// assertEquals(WKTUtils.pretty(expectedText),
-	// CRSWriter.writePretty(crs));
-	//
-	// text = "";
-	//
-	// crs = CRSReader.read(text, true);
-	//
-	// expectedText = text;
-	//
-	// assertEquals(expectedText, crs.toString());
-	// assertEquals(expectedText, CRSWriter.write(crs));
-	// assertEquals(WKTUtils.pretty(expectedText),
-	// CRSWriter.writePretty(crs));
-	//
-	// text = "";
-	//
-	// crs = CRSReader.read(text, true);
-	//
-	// expectedText = text;
-	//
-	// assertEquals(expectedText, crs.toString());
-	// assertEquals(expectedText, CRSWriter.write(crs));
-	// assertEquals(WKTUtils.pretty(expectedText),
-	// CRSWriter.writePretty(crs));
-	//
-	// }
-
 	/**
 	 * Test EPSG 3035
 	 * 

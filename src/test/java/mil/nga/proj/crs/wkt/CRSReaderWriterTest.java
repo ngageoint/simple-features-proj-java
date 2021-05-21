@@ -41,6 +41,7 @@ import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
 import mil.nga.proj.crs.geo.TriaxialEllipsoid;
 import mil.nga.proj.crs.metadata.CoordinateMetadata;
+import mil.nga.proj.crs.operation.ConcatenableOperationType;
 import mil.nga.proj.crs.operation.ConcatenatedOperation;
 import mil.nga.proj.crs.operation.CoordinateOperation;
 import mil.nga.proj.crs.operation.OperationParameter;
@@ -4910,7 +4911,77 @@ public class CRSReaderWriterTest {
 				.readConcatenatedOperation(text);
 		assertEquals(crs, operation);
 		assertEquals(CRSType.CONCATENATED_OPERATION, operation.getType());
-		// TODO
+		assertEquals("RT90 to KKJ", operation.getName());
+		GeoCoordinateReferenceSystem geographic1 = (GeoCoordinateReferenceSystem) operation
+				.getSource();
+		assertEquals(CRSType.GEOGRAPHIC, geographic1.getType());
+		assertEquals("RT90", geographic1.getName());
+		GeoCoordinateReferenceSystem geographic2 = (GeoCoordinateReferenceSystem) operation
+				.getTarget();
+		assertEquals(CRSType.GEOGRAPHIC, geographic2.getType());
+		assertEquals("KKJ", geographic2.getName());
+		assertEquals(ConcatenableOperationType.COORDINATE_OPERATION,
+				operation.getOperations().get(0).getOperationType());
+		assertEquals("RT90 to ETRS89",
+				operation.getOperations().get(0).getName());
+		geographic1 = (GeoCoordinateReferenceSystem) ((CoordinateOperation) operation
+				.getOperations().get(0)).getSource();
+		assertEquals(CRSType.GEOGRAPHIC, geographic1.getType());
+		assertEquals("RT90", geographic1.getName());
+		geographic2 = (GeoCoordinateReferenceSystem) ((CoordinateOperation) operation
+				.getOperations().get(0)).getTarget();
+		assertEquals(CRSType.GEOGRAPHIC, geographic2.getType());
+		assertEquals("ETRS89", geographic2.getName());
+		assertEquals("Coordinate Frame rotation",
+				operation.getOperations().get(0).getMethod().getName());
+		assertEquals("EPSG", operation.getOperations().get(0).getMethod()
+				.getIdentifiers().get(0).getName());
+		assertEquals("9607", operation.getOperations().get(0).getMethod()
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals(7,
+				operation.getOperations().get(0).getParameters().size());
+		assertEquals("X-axis translation", operation.getOperations().get(0)
+				.getParameters().get(0).getName());
+		assertEquals(414.1, ((OperationParameter) operation.getOperations()
+				.get(0).getParameters().get(0)).getValue(), 0);
+		assertEquals("EPSG", operation.getOperations().get(0).getIdentifiers()
+				.get(0).getName());
+		assertEquals("1437", operation.getOperations().get(0).getIdentifiers()
+				.get(0).getUniqueIdentifier());
+		assertEquals(ConcatenableOperationType.COORDINATE_OPERATION,
+				operation.getOperations().get(1).getOperationType());
+		assertEquals("KKJ to ETRS89",
+				operation.getOperations().get(1).getName());
+		geographic1 = (GeoCoordinateReferenceSystem) ((CoordinateOperation) operation
+				.getOperations().get(1)).getSource();
+		assertEquals(CRSType.GEOGRAPHIC, geographic1.getType());
+		assertEquals("KKJ", geographic1.getName());
+		geographic2 = (GeoCoordinateReferenceSystem) ((CoordinateOperation) operation
+				.getOperations().get(1)).getTarget();
+		assertEquals(CRSType.GEOGRAPHIC, geographic2.getType());
+		assertEquals("ETRS89", geographic2.getName());
+		assertEquals("Position Vector transformation",
+				operation.getOperations().get(1).getMethod().getName());
+		assertEquals("EPSG", operation.getOperations().get(1).getMethod()
+				.getIdentifiers().get(0).getName());
+		assertEquals("9606", operation.getOperations().get(1).getMethod()
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals(7,
+				operation.getOperations().get(1).getParameters().size());
+		assertEquals("X-axis translation", operation.getOperations().get(1)
+				.getParameters().get(0).getName());
+		assertEquals(-96.062, ((OperationParameter) operation.getOperations()
+				.get(1).getParameters().get(0)).getValue(), 0);
+		assertEquals("EPSG", operation.getOperations().get(1).getIdentifiers()
+				.get(0).getName());
+		assertEquals("10098", operation.getOperations().get(1).getIdentifiers()
+				.get(0).getUniqueIdentifier());
+		assertEquals("Concatenated operation scope description.",
+				operation.getUsages().get(0).getScope());
+		assertEquals("Concatenated operation area description.",
+				operation.getUsages().get(0).getExtent().getAreaDescription());
+		assertEquals("Step 2 is applied in reverse direction",
+				operation.getRemark());
 
 		text = text.replace("\",1,", "\",1.0,").replace("6378388", "6378388.0")
 				.replace("297", "297.0").replace("6378137", "6378137.0");
@@ -4948,7 +5019,57 @@ public class CRSReaderWriterTest {
 		operation = CRSReader.readConcatenatedOperation(text);
 		assertEquals(crs, operation);
 		assertEquals(CRSType.CONCATENATED_OPERATION, operation.getType());
-		// TODO
+		assertEquals("RT90 to KKJ", operation.getName());
+		geographic1 = (GeoCoordinateReferenceSystem) operation.getSource();
+		assertEquals(CRSType.GEOGRAPHIC, geographic1.getType());
+		assertEquals("RT90", geographic1.getName());
+		geographic2 = (GeoCoordinateReferenceSystem) operation.getTarget();
+		assertEquals(CRSType.GEOGRAPHIC, geographic2.getType());
+		assertEquals("KKJ", geographic2.getName());
+		assertEquals(ConcatenableOperationType.COORDINATE_OPERATION,
+				operation.getOperations().get(0).getOperationType());
+		assertEquals("RT90 to ETRS89",
+				operation.getOperations().get(0).getName());
+		geographic1 = (GeoCoordinateReferenceSystem) ((CoordinateOperation) operation
+				.getOperations().get(0)).getSource();
+		assertEquals(CRSType.GEOGRAPHIC, geographic1.getType());
+		assertEquals("RT90", geographic1.getName());
+		geographic2 = (GeoCoordinateReferenceSystem) ((CoordinateOperation) operation
+				.getOperations().get(0)).getTarget();
+		assertEquals(CRSType.GEOGRAPHIC, geographic2.getType());
+		assertEquals("ETRS89", geographic2.getName());
+		assertEquals("Coordinate Frame rotation",
+				operation.getOperations().get(0).getMethod().getName());
+		assertEquals("EPSG", operation.getOperations().get(0).getMethod()
+				.getIdentifiers().get(0).getName());
+		assertEquals("9607", operation.getOperations().get(0).getMethod()
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals(7,
+				operation.getOperations().get(0).getParameters().size());
+		assertEquals("X-axis translation", operation.getOperations().get(0)
+				.getParameters().get(0).getName());
+		assertEquals(414.1, ((OperationParameter) operation.getOperations()
+				.get(0).getParameters().get(0)).getValue(), 0);
+		assertEquals(ConcatenableOperationType.COORDINATE_OPERATION,
+				operation.getOperations().get(1).getOperationType());
+		assertEquals("ETRS89 to KKJ",
+				operation.getOperations().get(1).getName());
+		geographic1 = (GeoCoordinateReferenceSystem) ((CoordinateOperation) operation
+				.getOperations().get(1)).getSource();
+		assertEquals(CRSType.GEOGRAPHIC, geographic1.getType());
+		assertEquals("ETRS89", geographic1.getName());
+		geographic2 = (GeoCoordinateReferenceSystem) ((CoordinateOperation) operation
+				.getOperations().get(1)).getTarget();
+		assertEquals(CRSType.GEOGRAPHIC, geographic2.getType());
+		assertEquals("KKJ", geographic2.getName());
+		assertEquals("Position Vector transformation",
+				operation.getOperations().get(1).getMethod().getName());
+		assertEquals(7,
+				operation.getOperations().get(1).getParameters().size());
+		assertEquals("X-axis translation", operation.getOperations().get(1)
+				.getParameters().get(0).getName());
+		assertEquals(96.062, ((OperationParameter) operation.getOperations()
+				.get(1).getParameters().get(0)).getValue(), 0);
 
 		text = text.replace("\",1,", "\",1.0,").replace("6378388", "6378388.0")
 				.replace("297", "297.0").replace("6378137", "6378137.0");
@@ -5035,7 +5156,83 @@ public class CRSReaderWriterTest {
 		BoundCoordinateReferenceSystem bound = CRSReader.readBound(text);
 		assertEquals(crs, bound);
 		assertEquals(CRSType.BOUND, bound.getType());
-		// TODO
+		GeoCoordinateReferenceSystem geodedic1 = (GeoCoordinateReferenceSystem) bound
+				.getSource();
+		assertEquals(CRSType.GEODETIC, geodedic1.getType());
+		assertEquals("NAD27", geodedic1.getName());
+		assertEquals("North American Datum 1927",
+				geodedic1.getReferenceFrame().getName());
+		assertEquals("Clarke 1866",
+				geodedic1.getReferenceFrame().getEllipsoid().getName());
+		assertEquals(6378206.4,
+				geodedic1.getReferenceFrame().getEllipsoid().getSemiMajorAxis(),
+				0);
+		assertEquals(294.978698213, geodedic1.getReferenceFrame().getEllipsoid()
+				.getInverseFlattening(), 0);
+		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
+				geodedic1.getCoordinateSystem().getType());
+		assertEquals(2, geodedic1.getCoordinateSystem().getDimension());
+		assertEquals("latitude",
+				geodedic1.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals(AxisDirectionType.NORTH, geodedic1.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals("longitude",
+				geodedic1.getCoordinateSystem().getAxes().get(1).getName());
+		assertEquals(AxisDirectionType.EAST, geodedic1.getCoordinateSystem()
+				.getAxes().get(1).getDirection());
+		assertEquals(UnitType.ANGLEUNIT,
+				geodedic1.getCoordinateSystem().getUnit().getType());
+		assertEquals("degree",
+				geodedic1.getCoordinateSystem().getUnit().getName());
+		assertEquals(0.0174532925199433,
+				geodedic1.getCoordinateSystem().getUnit().getConversionFactor(),
+				0);
+		GeoCoordinateReferenceSystem geodedic2 = (GeoCoordinateReferenceSystem) bound
+				.getTarget();
+		assertEquals(CRSType.GEODETIC, geodedic2.getType());
+		assertEquals("NAD83", geodedic2.getName());
+		assertEquals("North American Datum 1983",
+				geodedic2.getReferenceFrame().getName());
+		assertEquals("GRS 1980",
+				geodedic2.getReferenceFrame().getEllipsoid().getName());
+		assertEquals(6378137,
+				geodedic2.getReferenceFrame().getEllipsoid().getSemiMajorAxis(),
+				0);
+		assertEquals(298.2572221, geodedic2.getReferenceFrame().getEllipsoid()
+				.getInverseFlattening(), 0);
+		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
+				geodedic2.getCoordinateSystem().getType());
+		assertEquals(2, geodedic2.getCoordinateSystem().getDimension());
+		assertEquals("latitude",
+				geodedic2.getCoordinateSystem().getAxes().get(0).getName());
+		assertEquals(AxisDirectionType.NORTH, geodedic2.getCoordinateSystem()
+				.getAxes().get(0).getDirection());
+		assertEquals("longitude",
+				geodedic2.getCoordinateSystem().getAxes().get(1).getName());
+		assertEquals(AxisDirectionType.EAST, geodedic2.getCoordinateSystem()
+				.getAxes().get(1).getDirection());
+		assertEquals(UnitType.ANGLEUNIT,
+				geodedic2.getCoordinateSystem().getUnit().getType());
+		assertEquals("degree",
+				geodedic2.getCoordinateSystem().getUnit().getName());
+		assertEquals(0.0174532925199433,
+				geodedic2.getCoordinateSystem().getUnit().getConversionFactor(),
+				0);
+		assertEquals("NAD27 to NAD83 Alaska",
+				bound.getTransformation().getName());
+		assertEquals("NADCON", bound.getTransformation().getMethod().getName());
+		assertEquals("EPSG", bound.getTransformation().getMethod()
+				.getIdentifiers().get(0).getName());
+		assertEquals("9613", bound.getTransformation().getMethod()
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Latitude difference file",
+				bound.getTransformation().getParameters().get(0).getName());
+		assertEquals("alaska.las", ((OperationParameterFile) bound
+				.getTransformation().getParameters().get(0)).getFileName());
+		assertEquals("Longitude difference file",
+				bound.getTransformation().getParameters().get(1).getName());
+		assertEquals("alaska.los", ((OperationParameterFile) bound
+				.getTransformation().getParameters().get(1)).getFileName());
 
 		text = text.replace("6378137", "6378137.0");
 		assertEquals(text, bound.toString());
@@ -5053,7 +5250,21 @@ public class CRSReaderWriterTest {
 		bound = CRSReader.readBound(text);
 		assertEquals(crs, bound);
 		assertEquals(CRSType.BOUND, bound.getType());
-		// TODO
+		assertEquals(CRSType.GEOGRAPHIC, bound.getSource().getType());
+		assertEquals("NAD27", bound.getSource().getName());
+		assertEquals(CRSType.GEOGRAPHIC, bound.getTarget().getType());
+		assertEquals("NAD83", bound.getTarget().getName());
+		assertEquals("NAD27 to NAD83(86) National",
+				bound.getTransformation().getName());
+		assertEquals("NTv2", bound.getTransformation().getMethod().getName());
+		assertEquals("EPSG", bound.getTransformation().getMethod()
+				.getIdentifiers().get(0).getName());
+		assertEquals("9615", bound.getTransformation().getMethod()
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Latitude and longitude difference file",
+				bound.getTransformation().getParameters().get(0).getName());
+		assertEquals("NTv2_0.gsb", ((OperationParameterFile) bound
+				.getTransformation().getParameters().get(0)).getFileName());
 
 		text = text.replace("6378137", "6378137.0").replace("\",1,", "\",1.0,");
 		assertEquals(text, bound.toString());
@@ -5077,7 +5288,74 @@ public class CRSReaderWriterTest {
 		bound = CRSReader.readBound(text);
 		assertEquals(crs, bound);
 		assertEquals(CRSType.BOUND, bound.getType());
-		// TODO
+		assertEquals(CRSType.GEOGRAPHIC, bound.getSource().getType());
+		assertEquals("Amersfoort", bound.getSource().getName());
+		assertEquals(CRSType.GEOGRAPHIC, bound.getTarget().getType());
+		assertEquals("ETRS89", bound.getTarget().getName());
+		assertEquals("Amersfoort to ETRS89 (3)",
+				bound.getTransformation().getName());
+		assertEquals("Coordinate Frame",
+				bound.getTransformation().getMethod().getName());
+		assertEquals("EPSG", bound.getTransformation().getMethod()
+				.getIdentifiers().get(0).getName());
+		assertEquals("1032", bound.getTransformation().getMethod()
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("X-axis translation",
+				bound.getTransformation().getParameters().get(0).getName());
+		assertEquals(565.2369, ((OperationParameter) bound.getTransformation()
+				.getParameters().get(0)).getValue(), 0);
+		assertEquals("EPSG", bound.getTransformation().getParameters().get(0)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8605", bound.getTransformation().getParameters().get(0)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Y-axis translation",
+				bound.getTransformation().getParameters().get(1).getName());
+		assertEquals(50.0087, ((OperationParameter) bound.getTransformation()
+				.getParameters().get(1)).getValue(), 0);
+		assertEquals("EPSG", bound.getTransformation().getParameters().get(1)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8606", bound.getTransformation().getParameters().get(1)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Z-axis translation",
+				bound.getTransformation().getParameters().get(2).getName());
+		assertEquals(465.658, ((OperationParameter) bound.getTransformation()
+				.getParameters().get(2)).getValue(), 0);
+		assertEquals("EPSG", bound.getTransformation().getParameters().get(2)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8607", bound.getTransformation().getParameters().get(2)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("X-axis rotation",
+				bound.getTransformation().getParameters().get(3).getName());
+		assertEquals(0.407, ((OperationParameter) bound.getTransformation()
+				.getParameters().get(3)).getValue(), 0);
+		assertEquals("EPSG", bound.getTransformation().getParameters().get(3)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8608", bound.getTransformation().getParameters().get(3)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Y-axis rotation",
+				bound.getTransformation().getParameters().get(4).getName());
+		assertEquals(-0.351, ((OperationParameter) bound.getTransformation()
+				.getParameters().get(4)).getValue(), 0);
+		assertEquals("EPSG", bound.getTransformation().getParameters().get(4)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8609", bound.getTransformation().getParameters().get(4)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Z-axis rotation",
+				bound.getTransformation().getParameters().get(5).getName());
+		assertEquals(1.870, ((OperationParameter) bound.getTransformation()
+				.getParameters().get(5)).getValue(), 0);
+		assertEquals("EPSG", bound.getTransformation().getParameters().get(5)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8610", bound.getTransformation().getParameters().get(5)
+				.getIdentifiers().get(0).getUniqueIdentifier());
+		assertEquals("Scale difference",
+				bound.getTransformation().getParameters().get(6).getName());
+		assertEquals(1.000004812, ((OperationParameter) bound
+				.getTransformation().getParameters().get(6)).getValue(), 0);
+		assertEquals("EPSG", bound.getTransformation().getParameters().get(6)
+				.getIdentifiers().get(0).getName());
+		assertEquals("8611", bound.getTransformation().getParameters().get(6)
+				.getIdentifiers().get(0).getUniqueIdentifier());
 
 		text = text.replace("6378137", "6378137.0")
 				.replaceAll("\",1,", "\",1.0,").replace("1.870", "1.87");
