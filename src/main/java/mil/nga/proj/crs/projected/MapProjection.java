@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mil.nga.proj.ProjectionException;
 import mil.nga.proj.crs.common.Identifier;
-import mil.nga.proj.crs.operation.ConcatenableOperation;
-import mil.nga.proj.crs.operation.ConcatenableOperationType;
+import mil.nga.proj.crs.operation.CommonOperation;
 import mil.nga.proj.crs.operation.OperationMethod;
 import mil.nga.proj.crs.operation.OperationParameter;
+import mil.nga.proj.crs.operation.OperationType;
 import mil.nga.proj.crs.operation.Parameter;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
@@ -19,7 +20,7 @@ import mil.nga.proj.crs.wkt.CRSWriter;
  * 
  * @author osbornb
  */
-public class MapProjection implements ConcatenableOperation {
+public class MapProjection implements CommonOperation {
 
 	/**
 	 * Logger
@@ -71,8 +72,8 @@ public class MapProjection implements ConcatenableOperation {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ConcatenableOperationType getOperationType() {
-		return ConcatenableOperationType.MAP_PROJECTION;
+	public OperationType getOperationType() {
+		return OperationType.MAP_PROJECTION;
 	}
 
 	/**
@@ -89,6 +90,31 @@ public class MapProjection implements ConcatenableOperation {
 	@Override
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getVersion() {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasVersion() {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setVersion(String version) {
+		throw new ProjectionException(
+				"Map Projection does not support version");
 	}
 
 	/**
@@ -132,6 +158,33 @@ public class MapProjection implements ConcatenableOperation {
 	@Override
 	public boolean hasParameters() {
 		return parameters != null && !parameters.isEmpty();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int numParameters() {
+		return parameters != null ? parameters.size() : 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Parameter getParameter(int index) {
+		return getOperationParameter(index);
+	}
+
+	/**
+	 * Get the parameter at the index
+	 * 
+	 * @param index
+	 *            parameter index
+	 * @return parameter
+	 */
+	public OperationParameter getOperationParameter(int index) {
+		return parameters.get(index);
 	}
 
 	/**
@@ -212,6 +265,22 @@ public class MapProjection implements ConcatenableOperation {
 	@Override
 	public boolean hasIdentifiers() {
 		return identifiers != null && !identifiers.isEmpty();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int numIdentifiers() {
+		return identifiers != null ? identifiers.size() : 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Identifier getIdentifier(int index) {
+		return identifiers.get(index);
 	}
 
 	/**

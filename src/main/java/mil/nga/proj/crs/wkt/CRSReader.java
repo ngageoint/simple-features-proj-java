@@ -51,7 +51,7 @@ import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
 import mil.nga.proj.crs.geo.TriaxialEllipsoid;
 import mil.nga.proj.crs.metadata.CoordinateMetadata;
-import mil.nga.proj.crs.operation.ConcatenableOperation;
+import mil.nga.proj.crs.operation.CommonOperation;
 import mil.nga.proj.crs.operation.ConcatenatedOperation;
 import mil.nga.proj.crs.operation.CoordinateOperation;
 import mil.nga.proj.crs.operation.OperationMethod;
@@ -1994,7 +1994,7 @@ public class CRSReader implements Closeable {
 
 		readRightDelimiter();
 
-		if (crs.getCoordinateReferenceSystems().size() < 2) {
+		if (crs.numCoordinateReferenceSystems() < 2) {
 			String message = "Compound Coordinate Reference System requires at least two Coordinate Reference Systems";
 			if (strict) {
 				throw new ProjectionException(message);
@@ -2176,7 +2176,7 @@ public class CRSReader implements Closeable {
 					CRSKeyword.POINTMOTIONOPERATION, CRSKeyword.CONVERSION,
 					CRSKeyword.DERIVINGCONVERSION);
 
-			ConcatenableOperation concatenable = null;
+			CommonOperation concatenable = null;
 
 			switch (keyword) {
 			case COORDINATEOPERATION:
@@ -2574,7 +2574,7 @@ public class CRSReader implements Closeable {
 
 			keyword = readToKeyword(CRSKeyword.ID);
 			if (keyword == CRSKeyword.ID) {
-				dynamic.setDeformationModelIdentifiers(readIdentifiers());
+				dynamic.setIdentifiers(readIdentifiers());
 			}
 
 			readRightDelimiter();
@@ -4168,7 +4168,7 @@ public class CRSReader implements Closeable {
 			}
 
 		}
-		coordinateSystem.setDimension(coordinateSystem.getAxes().size());
+		coordinateSystem.setDimension(coordinateSystem.numAxes());
 
 		// TODO http://ogc.standardstracker.org/show_request.cgi?id=674
 		if (isUnitNext()) {

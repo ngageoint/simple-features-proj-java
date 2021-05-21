@@ -38,7 +38,7 @@ import mil.nga.proj.crs.geo.GeoReferenceFrame;
 import mil.nga.proj.crs.geo.PrimeMeridian;
 import mil.nga.proj.crs.geo.TriaxialEllipsoid;
 import mil.nga.proj.crs.metadata.CoordinateMetadata;
-import mil.nga.proj.crs.operation.ConcatenableOperation;
+import mil.nga.proj.crs.operation.CommonOperation;
 import mil.nga.proj.crs.operation.ConcatenatedOperation;
 import mil.nga.proj.crs.operation.CoordinateOperation;
 import mil.nga.proj.crs.operation.OperationMethod;
@@ -1287,7 +1287,7 @@ public class CRSWriter implements Closeable {
 		writeSeparator();
 		writeTarget(operation.getTarget());
 
-		for (ConcatenableOperation concatenable : operation.getOperations()) {
+		for (CommonOperation concatenable : operation.getOperations()) {
 
 			writeSeparator();
 			write(CRSKeyword.STEP);
@@ -1555,9 +1555,9 @@ public class CRSWriter implements Closeable {
 
 			writeQuotedText(dynamic.getDeformationModelName());
 
-			if (dynamic.hasDeformationModelIdentifiers()) {
+			if (dynamic.hasIdentifiers()) {
 				writeSeparator();
-				writeIdentifiers(dynamic.getDeformationModelIdentifiers());
+				writeIdentifiers(dynamic.getIdentifiers());
 			}
 
 			writeRightDelimiter();

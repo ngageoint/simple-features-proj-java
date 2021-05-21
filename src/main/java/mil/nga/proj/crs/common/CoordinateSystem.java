@@ -13,7 +13,7 @@ import mil.nga.proj.crs.wkt.CRSWriter;
  * 
  * @author osbornb
  */
-public class CoordinateSystem {
+public class CoordinateSystem implements Identifiable {
 
 	/**
 	 * Logger
@@ -39,7 +39,7 @@ public class CoordinateSystem {
 	/**
 	 * Axes
 	 */
-	private List<Axis> axes = null;
+	private List<Axis> axes = new ArrayList<>();
 
 	/**
 	 * Unit
@@ -126,39 +126,49 @@ public class CoordinateSystem {
 	}
 
 	/**
-	 * Get the identifiers
-	 * 
-	 * @return identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Identifier> getIdentifiers() {
 		return identifiers;
 	}
 
 	/**
-	 * Has identifiers
-	 * 
-	 * @return true if has identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasIdentifiers() {
 		return identifiers != null && !identifiers.isEmpty();
 	}
 
 	/**
-	 * Set the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
+	public int numIdentifiers() {
+		return identifiers != null ? identifiers.size() : 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Identifier getIdentifier(int index) {
+		return identifiers.get(index);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void setIdentifiers(List<Identifier> identifiers) {
 		this.identifiers = identifiers;
 	}
 
 	/**
-	 * Add the identifier
-	 * 
-	 * @param identifier
-	 *            identifier
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifier(Identifier identifier) {
 		if (this.identifiers == null) {
 			this.identifiers = new ArrayList<>();
@@ -167,11 +177,9 @@ public class CoordinateSystem {
 	}
 
 	/**
-	 * Add the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifiers(List<Identifier> identifiers) {
 		if (this.identifiers == null) {
 			this.identifiers = new ArrayList<>();
@@ -186,6 +194,26 @@ public class CoordinateSystem {
 	 */
 	public List<Axis> getAxes() {
 		return axes;
+	}
+
+	/**
+	 * Number of axes
+	 * 
+	 * @return axes count
+	 */
+	public int numAxes() {
+		return axes.size();
+	}
+
+	/**
+	 * Get the axis at the index
+	 * 
+	 * @param index
+	 *            axis index
+	 * @return axis
+	 */
+	public Axis getAxis(int index) {
+		return axes.get(index);
 	}
 
 	/**
@@ -205,9 +233,6 @@ public class CoordinateSystem {
 	 *            axis
 	 */
 	public void addAxis(Axis axis) {
-		if (this.axes == null) {
-			this.axes = new ArrayList<>();
-		}
 		this.axes.add(axis);
 	}
 
@@ -218,9 +243,6 @@ public class CoordinateSystem {
 	 *            axes
 	 */
 	public void addAxes(List<Axis> axes) {
-		if (this.axes == null) {
-			this.axes = new ArrayList<>();
-		}
 		this.axes.addAll(axes);
 	}
 

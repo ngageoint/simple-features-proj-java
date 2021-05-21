@@ -36,8 +36,8 @@ public class PointMotionOperation extends SimpleOperation {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ConcatenableOperationType getOperationType() {
-		return ConcatenableOperationType.POINT_MOTION_OPERATION;
+	public OperationType getOperationType() {
+		return OperationType.POINT_MOTION_OPERATION;
 	}
 
 	/**

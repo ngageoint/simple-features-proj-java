@@ -13,7 +13,7 @@ import mil.nga.proj.crs.wkt.CRSWriter;
  * 
  * @author osbornb
  */
-public class DatumEnsembleMember {
+public class DatumEnsembleMember implements Identifiable {
 
 	/**
 	 * Logger
@@ -68,39 +68,49 @@ public class DatumEnsembleMember {
 	}
 
 	/**
-	 * Get the identifiers
-	 * 
-	 * @return identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Identifier> getIdentifiers() {
 		return identifiers;
 	}
 
 	/**
-	 * Has identifiers
-	 * 
-	 * @return true if has identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasIdentifiers() {
 		return identifiers != null && !identifiers.isEmpty();
 	}
 
 	/**
-	 * Set the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
+	public int numIdentifiers() {
+		return identifiers != null ? identifiers.size() : 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Identifier getIdentifier(int index) {
+		return identifiers.get(index);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void setIdentifiers(List<Identifier> identifiers) {
 		this.identifiers = identifiers;
 	}
 
 	/**
-	 * Add the identifier
-	 * 
-	 * @param identifier
-	 *            identifier
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifier(Identifier identifier) {
 		if (this.identifiers == null) {
 			this.identifiers = new ArrayList<>();
@@ -109,11 +119,9 @@ public class DatumEnsembleMember {
 	}
 
 	/**
-	 * Add the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifiers(List<Identifier> identifiers) {
 		if (this.identifiers == null) {
 			this.identifiers = new ArrayList<>();

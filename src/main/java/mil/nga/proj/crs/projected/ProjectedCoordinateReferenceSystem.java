@@ -2,8 +2,8 @@ package mil.nga.proj.crs.projected;
 
 import java.util.List;
 
-import mil.nga.proj.crs.SimpleCoordinateReferenceSystem;
 import mil.nga.proj.crs.CRSType;
+import mil.nga.proj.crs.SimpleCoordinateReferenceSystem;
 import mil.nga.proj.crs.common.CoordinateSystem;
 import mil.nga.proj.crs.common.Dynamic;
 import mil.nga.proj.crs.common.Identifier;
@@ -54,9 +54,8 @@ public class ProjectedCoordinateReferenceSystem
 	 *            coordinate system
 	 */
 	public ProjectedCoordinateReferenceSystem(String name, String baseName,
-			CRSType baseType,
-			GeoReferenceFrame referenceFrame, MapProjection mapProjection,
-			CoordinateSystem coordinateSystem) {
+			CRSType baseType, GeoReferenceFrame referenceFrame,
+			MapProjection mapProjection, CoordinateSystem coordinateSystem) {
 		super(name, CRSType.PROJECTED, coordinateSystem);
 		setBaseName(baseName);
 		setBaseType(baseType);
@@ -81,9 +80,8 @@ public class ProjectedCoordinateReferenceSystem
 	 *            coordinate system
 	 */
 	public ProjectedCoordinateReferenceSystem(String name, String baseName,
-			CRSType baseType,
-			GeoDatumEnsemble datumEnsemble, MapProjection mapProjection,
-			CoordinateSystem coordinateSystem) {
+			CRSType baseType, GeoDatumEnsemble datumEnsemble,
+			MapProjection mapProjection, CoordinateSystem coordinateSystem) {
 		super(name, CRSType.PROJECTED, coordinateSystem);
 		setBaseName(baseName);
 		setBaseType(baseType);
@@ -110,9 +108,8 @@ public class ProjectedCoordinateReferenceSystem
 	 *            coordinate system
 	 */
 	public ProjectedCoordinateReferenceSystem(String name, String baseName,
-			CRSType baseType, Dynamic dynamic,
-			GeoReferenceFrame referenceFrame, MapProjection mapProjection,
-			CoordinateSystem coordinateSystem) {
+			CRSType baseType, Dynamic dynamic, GeoReferenceFrame referenceFrame,
+			MapProjection mapProjection, CoordinateSystem coordinateSystem) {
 		super(name, CRSType.PROJECTED, coordinateSystem);
 		setBaseName(baseName);
 		setBaseType(baseType);
@@ -278,6 +275,26 @@ public class ProjectedCoordinateReferenceSystem
 	 */
 	public boolean hasBaseIdentifiers() {
 		return getBase().hasIdentifiers();
+	}
+
+	/**
+	 * Number of base identifiers
+	 * 
+	 * @return base identifiers count
+	 */
+	public int numBaseIdentifiers() {
+		return getBase().numIdentifiers();
+	}
+
+	/**
+	 * Get the base identifier at the index
+	 * 
+	 * @param index
+	 *            base identifier index
+	 * @return base identifier
+	 */
+	public Identifier getBaseIdentifier(int index) {
+		return getBase().getIdentifier(index);
 	}
 
 	/**

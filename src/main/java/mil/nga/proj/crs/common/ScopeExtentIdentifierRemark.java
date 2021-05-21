@@ -7,7 +7,7 @@ import java.util.List;
  * 
  * @author osbornb
  */
-public interface ScopeExtentIdentifierRemark {
+public interface ScopeExtentIdentifierRemark extends Identifiable {
 
 	/**
 	 * Get the usages
@@ -22,6 +22,22 @@ public interface ScopeExtentIdentifierRemark {
 	 * @return true if has usages
 	 */
 	public boolean hasUsages();
+
+	/**
+	 * Number of usages
+	 * 
+	 * @return usages count
+	 */
+	public int numUsages();
+
+	/**
+	 * Get the usage at the index
+	 * 
+	 * @param index
+	 *            usage index
+	 * @return usage
+	 */
+	public Usage getUsage(int index);
 
 	/**
 	 * Set the usages
@@ -46,44 +62,6 @@ public interface ScopeExtentIdentifierRemark {
 	 *            usages
 	 */
 	public void addUsages(List<Usage> usages);
-
-	/**
-	 * Get the identifiers
-	 * 
-	 * @return identifiers
-	 */
-	public List<Identifier> getIdentifiers();
-
-	/**
-	 * Has identifiers
-	 * 
-	 * @return true if has identifiers
-	 */
-	public boolean hasIdentifiers();
-
-	/**
-	 * Set the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
-	 */
-	public void setIdentifiers(List<Identifier> identifiers);
-
-	/**
-	 * Add the identifier
-	 * 
-	 * @param identifier
-	 *            identifier
-	 */
-	public void addIdentifier(Identifier identifier);
-
-	/**
-	 * Add the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
-	 */
-	public void addIdentifiers(List<Identifier> identifiers);
 
 	/**
 	 * Get the remark

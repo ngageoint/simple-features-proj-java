@@ -12,7 +12,7 @@ import mil.nga.proj.crs.CoordinateReferenceSystem;
  * @author osbornb
  */
 public abstract class SimpleOperation extends Operation
-		implements ConcatenableOperation {
+		implements CommonOperation {
 
 	/**
 	 * Operation Method
@@ -82,6 +82,22 @@ public abstract class SimpleOperation extends Operation
 	@Override
 	public boolean hasParameters() {
 		return parameters != null && !parameters.isEmpty();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int numParameters() {
+		return parameters != null ? parameters.size() : 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Parameter getParameter(int index) {
+		return parameters.get(index);
 	}
 
 	/**

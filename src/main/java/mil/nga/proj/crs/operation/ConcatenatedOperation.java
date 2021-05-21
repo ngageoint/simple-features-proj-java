@@ -21,7 +21,7 @@ public class ConcatenatedOperation extends Operation {
 	/**
 	 * Operations, transformations, and conversions
 	 */
-	private List<ConcatenableOperation> operations = new ArrayList<>();
+	private List<CommonOperation> operations = new ArrayList<>();
 
 	/**
 	 * Constructor
@@ -70,8 +70,28 @@ public class ConcatenatedOperation extends Operation {
 	 * 
 	 * @return operations
 	 */
-	public List<ConcatenableOperation> getOperations() {
+	public List<CommonOperation> getOperations() {
 		return operations;
+	}
+
+	/**
+	 * Number of operations
+	 * 
+	 * @return operations count
+	 */
+	public int numOperations() {
+		return operations != null ? operations.size() : 0;
+	}
+
+	/**
+	 * Get the operation at the index
+	 * 
+	 * @param index
+	 *            operation index
+	 * @return operation
+	 */
+	public CommonOperation getOperation(int index) {
+		return operations.get(index);
 	}
 
 	/**
@@ -80,7 +100,7 @@ public class ConcatenatedOperation extends Operation {
 	 * @param operations
 	 *            operations
 	 */
-	public void setOperations(List<ConcatenableOperation> operations) {
+	public void setOperations(List<CommonOperation> operations) {
 		this.operations = operations;
 	}
 
@@ -90,7 +110,7 @@ public class ConcatenatedOperation extends Operation {
 	 * @param operation
 	 *            operation
 	 */
-	public void addOperation(ConcatenableOperation operation) {
+	public void addOperation(CommonOperation operation) {
 		this.operations.add(operation);
 	}
 
@@ -100,7 +120,7 @@ public class ConcatenatedOperation extends Operation {
 	 * @param operations
 	 *            operations
 	 */
-	public void addOperations(List<ConcatenableOperation> operations) {
+	public void addOperations(List<CommonOperation> operations) {
 		this.operations.addAll(operations);
 	}
 

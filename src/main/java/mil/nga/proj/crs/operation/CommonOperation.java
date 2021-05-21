@@ -2,21 +2,21 @@ package mil.nga.proj.crs.operation;
 
 import java.util.List;
 
-import mil.nga.proj.crs.common.Identifier;
+import mil.nga.proj.crs.common.Identifiable;
 
 /**
- * Concatenable Operation interface
+ * Common Operation interface
  * 
  * @author osbornb
  */
-public interface ConcatenableOperation {
+public interface CommonOperation extends Identifiable {
 
 	/**
 	 * Get the operation type
 	 * 
 	 * @return operation type
 	 */
-	public ConcatenableOperationType getOperationType();
+	public OperationType getOperationType();
 
 	/**
 	 * Get the name
@@ -32,6 +32,28 @@ public interface ConcatenableOperation {
 	 *            name
 	 */
 	public void setName(String name);
+
+	/**
+	 * Get the operation version
+	 * 
+	 * @return operation version
+	 */
+	public String getVersion();
+
+	/**
+	 * Has an operation version
+	 * 
+	 * @return true if has operation version
+	 */
+	public boolean hasVersion();
+
+	/**
+	 * Set the operation version
+	 * 
+	 * @param version
+	 *            operation version
+	 */
+	public void setVersion(String version);
 
 	/**
 	 * Get the method
@@ -63,6 +85,22 @@ public interface ConcatenableOperation {
 	public boolean hasParameters();
 
 	/**
+	 * Number of parameters
+	 * 
+	 * @return parameters count
+	 */
+	public int numParameters();
+
+	/**
+	 * Get the parameter at the index
+	 * 
+	 * @param index
+	 *            parameter index
+	 * @return parameter
+	 */
+	public Parameter getParameter(int index);
+
+	/**
 	 * Set the parameters
 	 * 
 	 * @param parameters
@@ -85,43 +123,5 @@ public interface ConcatenableOperation {
 	 *            parameters
 	 */
 	public void addParameters(List<Parameter> parameters);
-
-	/**
-	 * Get the identifiers
-	 * 
-	 * @return identifiers
-	 */
-	public List<Identifier> getIdentifiers();
-
-	/**
-	 * Has identifiers
-	 * 
-	 * @return true if has identifiers
-	 */
-	public boolean hasIdentifiers();
-
-	/**
-	 * Set the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
-	 */
-	public void setIdentifiers(List<Identifier> identifiers);
-
-	/**
-	 * Add the identifier
-	 * 
-	 * @param identifier
-	 *            identifier
-	 */
-	public void addIdentifier(Identifier identifier);
-
-	/**
-	 * Add the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
-	 */
-	public void addIdentifiers(List<Identifier> identifiers);
 
 }

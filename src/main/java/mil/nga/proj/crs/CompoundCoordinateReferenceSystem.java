@@ -48,6 +48,27 @@ public class CompoundCoordinateReferenceSystem
 	}
 
 	/**
+	 * Number of coordinate reference systems
+	 * 
+	 * @return coordinate reference systems count
+	 */
+	public int numCoordinateReferenceSystems() {
+		return coordinateReferenceSystems.size();
+	}
+
+	/**
+	 * Get the coordinate reference system at the index
+	 * 
+	 * @param index
+	 *            crs index
+	 * @return coordinate reference system
+	 */
+	public SimpleCoordinateReferenceSystem getCoordinateReferenceSystem(
+			int index) {
+		return coordinateReferenceSystems.get(index);
+	}
+
+	/**
 	 * Set the coordinate reference systems
 	 * 
 	 * @param coordinateReferenceSystems

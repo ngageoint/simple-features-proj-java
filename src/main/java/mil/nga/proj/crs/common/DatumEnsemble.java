@@ -13,7 +13,7 @@ import mil.nga.proj.crs.wkt.CRSWriter;
  * 
  * @author osbornb
  */
-public abstract class DatumEnsemble {
+public abstract class DatumEnsemble implements Identifiable {
 
 	/**
 	 * Logger
@@ -29,7 +29,7 @@ public abstract class DatumEnsemble {
 	/**
 	 * Members
 	 */
-	private List<DatumEnsembleMember> members = null;
+	private List<DatumEnsembleMember> members = new ArrayList<>();
 
 	/**
 	 * Accuracy (in meters)
@@ -111,6 +111,26 @@ public abstract class DatumEnsemble {
 	}
 
 	/**
+	 * Number of members
+	 * 
+	 * @return members count
+	 */
+	public int numMembers() {
+		return members.size();
+	}
+
+	/**
+	 * Get the member at the index
+	 * 
+	 * @param index
+	 *            member index
+	 * @return member
+	 */
+	public DatumEnsembleMember getMember(int index) {
+		return members.get(index);
+	}
+
+	/**
 	 * Set the members
 	 * 
 	 * @param members
@@ -127,9 +147,6 @@ public abstract class DatumEnsemble {
 	 *            member
 	 */
 	public void addMember(DatumEnsembleMember member) {
-		if (this.members == null) {
-			this.members = new ArrayList<>();
-		}
 		this.members.add(member);
 	}
 
@@ -140,9 +157,6 @@ public abstract class DatumEnsemble {
 	 *            members
 	 */
 	public void addMembers(List<DatumEnsembleMember> members) {
-		if (this.members == null) {
-			this.members = new ArrayList<>();
-		}
 		this.members.addAll(members);
 	}
 
@@ -166,39 +180,49 @@ public abstract class DatumEnsemble {
 	}
 
 	/**
-	 * Get the identifiers
-	 * 
-	 * @return identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Identifier> getIdentifiers() {
 		return identifiers;
 	}
 
 	/**
-	 * Has identifiers
-	 * 
-	 * @return true if has identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasIdentifiers() {
 		return identifiers != null && !identifiers.isEmpty();
 	}
 
 	/**
-	 * Set the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
+	public int numIdentifiers() {
+		return identifiers != null ? identifiers.size() : 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Identifier getIdentifier(int index) {
+		return identifiers.get(index);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void setIdentifiers(List<Identifier> identifiers) {
 		this.identifiers = identifiers;
 	}
 
 	/**
-	 * Add the identifier
-	 * 
-	 * @param identifier
-	 *            identifier
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifier(Identifier identifier) {
 		if (this.identifiers == null) {
 			this.identifiers = new ArrayList<>();
@@ -207,11 +231,9 @@ public abstract class DatumEnsemble {
 	}
 
 	/**
-	 * Add the identifiers
-	 * 
-	 * @param identifiers
-	 *            identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifiers(List<Identifier> identifiers) {
 		if (this.identifiers == null) {
 			this.identifiers = new ArrayList<>();

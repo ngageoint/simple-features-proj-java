@@ -13,7 +13,7 @@ import mil.nga.proj.crs.wkt.CRSWriter;
  * 
  * @author osbornb
  */
-public class Dynamic {
+public class Dynamic implements Identifiable {
 
 	/**
 	 * Logger
@@ -34,7 +34,7 @@ public class Dynamic {
 	/**
 	 * Deformation Model Identifiers
 	 */
-	private List<Identifier> deformationModelIdentifiers;
+	private List<Identifier> identifiers;
 
 	/**
 	 * Constructor
@@ -101,58 +101,65 @@ public class Dynamic {
 	}
 
 	/**
-	 * Get the deformation model identifiers
-	 * 
-	 * @return deformation model identifiers
+	 * {@inheritDoc}
 	 */
-	public List<Identifier> getDeformationModelIdentifiers() {
-		return deformationModelIdentifiers;
+	@Override
+	public List<Identifier> getIdentifiers() {
+		return identifiers;
 	}
 
 	/**
-	 * Has deformation model identifiers
-	 * 
-	 * @return true if has deformation model identifiers
+	 * {@inheritDoc}
 	 */
-	public boolean hasDeformationModelIdentifiers() {
-		return deformationModelIdentifiers != null
-				&& !deformationModelIdentifiers.isEmpty();
+	@Override
+	public boolean hasIdentifiers() {
+		return identifiers != null && !identifiers.isEmpty();
 	}
 
 	/**
-	 * Set the deformation model identifiers
-	 * 
-	 * @param identifiers
-	 *            deformation model identifiers
+	 * {@inheritDoc}
 	 */
-	public void setDeformationModelIdentifiers(List<Identifier> identifiers) {
-		this.deformationModelIdentifiers = identifiers;
+	@Override
+	public int numIdentifiers() {
+		return identifiers != null ? identifiers.size() : 0;
 	}
 
 	/**
-	 * Add the deformation model identifier
-	 * 
-	 * @param identifier
-	 *            deformation model identifier
+	 * {@inheritDoc}
 	 */
+	@Override
+	public Identifier getIdentifier(int index) {
+		return identifiers.get(index);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setIdentifiers(List<Identifier> identifiers) {
+		this.identifiers = identifiers;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void addIdentifier(Identifier identifier) {
-		if (this.deformationModelIdentifiers == null) {
-			this.deformationModelIdentifiers = new ArrayList<>();
+		if (this.identifiers == null) {
+			this.identifiers = new ArrayList<>();
 		}
-		this.deformationModelIdentifiers.add(identifier);
+		this.identifiers.add(identifier);
 	}
 
 	/**
-	 * Add the deformation model identifiers
-	 * 
-	 * @param identifiers
-	 *            deformation model identifiers
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addIdentifiers(List<Identifier> identifiers) {
-		if (this.deformationModelIdentifiers == null) {
-			this.deformationModelIdentifiers = new ArrayList<>();
+		if (this.identifiers == null) {
+			this.identifiers = new ArrayList<>();
 		}
-		this.deformationModelIdentifiers.addAll(identifiers);
+		this.identifiers.addAll(identifiers);
 	}
 
 	/**
@@ -162,10 +169,10 @@ public class Dynamic {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((deformationModelIdentifiers == null) ? 0
-				: deformationModelIdentifiers.hashCode());
 		result = prime * result + ((deformationModelName == null) ? 0
 				: deformationModelName.hashCode());
+		result = prime * result
+				+ ((identifiers == null) ? 0 : identifiers.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(referenceEpoch);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -184,16 +191,15 @@ public class Dynamic {
 		if (getClass() != obj.getClass())
 			return false;
 		Dynamic other = (Dynamic) obj;
-		if (deformationModelIdentifiers == null) {
-			if (other.deformationModelIdentifiers != null)
-				return false;
-		} else if (!deformationModelIdentifiers
-				.equals(other.deformationModelIdentifiers))
-			return false;
 		if (deformationModelName == null) {
 			if (other.deformationModelName != null)
 				return false;
 		} else if (!deformationModelName.equals(other.deformationModelName))
+			return false;
+		if (identifiers == null) {
+			if (other.identifiers != null)
+				return false;
+		} else if (!identifiers.equals(other.identifiers))
 			return false;
 		if (Double.doubleToLongBits(referenceEpoch) != Double
 				.doubleToLongBits(other.referenceEpoch))

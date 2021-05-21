@@ -103,6 +103,22 @@ public class CommonCRS extends CRS implements ScopeExtentIdentifierRemark {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public int numUsages() {
+		return usages != null ? usages.size() : 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Usage getUsage(int index) {
+		return usages.get(index);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void setUsages(List<Usage> usages) {
 		this.usages = usages;
 	}
@@ -143,6 +159,22 @@ public class CommonCRS extends CRS implements ScopeExtentIdentifierRemark {
 	@Override
 	public boolean hasIdentifiers() {
 		return identifiers != null && !identifiers.isEmpty();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int numIdentifiers() {
+		return identifiers != null ? identifiers.size() : 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Identifier getIdentifier(int index) {
+		return identifiers.get(index);
 	}
 
 	/**

@@ -45,6 +45,15 @@ public class TriaxialEllipsoid extends Ellipsoid {
 	}
 
 	/**
+	 * Get the Ellipsoid Type
+	 * 
+	 * @return ellipsoid type
+	 */
+	public EllipsoidType getType() {
+		return EllipsoidType.TRIAXIAL;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override

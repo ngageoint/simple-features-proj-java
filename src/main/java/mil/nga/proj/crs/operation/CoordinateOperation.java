@@ -49,8 +49,8 @@ public class CoordinateOperation extends SimpleOperation {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ConcatenableOperationType getOperationType() {
-		return ConcatenableOperationType.COORDINATE_OPERATION;
+	public OperationType getOperationType() {
+		return OperationType.COORDINATE_OPERATION;
 	}
 
 	/**

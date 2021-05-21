@@ -9,7 +9,9 @@ import java.util.logging.Logger;
 import mil.nga.proj.crs.common.Identifier;
 import mil.nga.proj.crs.common.ScopeExtentIdentifierRemark;
 import mil.nga.proj.crs.common.Usage;
+import mil.nga.proj.crs.operation.CommonOperation;
 import mil.nga.proj.crs.operation.OperationMethod;
+import mil.nga.proj.crs.operation.OperationType;
 import mil.nga.proj.crs.operation.Parameter;
 import mil.nga.proj.crs.wkt.CRSWriter;
 
@@ -19,7 +21,7 @@ import mil.nga.proj.crs.wkt.CRSWriter;
  * @author osbornb
  */
 public class AbridgedCoordinateTransformation
-		implements ScopeExtentIdentifierRemark {
+		implements CommonOperation, ScopeExtentIdentifierRemark {
 
 	/**
 	 * Logger
@@ -84,105 +86,113 @@ public class AbridgedCoordinateTransformation
 	}
 
 	/**
-	 * Get the operation name
-	 * 
-	 * @return operation name
+	 * {@inheritDoc}
 	 */
+	@Override
+	public OperationType getOperationType() {
+		return OperationType.ABRIDGED_COORDINATE_TRANSFORMATION;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * Set the operation name
-	 * 
-	 * @param name
-	 *            operation name
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/**
-	 * Get the operation version
-	 * 
-	 * @return operation version
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String getVersion() {
 		return version;
 	}
 
 	/**
-	 * Has an operation version
-	 * 
-	 * @return true if has operation version
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasVersion() {
 		return getVersion() != null;
 	}
 
 	/**
-	 * Set the operation version
-	 * 
-	 * @param version
-	 *            operation version
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setVersion(String version) {
 		this.version = version;
 	}
 
 	/**
-	 * Get the method
-	 * 
-	 * @return method
+	 * {@inheritDoc}
 	 */
+	@Override
 	public OperationMethod getMethod() {
 		return method;
 	}
 
 	/**
-	 * Set the method
-	 * 
-	 * @param method
-	 *            method
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setMethod(OperationMethod method) {
 		this.method = method;
 	}
 
 	/**
-	 * Get the parameters
-	 * 
-	 * @return parameters
+	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Parameter> getParameters() {
 		return parameters;
 	}
 
 	/**
-	 * Has parameters
-	 * 
-	 * @return true if has parameters
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasParameters() {
 		return parameters != null && !parameters.isEmpty();
 	}
 
 	/**
-	 * Set the parameters
-	 * 
-	 * @param parameters
-	 *            parameters
+	 * {@inheritDoc}
 	 */
+	@Override
+	public int numParameters() {
+		return parameters != null ? parameters.size() : 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Parameter getParameter(int index) {
+		return parameters.get(index);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void setParameters(List<Parameter> parameters) {
 		this.parameters = parameters;
 	}
 
 	/**
-	 * Add the parameter
-	 * 
-	 * @param parameter
-	 *            parameter
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addParameter(Parameter parameter) {
 		if (this.parameters == null) {
 			this.parameters = new ArrayList<>();
@@ -191,11 +201,9 @@ public class AbridgedCoordinateTransformation
 	}
 
 	/**
-	 * Add the parameters
-	 * 
-	 * @param parameters
-	 *            parameters
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void addParameters(List<Parameter> parameters) {
 		if (this.parameters == null) {
 			this.parameters = new ArrayList<>();
@@ -217,6 +225,22 @@ public class AbridgedCoordinateTransformation
 	@Override
 	public boolean hasUsages() {
 		return usages != null && !usages.isEmpty();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int numUsages() {
+		return usages != null ? usages.size() : 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Usage getUsage(int index) {
+		return usages.get(index);
 	}
 
 	/**
@@ -263,6 +287,22 @@ public class AbridgedCoordinateTransformation
 	@Override
 	public boolean hasIdentifiers() {
 		return identifiers != null && !identifiers.isEmpty();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int numIdentifiers() {
+		return identifiers != null ? identifiers.size() : 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Identifier getIdentifier(int index) {
+		return identifiers.get(index);
 	}
 
 	/**

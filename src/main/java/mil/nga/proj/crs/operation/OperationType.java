@@ -1,11 +1,11 @@
 package mil.nga.proj.crs.operation;
 
 /**
- * Concatenable Operation type
+ * Coordinate Operation type
  * 
  * @author osbornb
  */
-public enum ConcatenableOperationType {
+public enum OperationType {
 
 	/**
 	 * Coordinate Operation
@@ -25,6 +25,11 @@ public enum ConcatenableOperationType {
 	/**
 	 * Deriving Conversion
 	 */
-	DERIVING_CONVERSION;
+	DERIVING_CONVERSION,
+
+	/**
+	 * Abridged Coordinate Transformation
+	 */
+	ABRIDGED_COORDINATE_TRANSFORMATION;
 
 }
