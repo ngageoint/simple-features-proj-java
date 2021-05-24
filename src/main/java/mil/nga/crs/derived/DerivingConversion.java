@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mil.nga.crs.CRSException;
 import mil.nga.crs.common.Identifier;
 import mil.nga.crs.operation.CommonOperation;
 import mil.nga.crs.operation.OperationMethod;
 import mil.nga.crs.operation.OperationType;
 import mil.nga.crs.operation.Parameter;
 import mil.nga.crs.wkt.CRSWriter;
-import mil.nga.proj.ProjectionException;
 
 /**
  * Deriving Conversion
@@ -112,8 +112,7 @@ public class DerivingConversion implements CommonOperation {
 	 */
 	@Override
 	public void setVersion(String version) {
-		throw new ProjectionException(
-				"Deriving Conversion does not support version");
+		throw new CRSException("Deriving Conversion does not support version");
 	}
 
 	/**

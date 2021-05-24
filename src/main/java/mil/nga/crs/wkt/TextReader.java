@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import mil.nga.proj.ProjectionException;
+import mil.nga.crs.CRSException;
 
 /**
  * Read through text string
@@ -315,7 +315,7 @@ public class TextReader {
 	public String readExpectedToken() throws IOException {
 		String token = readToken();
 		if (token == null) {
-			throw new ProjectionException("Unexpected end of text, null token");
+			throw new CRSException("Unexpected end of text, null token");
 		}
 		return token;
 	}
@@ -343,7 +343,7 @@ public class TextReader {
 	public String peekExpectedToken(int num) throws IOException {
 		String token = peekToken(num);
 		if (token == null) {
-			throw new ProjectionException("Unexpected end of text, null token");
+			throw new CRSException("Unexpected end of text, null token");
 		}
 		return token;
 	}
@@ -361,7 +361,7 @@ public class TextReader {
 		try {
 			number = Double.parseDouble(token);
 		} catch (NumberFormatException e) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Invalid number token. found: '" + token + "'", e);
 		}
 		return number;
@@ -377,8 +377,7 @@ public class TextReader {
 	public double readUnsignedNumber() throws IOException {
 		double number = readNumber();
 		if (number < 0) {
-			throw new ProjectionException(
-					"Invalid unsigned number. found: " + number);
+			throw new CRSException("Invalid unsigned number. found: " + number);
 		}
 		return number;
 	}
@@ -396,7 +395,7 @@ public class TextReader {
 		try {
 			number = Integer.parseInt(token);
 		} catch (NumberFormatException e) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Invalid integer token. found: '" + token + "'", e);
 		}
 		return number;
@@ -415,7 +414,7 @@ public class TextReader {
 		try {
 			number = Integer.parseUnsignedInt(token);
 		} catch (NumberFormatException e) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Invalid unsigned integer token. found: '" + token + "'",
 					e);
 		}

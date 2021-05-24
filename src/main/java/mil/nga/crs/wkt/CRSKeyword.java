@@ -8,7 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import mil.nga.proj.ProjectionException;
+import mil.nga.crs.CRSException;
 
 /**
  * Coordinate Reference System Keyword
@@ -481,7 +481,7 @@ public enum CRSKeyword {
 	public static CRSKeyword getRequiredType(String keyword) {
 		CRSKeyword type = getType(keyword);
 		if (type == null) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"No Coordinate Reference System Keyword for value: "
 							+ keyword);
 		}
@@ -513,7 +513,7 @@ public enum CRSKeyword {
 	public static Set<CRSKeyword> getRequiredTypes(String keyword) {
 		Set<CRSKeyword> types = getTypes(keyword);
 		if (types == null || types.isEmpty()) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"No Coordinate Reference System Keywords for value: "
 							+ keyword);
 		}

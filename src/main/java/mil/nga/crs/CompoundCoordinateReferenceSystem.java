@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import mil.nga.proj.ProjectionException;
-
 /**
  * Compound Coordinate Reference System
  * 
@@ -100,7 +98,7 @@ public class CompoundCoordinateReferenceSystem
 			this.coordinateReferenceSystems.add(crs);
 			break;
 		default:
-			throw new ProjectionException(
+			throw new CRSException(
 					"Unsupported Compound Coordinate Reference System Type: "
 							+ crs.getType());
 		}

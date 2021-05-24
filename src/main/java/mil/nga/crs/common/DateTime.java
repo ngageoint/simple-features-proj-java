@@ -1,6 +1,6 @@
 package mil.nga.crs.common;
 
-import mil.nga.proj.ProjectionException;
+import mil.nga.crs.CRSException;
 
 /**
  * Date and time
@@ -149,8 +149,7 @@ public class DateTime {
 		}
 
 		if (dateTime == null) {
-			throw new ProjectionException(
-					"Invalid Date and Time value: " + text);
+			throw new CRSException("Invalid Date and Time value: " + text);
 		}
 
 		return dateTime;
@@ -438,8 +437,7 @@ public class DateTime {
 	 */
 	public void setFraction(Double fraction) {
 		if (fraction != null && (fraction < 0 || fraction >= 1.0)) {
-			throw new ProjectionException(
-					"Invalid fraction value: " + fraction);
+			throw new CRSException("Invalid fraction value: " + fraction);
 		}
 		this.fraction = fraction;
 	}

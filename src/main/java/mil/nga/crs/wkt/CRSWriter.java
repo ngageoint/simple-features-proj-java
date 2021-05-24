@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.crs.CRS;
+import mil.nga.crs.CRSException;
 import mil.nga.crs.CompoundCoordinateReferenceSystem;
 import mil.nga.crs.CoordinateReferenceSystem;
 import mil.nga.crs.bound.AbridgedCoordinateTransformation;
@@ -51,7 +52,6 @@ import mil.nga.crs.projected.ProjectedCoordinateReferenceSystem;
 import mil.nga.crs.temporal.TemporalCoordinateReferenceSystem;
 import mil.nga.crs.temporal.TemporalDatum;
 import mil.nga.crs.vertical.VerticalCoordinateReferenceSystem;
-import mil.nga.proj.ProjectionException;
 
 /**
  * Well-Known Text writer
@@ -338,8 +338,7 @@ public class CRSWriter implements Closeable {
 			writeBound((BoundCoordinateReferenceSystem) crs);
 			break;
 		default:
-			throw new ProjectionException(
-					"Unsupported CRS type: " + crs.getType());
+			throw new CRSException("Unsupported CRS type: " + crs.getType());
 		}
 
 	}
@@ -470,7 +469,7 @@ public class CRSWriter implements Closeable {
 			keyword = CRSKeyword.GEOGCRS;
 			break;
 		default:
-			throw new ProjectionException(
+			throw new CRSException(
 					"Invalid Geodetic or Geographic Coordinate Reference System Type: "
 							+ crs.getType());
 		}
@@ -526,7 +525,7 @@ public class CRSWriter implements Closeable {
 			baseKeyword = CRSKeyword.BASEGEOGCRS;
 			break;
 		default:
-			throw new ProjectionException(
+			throw new CRSException(
 					"Invalid Geodetic or Geographic Base Coordinate Reference System Type: "
 							+ crs.getBaseType());
 		}
@@ -738,7 +737,7 @@ public class CRSWriter implements Closeable {
 			writeDerivedTemporalCRS(crs);
 			break;
 		default:
-			throw new ProjectionException(
+			throw new CRSException(
 					"Unsupported derived base CRS type: " + crs.getBaseType());
 		}
 
@@ -767,7 +766,7 @@ public class CRSWriter implements Closeable {
 			baseKeyword = CRSKeyword.BASEGEOGCRS;
 			break;
 		default:
-			throw new ProjectionException(
+			throw new CRSException(
 					"Invalid Derived Geodetic or Geographic Coordinate Reference System Type: "
 							+ crs.getType());
 		}
@@ -854,7 +853,7 @@ public class CRSWriter implements Closeable {
 			keyword = CRSKeyword.BASEGEOGCRS;
 			break;
 		default:
-			throw new ProjectionException(
+			throw new CRSException(
 					"Invalid Derived Projected Geodetic or Geographic Coordinate Reference System Type: "
 							+ crs.getType());
 		}
@@ -1308,7 +1307,7 @@ public class CRSWriter implements Closeable {
 				write((DerivingConversion) concatenable);
 				break;
 			default:
-				throw new ProjectionException(
+				throw new CRSException(
 						"Unsupported concatenable operation type: "
 								+ concatenable.getOperationType());
 			}
@@ -1412,7 +1411,7 @@ public class CRSWriter implements Closeable {
 			write(CRSKeyword.PDATUM);
 			break;
 		default:
-			throw new ProjectionException(
+			throw new CRSException(
 					"Unexpected Reference Frame Coordinate Reference System Type: "
 							+ referenceFrame.getType());
 		}
@@ -2299,7 +2298,7 @@ public class CRSWriter implements Closeable {
 			write((OperationParameterFile) parameter);
 			break;
 		default:
-			throw new ProjectionException("Unsupported parameter type: "
+			throw new CRSException("Unsupported parameter type: "
 					+ parameter.getParameterType());
 		}
 

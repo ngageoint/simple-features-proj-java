@@ -2,10 +2,10 @@ package mil.nga.crs.wkt;
 
 import java.io.IOException;
 
+import mil.nga.crs.CRSException;
 import mil.nga.crs.CRSType;
 import mil.nga.crs.common.CoordinateSystemType;
 import mil.nga.crs.common.UnitType;
-import mil.nga.proj.ProjectionException;
 
 /**
  * CRS Well-Known Text Utilities
@@ -109,16 +109,15 @@ public class WKTUtils {
 	 *            coordinate reference system keyword
 	 * @return unit type
 	 */
-	public static UnitType getUnitType(
-			CRSKeyword keyword) {
+	public static UnitType getUnitType(CRSKeyword keyword) {
 
 		UnitType unitType = null;
 
 		try {
 			unitType = UnitType.valueOf(keyword.name());
 		} catch (Exception e) {
-			throw new ProjectionException(
-					"No unit type found. keyword: " + keyword, e);
+			throw new CRSException("No unit type found. keyword: " + keyword,
+					e);
 		}
 
 		return unitType;
@@ -131,8 +130,7 @@ public class WKTUtils {
 	 *            coordinate reference system keyword
 	 * @return coordinate reference system type
 	 */
-	public static CRSType getCoordinateReferenceSystemType(
-			CRSKeyword keyword) {
+	public static CRSType getCoordinateReferenceSystemType(CRSKeyword keyword) {
 
 		CRSType crsType = null;
 
@@ -151,7 +149,7 @@ public class WKTUtils {
 			break;
 
 		default:
-			throw new ProjectionException(
+			throw new CRSException(
 					"No coordinate reference system type found. keyword: "
 							+ keyword);
 		}

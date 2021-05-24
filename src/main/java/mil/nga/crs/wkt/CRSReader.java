@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import mil.nga.crs.CRS;
+import mil.nga.crs.CRSException;
 import mil.nga.crs.CRSType;
 import mil.nga.crs.CommonCRS;
 import mil.nga.crs.CompoundCoordinateReferenceSystem;
@@ -67,7 +68,6 @@ import mil.nga.crs.temporal.TemporalDatum;
 import mil.nga.crs.vertical.VerticalCoordinateReferenceSystem;
 import mil.nga.crs.vertical.VerticalDatumEnsemble;
 import mil.nga.crs.vertical.VerticalReferenceFrame;
-import mil.nga.proj.ProjectionException;
 
 /**
  * Well-Known Text reader
@@ -157,7 +157,7 @@ public class CRSReader implements Closeable {
 		CRS crs = read(text, strict);
 		Set<CRSType> expectedSet = new HashSet<>(Arrays.asList(expected));
 		if (!expectedSet.contains(crs.getType())) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Unexpected Coordinate Reference System Type: "
 							+ crs.getType() + ", Expected: " + expectedSet);
 		}
@@ -857,8 +857,7 @@ public class CRSReader implements Closeable {
 			crs = readBound();
 			break;
 		default:
-			throw new ProjectionException(
-					"Unsupported WKT CRS keyword: " + keyword);
+			throw new CRSException("Unsupported WKT CRS keyword: " + keyword);
 		}
 
 		return crs;
@@ -875,7 +874,7 @@ public class CRSReader implements Closeable {
 			throws IOException {
 		CRS crs = read();
 		if (!(crs instanceof CoordinateReferenceSystem)) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Unexpected Coordinate Reference System Type: "
 							+ crs.getType());
 		}
@@ -893,7 +892,7 @@ public class CRSReader implements Closeable {
 			throws IOException {
 		CRS crs = read();
 		if (!(crs instanceof SimpleCoordinateReferenceSystem)) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Unexpected Simple Coordinate Reference System Type: "
 							+ crs.getType());
 		}
@@ -1017,7 +1016,7 @@ public class CRSReader implements Closeable {
 		}
 
 		if (required && keyword == null) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Expected keyword not found: " + keywordNames(keywordSet));
 		}
 
@@ -1044,7 +1043,7 @@ public class CRSReader implements Closeable {
 			log.append(ignored);
 			log.append("\"");
 			if (strict) {
-				throw new ProjectionException(log.toString());
+				throw new CRSException(log.toString());
 			} else {
 				logger.log(Level.WARNING, log.toString());
 			}
@@ -1132,7 +1131,7 @@ public class CRSReader implements Closeable {
 	public void readLeftDelimiter() throws IOException {
 		String token = reader.readExpectedToken();
 		if (!WKTUtils.isLeftDelimiter(token)) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Invalid left delimiter token, expected '[' or '('. found: '"
 							+ token + "'");
 		}
@@ -1165,7 +1164,7 @@ public class CRSReader implements Closeable {
 		readKeyword(false, new CRSKeyword[] {});
 		String token = reader.readExpectedToken();
 		if (!WKTUtils.isRightDelimiter(token)) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Invalid right delimiter token, expected ']' or ')'. found: '"
 							+ token + "'");
 		}
@@ -1198,7 +1197,7 @@ public class CRSReader implements Closeable {
 		if (token.equals(WKTConstants.SEPARATOR)) {
 			reader.readExpectedToken();
 		} else if (strict) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Invalid separator token, expected ','. found: '" + token
 							+ "'");
 		} else {
@@ -1249,7 +1248,7 @@ public class CRSReader implements Closeable {
 			log.append(ignored);
 			log.append("\"");
 			if (strict) {
-				throw new ProjectionException(log.toString());
+				throw new CRSException(log.toString());
 			} else {
 				logger.log(Level.WARNING, log.toString());
 			}
@@ -1299,7 +1298,7 @@ public class CRSReader implements Closeable {
 			}
 		}
 		if (keyword == null) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Unexpected keyword. found: " + keywordNames(keywords)
 							+ ", expected: " + keywordNames(expectedSet));
 		}
@@ -1433,7 +1432,7 @@ public class CRSReader implements Closeable {
 				readKeyword(CRSKeyword.BASEGEOGCRS);
 				break;
 			default:
-				throw new ProjectionException(
+				throw new CRSException(
 						"Unsupported Coordinate Reference System Type: "
 								+ keyword);
 			}
@@ -1556,7 +1555,7 @@ public class CRSReader implements Closeable {
 				CRSKeyword.BASEGEOGCRS);
 		CRSType crsType = WKTUtils.getCoordinateReferenceSystemType(type);
 		if (expectedBaseType != null && crsType != expectedBaseType) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Unexpected Base Coordinate Reference System Type. expected: "
 							+ expectedBaseType + ", found: " + crsType);
 		}
@@ -1997,7 +1996,7 @@ public class CRSReader implements Closeable {
 		if (crs.numCoordinateReferenceSystems() < 2) {
 			String message = "Compound Coordinate Reference System requires at least two Coordinate Reference Systems";
 			if (strict) {
-				throw new ProjectionException(message);
+				throw new CRSException(message);
 			} else {
 				logger.log(Level.WARNING, message);
 			}
@@ -2192,7 +2191,7 @@ public class CRSReader implements Closeable {
 				concatenable = readDerivingConversion();
 				break;
 			default:
-				throw new ProjectionException(
+				throw new CRSException(
 						"Unsupported concatenable operation type: " + keyword);
 			}
 
@@ -2285,7 +2284,7 @@ public class CRSReader implements Closeable {
 	public GeoReferenceFrame readGeoReferenceFrame() throws IOException {
 		ReferenceFrame referenceFrame = readReferenceFrame();
 		if (!(referenceFrame instanceof GeoReferenceFrame)) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Reference frame was not an expected Geo Reference Frame");
 		}
 		return (GeoReferenceFrame) referenceFrame;
@@ -2302,7 +2301,7 @@ public class CRSReader implements Closeable {
 			throws IOException {
 		ReferenceFrame referenceFrame = readReferenceFrame();
 		if (!(referenceFrame instanceof VerticalReferenceFrame)) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Reference frame was not an expected Vertical Reference Frame");
 		}
 		return (VerticalReferenceFrame) referenceFrame;
@@ -2318,7 +2317,7 @@ public class CRSReader implements Closeable {
 	public EngineeringDatum readEngineeringDatum() throws IOException {
 		ReferenceFrame referenceFrame = readReferenceFrame();
 		if (!(referenceFrame instanceof EngineeringDatum)) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Reference frame was not an expected Engineering Datum");
 		}
 		return (EngineeringDatum) referenceFrame;
@@ -2334,7 +2333,7 @@ public class CRSReader implements Closeable {
 	public ParametricDatum readParametricDatum() throws IOException {
 		ReferenceFrame referenceFrame = readReferenceFrame();
 		if (!(referenceFrame instanceof ParametricDatum)) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Reference frame was not an expected Parametric Datum");
 		}
 		return (ParametricDatum) referenceFrame;
@@ -2369,8 +2368,7 @@ public class CRSReader implements Closeable {
 			referenceFrame = new ParametricDatum();
 			break;
 		default:
-			throw new ProjectionException(
-					"Unexpected Reference Frame type: " + type);
+			throw new CRSException("Unexpected Reference Frame type: " + type);
 		}
 
 		readLeftDelimiter();
@@ -2425,7 +2423,7 @@ public class CRSReader implements Closeable {
 	public GeoDatumEnsemble readGeoDatumEnsemble() throws IOException {
 		DatumEnsemble datumEnsemble = readDatumEnsemble();
 		if (!(datumEnsemble instanceof GeoDatumEnsemble)) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Datum ensemble was not an expected Geo Datum Ensemble");
 		}
 		return (GeoDatumEnsemble) datumEnsemble;
@@ -2442,7 +2440,7 @@ public class CRSReader implements Closeable {
 			throws IOException {
 		DatumEnsemble datumEnsemble = readDatumEnsemble();
 		if (!(datumEnsemble instanceof VerticalDatumEnsemble)) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Datum ensemble was not an expected Vertical Datum Ensemble");
 		}
 		return (VerticalDatumEnsemble) datumEnsemble;
@@ -2767,7 +2765,7 @@ public class CRSReader implements Closeable {
 		} else if (keywords.size() == 1) {
 			type = WKTUtils.getUnitType(keywords.iterator().next());
 		} else if (keywords.isEmpty()) {
-			throw new ProjectionException("Unexpected unit keyword. found: "
+			throw new CRSException("Unexpected unit keyword. found: "
 					+ keywordNames(keywords));
 		}
 		unit.setType(type);
@@ -2875,7 +2873,7 @@ public class CRSReader implements Closeable {
 		String csTypeName = reader.readToken();
 		CoordinateSystemType csType = CoordinateSystemType.getType(csTypeName);
 		if (csType == null) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Unexpected coordinate system type. found: " + csTypeName);
 		}
 		coordinateSystem.setType(csType);
@@ -3003,9 +3001,8 @@ public class CRSReader implements Closeable {
 					.equalsIgnoreCase(WKTConstants.AXIS_DIRECTION_OTHER)) {
 				axisDirectionType = AxisDirectionType.UNSPECIFIED;
 			} else {
-				throw new ProjectionException(
-						"Unexpected axis direction type. found: "
-								+ axisDirectionTypeName);
+				throw new CRSException("Unexpected axis direction type. found: "
+						+ axisDirectionTypeName);
 			}
 		}
 		axis.setDirection(axisDirectionType);
@@ -3182,10 +3179,9 @@ public class CRSReader implements Closeable {
 				CRSKeyword.VERTICALEXTENT, CRSKeyword.TIMEEXTENT);
 
 		if (keyword == null) {
-			throw new ProjectionException(
-					"Missing extent type of [" + CRSKeyword.AREA + ", "
-							+ CRSKeyword.BBOX + ", " + CRSKeyword.VERTICALEXTENT
-							+ ", " + CRSKeyword.TIMEEXTENT + "]");
+			throw new CRSException("Missing extent type of [" + CRSKeyword.AREA
+					+ ", " + CRSKeyword.BBOX + ", " + CRSKeyword.VERTICALEXTENT
+					+ ", " + CRSKeyword.TIMEEXTENT + "]");
 		}
 
 		if (keyword == CRSKeyword.AREA) {
@@ -3454,7 +3450,7 @@ public class CRSReader implements Closeable {
 			keywords = new CRSKeyword[] { CRSKeyword.ID };
 			break;
 		default:
-			throw new ProjectionException("Unsupported CRS Type: " + type);
+			throw new CRSException("Unsupported CRS Type: " + type);
 		}
 
 		CRSKeyword keyword = readToKeyword(keywords);
@@ -3848,7 +3844,7 @@ public class CRSReader implements Closeable {
 				CRSKeyword.GEODCRS, CRSKeyword.GEOGCRS);
 		CRSType crsType = WKTUtils.getCoordinateReferenceSystemType(type);
 		if (expectedType != null && crsType != expectedType) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Unexpected Coordinate Reference System Type. expected: "
 							+ expectedType + ", found: " + crsType);
 		}
@@ -4126,9 +4122,8 @@ public class CRSReader implements Closeable {
 			coordinateSystem.setType(CoordinateSystemType.CARTESIAN);
 			break;
 		default:
-			throw new ProjectionException(
-					"Unexpected Reference Frame Type. expected: "
-							+ datum.getType());
+			throw new CRSException("Unexpected Reference Frame Type. expected: "
+					+ datum.getType());
 		}
 
 		if (isUnitNext()) {
@@ -4163,7 +4158,7 @@ public class CRSReader implements Closeable {
 						AxisDirectionType.NORTH));
 				break;
 			default:
-				throw new ProjectionException(
+				throw new CRSException(
 						"Unexpected Coordinate Reference System Type: " + type);
 			}
 
@@ -4189,7 +4184,7 @@ public class CRSReader implements Closeable {
 	public VerticalReferenceFrame readVerticalDatumCompat() throws IOException {
 		ReferenceFrame referenceFrame = readDatumCompat();
 		if (!(referenceFrame instanceof VerticalReferenceFrame)) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Datum was not an expected Vertical Reference Frame");
 		}
 		return (VerticalReferenceFrame) referenceFrame;
@@ -4205,7 +4200,7 @@ public class CRSReader implements Closeable {
 	public EngineeringDatum readEngineeringDatumCompat() throws IOException {
 		ReferenceFrame referenceFrame = readDatumCompat();
 		if (!(referenceFrame instanceof EngineeringDatum)) {
-			throw new ProjectionException(
+			throw new CRSException(
 					"Datum was not an expected Engineering Datum");
 		}
 		return (EngineeringDatum) referenceFrame;
@@ -4231,7 +4226,7 @@ public class CRSReader implements Closeable {
 			referenceFrame = new EngineeringDatum();
 			break;
 		default:
-			throw new ProjectionException("Unexpected Datum type: " + type);
+			throw new CRSException("Unexpected Datum type: " + type);
 		}
 
 		readLeftDelimiter();
