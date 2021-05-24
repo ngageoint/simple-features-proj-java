@@ -120,6 +120,25 @@ public class Projection {
 	}
 
 	/**
+	 * Get the transformation from this Projection to the authority and
+	 * coordinate code. Each thread of execution should have it's own
+	 * transformation.
+	 * 
+	 * @param authority
+	 *            coordinate authority
+	 * @param code
+	 *            coordinate code
+	 * @return transform
+	 * @since 4.0.0
+	 */
+	public ProjectionTransform getTransformation(String authority,
+			String code) {
+		Projection projectionTo = ProjectionFactory.getProjection(authority,
+				code);
+		return getTransformation(projectionTo);
+	}
+
+	/**
 	 * Get the transformation from this Projection to the provided projection.
 	 * Each thread of execution should have it's own transformation.
 	 * 

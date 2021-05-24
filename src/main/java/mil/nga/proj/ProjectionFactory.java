@@ -326,26 +326,18 @@ public class ProjectionFactory {
 
 		if (definition != null && !definition.isEmpty()) {
 
-			String parametersString = "";
-			// TODO parse WKT definition into proj4 parameters
-
-			// Try to create the projection from the parameters
-			if (parametersString != null && !parametersString.isEmpty()) {
-				try {
-					CoordinateReferenceSystem crs = csFactory
-							.createFromParameters(
-									coordinateName(authority, code),
-									parametersString);
+			try {
+				CoordinateReferenceSystem crs = CRSParser.parse(definition);
+				if (crs != null) {
 					projection = new Projection(authority, code, crs);
 					projections.addProjection(projection);
-				} catch (Exception e) {
-					logger.log(Level.WARNING,
-							"Failed to create projection for authority: "
-									+ authority + ", code: " + code
-									+ ", definition: " + definition
-									+ ", parameters: " + parametersString,
-							e);
 				}
+			} catch (Exception e) {
+				logger.log(Level.WARNING,
+						"Failed to create projection for authority: "
+								+ authority + ", code: " + code
+								+ ", definition: " + definition,
+						e);
 			}
 
 		}

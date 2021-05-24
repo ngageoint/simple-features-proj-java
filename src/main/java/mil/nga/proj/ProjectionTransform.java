@@ -46,6 +46,161 @@ public class ProjectionTransform {
 	}
 
 	/**
+	 * Create a projection transform
+	 * 
+	 * @param fromProjection
+	 *            from projection
+	 * @param toEpsg
+	 *            to epsg
+	 * @return projection transform
+	 */
+	public static ProjectionTransform create(Projection fromProjection,
+			long toEpsg) {
+		return new ProjectionTransform(fromProjection,
+				ProjectionFactory.getProjection(toEpsg));
+	}
+
+	/**
+	 * Create a projection transform
+	 * 
+	 * @param fromProjection
+	 *            from projection
+	 * @param toAuthority
+	 *            to coordinate authority
+	 * @param toCode
+	 *            to coordinate code
+	 * @return projection transform
+	 */
+	public static ProjectionTransform create(Projection fromProjection,
+			String toAuthority, long toCode) {
+		return new ProjectionTransform(fromProjection,
+				ProjectionFactory.getProjection(toAuthority, toCode));
+	}
+
+	/**
+	 * Create a projection transform
+	 * 
+	 * @param fromProjection
+	 *            from projection
+	 * @param toAuthority
+	 *            to coordinate authority
+	 * @param toCode
+	 *            to coordinate code
+	 * @return projection transform
+	 */
+	public static ProjectionTransform create(Projection fromProjection,
+			String toAuthority, String toCode) {
+		return new ProjectionTransform(fromProjection,
+				ProjectionFactory.getProjection(toAuthority, toCode));
+	}
+
+	/**
+	 * Create a projection transform
+	 * 
+	 * @param fromEpsg
+	 *            from epsg
+	 * @param toProjection
+	 *            to projection
+	 * @return projection transform
+	 */
+	public static ProjectionTransform create(long fromEpsg,
+			Projection toProjection) {
+		return new ProjectionTransform(
+				ProjectionFactory.getProjection(fromEpsg), toProjection);
+	}
+
+	/**
+	 * Create a projection transform
+	 * 
+	 * @param fromAuthority
+	 *            from coordinate authority
+	 * @param fromCode
+	 *            from coordinate code
+	 * @param toProjection
+	 *            to projection
+	 * @return projection transform
+	 */
+	public static ProjectionTransform create(String fromAuthority,
+			long fromCode, Projection toProjection) {
+		return new ProjectionTransform(
+				ProjectionFactory.getProjection(fromAuthority, fromCode),
+				toProjection);
+	}
+
+	/**
+	 * Create a projection transform
+	 * 
+	 * @param fromAuthority
+	 *            from coordinate authority
+	 * @param fromCode
+	 *            from coordinate code
+	 * @param toProjection
+	 *            to projection
+	 * @return projection transform
+	 */
+	public static ProjectionTransform create(String fromAuthority,
+			String fromCode, Projection toProjection) {
+		return new ProjectionTransform(
+				ProjectionFactory.getProjection(fromAuthority, fromCode),
+				toProjection);
+	}
+
+	/**
+	 * Create a projection transform
+	 * 
+	 * @param fromEpsg
+	 *            from epsg
+	 * @param toEpsg
+	 *            to epsg
+	 * @return projection transform
+	 */
+	public static ProjectionTransform create(long fromEpsg, long toEpsg) {
+		return new ProjectionTransform(
+				ProjectionFactory.getProjection(fromEpsg),
+				ProjectionFactory.getProjection(toEpsg));
+	}
+
+	/**
+	 * Create a projection transform
+	 * 
+	 * @param fromAuthority
+	 *            from coordinate authority
+	 * @param fromCode
+	 *            from coordinate code
+	 * @param toAuthority
+	 *            to coordinate authority
+	 * @param toCode
+	 *            to coordinate code
+	 * @return projection transform
+	 */
+	public static ProjectionTransform create(String fromAuthority,
+			long fromCode, String toAuthority, long toCode) {
+		return new ProjectionTransform(
+				ProjectionFactory.getProjection(fromAuthority, fromCode),
+				ProjectionFactory.getProjection(toAuthority, toCode));
+	}
+
+	/**
+	 * Create a projection transform
+	 * 
+	 * @param fromAuthority
+	 *            from coordinate authority
+	 * @param fromCode
+	 *            from coordinate code
+	 * @param toAuthority
+	 *            to coordinate authority
+	 * @param toCode
+	 *            to coordinate code
+	 * @return projection transform
+	 */
+	public static ProjectionTransform create(String fromAuthority,
+			String fromCode, String toAuthority, String toCode) {
+		return new ProjectionTransform(
+				ProjectionFactory.getProjection(fromAuthority, fromCode),
+				ProjectionFactory.getProjection(toAuthority, toCode));
+	}
+
+	/**
 	 * Constructor
 	 * 
 	 * @param fromProjection

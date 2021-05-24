@@ -6,6 +6,7 @@ import java.util.List;
 import org.locationtech.proj4j.ProjCoordinate;
 
 import mil.nga.proj.Projection;
+import mil.nga.proj.ProjectionFactory;
 import mil.nga.proj.ProjectionTransform;
 import mil.nga.sf.CircularString;
 import mil.nga.sf.CompoundCurve;
@@ -49,6 +50,160 @@ public class GeometryTransform extends ProjectionTransform {
 	}
 
 	/**
+	 * Create a geometry projection transform
+	 * 
+	 * @param fromProjection
+	 *            from projection
+	 * @param toEpsg
+	 *            to epsg
+	 * @return projection transform
+	 */
+	public static GeometryTransform create(Projection fromProjection,
+			long toEpsg) {
+		return new GeometryTransform(fromProjection,
+				ProjectionFactory.getProjection(toEpsg));
+	}
+
+	/**
+	 * Create a geometry projection transform
+	 * 
+	 * @param fromProjection
+	 *            from projection
+	 * @param toAuthority
+	 *            to coordinate authority
+	 * @param toCode
+	 *            to coordinate code
+	 * @return projection transform
+	 */
+	public static GeometryTransform create(Projection fromProjection,
+			String toAuthority, long toCode) {
+		return new GeometryTransform(fromProjection,
+				ProjectionFactory.getProjection(toAuthority, toCode));
+	}
+
+	/**
+	 * Create a geometry projection transform
+	 * 
+	 * @param fromProjection
+	 *            from projection
+	 * @param toAuthority
+	 *            to coordinate authority
+	 * @param toCode
+	 *            to coordinate code
+	 * @return projection transform
+	 */
+	public static GeometryTransform create(Projection fromProjection,
+			String toAuthority, String toCode) {
+		return new GeometryTransform(fromProjection,
+				ProjectionFactory.getProjection(toAuthority, toCode));
+	}
+
+	/**
+	 * Create a geometry projection transform
+	 * 
+	 * @param fromEpsg
+	 *            from epsg
+	 * @param toProjection
+	 *            to projection
+	 * @return projection transform
+	 */
+	public static GeometryTransform create(long fromEpsg,
+			Projection toProjection) {
+		return new GeometryTransform(ProjectionFactory.getProjection(fromEpsg),
+				toProjection);
+	}
+
+	/**
+	 * Create a geometry projection transform
+	 * 
+	 * @param fromAuthority
+	 *            from coordinate authority
+	 * @param fromCode
+	 *            from coordinate code
+	 * @param toProjection
+	 *            to projection
+	 * @return projection transform
+	 */
+	public static GeometryTransform create(String fromAuthority, long fromCode,
+			Projection toProjection) {
+		return new GeometryTransform(
+				ProjectionFactory.getProjection(fromAuthority, fromCode),
+				toProjection);
+	}
+
+	/**
+	 * Create a geometry projection transform
+	 * 
+	 * @param fromAuthority
+	 *            from coordinate authority
+	 * @param fromCode
+	 *            from coordinate code
+	 * @param toProjection
+	 *            to projection
+	 * @return projection transform
+	 */
+	public static GeometryTransform create(String fromAuthority,
+			String fromCode, Projection toProjection) {
+		return new GeometryTransform(
+				ProjectionFactory.getProjection(fromAuthority, fromCode),
+				toProjection);
+	}
+
+	/**
+	 * Create a geometry projection transform
+	 * 
+	 * @param fromEpsg
+	 *            from epsg
+	 * @param toEpsg
+	 *            to epsg
+	 * @return projection transform
+	 */
+	public static GeometryTransform create(long fromEpsg, long toEpsg) {
+		return new GeometryTransform(ProjectionFactory.getProjection(fromEpsg),
+				ProjectionFactory.getProjection(toEpsg));
+	}
+
+	/**
+	 * Create a geometry projection transform
+	 * 
+	 * @param fromAuthority
+	 *            from coordinate authority
+	 * @param fromCode
+	 *            from coordinate code
+	 * @param toAuthority
+	 *            to coordinate authority
+	 * @param toCode
+	 *            to coordinate code
+	 * @return projection transform
+	 */
+	public static GeometryTransform create(String fromAuthority, long fromCode,
+			String toAuthority, long toCode) {
+		return new GeometryTransform(
+				ProjectionFactory.getProjection(fromAuthority, fromCode),
+				ProjectionFactory.getProjection(toAuthority, toCode));
+	}
+
+	/**
+	 * Create a geometry projection transform
+	 * 
+	 * @param fromAuthority
+	 *            from coordinate authority
+	 * @param fromCode
+	 *            from coordinate code
+	 * @param toAuthority
+	 *            to coordinate authority
+	 * @param toCode
+	 *            to coordinate code
+	 * @return projection transform
+	 */
+	public static GeometryTransform create(String fromAuthority,
+			String fromCode, String toAuthority, String toCode) {
+		return new GeometryTransform(
+				ProjectionFactory.getProjection(fromAuthority, fromCode),
+				ProjectionFactory.getProjection(toAuthority, toCode));
+	}
+
+	/**
 	 * Constructor
 	 * 
 	 * @param fromProjection
@@ -69,6 +224,14 @@ public class GeometryTransform extends ProjectionTransform {
 	 */
 	public GeometryTransform(ProjectionTransform transform) {
 		super(transform);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public GeometryTransform getInverseTransformation() {
+		return GeometryTransform.create(toProjection, fromProjection);
 	}
 
 	/**
