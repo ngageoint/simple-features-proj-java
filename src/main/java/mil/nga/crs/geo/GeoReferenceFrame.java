@@ -13,7 +13,7 @@ import mil.nga.crs.wkt.CRSWriter;
  * 
  * @author osbornb
  */
-public class GeoReferenceFrame extends ReferenceFrame {
+public class GeoReferenceFrame extends ReferenceFrame implements GeoDatum {
 
 	/**
 	 * Logger
@@ -70,55 +70,47 @@ public class GeoReferenceFrame extends ReferenceFrame {
 	 * @param ellipsoid
 	 *            ellipsoid
 	 */
-	public GeoReferenceFrame(String name, CRSType type,
-			Ellipsoid ellipsoid) {
+	public GeoReferenceFrame(String name, CRSType type, Ellipsoid ellipsoid) {
 		super(name, type);
 		setEllipsoid(ellipsoid);
 	}
 
 	/**
-	 * Get the ellipsoid
-	 * 
-	 * @return ellipsoid
+	 * {@inheritDoc}
 	 */
+	@Override
 	public Ellipsoid getEllipsoid() {
 		return ellipsoid;
 	}
 
 	/**
-	 * Set the ellipsoid
-	 * 
-	 * @param ellipsoid
-	 *            ellipsoid
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setEllipsoid(Ellipsoid ellipsoid) {
 		this.ellipsoid = ellipsoid;
 	}
 
 	/**
-	 * Get the prime meridian
-	 * 
-	 * @return prime meridian
+	 * {@inheritDoc}
 	 */
+	@Override
 	public PrimeMeridian getPrimeMeridian() {
 		return primeMeridian;
 	}
 
 	/**
-	 * Has a prime meridian
-	 * 
-	 * @return true if has prime meridian
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean hasPrimeMeridian() {
 		return getPrimeMeridian() != null;
 	}
 
 	/**
-	 * Set the prime meridian
-	 * 
-	 * @param primeMeridian
-	 *            prime meridian
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setPrimeMeridian(PrimeMeridian primeMeridian) {
 		this.primeMeridian = primeMeridian;
 	}

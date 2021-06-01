@@ -2601,12 +2601,12 @@ public class CRSReader implements Closeable {
 		primeMeridian.setName(reader.readExpectedToken());
 
 		readSeparator();
-		primeMeridian.setIrmLongitude(reader.readNumber());
+		primeMeridian.setLongitude(reader.readNumber());
 
 		CRSKeyword keyword = readToKeyword(CRSKeyword.ANGLEUNIT, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.ANGLEUNIT) {
-			primeMeridian.setIrmLongitudeUnit(readAngleUnit());
+			primeMeridian.setLongitudeUnit(readAngleUnit());
 			keyword = readToKeyword(CRSKeyword.ID);
 		}
 

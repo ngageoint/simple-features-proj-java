@@ -27,8 +27,13 @@ public class Projection {
 	private final CoordinateReferenceSystem crs;
 
 	/**
+	 * Well-Known Text Coordinate Definition
+	 */
+	private final String definition;
+
+	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param authority
 	 *            coordinate authority
 	 * @param code
@@ -38,7 +43,22 @@ public class Projection {
 	 */
 	public Projection(String authority, long code,
 			CoordinateReferenceSystem crs) {
-		this(authority, String.valueOf(code), crs);
+		this(authority, code, crs, null);
+	}
+
+	/**
+	 * Constructor
+	 *
+	 * @param authority
+	 *            coordinate authority
+	 * @param code
+	 *            coordinate code
+	 * @param crs
+	 *            crs
+	 */
+	public Projection(String authority, String code,
+			CoordinateReferenceSystem crs) {
+		this(authority, code, crs, null);
 	}
 
 	/**
@@ -50,9 +70,28 @@ public class Projection {
 	 *            coordinate code
 	 * @param crs
 	 *            crs
+	 * @param definition
+	 *            well-known text coordinate definition
+	 */
+	public Projection(String authority, long code,
+			CoordinateReferenceSystem crs, String definition) {
+		this(authority, String.valueOf(code), crs, definition);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param authority
+	 *            coordinate authority
+	 * @param code
+	 *            coordinate code
+	 * @param crs
+	 *            crs
+	 * @param definition
+	 *            well-known text coordinate definition
 	 */
 	public Projection(String authority, String code,
-			CoordinateReferenceSystem crs) {
+			CoordinateReferenceSystem crs, String definition) {
 		if (authority == null || code == null || crs == null) {
 			throw new IllegalArgumentException(
 					"All projection arguments are required. authority: "
@@ -61,6 +100,7 @@ public class Projection {
 		this.authority = authority;
 		this.code = code;
 		this.crs = crs;
+		this.definition = definition;
 	}
 
 	/**
@@ -88,6 +128,15 @@ public class Projection {
 	 */
 	public CoordinateReferenceSystem getCrs() {
 		return crs;
+	}
+
+	/**
+	 * Get the well-known text coordinate definition
+	 * 
+	 * @return definition
+	 */
+	public String getDefinition() {
+		return definition;
 	}
 
 	/**

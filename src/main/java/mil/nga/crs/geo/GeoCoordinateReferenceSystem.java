@@ -41,8 +41,7 @@ public class GeoCoordinateReferenceSystem
 	 * @param type
 	 *            coordinate reference system type
 	 */
-	public GeoCoordinateReferenceSystem(
-			CRSType type) {
+	public GeoCoordinateReferenceSystem(CRSType type) {
 		super(type);
 	}
 
@@ -58,8 +57,7 @@ public class GeoCoordinateReferenceSystem
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
-	public GeoCoordinateReferenceSystem(String name,
-			CRSType type,
+	public GeoCoordinateReferenceSystem(String name, CRSType type,
 			GeoReferenceFrame referenceFrame,
 			CoordinateSystem coordinateSystem) {
 		super(name, type, coordinateSystem);
@@ -78,10 +76,8 @@ public class GeoCoordinateReferenceSystem
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
-	public GeoCoordinateReferenceSystem(String name,
-			CRSType type,
-			GeoDatumEnsemble datumEnsemble,
-			CoordinateSystem coordinateSystem) {
+	public GeoCoordinateReferenceSystem(String name, CRSType type,
+			GeoDatumEnsemble datumEnsemble, CoordinateSystem coordinateSystem) {
 		super(name, type, coordinateSystem);
 		setDatumEnsemble(datumEnsemble);
 	}
@@ -100,9 +96,8 @@ public class GeoCoordinateReferenceSystem
 	 * @param coordinateSystem
 	 *            coordinate system
 	 */
-	public GeoCoordinateReferenceSystem(String name,
-			CRSType type, Dynamic dynamic,
-			GeoReferenceFrame referenceFrame,
+	public GeoCoordinateReferenceSystem(String name, CRSType type,
+			Dynamic dynamic, GeoReferenceFrame referenceFrame,
 			CoordinateSystem coordinateSystem) {
 		super(name, type, coordinateSystem);
 		setDynamic(dynamic);
@@ -191,6 +186,21 @@ public class GeoCoordinateReferenceSystem
 	 */
 	public void setDynamic(Dynamic dynamic) {
 		this.dynamic = dynamic;
+	}
+
+	/**
+	 * Get the geodetic or geographic common datum
+	 * 
+	 * @return geo datum
+	 */
+	public GeoDatum getGeoDatum() {
+		GeoDatum datum = null;
+		if (hasReferenceFrame()) {
+			datum = getReferenceFrame();
+		} else if (hasDatumEnsemble()) {
+			datum = getDatumEnsemble();
+		}
+		return datum;
 	}
 
 	/**

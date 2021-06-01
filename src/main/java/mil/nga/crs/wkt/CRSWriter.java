@@ -1582,11 +1582,11 @@ public class CRSWriter implements Closeable {
 		writeQuotedText(primeMeridian.getName());
 
 		writeSeparator();
-		write(primeMeridian.getIrmLongitude());
+		write(primeMeridian.getLongitude());
 
-		if (primeMeridian.hasIrmLongitudeUnit()) {
+		if (primeMeridian.hasLongitudeUnit()) {
 			writeSeparator();
-			write(primeMeridian.getIrmLongitudeUnit());
+			write(primeMeridian.getLongitudeUnit());
 		}
 
 		if (primeMeridian.hasIdentifiers()) {

@@ -1270,12 +1270,12 @@ public class CRSReaderWriterTest {
 		CRSReader reader = new CRSReader(text);
 		PrimeMeridian primeMeridian = reader.readPrimeMeridian();
 		assertEquals("Paris", primeMeridian.getName());
-		assertEquals(2.5969213, primeMeridian.getIrmLongitude(), 0);
+		assertEquals(2.5969213, primeMeridian.getLongitude(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				primeMeridian.getIrmLongitudeUnit().getType());
-		assertEquals("grad", primeMeridian.getIrmLongitudeUnit().getName());
+				primeMeridian.getLongitudeUnit().getType());
+		assertEquals("grad", primeMeridian.getLongitudeUnit().getName());
 		assertEquals(0.015707963267949,
-				primeMeridian.getIrmLongitudeUnit().getConversionFactor(), 0);
+				primeMeridian.getLongitudeUnit().getConversionFactor(), 0);
 		reader.close();
 		assertEquals(text, primeMeridian.toString());
 
@@ -1283,7 +1283,7 @@ public class CRSReaderWriterTest {
 		reader = new CRSReader(text);
 		primeMeridian = reader.readPrimeMeridian();
 		assertEquals("Ferro", primeMeridian.getName());
-		assertEquals(-17.6666667, primeMeridian.getIrmLongitude(), 0);
+		assertEquals(-17.6666667, primeMeridian.getLongitude(), 0);
 		reader.close();
 		assertEquals(text, primeMeridian.toString());
 
@@ -1291,12 +1291,12 @@ public class CRSReaderWriterTest {
 		reader = new CRSReader(text);
 		primeMeridian = reader.readPrimeMeridian();
 		assertEquals("Greenwich", primeMeridian.getName());
-		assertEquals(0.0, primeMeridian.getIrmLongitude(), 0);
+		assertEquals(0.0, primeMeridian.getLongitude(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				primeMeridian.getIrmLongitudeUnit().getType());
-		assertEquals("degree", primeMeridian.getIrmLongitudeUnit().getName());
+				primeMeridian.getLongitudeUnit().getType());
+		assertEquals("degree", primeMeridian.getLongitudeUnit().getName());
 		assertEquals(0.0174532925199433,
-				primeMeridian.getIrmLongitudeUnit().getConversionFactor(), 0);
+				primeMeridian.getLongitudeUnit().getConversionFactor(), 0);
 		reader.close();
 		assertEquals(text, primeMeridian.toString());
 
@@ -1346,7 +1346,7 @@ public class CRSReaderWriterTest {
 		assertEquals("Greenwich",
 				geodeticReferenceFrame.getPrimeMeridian().getName());
 		assertEquals(0.0,
-				geodeticReferenceFrame.getPrimeMeridian().getIrmLongitude(), 0);
+				geodeticReferenceFrame.getPrimeMeridian().getLongitude(), 0);
 		reader.close();
 		assertEquals(text.replaceAll("TRF", "DATUM"),
 				geodeticReferenceFrame.toString());
@@ -1371,13 +1371,13 @@ public class CRSReaderWriterTest {
 		assertEquals("Paris",
 				geodeticReferenceFrame.getPrimeMeridian().getName());
 		assertEquals(2.5969213,
-				geodeticReferenceFrame.getPrimeMeridian().getIrmLongitude(), 0);
+				geodeticReferenceFrame.getPrimeMeridian().getLongitude(), 0);
 		assertEquals(UnitType.ANGLEUNIT, geodeticReferenceFrame
-				.getPrimeMeridian().getIrmLongitudeUnit().getType());
+				.getPrimeMeridian().getLongitudeUnit().getType());
 		assertEquals("grad", geodeticReferenceFrame.getPrimeMeridian()
-				.getIrmLongitudeUnit().getName());
+				.getLongitudeUnit().getName());
 		assertEquals(0.015707963267949, geodeticReferenceFrame
-				.getPrimeMeridian().getIrmLongitudeUnit().getConversionFactor(),
+				.getPrimeMeridian().getLongitudeUnit().getConversionFactor(),
 				0);
 		reader.close();
 		assertEquals(text.replaceAll("GEODETICDATUM", "DATUM"),
@@ -1655,7 +1655,7 @@ public class CRSReaderWriterTest {
 		assertEquals("Paris",
 				geographicCrs.getReferenceFrame().getPrimeMeridian().getName());
 		assertEquals(2.5969213, geographicCrs.getReferenceFrame()
-				.getPrimeMeridian().getIrmLongitude(), 0);
+				.getPrimeMeridian().getLongitude(), 0);
 		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
 				geographicCrs.getCoordinateSystem().getType());
 		assertEquals(2, geographicCrs.getCoordinateSystem().getDimension());
@@ -2245,7 +2245,7 @@ public class CRSReaderWriterTest {
 		assertEquals("Greenwich", projectedGeographicCrs.getReferenceFrame()
 				.getPrimeMeridian().getName());
 		assertEquals(0, projectedGeographicCrs.getReferenceFrame()
-				.getPrimeMeridian().getIrmLongitude(), 0);
+				.getPrimeMeridian().getLongitude(), 0);
 		assertEquals("UTM zone 10N",
 				projectedGeographicCrs.getMapProjection().getName());
 		assertEquals("Transverse Mercator", projectedGeographicCrs
@@ -3965,7 +3965,7 @@ public class CRSReaderWriterTest {
 		assertEquals("Greenwich",
 				geo.getReferenceFrame().getPrimeMeridian().getName());
 		assertEquals(0,
-				geo.getReferenceFrame().getPrimeMeridian().getIrmLongitude(),
+				geo.getReferenceFrame().getPrimeMeridian().getLongitude(),
 				0);
 		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
 				geo.getCoordinateSystem().getType());
@@ -5444,7 +5444,7 @@ public class CRSReaderWriterTest {
 		assertEquals("Greenwich",
 				geographicCrs.getReferenceFrame().getPrimeMeridian().getName());
 		assertEquals(0.0, geographicCrs.getReferenceFrame().getPrimeMeridian()
-				.getIrmLongitude(), 0);
+				.getLongitude(), 0);
 		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
 				geographicCrs.getCoordinateSystem().getType());
 		assertEquals(2, geographicCrs.getCoordinateSystem().getDimension());
@@ -5496,7 +5496,7 @@ public class CRSReaderWriterTest {
 		assertEquals("Greenwich",
 				geographicCrs.getReferenceFrame().getPrimeMeridian().getName());
 		assertEquals(0.0, geographicCrs.getReferenceFrame().getPrimeMeridian()
-				.getIrmLongitude(), 0);
+				.getLongitude(), 0);
 		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
 				geographicCrs.getCoordinateSystem().getType());
 		assertEquals(2, geographicCrs.getCoordinateSystem().getDimension());
@@ -5566,7 +5566,7 @@ public class CRSReaderWriterTest {
 		assertEquals("Greenwich",
 				projectedCrs.getReferenceFrame().getPrimeMeridian().getName());
 		assertEquals(0, projectedCrs.getReferenceFrame().getPrimeMeridian()
-				.getIrmLongitude(), 0);
+				.getLongitude(), 0);
 		assertEquals("Transverse Mercator",
 				projectedCrs.getMapProjection().getName());
 		assertEquals("Transverse Mercator",
@@ -5648,7 +5648,7 @@ public class CRSReaderWriterTest {
 		assertEquals("Greenwich",
 				projectedCrs.getReferenceFrame().getPrimeMeridian().getName());
 		assertEquals(0, projectedCrs.getReferenceFrame().getPrimeMeridian()
-				.getIrmLongitude(), 0);
+				.getLongitude(), 0);
 		assertEquals("UTM zone 10N", projectedCrs.getMapProjection().getName());
 		assertEquals("UTM zone 10N",
 				projectedCrs.getMapProjection().getMethod().getName());

@@ -1,11 +1,17 @@
 package mil.nga.proj;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.locationtech.proj4j.CRSFactory;
 import org.locationtech.proj4j.CoordinateReferenceSystem;
+
+import mil.nga.crs.CRS;
+import mil.nga.crs.common.Identifiable;
+import mil.nga.crs.common.Identifier;
+import mil.nga.crs.wkt.CRSReader;
 
 /**
  * Projection factory for coordinate projections and transformations
@@ -170,6 +176,39 @@ public class ProjectionFactory {
 	}
 
 	/**
+	 * Get the projection for the authority, code, and definition
+	 * 
+	 * @param authority
+	 *            coordinate authority
+	 * @param code
+	 *            authority coordinate code
+	 * @param definition
+	 *            definition
+	 * @return projection
+	 */
+	public static Projection getProjectionByDefinition(String authority,
+			long code, String definition) {
+		return getProjectionByDefinition(authority, String.valueOf(code),
+				definition);
+	}
+
+	/**
+	 * Get the projection for the authority, code, and definition
+	 * 
+	 * @param authority
+	 *            coordinate authority
+	 * @param code
+	 *            authority coordinate code
+	 * @param definition
+	 *            definition
+	 * @return projection
+	 */
+	public static Projection getProjectionByDefinition(String authority,
+			String code, String definition) {
+		return getProjection(authority, code, null, definition);
+	}
+
+	/**
 	 * Get the projection for the authority, code, definition, and custom
 	 * parameter array
 	 * 
@@ -211,6 +250,12 @@ public class ProjectionFactory {
 		// Check if the projection already exists
 		Projection projection = projections.getProjection(authority, code);
 
+		// Check if the definition does not match the cached projection
+		if (projection != null && definition != null && !definition.isEmpty()
+				&& !definition.equals(projection.getDefinition())) {
+			projection = null;
+		}
+
 		if (projection == null) {
 
 			// Try to get or create the projection from a definition
@@ -219,17 +264,17 @@ public class ProjectionFactory {
 			if (projection == null) {
 
 				// Try to create the projection from the provided params
-				projection = fromParams(authority, code, params);
+				projection = fromParams(authority, code, params, definition);
 
 				if (projection == null) {
 
 					// Try to create the projection from properties
-					projection = fromProperties(authority, code);
+					projection = fromProperties(authority, code, definition);
 
 					if (projection == null) {
 
 						// Try to create the projection from the authority name
-						projection = fromName(authority, code);
+						projection = fromName(authority, code, definition);
 
 						if (projection == null) {
 							throw new ProjectionException(
@@ -242,6 +287,95 @@ public class ProjectionFactory {
 					}
 				}
 			}
+		}
+
+		return projection;
+	}
+
+	/**
+	 * Get the projection for the definition
+	 * 
+	 * @param definition
+	 *            definition
+	 * @return projection
+	 */
+	public static Projection getProjectionByDefinition(String definition) {
+
+		Projection projection = null;
+
+		if (definition != null && !definition.isEmpty()) {
+
+			CRS crsObject = null;
+			try {
+				crsObject = CRSReader.read(definition);
+			} catch (IOException e) {
+				throw new ProjectionException(
+						"Failed to parse definition: " + definition, e);
+			}
+
+			if (crsObject != null) {
+
+				String authority = null;
+				String code = null;
+
+				if (crsObject instanceof Identifiable) {
+					Identifiable identifiable = (Identifiable) crsObject;
+					if (identifiable.hasIdentifiers()) {
+						Identifier identifier = identifiable.getIdentifier(0);
+						authority = identifier.getName();
+						code = identifier.getUniqueIdentifier();
+					}
+				}
+
+				boolean cache = true;
+
+				if (authority != null && code != null) {
+
+					// Check if the projection already exists
+					projection = projections.getProjection(authority, code);
+
+					// Check if the definition does not match the cached
+					// projection
+					if (projection != null
+							&& !definition.equals(projection.getDefinition())) {
+						projection = null;
+					}
+
+				} else {
+
+					cache = false;
+
+					if (authority == null) {
+						authority = "";
+					}
+					if (code == null) {
+						code = "";
+					}
+
+				}
+
+				if (projection == null) {
+
+					CoordinateReferenceSystem crs = CRSParser
+							.convert(crsObject);
+					if (crs != null) {
+						projection = new Projection(authority, code, crs,
+								definition);
+						if (cache) {
+							projections.addProjection(projection);
+						}
+					}
+
+				}
+
+			}
+
+		}
+
+		if (projection == null) {
+			throw new ProjectionException(
+					"Failed to create projection for definition: "
+							+ definition);
 		}
 
 		return projection;
@@ -329,7 +463,8 @@ public class ProjectionFactory {
 			try {
 				CoordinateReferenceSystem crs = CRSParser.parse(definition);
 				if (crs != null) {
-					projection = new Projection(authority, code, crs);
+					projection = new Projection(authority, code, crs,
+							definition);
 					projections.addProjection(projection);
 				}
 			} catch (Exception e) {
@@ -354,10 +489,12 @@ public class ProjectionFactory {
 	 *            coordinate code
 	 * @param params
 	 *            proj4 parameters
+	 * @param definition
+	 *            WKT coordinate definition
 	 * @return projection
 	 */
 	private static Projection fromParams(String authority, String code,
-			String[] params) {
+			String[] params, String definition) {
 
 		Projection projection = null;
 
@@ -365,7 +502,7 @@ public class ProjectionFactory {
 			try {
 				CoordinateReferenceSystem crs = csFactory.createFromParameters(
 						coordinateName(authority, code), params);
-				projection = new Projection(authority, code, crs);
+				projection = new Projection(authority, code, crs, definition);
 				projections.addProjection(projection);
 			} catch (Exception e) {
 				logger.log(Level.WARNING,
@@ -386,9 +523,12 @@ public class ProjectionFactory {
 	 *            coordinate authority
 	 * @param code
 	 *            coordinate code
+	 * @param definition
+	 *            WKT coordinate definition
 	 * @return projection
 	 */
-	private static Projection fromProperties(String authority, String code) {
+	private static Projection fromProperties(String authority, String code,
+			String definition) {
 
 		Projection projection = null;
 
@@ -398,7 +538,7 @@ public class ProjectionFactory {
 			try {
 				CoordinateReferenceSystem crs = csFactory.createFromParameters(
 						coordinateName(authority, code), parameters);
-				projection = new Projection(authority, code, crs);
+				projection = new Projection(authority, code, crs, definition);
 				projections.addProjection(projection);
 			} catch (Exception e) {
 				logger.log(Level.WARNING,
@@ -419,16 +559,19 @@ public class ProjectionFactory {
 	 *            coordinate authority
 	 * @param code
 	 *            coordinate code
+	 * @param definition
+	 *            WKT coordinate definition
 	 * @return projection
 	 */
-	private static Projection fromName(String authority, String code) {
+	private static Projection fromName(String authority, String code,
+			String definition) {
 
 		Projection projection = null;
 
 		String name = coordinateName(authority, code);
 		try {
 			CoordinateReferenceSystem crs = csFactory.createFromName(name);
-			projection = new Projection(authority, code, crs);
+			projection = new Projection(authority, code, crs, definition);
 			projections.addProjection(projection);
 		} catch (Exception e) {
 			logger.log(Level.WARNING,

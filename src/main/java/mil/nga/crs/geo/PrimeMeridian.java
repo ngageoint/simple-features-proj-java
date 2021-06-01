@@ -31,14 +31,14 @@ public class PrimeMeridian implements Identifiable {
 	private String name = null;;
 
 	/**
-	 * IRM longitude
+	 * International Reference Meridian longitude
 	 */
-	private double irmLongitude;
+	private double longitude;
 
 	/**
-	 * IRM longitude unit (angle)
+	 * International Reference Meridian longitude unit (angle)
 	 */
-	private Unit irmLongitudeUnit;
+	private Unit longitudeUnit;
 
 	/**
 	 * Identifiers
@@ -57,12 +57,12 @@ public class PrimeMeridian implements Identifiable {
 	 * 
 	 * @param name
 	 *            name
-	 * @param irmLongitude
-	 *            IRM longitude
+	 * @param longitude
+	 *            International Reference Meridian longitude
 	 */
-	public PrimeMeridian(String name, double irmLongitude) {
+	public PrimeMeridian(String name, double longitude) {
 		setName(name);
-		setIrmLongitude(irmLongitude);
+		setLongitude(longitude);
 	}
 
 	/**
@@ -85,50 +85,51 @@ public class PrimeMeridian implements Identifiable {
 	}
 
 	/**
-	 * Get the IRM longitude
+	 * Get the International Reference Meridian longitude
 	 * 
-	 * @return IRM longitude
+	 * @return International Reference Meridian longitude
 	 */
-	public double getIrmLongitude() {
-		return irmLongitude;
+	public double getLongitude() {
+		return longitude;
 	}
 
 	/**
-	 * Set the IRM longitude
+	 * Set the International Reference Meridian longitude
 	 * 
-	 * @param irmLongitude
-	 *            IRM longitude
+	 * @param longitude
+	 *            International Reference Meridian longitude
 	 */
-	public void setIrmLongitude(double irmLongitude) {
-		this.irmLongitude = irmLongitude;
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 
 	/**
-	 * Get the IRM longitude unit (angle)
+	 * Get the International Reference Meridian longitude unit (angle)
 	 * 
-	 * @return IRM longitude unit (angle)
+	 * @return International Reference Meridian longitude unit (angle)
 	 */
-	public Unit getIrmLongitudeUnit() {
-		return irmLongitudeUnit;
+	public Unit getLongitudeUnit() {
+		return longitudeUnit;
 	}
 
 	/**
-	 * Has an IRM longitude unit (angle)
+	 * Has an International Reference Meridian longitude unit (angle)
 	 * 
-	 * @return true if has IRM longitude unit (angle)
+	 * @return true if has International Reference Meridian longitude unit
+	 *         (angle)
 	 */
-	public boolean hasIrmLongitudeUnit() {
-		return getIrmLongitudeUnit() != null;
+	public boolean hasLongitudeUnit() {
+		return getLongitudeUnit() != null;
 	}
 
 	/**
-	 * Set the IRM longitude unit (angle)
+	 * Set the International Reference Meridian longitude unit (angle)
 	 * 
-	 * @param irmLongitudeUnit
-	 *            IRM longitude unit (angle)
+	 * @param longitudeUnit
+	 *            International Reference Meridian longitude unit (angle)
 	 */
-	public void setIrmLongitudeUnit(Unit irmLongitudeUnit) {
-		this.irmLongitudeUnit = irmLongitudeUnit;
+	public void setLongitudeUnit(Unit longitudeUnit) {
+		this.longitudeUnit = longitudeUnit;
 	}
 
 	/**
@@ -203,10 +204,10 @@ public class PrimeMeridian implements Identifiable {
 		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
 		long temp;
-		temp = Double.doubleToLongBits(irmLongitude);
+		temp = Double.doubleToLongBits(longitude);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((irmLongitudeUnit == null) ? 0
-				: irmLongitudeUnit.hashCode());
+		result = prime * result
+				+ ((longitudeUnit == null) ? 0 : longitudeUnit.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
@@ -228,13 +229,13 @@ public class PrimeMeridian implements Identifiable {
 				return false;
 		} else if (!identifiers.equals(other.identifiers))
 			return false;
-		if (Double.doubleToLongBits(irmLongitude) != Double
-				.doubleToLongBits(other.irmLongitude))
+		if (Double.doubleToLongBits(longitude) != Double
+				.doubleToLongBits(other.longitude))
 			return false;
-		if (irmLongitudeUnit == null) {
-			if (other.irmLongitudeUnit != null)
+		if (longitudeUnit == null) {
+			if (other.longitudeUnit != null)
 				return false;
-		} else if (!irmLongitudeUnit.equals(other.irmLongitudeUnit))
+		} else if (!longitudeUnit.equals(other.longitudeUnit))
 			return false;
 		if (name == null) {
 			if (other.name != null)
