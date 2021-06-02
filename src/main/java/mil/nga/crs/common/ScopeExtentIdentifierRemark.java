@@ -10,6 +10,21 @@ import java.util.List;
 public interface ScopeExtentIdentifierRemark extends Identifiable {
 
 	/**
+	 * Get the name
+	 * 
+	 * @return name
+	 */
+	public String getName();
+
+	/**
+	 * Set the name
+	 * 
+	 * @param name
+	 *            name
+	 */
+	public void setName(String name);
+
+	/**
 	 * Get the usages
 	 * 
 	 * @return usages

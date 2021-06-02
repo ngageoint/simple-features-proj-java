@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mil.nga.crs.common.ScopeExtentIdentifierRemark;
 import mil.nga.crs.wkt.CRSWriter;
 
 /**
@@ -11,7 +12,7 @@ import mil.nga.crs.wkt.CRSWriter;
  * 
  * @author osbornb
  */
-public abstract class CRS {
+public abstract class CRS implements ScopeExtentIdentifierRemark {
 
 	/**
 	 * Logger

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mil.nga.crs.common.Identifier;
-import mil.nga.crs.common.ScopeExtentIdentifierRemark;
 import mil.nga.crs.common.Usage;
 
 /**
@@ -12,7 +11,7 @@ import mil.nga.crs.common.Usage;
  * 
  * @author osbornb
  */
-public class CommonCRS extends CRS implements ScopeExtentIdentifierRemark {
+public class CommonCRS extends CRS {
 
 	/**
 	 * Name
@@ -65,20 +64,17 @@ public class CommonCRS extends CRS implements ScopeExtentIdentifierRemark {
 	}
 
 	/**
-	 * Get the name
-	 * 
-	 * @return name
+	 * {@inheritDoc}
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * Set the name
-	 * 
-	 * @param name
-	 *            name
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}

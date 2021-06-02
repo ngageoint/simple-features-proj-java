@@ -104,6 +104,26 @@ public class Identifier {
 	}
 
 	/**
+	 * Get the name and unique identifier separated by a colon
+	 * 
+	 * @return name and unique identifier
+	 */
+	public String getNameAndUniqueIdentifier() {
+		return getNameAndUniqueIdentifier(":");
+	}
+
+	/**
+	 * Get the name and unique identifier separated by the delimiter
+	 * 
+	 * @param delimiter
+	 *            delimiter
+	 * @return name and unique identifier
+	 */
+	public String getNameAndUniqueIdentifier(String delimiter) {
+		return getName() + delimiter + getUniqueIdentifier();
+	}
+
+	/**
 	 * Get the version
 	 * 
 	 * @return version

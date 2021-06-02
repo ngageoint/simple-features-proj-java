@@ -9,10 +9,6 @@ import org.junit.Test;
 
 import mil.nga.crs.CRS;
 import mil.nga.crs.CoordinateReferenceSystem;
-import mil.nga.crs.wkt.CRSReader;
-import mil.nga.crs.wkt.CRSWriter;
-import mil.nga.crs.wkt.WKTConstants;
-import mil.nga.crs.wkt.WKTUtils;
 
 /**
  * CRS Reader and Writer EPSG tests
@@ -709,7 +705,7 @@ public class CRSReaderWriterEpsgTest {
 		assertEquals(expectedText, CRSWriter.write(crs));
 		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
-		text = "GEOGCS[\"WGS 84\"," + "DATUM[\"WGS_1984\","
+		text = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\","
 				+ "SPHEROID[\"WGS84\",6378137,298.257223563]],"
 				+ "PRIMEM[\"Greenwich\",0],"
 				+ "UNIT[\"degree\",0.0174532925199433]]";

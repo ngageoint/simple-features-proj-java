@@ -1,10 +1,12 @@
 package mil.nga.proj;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.locationtech.proj4j.datum.Datum;
 import org.locationtech.proj4j.datum.Ellipsoid;
+import org.locationtech.proj4j.datum.Grid;
 import org.locationtech.proj4j.proj.LongLatProjection;
 import org.locationtech.proj4j.units.Units;
 import org.locationtech.proj4j.util.ProjectionMath;
@@ -114,9 +116,15 @@ public class CRSParser {
 
 		String name = geoDatum.getName();
 		double[] transform = null; // TODO?
+		List<Grid> grids = null; // TODO?
 		Ellipsoid ellipsoid = convert(geoDatum.getEllipsoid());
 
-		return new Datum(name, transform, null, ellipsoid, name);
+		String code = name;
+		if (geoDatum.hasIdentifiers()) {
+			code = geoDatum.getIdentifier(0).getNameAndUniqueIdentifier();
+		}
+
+		return new Datum(code, transform, grids, ellipsoid, name);
 	}
 
 	/**
@@ -128,33 +136,33 @@ public class CRSParser {
 	 */
 	public static Ellipsoid convert(mil.nga.crs.geo.Ellipsoid ellipsoid) {
 
-		Ellipsoid value = null;
-
 		String name = ellipsoid.getName();
-		double semiMajorAxis = ellipsoid.getSemiMajorAxis();
+		String shortName = name;
+		if (ellipsoid.hasIdentifiers()) {
+			shortName = ellipsoid.getIdentifier(0).getNameAndUniqueIdentifier();
+		}
+		double equatorRadius = ellipsoid.getSemiMajorAxis();
+		double poleRadius = 0;
+		double reciprocalFlattening = 0;
 
 		switch (ellipsoid.getType()) {
-
 		case OBLATE:
-			double inverseFlattening = ellipsoid.getInverseFlattening();
-			if (inverseFlattening == 0) {
-				inverseFlattening = Double.POSITIVE_INFINITY;
+			reciprocalFlattening = ellipsoid.getInverseFlattening();
+			if (reciprocalFlattening == 0) {
+				reciprocalFlattening = Double.POSITIVE_INFINITY;
 			}
-			value = new Ellipsoid(name, semiMajorAxis, 0, inverseFlattening,
-					name);
 			break;
 		case TRIAXIAL:
 			TriaxialEllipsoid triaxial = (TriaxialEllipsoid) ellipsoid;
-			value = new Ellipsoid(name, semiMajorAxis,
-					triaxial.getSemiMinorAxis(), 0, name);
+			poleRadius = triaxial.getSemiMinorAxis();
 			break;
-
 		default:
 			throw new CRSException(
 					"Unsupported Ellipsoid Type: " + ellipsoid.getType());
 		}
 
-		return value;
+		return new Ellipsoid(shortName, equatorRadius, poleRadius,
+				reciprocalFlattening, name);
 	}
 
 }

@@ -9,7 +9,6 @@ import org.locationtech.proj4j.CRSFactory;
 import org.locationtech.proj4j.CoordinateReferenceSystem;
 
 import mil.nga.crs.CRS;
-import mil.nga.crs.common.Identifiable;
 import mil.nga.crs.common.Identifier;
 import mil.nga.crs.wkt.CRSReader;
 
@@ -318,13 +317,10 @@ public class ProjectionFactory {
 				String authority = null;
 				String code = null;
 
-				if (crsObject instanceof Identifiable) {
-					Identifiable identifiable = (Identifiable) crsObject;
-					if (identifiable.hasIdentifiers()) {
-						Identifier identifier = identifiable.getIdentifier(0);
-						authority = identifier.getName();
-						code = identifier.getUniqueIdentifier();
-					}
+				if (crsObject.hasIdentifiers()) {
+					Identifier identifier = crsObject.getIdentifier(0);
+					authority = identifier.getName();
+					code = identifier.getUniqueIdentifier();
 				}
 
 				boolean cache = true;

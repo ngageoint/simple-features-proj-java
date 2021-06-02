@@ -1,8 +1,12 @@
 package mil.nga.crs.metadata;
 
+import java.util.List;
+
 import mil.nga.crs.CRS;
 import mil.nga.crs.CRSType;
 import mil.nga.crs.CoordinateReferenceSystem;
+import mil.nga.crs.common.Identifier;
+import mil.nga.crs.common.Usage;
 
 /**
  * Coordinate metadata
@@ -97,6 +101,158 @@ public class CoordinateMetadata extends CRS {
 	 */
 	public void setEpoch(Double epoch) {
 		this.epoch = epoch;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getName() {
+		return coordinateReferenceSystem.getName();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setName(String name) {
+		coordinateReferenceSystem.setName(name);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<Usage> getUsages() {
+		return coordinateReferenceSystem.getUsages();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasUsages() {
+		return coordinateReferenceSystem.hasUsages();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int numUsages() {
+		return coordinateReferenceSystem.numUsages();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Usage getUsage(int index) {
+		return coordinateReferenceSystem.getUsage(index);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setUsages(List<Usage> usages) {
+		coordinateReferenceSystem.setUsages(usages);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addUsage(Usage usage) {
+		coordinateReferenceSystem.addUsage(usage);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addUsages(List<Usage> usages) {
+		coordinateReferenceSystem.addUsages(usages);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<Identifier> getIdentifiers() {
+		return coordinateReferenceSystem.getIdentifiers();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasIdentifiers() {
+		return coordinateReferenceSystem.hasIdentifiers();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int numIdentifiers() {
+		return coordinateReferenceSystem.numIdentifiers();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Identifier getIdentifier(int index) {
+		return coordinateReferenceSystem.getIdentifier(index);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setIdentifiers(List<Identifier> identifiers) {
+		coordinateReferenceSystem.setIdentifiers(identifiers);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addIdentifier(Identifier identifier) {
+		coordinateReferenceSystem.addIdentifier(identifier);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addIdentifiers(List<Identifier> identifiers) {
+		coordinateReferenceSystem.addIdentifiers(identifiers);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getRemark() {
+		return coordinateReferenceSystem.getRemark();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasRemark() {
+		return coordinateReferenceSystem.hasRemark();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setRemark(String remark) {
+		coordinateReferenceSystem.setRemark(remark);
 	}
 
 	/**
