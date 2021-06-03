@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.locationtech.proj4j.CRSFactory;
 import org.locationtech.proj4j.CoordinateReferenceSystem;
 
 import mil.nga.crs.CRS;
@@ -24,11 +23,6 @@ public class ProjectionFactory {
 	 */
 	private static final Logger logger = Logger
 			.getLogger(ProjectionFactory.class.getName());
-
-	/**
-	 * CRS Factory
-	 */
-	private static final CRSFactory csFactory = new CRSFactory();
 
 	/**
 	 * Projections
@@ -496,8 +490,9 @@ public class ProjectionFactory {
 
 		if (params != null && params.length > 0) {
 			try {
-				CoordinateReferenceSystem crs = csFactory.createFromParameters(
-						coordinateName(authority, code), params);
+				CoordinateReferenceSystem crs = CRSParser.getCRSFactory()
+						.createFromParameters(coordinateName(authority, code),
+								params);
 				projection = new Projection(authority, code, crs, definition);
 				projections.addProjection(projection);
 			} catch (Exception e) {
@@ -532,8 +527,9 @@ public class ProjectionFactory {
 
 		if (parameters != null && !parameters.isEmpty()) {
 			try {
-				CoordinateReferenceSystem crs = csFactory.createFromParameters(
-						coordinateName(authority, code), parameters);
+				CoordinateReferenceSystem crs = CRSParser.getCRSFactory()
+						.createFromParameters(coordinateName(authority, code),
+								parameters);
 				projection = new Projection(authority, code, crs, definition);
 				projections.addProjection(projection);
 			} catch (Exception e) {
@@ -566,7 +562,8 @@ public class ProjectionFactory {
 
 		String name = coordinateName(authority, code);
 		try {
-			CoordinateReferenceSystem crs = csFactory.createFromName(name);
+			CoordinateReferenceSystem crs = CRSParser.getCRSFactory()
+					.createFromName(name);
 			projection = new Projection(authority, code, crs, definition);
 			projections.addProjection(projection);
 		} catch (Exception e) {

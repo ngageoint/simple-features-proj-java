@@ -3,11 +3,13 @@ package mil.nga.proj;
 import java.io.IOException;
 import java.util.List;
 
+import org.locationtech.proj4j.CRSFactory;
 import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.locationtech.proj4j.datum.Datum;
 import org.locationtech.proj4j.datum.Ellipsoid;
 import org.locationtech.proj4j.datum.Grid;
-import org.locationtech.proj4j.proj.LongLatProjection;
+import org.locationtech.proj4j.parser.DatumParameters;
+import org.locationtech.proj4j.proj.Projection;
 import org.locationtech.proj4j.units.Units;
 import org.locationtech.proj4j.util.ProjectionMath;
 
@@ -18,6 +20,8 @@ import mil.nga.crs.geo.GeoCoordinateReferenceSystem;
 import mil.nga.crs.geo.GeoDatum;
 import mil.nga.crs.geo.PrimeMeridian;
 import mil.nga.crs.geo.TriaxialEllipsoid;
+import mil.nga.crs.projected.MapProjection;
+import mil.nga.crs.projected.ProjectedCoordinateReferenceSystem;
 import mil.nga.crs.wkt.CRSReader;
 
 /**
@@ -26,6 +30,20 @@ import mil.nga.crs.wkt.CRSReader;
  * @author osbornb
  */
 public class CRSParser {
+
+	/**
+	 * CRS Factory
+	 */
+	private static final CRSFactory crsFactory = new CRSFactory();
+
+	/**
+	 * Get the CRS Factory
+	 * 
+	 * @return crs factory
+	 */
+	public static CRSFactory getCRSFactory() {
+		return crsFactory;
+	}
 
 	/**
 	 * Parse crs well-known text into a proj4 coordinate reference system
@@ -66,36 +84,11 @@ public class CRSParser {
 
 		case GEODETIC:
 		case GEOGRAPHIC:
+			crs = convert((GeoCoordinateReferenceSystem) crsObject);
+			break;
 
-			GeoCoordinateReferenceSystem geo = (GeoCoordinateReferenceSystem) crsObject;
-
-			String name = geo.getName();
-
-			GeoDatum geoDatum = geo.getGeoDatum();
-			Datum datum = convert(geoDatum);
-
-			LongLatProjection proj = new LongLatProjection();
-			proj.setEllipsoid(datum.getEllipsoid());
-			mil.nga.crs.geo.Ellipsoid ellipsoid = geoDatum.getEllipsoid();
-			if (ellipsoid.hasUnit()) {
-				Unit unit = ellipsoid.getUnit();
-				proj.setUnits(Units.findUnits(unit.getName()));
-				proj.setFromMetres(unit.getConversionFactor());
-			}
-			if (geoDatum.hasPrimeMeridian()) {
-				PrimeMeridian primeMeridian = geoDatum.getPrimeMeridian();
-				double primeMeridianLongitude = primeMeridian.getLongitude();
-				if (primeMeridian.hasLongitudeUnit()
-						&& Units.findUnits(primeMeridian.getLongitudeUnit()
-								.getName()) == Units.RADIANS) {
-					primeMeridianLongitude *= ProjectionMath.RTD;
-				}
-				proj.setPrimeMeridian(Double.toString(primeMeridianLongitude));
-			}
-			proj.initialize();
-
-			crs = new CoordinateReferenceSystem(name, null, datum, proj);
-
+		case PROJECTED:
+			crs = convert((ProjectedCoordinateReferenceSystem) crsObject);
 			break;
 
 		default:
@@ -103,6 +96,142 @@ public class CRSParser {
 		}
 
 		return crs;
+	}
+
+	/**
+	 * Convert a geodetic or geographic crs into a proj4 coordinate reference
+	 * system
+	 * 
+	 * @param geo
+	 *            geodetic or geographic crs
+	 * @return coordinate reference system
+	 */
+	public static CoordinateReferenceSystem convert(
+			GeoCoordinateReferenceSystem geo) {
+
+		GeoDatum geoDatum = geo.getGeoDatum();
+		Datum datum = convert(geoDatum);
+
+		Projection proj = createProjection(datum.getEllipsoid(),
+				geo.getCoordinateSystem().getAxisUnit(), geoDatum);
+
+		return new CoordinateReferenceSystem(geo.getName(), null, datum, proj);
+	}
+
+	/**
+	 * Convert a projected crs into a proj4 coordinate reference system
+	 * 
+	 * @param projected
+	 *            projected crs
+	 * @return coordinate reference system
+	 */
+	public static CoordinateReferenceSystem convert(
+			ProjectedCoordinateReferenceSystem projected) {
+
+		GeoCoordinateReferenceSystem base = projected.getBase(); // TODO
+		MapProjection mapProjection = projected.getMapProjection(); // TODO
+
+		GeoDatum geoDatum = projected.getGeoDatum();
+
+		Ellipsoid ellipsoid = convert(geoDatum.getEllipsoid());
+		DatumParameters datumParameters = new DatumParameters();
+		datumParameters.setA(ellipsoid.getA());
+		datumParameters.setES(0);
+
+		Datum datum = datumParameters.getDatum();
+
+		Projection proj = createProjection(datum.getEllipsoid(),
+				projected.getCoordinateSystem().getAxisUnit(), geoDatum);
+
+		proj.initialize();
+
+		return new CoordinateReferenceSystem(projected.getName(), null, datum,
+				proj);
+	}
+
+	/**
+	 * Create a proj4j projection
+	 * 
+	 * @param ellipsoid
+	 *            ellipsoid
+	 * @param unit
+	 *            unit
+	 * @param geoDatum
+	 *            geo datum
+	 * @return projection
+	 */
+	public static Projection createProjection(Ellipsoid ellipsoid, Unit unit,
+			GeoDatum geoDatum) {
+
+		Projection proj = createProjection(ellipsoid, unit);
+
+		if (geoDatum.hasPrimeMeridian()) {
+			PrimeMeridian primeMeridian = geoDatum.getPrimeMeridian();
+			double primeMeridianLongitude = primeMeridian.getLongitude();
+			if (primeMeridian.hasLongitudeUnit()
+					&& Units.findUnits(primeMeridian.getLongitudeUnit()
+							.getName()) == Units.RADIANS) {
+				primeMeridianLongitude *= ProjectionMath.RTD;
+			}
+			proj.setPrimeMeridian(Double.toString(primeMeridianLongitude));
+		}
+
+		proj.initialize();
+
+		return proj;
+	}
+
+	/**
+	 * Create a proj4j projection
+	 * 
+	 * @param ellipsoid
+	 *            ellipsoid
+	 * @param unit
+	 *            unit
+	 * @return projection
+	 */
+	public static Projection createProjection(Ellipsoid ellipsoid, Unit unit) {
+
+		Projection proj = createProjection(unit);
+
+		proj.setEllipsoid(ellipsoid);
+
+		proj.initialize();
+
+		return proj;
+	}
+
+	/**
+	 * Create a proj4j projection for the unit
+	 * 
+	 * @param unit
+	 *            unit
+	 * @return projection
+	 */
+	public static Projection createProjection(Unit unit) {
+
+		org.locationtech.proj4j.units.Unit projUnit = Units.METRES;
+		if (unit != null) {
+			projUnit = Units.findUnits(unit.getName());
+		}
+
+		String projectionName = null;
+		if (projUnit == Units.DEGREES) {
+			projectionName = "longlat";
+		} else {
+			projectionName = "merc";
+		}
+
+		Projection proj = getCRSFactory().getRegistry()
+				.getProjection(projectionName);
+		proj.setUnits(projUnit);
+
+		if (unit != null) {
+			// TODO
+			// proj.setFromMetres(unit.getConversionFactor());
+		}
+
+		return proj;
 	}
 
 	/**

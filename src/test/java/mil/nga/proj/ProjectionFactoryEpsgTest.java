@@ -35,7 +35,76 @@ public class ProjectionFactoryEpsgTest {
 	}
 
 	/**
-	 * Test custom projections
+	 * Test EPSG 3857
+	 */
+	@Test
+	public void test3857() {
+
+		String definition = "PROJCRS[\"WGS 84 / Pseudo-Mercator\",BASEGEOGCRS[\"WGS 84\","
+				+ "ENSEMBLE[\"World Geodetic System 1984 ensemble\","
+				+ "MEMBER[\"World Geodetic System 1984 (Transit)\",ID[\"EPSG\",1166]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G730)\",ID[\"EPSG\",1152]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G873)\",ID[\"EPSG\",1153]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1150)\",ID[\"EPSG\",1154]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1674)\",ID[\"EPSG\",1155]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1762)\",ID[\"EPSG\",1156]],"
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,ID[\"EPSG\",7030]],"
+				+ "ENSEMBLEACCURACY[2],ID[\"EPSG\",6326]],ID[\"EPSG\",4326]],"
+				+ "CONVERSION[\"Popular Visualisation Pseudo-Mercator\","
+				+ "METHOD[\"Popular Visualisation Pseudo Mercator\",ID[\"EPSG\",1024]],"
+				+ "PARAMETER[\"Latitude of natural origin\",0,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Longitude of natural origin\",0,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"False easting\",0,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "PARAMETER[\"False northing\",0,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "ID[\"EPSG\",3856]],CS[Cartesian,2,ID[\"EPSG\",4499]],"
+				+ "AXIS[\"Easting (X)\",east],AXIS[\"Northing (Y)\",north],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3857]]";
+
+		projectionTestDerived(3857, definition);
+
+		definition = "PROJCS[\"WGS 84 / Pseudo-Mercator\",GEOGCS[\"WGS 84\","
+				+ "DATUM[\"WGS_1984\","
+				+ "SPHEROID[\"WGS 84\",6378137,298.257223563,"
+				+ "AUTHORITY[\"EPSG\",\"7030\"]],"
+				+ "AUTHORITY[\"EPSG\",\"6326\"]],"
+				+ "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "AUTHORITY[\"EPSG\",\"9122\"]],"
+				+ "AUTHORITY[\"EPSG\",\"4326\"]],"
+				+ "PROJECTION[\"Mercator_1SP\"],"
+				+ "PARAMETER[\"central_meridian\",0],"
+				+ "PARAMETER[\"scale_factor\",1],"
+				+ "PARAMETER[\"false_easting\",0],"
+				+ "PARAMETER[\"false_northing\",0],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "AXIS[\"X\",EAST],AXIS[\"Y\",NORTH],"
+				+ "EXTENSION[\"PROJ4\",\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs\"],"
+				+ "AUTHORITY[\"EPSG\",\"3857\"]]";
+
+		projectionTestDerived(3857, definition);
+
+		definition = "PROJCS[\"WGS 84 / Pseudo-Mercator\","
+				+ "GEOGCRS[\"WGS 84\",DATUM[\"WGS_1984\","
+				+ "SPHEROID[\"WGS 84\",6378137,298.257223563,"
+				+ "ID[\"EPSG\",\"7030\"]],ID[\"EPSG\",\"6326\"]],"
+				+ "PRIMEM[\"Greenwich\",0,ID[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "ID[\"EPSG\",\"9122\"]],ID[\"EPSG\",\"4326\"]],"
+				+ "PROJECTION[\"Mercator_1SP\"],"
+				+ "PARAMETER[\"central_meridian\",0],"
+				+ "PARAMETER[\"scale_factor\",1],"
+				+ "PARAMETER[\"false_easting\",0],"
+				+ "PARAMETER[\"false_northing\",0]"
+				+ ",UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]]"
+				+ ",AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]"
+				+ ",ID[\"EPSG\",\"3857\"]]";
+
+		projectionTestDerived(3857, definition);
+
+	}
+
+	/**
+	 * Test EPSG 4326
 	 */
 	@Test
 	public void test4326() {
@@ -73,6 +142,56 @@ public class ProjectionFactoryEpsgTest {
 				+ "UNIT[\"degree\",0.0174532925199433]]";
 
 		projectionTestSpecified(4326, definition);
+
+	}
+
+	/**
+	 * Test EPSG 4979
+	 */
+	@Test
+	public void test4979() {
+
+		String definition = "GEOGCRS[\"WGS 84\",ENSEMBLE[\"World Geodetic System 1984 ensemble\","
+				+ "MEMBER[\"World Geodetic System 1984 (Transit)\",ID[\"EPSG\",1166]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G730)\",ID[\"EPSG\",1152]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G873)\",ID[\"EPSG\",1153]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1150)\",ID[\"EPSG\",1154]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1674)\",ID[\"EPSG\",1155]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1762)\",ID[\"EPSG\",1156]],"
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,ID[\"EPSG\",7030]],"
+				+ "ENSEMBLEACCURACY[2],ID[\"EPSG\",6326]],"
+				+ "CS[ellipsoidal,3,ID[\"EPSG\",6423]],"
+				+ "AXIS[\"Geodetic latitude (Lat)\",north,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "AXIS[\"Geodetic longitude (Lon)\",east,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "AXIS[\"Ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",4979]]";
+
+		projectionTestDerived(4979, definition);
+
+		definition = "GEOGCS[\"WGS 84\","
+				+ "DATUM[\"World Geodetic System 1984\","
+				+ "SPHEROID[\"WGS 84\",6378137.0,298.257223563,"
+				+ "AUTHORITY[\"EPSG\",\"7030\"]],"
+				+ "AUTHORITY[\"EPSG\",\"6326\"]],"
+				+ "PRIMEM[\"Greenwich\",0.0,AUTHORITY[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.017453292519943295],"
+				+ "AXIS[\"Geodetic latitude\",NORTH],"
+				+ "AXIS[\"Geodetic longitude\",EAST],"
+				+ "AXIS[\"Ellipsoidal height\",UP],"
+				+ "AUTHORITY[\"EPSG\",\"4979\"]]";
+
+		projectionTestDerived(4979, definition);
+
+		definition = "GEODCRS[\"WGS 84\",DATUM[\"World Geodetic System 1984\","
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,"
+				+ "LENGTHUNIT[\"metre\",1.0]]],CS[ellipsoidal,3],"
+				+ "AXIS[\"Geodetic latitude (Lat)\",north,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "AXIS[\"Geodetic longitude (Long)\",east,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "AXIS[\"Ellipsoidal height (h)\",up,"
+				+ "LENGTHUNIT[\"metre\",1.0]],ID[\"EPSG\",4979]]";
+
+		projectionTestDerived(4979, definition);
 
 	}
 

@@ -9,6 +9,7 @@ import mil.nga.crs.common.Dynamic;
 import mil.nga.crs.common.Identifier;
 import mil.nga.crs.common.Unit;
 import mil.nga.crs.geo.GeoCoordinateReferenceSystem;
+import mil.nga.crs.geo.GeoDatum;
 import mil.nga.crs.geo.GeoDatumEnsemble;
 import mil.nga.crs.geo.GeoReferenceFrame;
 
@@ -260,6 +261,15 @@ public class ProjectedCoordinateReferenceSystem
 	}
 
 	/**
+	 * Get the geodetic or geographic common datum
+	 * 
+	 * @return geo datum
+	 */
+	public GeoDatum getGeoDatum() {
+		return getBase().getGeoDatum();
+	}
+
+	/**
 	 * Get the base identifiers
 	 * 
 	 * @return base identifiers
@@ -333,7 +343,12 @@ public class ProjectedCoordinateReferenceSystem
 	 * @return unit (ellipsoidal angle)
 	 */
 	public Unit getUnit() {
-		return getBase().getCoordinateSystem().getUnit();
+		Unit unit = null;
+		CoordinateSystem cs = getBase().getCoordinateSystem();
+		if (cs != null) {
+			unit = cs.getUnit();
+		}
+		return unit;
 	}
 
 	/**

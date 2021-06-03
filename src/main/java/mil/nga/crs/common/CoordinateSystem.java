@@ -275,6 +275,24 @@ public class CoordinateSystem implements Identifiable {
 	}
 
 	/**
+	 * Get the axis unit, either the CS unit or first axis with unit
+	 * 
+	 * @return unit
+	 */
+	public Unit getAxisUnit() {
+		Unit axisUnit = getUnit();
+		if (axisUnit == null) {
+			for (Axis axis : axes) {
+				axisUnit = axis.getUnit();
+				if (axisUnit != null) {
+					break;
+				}
+			}
+		}
+		return axisUnit;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
