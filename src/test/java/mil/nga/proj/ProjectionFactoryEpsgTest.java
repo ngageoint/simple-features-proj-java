@@ -427,6 +427,7 @@ public class ProjectionFactoryEpsgTest {
 		}
 
 		assertEquals(proj.getAlpha(), proj2.getAlpha(), 0);
+		assertEquals(proj.getAxisOrder(), proj2.getAxisOrder());
 		assertEquals(proj.getEPSGCode(), proj2.getEPSGCode(), 0);
 		assertEquals(proj.getEquatorRadius(), proj2.getEquatorRadius(), 0);
 		assertEquals(proj.getFalseEasting(), proj2.getFalseEasting(), 0);

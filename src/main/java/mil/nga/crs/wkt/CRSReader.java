@@ -62,6 +62,7 @@ import mil.nga.crs.operation.PointMotionOperation;
 import mil.nga.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.crs.parametric.ParametricDatum;
 import mil.nga.crs.projected.MapProjection;
+import mil.nga.crs.projected.MapProjectionMethod;
 import mil.nga.crs.projected.ProjectedCoordinateReferenceSystem;
 import mil.nga.crs.temporal.TemporalCoordinateReferenceSystem;
 import mil.nga.crs.temporal.TemporalDatum;
@@ -3324,7 +3325,7 @@ public class CRSReader implements Closeable {
 		mapProjection.setName(reader.readExpectedToken());
 
 		readSeparator();
-		mapProjection.setMethod(readMethod());
+		mapProjection.setMethod(readMapProjectionMethod());
 
 		CRSKeyword keyword = readToKeyword(CRSKeyword.PARAMETER, CRSKeyword.ID);
 
@@ -3349,9 +3350,34 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public OperationMethod readMethod() throws IOException {
+	public MapProjectionMethod readMapProjectionMethod() throws IOException {
+		MapProjectionMethod method = new MapProjectionMethod();
+		readMethod(method);
+		return method;
+	}
 
+	/**
+	 * Read an operation method
+	 * 
+	 * @return operation method
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public OperationMethod readMethod() throws IOException {
 		OperationMethod method = new OperationMethod();
+		readMethod(method);
+		return method;
+	}
+
+	/**
+	 * Read an operation method
+	 * 
+	 * @param method
+	 *            operation method
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public void readMethod(OperationMethod method) throws IOException {
 
 		readKeyword(CRSKeyword.METHOD);
 
@@ -3366,7 +3392,6 @@ public class CRSReader implements Closeable {
 
 		readRightDelimiter();
 
-		return method;
 	}
 
 	/**
@@ -4075,7 +4100,7 @@ public class CRSReader implements Closeable {
 
 		MapProjection mapProjection = new MapProjection();
 
-		OperationMethod method = readMethod();
+		MapProjectionMethod method = readMapProjectionMethod();
 		mapProjection.setName(method.getName());
 		mapProjection.setMethod(method);
 

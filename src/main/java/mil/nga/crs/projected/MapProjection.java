@@ -14,6 +14,7 @@ import mil.nga.crs.operation.OperationParameter;
 import mil.nga.crs.operation.OperationType;
 import mil.nga.crs.operation.Parameter;
 import mil.nga.crs.wkt.CRSWriter;
+import mil.nga.proj.ProjectionException;
 
 /**
  * Map Projection
@@ -36,7 +37,7 @@ public class MapProjection implements CommonOperation {
 	/**
 	 * Method
 	 */
-	private OperationMethod method = null;
+	private MapProjectionMethod method = null;
 
 	/**
 	 * Parameters
@@ -63,7 +64,7 @@ public class MapProjection implements CommonOperation {
 	 * @param method
 	 *            method
 	 */
-	public MapProjection(String name, OperationMethod method) {
+	public MapProjection(String name, MapProjectionMethod method) {
 		setName(name);
 		setMethod(method);
 	}
@@ -120,7 +121,7 @@ public class MapProjection implements CommonOperation {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public OperationMethod getMethod() {
+	public MapProjectionMethod getMethod() {
 		return method;
 	}
 
@@ -129,6 +130,22 @@ public class MapProjection implements CommonOperation {
 	 */
 	@Override
 	public void setMethod(OperationMethod method) {
+		if (!(method instanceof MapProjectionMethod)) {
+			throw new ProjectionException(
+					"Operation Method is not a Map Projection Method. Name: "
+							+ method.getName() + ", Type: "
+							+ method.getClass().getSimpleName());
+		}
+		setMethod((MapProjectionMethod) method);
+	}
+
+	/**
+	 * Set the map projection method
+	 * 
+	 * @param method
+	 *            map projection method
+	 */
+	public void setMethod(MapProjectionMethod method) {
 		this.method = method;
 	}
 
