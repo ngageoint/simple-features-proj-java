@@ -21,6 +21,9 @@ import mil.nga.crs.geo.GeoDatum;
 import mil.nga.crs.geo.PrimeMeridian;
 import mil.nga.crs.geo.TriaxialEllipsoid;
 import mil.nga.crs.projected.MapProjection;
+import mil.nga.crs.projected.MapProjectionMethod;
+import mil.nga.crs.projected.MapProjectionMethods;
+import mil.nga.crs.projected.MapProjectionParameter;
 import mil.nga.crs.projected.ProjectedCoordinateReferenceSystem;
 import mil.nga.crs.wkt.CRSReader;
 
@@ -112,10 +115,13 @@ public class CRSParser {
 		GeoDatum geoDatum = geo.getGeoDatum();
 		Datum datum = convert(geoDatum);
 
-		Projection proj = createProjection(datum.getEllipsoid(),
-				geo.getCoordinateSystem().getAxisUnit(), geoDatum);
+		Projection projection = createProjection(
+				geo.getCoordinateSystem().getAxisUnit());
+		updateProjection(projection, datum.getEllipsoid(), geoDatum);
+		projection.initialize();
 
-		return new CoordinateReferenceSystem(geo.getName(), null, datum, proj);
+		return new CoordinateReferenceSystem(geo.getName(), null, datum,
+				projection);
 	}
 
 	/**
@@ -128,110 +134,32 @@ public class CRSParser {
 	public static CoordinateReferenceSystem convert(
 			ProjectedCoordinateReferenceSystem projected) {
 
-		GeoCoordinateReferenceSystem base = projected.getBase(); // TODO
-		MapProjection mapProjection = projected.getMapProjection(); // TODO
+		MapProjection mapProjection = projected.getMapProjection();
 
 		GeoDatum geoDatum = projected.getGeoDatum();
 
 		Ellipsoid ellipsoid = convert(geoDatum.getEllipsoid());
 		DatumParameters datumParameters = new DatumParameters();
-		datumParameters.setA(ellipsoid.getA());
-		datumParameters.setES(0);
+
+		MapProjectionMethod method = mapProjection.getMethod();
+		if (method != null && method
+				.getMethod() == MapProjectionMethods.POPULAR_VISUALISATION_PSEUDO_MERCATOR) {
+			datumParameters.setA(ellipsoid.getA());
+			datumParameters.setES(0);
+		} else {
+			datumParameters.setEllipsoid(ellipsoid);
+		}
 
 		Datum datum = datumParameters.getDatum();
 
-		Projection proj = createProjection(datum.getEllipsoid(),
-				projected.getCoordinateSystem().getAxisUnit(), geoDatum);
-
-		proj.initialize();
+		Projection projection = createProjection(
+				projected.getCoordinateSystem().getAxisUnit(), method);
+		updateProjection(projection, datum.getEllipsoid(), geoDatum);
+		updateProjection(projection, method);
+		projection.initialize();
 
 		return new CoordinateReferenceSystem(projected.getName(), null, datum,
-				proj);
-	}
-
-	/**
-	 * Create a proj4j projection
-	 * 
-	 * @param ellipsoid
-	 *            ellipsoid
-	 * @param unit
-	 *            unit
-	 * @param geoDatum
-	 *            geo datum
-	 * @return projection
-	 */
-	public static Projection createProjection(Ellipsoid ellipsoid, Unit unit,
-			GeoDatum geoDatum) {
-
-		Projection proj = createProjection(ellipsoid, unit);
-
-		if (geoDatum.hasPrimeMeridian()) {
-			PrimeMeridian primeMeridian = geoDatum.getPrimeMeridian();
-			double primeMeridianLongitude = primeMeridian.getLongitude();
-			if (primeMeridian.hasLongitudeUnit()
-					&& Units.findUnits(primeMeridian.getLongitudeUnit()
-							.getName()) == Units.RADIANS) {
-				primeMeridianLongitude *= ProjectionMath.RTD;
-			}
-			proj.setPrimeMeridian(Double.toString(primeMeridianLongitude));
-		}
-
-		proj.initialize();
-
-		return proj;
-	}
-
-	/**
-	 * Create a proj4j projection
-	 * 
-	 * @param ellipsoid
-	 *            ellipsoid
-	 * @param unit
-	 *            unit
-	 * @return projection
-	 */
-	public static Projection createProjection(Ellipsoid ellipsoid, Unit unit) {
-
-		Projection proj = createProjection(unit);
-
-		proj.setEllipsoid(ellipsoid);
-
-		proj.initialize();
-
-		return proj;
-	}
-
-	/**
-	 * Create a proj4j projection for the unit
-	 * 
-	 * @param unit
-	 *            unit
-	 * @return projection
-	 */
-	public static Projection createProjection(Unit unit) {
-
-		org.locationtech.proj4j.units.Unit projUnit = Units.METRES;
-		if (unit != null) {
-			projUnit = Units.findUnits(unit.getName());
-		}
-
-		String projectionName = null;
-		if (projUnit == Units.DEGREES) {
-			projectionName = "longlat";
-		} else {
-			projectionName = "merc";
-		}
-
-		Projection proj = getCRSFactory().getRegistry()
-				.getProjection(projectionName);
-		proj.setUnits(projUnit);
-
-		if (unit != null) {
-			// TODO
-			// proj.setFromMetres(unit.getConversionFactor());
-		}
-
-		return proj;
+				projection);
 	}
 
 	/**
@@ -292,6 +220,214 @@ public class CRSParser {
 
 		return new Ellipsoid(shortName, equatorRadius, poleRadius,
 				reciprocalFlattening, name);
+	}
+
+	/**
+	 * Create a proj4j projection
+	 * 
+	 * @param projection
+	 *            projection
+	 * @param ellipsoid
+	 *            ellipsoid
+	 * @param geoDatum
+	 *            geo datum
+	 */
+	public static void updateProjection(Projection projection,
+			Ellipsoid ellipsoid, GeoDatum geoDatum) {
+
+		projection.setEllipsoid(ellipsoid);
+
+		if (geoDatum.hasPrimeMeridian()) {
+			PrimeMeridian primeMeridian = geoDatum.getPrimeMeridian();
+			double primeMeridianLongitude = primeMeridian.getLongitude();
+			if (primeMeridian.hasLongitudeUnit()
+					&& Units.findUnits(primeMeridian.getLongitudeUnit()
+							.getName()) == Units.RADIANS) {
+				primeMeridianLongitude *= ProjectionMath.RTD;
+			}
+			projection
+					.setPrimeMeridian(Double.toString(primeMeridianLongitude));
+		}
+
+	}
+
+	/**
+	 * Create a proj4j projection for the unit
+	 * 
+	 * @param unit
+	 *            unit
+	 * @return projection
+	 */
+	public static Projection createProjection(Unit unit) {
+
+		org.locationtech.proj4j.units.Unit projUnit = Units.METRES;
+		if (unit != null) {
+			projUnit = Units.findUnits(unit.getName());
+		}
+
+		String projectionName = null;
+		if (projUnit == Units.DEGREES) {
+			projectionName = "longlat";
+		} else {
+			projectionName = "merc";
+		}
+
+		return createProjection(projectionName, unit);
+	}
+
+	/**
+	 * Create a proj4j projection for the method and unit
+	 * 
+	 * @param unit
+	 *            unit
+	 * @param method
+	 *            map projection method
+	 * @return projection
+	 */
+	public static Projection createProjection(Unit unit,
+			MapProjectionMethod method) {
+
+		Projection projection = null;
+
+		if (method.hasMethod()) {
+
+			String projectionName = null;
+
+			switch (method.getMethod()) {
+
+			case LAMBERT_AZIMUTHAL_EQUAL_AREA:
+				projectionName = "laea";
+				break;
+
+			case POPULAR_VISUALISATION_PSEUDO_MERCATOR:
+				projectionName = "merc";
+				break;
+
+			// TODO
+
+			default:
+
+			}
+
+			if (projectionName != null) {
+				projection = createProjection(projectionName, unit);
+			}
+		}
+
+		if (projection == null) {
+			projection = createProjection(null);
+		}
+
+		return projection;
+	}
+
+	/**
+	 * Create a proj4j projection for the projection name and unit
+	 * 
+	 * @param projectionName
+	 *            projection name
+	 * @param unit
+	 *            unit
+	 * @return projection
+	 */
+	public static Projection createProjection(String projectionName,
+			Unit unit) {
+
+		Projection projection = getCRSFactory().getRegistry()
+				.getProjection(projectionName);
+
+		org.locationtech.proj4j.units.Unit projUnit = Units.METRES;
+		if (unit != null) {
+			projUnit = Units.findUnits(unit.getName());
+		}
+		projection.setUnits(projUnit);
+
+		if (unit != null) {
+			// TODO
+			// proj.setFromMetres(unit.getConversionFactor());
+		}
+
+		return projection;
+	}
+
+	/**
+	 * Update the method parameters in the projection
+	 * 
+	 * @param projection
+	 *            proj4j projection
+	 * @param method
+	 *            map projection method
+	 */
+	public static void updateProjection(Projection projection,
+			MapProjectionMethod method) {
+		if (method.hasParameters()) {
+			for (MapProjectionParameter parameter : method
+					.getMapProjectionParameters()) {
+				updateProjection(projection, parameter);
+			}
+		}
+	}
+
+	/**
+	 * Update the method parameter in the projection
+	 * 
+	 * @param projection
+	 *            proj4j projection
+	 * @param parameter
+	 *            map projection parameter
+	 */
+	public static void updateProjection(Projection projection,
+			MapProjectionParameter parameter) {
+
+		if (parameter.hasParameter()) {
+
+			double value = parameter.getValue();
+
+			switch (parameter.getParameter()) {
+
+			case FALSE_EASTING:
+			case EASTING_AT_PROJECTION_CENTRE:
+			case EASTING_AT_FALSE_ORIGIN:
+				projection.setFalseEasting(value);
+				break;
+
+			case FALSE_NORTHING:
+			case NORTHING_AT_PROJECTION_CENTRE:
+			case NORTHING_AT_FALSE_ORIGIN:
+				projection.setFalseNorthing(value);
+				break;
+
+			case SCALE_FACTOR_AT_NATURAL_ORIGIN:
+			case SCALE_FACTOR_ON_INITIAL_LINE:
+				projection.setScaleFactor(value);
+				break;
+
+			case LATITUDE_OF_1ST_STANDARD_PARALLEL:
+				projection.setProjectionLatitude1(value);
+				break;
+
+			case LATITUDE_OF_2ND_STANDARD_PARALLEL:
+				projection.setProjectionLatitude2(value);
+				break;
+
+			case LATITUDE_OF_PROJECTION_CENTRE:
+			case LATITUDE_OF_NATURAL_ORIGIN:
+			case LATITUDE_OF_FALSE_ORIGIN:
+				projection.setProjectionLatitudeDegrees(value);
+				break;
+
+			case LONGITUDE_OF_PROJECTION_CENTRE:
+			case LONGITUDE_OF_NATURAL_ORIGIN:
+			case LONGITUDE_OF_FALSE_ORIGIN:
+				projection.setProjectionLongitudeDegrees(value);
+				break;
+
+			default:
+
+			}
+
+		}
+
 	}
 
 }

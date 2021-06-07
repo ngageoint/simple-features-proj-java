@@ -7,9 +7,6 @@ import java.io.IOException;
 import org.junit.Test;
 
 import mil.nga.crs.CRS;
-import mil.nga.crs.wkt.CRSReader;
-import mil.nga.crs.wkt.CRSWriter;
-import mil.nga.crs.wkt.WKTUtils;
 
 /**
  * CRS Reader and Writer NGA tests

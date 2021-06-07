@@ -66,6 +66,15 @@ public class MapProjectionMethod extends OperationMethod {
 	}
 
 	/**
+	 * Is a commonly known method type
+	 * 
+	 * @return true if has common method type
+	 */
+	public boolean hasMethod() {
+		return getMethod() != null;
+	}
+
+	/**
 	 * Set the commonly known method type
 	 * 
 	 * @param method

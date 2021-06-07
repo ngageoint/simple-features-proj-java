@@ -105,6 +105,13 @@ public enum MapProjectionMethods {
 			8826, 8827),
 
 	/**
+	 * Popular Visualisation Pseudo Mercator
+	 */
+	POPULAR_VISUALISATION_PSEUDO_MERCATOR(
+			"Popular Visualisation Pseudo Mercator", "Mercator_1SP", 1024, 8801,
+			8802, 8806, 8807),
+
+	/**
 	 * Transverse Mercator
 	 */
 	TRANSVERSE_MERCATOR("Transverse Mercator",

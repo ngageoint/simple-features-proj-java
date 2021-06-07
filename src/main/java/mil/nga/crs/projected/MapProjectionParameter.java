@@ -67,6 +67,15 @@ public class MapProjectionParameter extends OperationParameter {
 	}
 
 	/**
+	 * Is a commonly known parameter type
+	 * 
+	 * @return true if has common parameter type
+	 */
+	public boolean hasParameter() {
+		return getParameter() != null;
+	}
+
+	/**
 	 * Set the commonly known parameter type
 	 * 
 	 * @param parameter

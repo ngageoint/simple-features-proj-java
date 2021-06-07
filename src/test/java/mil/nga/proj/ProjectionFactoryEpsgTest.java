@@ -35,6 +35,79 @@ public class ProjectionFactoryEpsgTest {
 	}
 
 	/**
+	 * Test EPSG 3035
+	 */
+	@Test
+	public void test3035() {
+
+		String definition = "PROJCRS[\"ETRS89-extended / LAEA Europe\",BASEGEOGCRS[\"ETRS89\","
+				+ "ENSEMBLE[\"European Terrestrial Reference System 1989 ensemble\","
+				+ "MEMBER[\"European Terrestrial Reference Frame 1989\",ID[\"EPSG\",1178]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 1990\",ID[\"EPSG\",1179]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 1991\",ID[\"EPSG\",1180]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 1992\",ID[\"EPSG\",1181]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 1993\",ID[\"EPSG\",1182]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 1994\",ID[\"EPSG\",1183]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 1996\",ID[\"EPSG\",1184]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 1997\",ID[\"EPSG\",1185]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 2000\",ID[\"EPSG\",1186]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 2005\",ID[\"EPSG\",1204]],"
+				+ "MEMBER[\"European Terrestrial Reference Frame 2014\",ID[\"EPSG\",1206]],"
+				+ "ELLIPSOID[\"GRS 1980\",6378137,298.257222101,ID[\"EPSG\",7019]],"
+				+ "ENSEMBLEACCURACY[0.1],ID[\"EPSG\",6258]],ID[\"EPSG\",4258]],"
+				+ "CONVERSION[\"Europe Equal Area 2001\",METHOD[\"Lambert Azimuthal Equal Area\",ID[\"EPSG\",9820]],"
+				+ "PARAMETER[\"Latitude of natural origin\",52,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Longitude of natural origin\",10,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"False easting\",4321000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "PARAMETER[\"False northing\",3210000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "ID[\"EPSG\",19986]],CS[Cartesian,2,ID[\"EPSG\",4532]],"
+				+ "AXIS[\"Northing (Y)\",north],AXIS[\"Easting (X)\",east],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3035]]";
+
+		projectionTestDerived(3035, definition);
+
+		definition = "PROJCS[\"ETRS89 / ETRS-LAEA\",GEOGCS[\"ETRS89\","
+				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
+				+ "SPHEROID[\"GRS 1980\",6378137,298.257222101,"
+				+ "AUTHORITY[\"EPSG\",\"7019\"]],"
+				+ "AUTHORITY[\"EPSG\",\"6258\"]],"
+				+ "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.01745329251994328,"
+				+ "AUTHORITY[\"EPSG\",\"9122\"]],"
+				+ "AUTHORITY[\"EPSG\",\"4258\"]],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "PROJECTION[\"Lambert_Azimuthal_Equal_Area\"],"
+				+ "PARAMETER[\"latitude_of_center\",52],"
+				+ "PARAMETER[\"longitude_of_center\",10],"
+				+ "PARAMETER[\"false_easting\",4321000],"
+				+ "PARAMETER[\"false_northing\",3210000],"
+				+ "AUTHORITY[\"EPSG\",\"3035\"],"
+				+ "AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]";
+
+		projectionTestDerived(3035, definition);
+
+		definition = "PROJCS[\"ETRS89 / LAEA Europe\",GEOGCRS[\"ETRS89\","
+				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
+				+ "SPHEROID[\"GRS 1980\",6378137,298.257222101,"
+				+ "ID[\"EPSG\",\"7019\"]],"
+				+ "ABRIDGEDTRANSFORMATION[0,0,0,0,0,0,0],"
+				+ "ID[\"EPSG\",\"6258\"]],"
+				+ "PRIMEM[\"Greenwich\",0,ID[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "ID[\"EPSG\",\"9122\"]],ID[\"EPSG\",\"4258\"]],"
+				+ "PROJECTION[\"Lambert_Azimuthal_Equal_Area\"],"
+				+ "PARAMETER[\"latitude_of_center\",52],"
+				+ "PARAMETER[\"longitude_of_center\",10],"
+				+ "PARAMETER[\"false_easting\",4321000],"
+				+ "PARAMETER[\"false_northing\",3210000],"
+				+ "UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]],"
+				+ "ID[\"EPSG\",\"3035\"]]";
+
+		projectionTestDerived(3035, definition);
+
+	}
+
+	/**
 	 * Test EPSG 3857
 	 */
 	@Test
@@ -428,7 +501,7 @@ public class ProjectionFactoryEpsgTest {
 
 		assertEquals(proj.getAlpha(), proj2.getAlpha(), 0);
 		assertEquals(proj.getAxisOrder(), proj2.getAxisOrder());
-		assertEquals(proj.getEPSGCode(), proj2.getEPSGCode(), 0);
+		//assertEquals(proj.getEPSGCode(), proj2.getEPSGCode(), 0);
 		assertEquals(proj.getEquatorRadius(), proj2.getEquatorRadius(), 0);
 		assertEquals(proj.getFalseEasting(), proj2.getFalseEasting(), 0);
 		assertEquals(proj.getFalseNorthing(), proj2.getFalseNorthing(), 0);

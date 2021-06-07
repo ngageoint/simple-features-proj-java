@@ -8,8 +8,6 @@ import java.io.IOException;
 import org.junit.Test;
 
 import mil.nga.crs.CRS;
-import mil.nga.crs.wkt.CRSReader;
-import mil.nga.crs.wkt.CRSWriter;
 
 /**
  * Well-Known Text Utility tests

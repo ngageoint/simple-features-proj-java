@@ -26,7 +26,7 @@ public enum MapProjectionParameters {
 	 * application of false coordinates has grid coordinates of (0,0).
 	 */
 	LATITUDE_OF_NATURAL_ORIGIN(8801, "latitude of natural origin",
-			UnitType.ANGLEUNIT, "latitude of origin"),
+			UnitType.ANGLEUNIT, "latitude of origin", "latitude of center"),
 
 	/**
 	 * geodetic longitude of the point from which the values of both the
@@ -38,7 +38,8 @@ public enum MapProjectionParameters {
 	 * application of false coordinates has grid coordinates of (0,0).
 	 */
 	LONGITUDE_OF_NATURAL_ORIGIN(8802, "longitude of natural origin",
-			UnitType.ANGLEUNIT, "longitude of origin", "central meridian"),
+			UnitType.ANGLEUNIT, "longitude of origin", "central meridian",
+			"longitude of center"),
 
 	/**
 	 * 

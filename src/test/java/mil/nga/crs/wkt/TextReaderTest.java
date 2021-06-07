@@ -6,8 +6,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import mil.nga.crs.wkt.TextReader;
-
 /**
  * Text Reader tests
  * 
