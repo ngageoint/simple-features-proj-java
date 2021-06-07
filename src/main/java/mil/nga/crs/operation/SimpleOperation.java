@@ -1,8 +1,5 @@
 package mil.nga.crs.operation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import mil.nga.crs.CRSType;
 import mil.nga.crs.CoordinateReferenceSystem;
 
@@ -18,11 +15,6 @@ public abstract class SimpleOperation extends Operation
 	 * Operation Method
 	 */
 	private OperationMethod method = null;
-
-	/**
-	 * Coordinate operation parameters and parameter files
-	 */
-	private List<Parameter> parameters = null;
 
 	/**
 	 * Constructor
@@ -72,74 +64,10 @@ public abstract class SimpleOperation extends Operation
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Parameter> getParameters() {
-		return parameters;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasParameters() {
-		return parameters != null && !parameters.isEmpty();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int numParameters() {
-		return parameters != null ? parameters.size() : 0;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Parameter getParameter(int index) {
-		return parameters.get(index);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setParameters(List<Parameter> parameters) {
-		this.parameters = parameters;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void addParameter(Parameter parameter) {
-		if (this.parameters == null) {
-			this.parameters = new ArrayList<>();
-		}
-		this.parameters.add(parameter);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void addParameters(List<Parameter> parameters) {
-		if (this.parameters == null) {
-			this.parameters = new ArrayList<>();
-		}
-		this.parameters.addAll(parameters);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((method == null) ? 0 : method.hashCode());
-		result = prime * result
-				+ ((parameters == null) ? 0 : parameters.hashCode());
 		return result;
 	}
 
@@ -159,11 +87,6 @@ public abstract class SimpleOperation extends Operation
 			if (other.method != null)
 				return false;
 		} else if (!method.equals(other.method))
-			return false;
-		if (parameters == null) {
-			if (other.parameters != null)
-				return false;
-		} else if (!parameters.equals(other.parameters))
 			return false;
 		return true;
 	}

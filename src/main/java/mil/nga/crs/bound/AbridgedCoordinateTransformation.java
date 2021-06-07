@@ -12,7 +12,6 @@ import mil.nga.crs.common.Usage;
 import mil.nga.crs.operation.CommonOperation;
 import mil.nga.crs.operation.OperationMethod;
 import mil.nga.crs.operation.OperationType;
-import mil.nga.crs.operation.Parameter;
 import mil.nga.crs.wkt.CRSWriter;
 
 /**
@@ -43,11 +42,6 @@ public class AbridgedCoordinateTransformation
 	 * Operation Method
 	 */
 	private OperationMethod method = null;
-
-	/**
-	 * Coordinate operation parameters and parameter files
-	 */
-	private List<Parameter> parameters = null;
 
 	/**
 	 * Usages
@@ -147,68 +141,6 @@ public class AbridgedCoordinateTransformation
 	@Override
 	public void setMethod(OperationMethod method) {
 		this.method = method;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<Parameter> getParameters() {
-		return parameters;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasParameters() {
-		return parameters != null && !parameters.isEmpty();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int numParameters() {
-		return parameters != null ? parameters.size() : 0;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Parameter getParameter(int index) {
-		return parameters.get(index);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setParameters(List<Parameter> parameters) {
-		this.parameters = parameters;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void addParameter(Parameter parameter) {
-		if (this.parameters == null) {
-			this.parameters = new ArrayList<>();
-		}
-		this.parameters.add(parameter);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void addParameters(List<Parameter> parameters) {
-		if (this.parameters == null) {
-			this.parameters = new ArrayList<>();
-		}
-		this.parameters.addAll(parameters);
 	}
 
 	/**
@@ -370,8 +302,6 @@ public class AbridgedCoordinateTransformation
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
 		result = prime * result + ((method == null) ? 0 : method.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((parameters == null) ? 0 : parameters.hashCode());
 		result = prime * result + ((remark == null) ? 0 : remark.hashCode());
 		result = prime * result + ((usages == null) ? 0 : usages.hashCode());
 		result = prime * result + ((version == null) ? 0 : version.hashCode());
@@ -404,11 +334,6 @@ public class AbridgedCoordinateTransformation
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
-			return false;
-		if (parameters == null) {
-			if (other.parameters != null)
-				return false;
-		} else if (!parameters.equals(other.parameters))
 			return false;
 		if (remark == null) {
 			if (other.remark != null)

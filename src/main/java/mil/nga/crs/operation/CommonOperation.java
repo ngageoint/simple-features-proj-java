@@ -1,7 +1,5 @@
 package mil.nga.crs.operation;
 
-import java.util.List;
-
 import mil.nga.crs.common.Identifiable;
 
 /**
@@ -69,59 +67,5 @@ public interface CommonOperation extends Identifiable {
 	 *            method
 	 */
 	public void setMethod(OperationMethod method);
-
-	/**
-	 * Get the parameters
-	 * 
-	 * @return parameters
-	 */
-	public List<Parameter> getParameters();
-
-	/**
-	 * Has parameters
-	 * 
-	 * @return true if has parameters
-	 */
-	public boolean hasParameters();
-
-	/**
-	 * Number of parameters
-	 * 
-	 * @return parameters count
-	 */
-	public int numParameters();
-
-	/**
-	 * Get the parameter at the index
-	 * 
-	 * @param index
-	 *            parameter index
-	 * @return parameter
-	 */
-	public Parameter getParameter(int index);
-
-	/**
-	 * Set the parameters
-	 * 
-	 * @param parameters
-	 *            parameters
-	 */
-	public void setParameters(List<Parameter> parameters);
-
-	/**
-	 * Add the parameter
-	 * 
-	 * @param parameter
-	 *            parameter
-	 */
-	public void addParameter(Parameter parameter);
-
-	/**
-	 * Add the parameters
-	 * 
-	 * @param parameters
-	 *            parameters
-	 */
-	public void addParameters(List<Parameter> parameters);
 
 }

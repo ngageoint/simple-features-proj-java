@@ -1193,11 +1193,12 @@ public class CRSWriter implements Closeable {
 		writeTarget(operation.getTarget());
 
 		writeSeparator();
-		write(operation.getMethod());
+		OperationMethod method = operation.getMethod();
+		write(method);
 
-		if (operation.hasParameters()) {
+		if (method.hasParameters()) {
 			writeSeparator();
-			writeParametersAndFiles(operation.getParameters());
+			writeParameters(method.getParameters());
 		}
 
 		if (operation.hasInterpolation()) {
@@ -1241,11 +1242,12 @@ public class CRSWriter implements Closeable {
 		writeSource(operation.getSource());
 
 		writeSeparator();
-		write(operation.getMethod());
+		OperationMethod method = operation.getMethod();
+		write(method);
 
-		if (operation.hasParameters()) {
+		if (method.hasParameters()) {
 			writeSeparator();
-			writeParametersAndFiles(operation.getParameters());
+			writeParameters(method.getParameters());
 		}
 
 		if (operation.hasAccuracy()) {
@@ -2089,11 +2091,13 @@ public class CRSWriter implements Closeable {
 		writeQuotedText(mapProjection.getName());
 
 		writeSeparator();
-		write(mapProjection.getMethod());
 
-		if (mapProjection.hasParameters()) {
+		OperationMethod method = mapProjection.getMethod();
+		write(method);
+
+		if (method.hasParameters()) {
 			writeSeparator();
-			writeParameters(mapProjection.getOperationParameters());
+			writeParameters(method.getParameters());
 		}
 
 		if (mapProjection.hasIdentifiers()) {
@@ -2126,28 +2130,6 @@ public class CRSWriter implements Closeable {
 		}
 
 		writeRightDelimiter();
-	}
-
-	/**
-	 * Write operation parameters to well-known text
-	 * 
-	 * @param parameters
-	 *            operation parameters
-	 * @throws IOException
-	 *             upon failure to write
-	 */
-	public void writeParameters(List<OperationParameter> parameters)
-			throws IOException {
-
-		for (int i = 0; i < parameters.size(); i++) {
-
-			if (i > 0) {
-				writeSeparator();
-			}
-
-			write(parameters.get(i));
-		}
-
 	}
 
 	/**
@@ -2242,11 +2224,12 @@ public class CRSWriter implements Closeable {
 		writeQuotedText(derivingConversion.getName());
 
 		writeSeparator();
-		write(derivingConversion.getMethod());
+		OperationMethod method = derivingConversion.getMethod();
+		write(method);
 
-		if (derivingConversion.hasParameters()) {
+		if (method.hasParameters()) {
 			writeSeparator();
-			writeParametersAndFiles(derivingConversion.getParameters());
+			writeParameters(method.getParameters());
 		}
 
 		if (derivingConversion.hasIdentifiers()) {
@@ -2266,8 +2249,7 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeParametersAndFiles(List<Parameter> parameters)
-			throws IOException {
+	public void writeParameters(List<Parameter> parameters) throws IOException {
 
 		for (int i = 0; i < parameters.size(); i++) {
 
@@ -2450,11 +2432,12 @@ public class CRSWriter implements Closeable {
 		}
 
 		writeSeparator();
-		write(transformation.getMethod());
+		OperationMethod method = transformation.getMethod();
+		write(method);
 
-		if (transformation.hasParameters()) {
+		if (method.hasParameters()) {
 			writeSeparator();
-			writeParametersAndFiles(transformation.getParameters());
+			writeParameters(method.getParameters());
 		}
 
 		writeScopeExtentIdentifierRemark(transformation);

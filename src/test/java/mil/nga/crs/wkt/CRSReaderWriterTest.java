@@ -56,9 +56,6 @@ import mil.nga.crs.temporal.TemporalCoordinateReferenceSystem;
 import mil.nga.crs.temporal.TemporalDatum;
 import mil.nga.crs.vertical.VerticalCoordinateReferenceSystem;
 import mil.nga.crs.vertical.VerticalReferenceFrame;
-import mil.nga.crs.wkt.CRSReader;
-import mil.nga.crs.wkt.CRSWriter;
-import mil.nga.crs.wkt.WKTUtils;
 
 /**
  * CRS Reader and Writer tests
@@ -1717,71 +1714,75 @@ public class CRSReaderWriterTest {
 		assertEquals("9807", mapProjection.getMethod().getIdentifier(0)
 				.getUniqueIdentifier());
 		assertEquals("Latitude of natural origin",
-				mapProjection.getParameter(0).getName());
-		assertEquals(0, mapProjection.getOperationParameter(0).getValue(), 0);
+				mapProjection.getMethod().getParameter(0).getName());
+		assertEquals(0, mapProjection.getMethod().getParameter(0).getValue(),
+				0);
 		assertEquals(UnitType.ANGLEUNIT,
-				mapProjection.getOperationParameter(0).getUnit().getType());
+				mapProjection.getMethod().getParameter(0).getUnit().getType());
 		assertEquals("degree",
-				mapProjection.getOperationParameter(0).getUnit().getName());
-		assertEquals(0.0174532925199433, mapProjection.getOperationParameter(0)
-				.getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG",
-				mapProjection.getParameter(0).getIdentifier(0).getName());
-		assertEquals("8801", mapProjection.getParameter(0).getIdentifier(0)
-				.getUniqueIdentifier());
+				mapProjection.getMethod().getParameter(0).getUnit().getName());
+		assertEquals(0.0174532925199433, mapProjection.getMethod()
+				.getParameter(0).getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", mapProjection.getMethod().getParameter(0)
+				.getIdentifier(0).getName());
+		assertEquals("8801", mapProjection.getMethod().getParameter(0)
+				.getIdentifier(0).getUniqueIdentifier());
 		assertEquals("Longitude of natural origin",
-				mapProjection.getParameter(1).getName());
-		assertEquals(-123, mapProjection.getOperationParameter(1).getValue(),
+				mapProjection.getMethod().getParameter(1).getName());
+		assertEquals(-123, mapProjection.getMethod().getParameter(1).getValue(),
 				0);
 		assertEquals(UnitType.ANGLEUNIT,
-				mapProjection.getOperationParameter(1).getUnit().getType());
+				mapProjection.getMethod().getParameter(1).getUnit().getType());
 		assertEquals("degree",
-				mapProjection.getOperationParameter(1).getUnit().getName());
-		assertEquals(0.0174532925199433, mapProjection.getOperationParameter(1)
-				.getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG",
-				mapProjection.getParameter(1).getIdentifier(0).getName());
-		assertEquals("8802", mapProjection.getParameter(1).getIdentifier(0)
-				.getUniqueIdentifier());
+				mapProjection.getMethod().getParameter(1).getUnit().getName());
+		assertEquals(0.0174532925199433, mapProjection.getMethod()
+				.getParameter(1).getUnit().getConversionFactor(), 0);
+		assertEquals("EPSG", mapProjection.getMethod().getParameter(1)
+				.getIdentifier(0).getName());
+		assertEquals("8802", mapProjection.getMethod().getParameter(1)
+				.getIdentifier(0).getUniqueIdentifier());
 		assertEquals("Scale factor at natural origin",
-				mapProjection.getParameter(2).getName());
-		assertEquals(0.9996, mapProjection.getOperationParameter(2).getValue(),
-				0);
+				mapProjection.getMethod().getParameter(2).getName());
+		assertEquals(0.9996,
+				mapProjection.getMethod().getParameter(2).getValue(), 0);
 		assertEquals(UnitType.SCALEUNIT,
-				mapProjection.getOperationParameter(2).getUnit().getType());
+				mapProjection.getMethod().getParameter(2).getUnit().getType());
 		assertEquals("unity",
-				mapProjection.getOperationParameter(2).getUnit().getName());
-		assertEquals(1.0, mapProjection.getOperationParameter(2).getUnit()
+				mapProjection.getMethod().getParameter(2).getUnit().getName());
+		assertEquals(1.0, mapProjection.getMethod().getParameter(2).getUnit()
 				.getConversionFactor(), 0);
-		assertEquals("EPSG",
-				mapProjection.getParameter(2).getIdentifier(0).getName());
-		assertEquals("8805", mapProjection.getParameter(2).getIdentifier(0)
-				.getUniqueIdentifier());
-		assertEquals("False easting", mapProjection.getParameter(3).getName());
-		assertEquals(500000, mapProjection.getOperationParameter(3).getValue(),
+		assertEquals("EPSG", mapProjection.getMethod().getParameter(2)
+				.getIdentifier(0).getName());
+		assertEquals("8805", mapProjection.getMethod().getParameter(2)
+				.getIdentifier(0).getUniqueIdentifier());
+		assertEquals("False easting",
+				mapProjection.getMethod().getParameter(3).getName());
+		assertEquals(500000,
+				mapProjection.getMethod().getParameter(3).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT,
+				mapProjection.getMethod().getParameter(3).getUnit().getType());
+		assertEquals("metre",
+				mapProjection.getMethod().getParameter(3).getUnit().getName());
+		assertEquals(1.0, mapProjection.getMethod().getParameter(3).getUnit()
+				.getConversionFactor(), 0);
+		assertEquals("EPSG", mapProjection.getMethod().getParameter(3)
+				.getIdentifier(0).getName());
+		assertEquals("8806", mapProjection.getMethod().getParameter(3)
+				.getIdentifier(0).getUniqueIdentifier());
+		assertEquals("False northing",
+				mapProjection.getMethod().getParameter(4).getName());
+		assertEquals(0, mapProjection.getMethod().getParameter(4).getValue(),
 				0);
 		assertEquals(UnitType.LENGTHUNIT,
-				mapProjection.getOperationParameter(3).getUnit().getType());
+				mapProjection.getMethod().getParameter(4).getUnit().getType());
 		assertEquals("metre",
-				mapProjection.getOperationParameter(3).getUnit().getName());
-		assertEquals(1.0, mapProjection.getOperationParameter(3).getUnit()
+				mapProjection.getMethod().getParameter(4).getUnit().getName());
+		assertEquals(1.0, mapProjection.getMethod().getParameter(4).getUnit()
 				.getConversionFactor(), 0);
-		assertEquals("EPSG",
-				mapProjection.getParameter(3).getIdentifier(0).getName());
-		assertEquals("8806", mapProjection.getParameter(3).getIdentifier(0)
-				.getUniqueIdentifier());
-		assertEquals("False northing", mapProjection.getParameter(4).getName());
-		assertEquals(0, mapProjection.getOperationParameter(4).getValue(), 0);
-		assertEquals(UnitType.LENGTHUNIT,
-				mapProjection.getOperationParameter(4).getUnit().getType());
-		assertEquals("metre",
-				mapProjection.getOperationParameter(4).getUnit().getName());
-		assertEquals(1.0, mapProjection.getOperationParameter(4).getUnit()
-				.getConversionFactor(), 0);
-		assertEquals("EPSG",
-				mapProjection.getParameter(4).getIdentifier(0).getName());
-		assertEquals("8807", mapProjection.getParameter(4).getIdentifier(0)
-				.getUniqueIdentifier());
+		assertEquals("EPSG", mapProjection.getMethod().getParameter(4)
+				.getIdentifier(0).getName());
+		assertEquals("8807", mapProjection.getMethod().getParameter(4)
+				.getIdentifier(0).getUniqueIdentifier());
 		reader.close();
 		assertEquals(
 				text.replaceAll(",0,", ",0.0,").replaceAll("-123", "-123.0")
@@ -1805,50 +1806,54 @@ public class CRSReaderWriterTest {
 		assertEquals("Transverse Mercator",
 				mapProjection.getMethod().getName());
 		assertEquals("Latitude of natural origin",
-				mapProjection.getParameter(0).getName());
-		assertEquals(0, mapProjection.getOperationParameter(0).getValue(), 0);
+				mapProjection.getMethod().getParameter(0).getName());
+		assertEquals(0, mapProjection.getMethod().getParameter(0).getValue(),
+				0);
 		assertEquals(UnitType.ANGLEUNIT,
-				mapProjection.getOperationParameter(0).getUnit().getType());
+				mapProjection.getMethod().getParameter(0).getUnit().getType());
 		assertEquals("degree",
-				mapProjection.getOperationParameter(0).getUnit().getName());
-		assertEquals(0.0174532925199433, mapProjection.getOperationParameter(0)
-				.getUnit().getConversionFactor(), 0);
+				mapProjection.getMethod().getParameter(0).getUnit().getName());
+		assertEquals(0.0174532925199433, mapProjection.getMethod()
+				.getParameter(0).getUnit().getConversionFactor(), 0);
 		assertEquals("Longitude of natural origin",
-				mapProjection.getParameter(1).getName());
-		assertEquals(-123, mapProjection.getOperationParameter(1).getValue(),
+				mapProjection.getMethod().getParameter(1).getName());
+		assertEquals(-123, mapProjection.getMethod().getParameter(1).getValue(),
 				0);
 		assertEquals(UnitType.ANGLEUNIT,
-				mapProjection.getOperationParameter(1).getUnit().getType());
+				mapProjection.getMethod().getParameter(1).getUnit().getType());
 		assertEquals("degree",
-				mapProjection.getOperationParameter(1).getUnit().getName());
-		assertEquals(0.0174532925199433, mapProjection.getOperationParameter(1)
-				.getUnit().getConversionFactor(), 0);
+				mapProjection.getMethod().getParameter(1).getUnit().getName());
+		assertEquals(0.0174532925199433, mapProjection.getMethod()
+				.getParameter(1).getUnit().getConversionFactor(), 0);
 		assertEquals("Scale factor at natural origin",
-				mapProjection.getParameter(2).getName());
-		assertEquals(0.9996, mapProjection.getOperationParameter(2).getValue(),
-				0);
+				mapProjection.getMethod().getParameter(2).getName());
+		assertEquals(0.9996,
+				mapProjection.getMethod().getParameter(2).getValue(), 0);
 		assertEquals(UnitType.SCALEUNIT,
-				mapProjection.getOperationParameter(2).getUnit().getType());
+				mapProjection.getMethod().getParameter(2).getUnit().getType());
 		assertEquals("unity",
-				mapProjection.getOperationParameter(2).getUnit().getName());
-		assertEquals(1.0, mapProjection.getOperationParameter(2).getUnit()
+				mapProjection.getMethod().getParameter(2).getUnit().getName());
+		assertEquals(1.0, mapProjection.getMethod().getParameter(2).getUnit()
 				.getConversionFactor(), 0);
-		assertEquals("False easting", mapProjection.getParameter(3).getName());
-		assertEquals(500000, mapProjection.getOperationParameter(3).getValue(),
+		assertEquals("False easting",
+				mapProjection.getMethod().getParameter(3).getName());
+		assertEquals(500000,
+				mapProjection.getMethod().getParameter(3).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT,
+				mapProjection.getMethod().getParameter(3).getUnit().getType());
+		assertEquals("metre",
+				mapProjection.getMethod().getParameter(3).getUnit().getName());
+		assertEquals(1.0, mapProjection.getMethod().getParameter(3).getUnit()
+				.getConversionFactor(), 0);
+		assertEquals("False northing",
+				mapProjection.getMethod().getParameter(4).getName());
+		assertEquals(0, mapProjection.getMethod().getParameter(4).getValue(),
 				0);
 		assertEquals(UnitType.LENGTHUNIT,
-				mapProjection.getOperationParameter(3).getUnit().getType());
+				mapProjection.getMethod().getParameter(4).getUnit().getType());
 		assertEquals("metre",
-				mapProjection.getOperationParameter(3).getUnit().getName());
-		assertEquals(1.0, mapProjection.getOperationParameter(3).getUnit()
-				.getConversionFactor(), 0);
-		assertEquals("False northing", mapProjection.getParameter(4).getName());
-		assertEquals(0, mapProjection.getOperationParameter(4).getValue(), 0);
-		assertEquals(UnitType.LENGTHUNIT,
-				mapProjection.getOperationParameter(4).getUnit().getType());
-		assertEquals("metre",
-				mapProjection.getOperationParameter(4).getUnit().getName());
-		assertEquals(1.0, mapProjection.getOperationParameter(4).getUnit()
+				mapProjection.getMethod().getParameter(4).getUnit().getName());
+		assertEquals(1.0, mapProjection.getMethod().getParameter(4).getUnit()
 				.getConversionFactor(), 0);
 		assertEquals("EPSG", mapProjection.getIdentifier(0).getName());
 		assertEquals("16010",
@@ -1929,55 +1934,53 @@ public class CRSReaderWriterTest {
 		assertEquals("9820", projectedGeographicCrs.getMapProjection()
 				.getMethod().getIdentifier(0).getUniqueIdentifier());
 		assertEquals("Latitude of origin", projectedGeographicCrs
-				.getMapProjection().getParameter(0).getName());
-		assertEquals(52.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(0).getValue(), 0);
+				.getMapProjection().getMethod().getParameter(0).getName());
+		assertEquals(52.0, projectedGeographicCrs.getMapProjection().getMethod()
+				.getParameter(0).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(0).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(0).getUnit().getType());
 		assertEquals("degree", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(0).getUnit().getName());
+				.getMethod().getParameter(0).getUnit().getName());
 		assertEquals(0.0174532925199433,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(0).getUnit()
-						.getConversionFactor(),
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(0).getUnit().getConversionFactor(),
 				0);
 		assertEquals("Longitude of origin", projectedGeographicCrs
-				.getMapProjection().getParameter(1).getName());
-		assertEquals(10.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(1).getValue(), 0);
+				.getMapProjection().getMethod().getParameter(1).getName());
+		assertEquals(10.0, projectedGeographicCrs.getMapProjection().getMethod()
+				.getParameter(1).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(1).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(1).getUnit().getType());
 		assertEquals("degree", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(1).getUnit().getName());
+				.getMethod().getParameter(1).getUnit().getName());
 		assertEquals(0.0174532925199433,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(1).getUnit()
-						.getConversionFactor(),
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(1).getUnit().getConversionFactor(),
 				0);
 		assertEquals("False easting", projectedGeographicCrs.getMapProjection()
-				.getParameter(2).getName());
+				.getMethod().getParameter(2).getName());
 		assertEquals(4321000.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(2).getValue(), 0);
+				.getMethod().getParameter(2).getValue(), 0);
 		assertEquals(UnitType.LENGTHUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(2).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(2).getUnit().getType());
 		assertEquals("metre", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(2).getUnit().getName());
-		assertEquals(1.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(2).getUnit().getConversionFactor(), 0);
+				.getMethod().getParameter(2).getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getMapProjection().getMethod()
+				.getParameter(2).getUnit().getConversionFactor(), 0);
 		assertEquals("False northing", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(3).getName());
+				.getMethod().getParameter(3).getName());
 		assertEquals(3210000.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(3).getValue(), 0);
+				.getMethod().getParameter(3).getValue(), 0);
 		assertEquals(UnitType.LENGTHUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(3).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(3).getUnit().getType());
 		assertEquals("metre", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(3).getUnit().getName());
-		assertEquals(1.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(3).getUnit().getConversionFactor(), 0);
+				.getMethod().getParameter(3).getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getMapProjection().getMethod()
+				.getParameter(3).getUnit().getConversionFactor(), 0);
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				projectedGeographicCrs.getCoordinateSystem().getType());
 		assertEquals(2,
@@ -2075,113 +2078,119 @@ public class CRSReaderWriterTest {
 		assertEquals("9802", projectedGeographicCrs.getMapProjection()
 				.getMethod().getIdentifier(0).getUniqueIdentifier());
 		assertEquals("Latitude of false origin", projectedGeographicCrs
-				.getMapProjection().getParameter(0).getName());
+				.getMapProjection().getMethod().getParameter(0).getName());
 		assertEquals(27.83333333333333, projectedGeographicCrs
-				.getMapProjection().getOperationParameter(0).getValue(), 0);
+				.getMapProjection().getMethod().getParameter(0).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(0).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(0).getUnit().getType());
 		assertEquals("degree", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(0).getUnit().getName());
+				.getMethod().getParameter(0).getUnit().getName());
 		assertEquals(0.0174532925199433,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(0).getUnit()
-						.getConversionFactor(),
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(0).getUnit().getConversionFactor(),
 				0);
 		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
-				.getParameter(0).getIdentifier(0).getName());
-		assertEquals("8821", projectedGeographicCrs.getMapProjection()
-				.getParameter(0).getIdentifier(0).getUniqueIdentifier());
+				.getMethod().getParameter(0).getIdentifier(0).getName());
+		assertEquals("8821",
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(0).getIdentifier(0)
+						.getUniqueIdentifier());
 		assertEquals("Longitude of false origin", projectedGeographicCrs
-				.getMapProjection().getParameter(1).getName());
+				.getMapProjection().getMethod().getParameter(1).getName());
 		assertEquals(-99.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(1).getValue(), 0);
+				.getMethod().getParameter(1).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(1).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(1).getUnit().getType());
 		assertEquals("degree", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(1).getUnit().getName());
+				.getMethod().getParameter(1).getUnit().getName());
 		assertEquals(0.0174532925199433,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(1).getUnit()
-						.getConversionFactor(),
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(1).getUnit().getConversionFactor(),
 				0);
 		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
-				.getParameter(1).getIdentifier(0).getName());
-		assertEquals("8822", projectedGeographicCrs.getMapProjection()
-				.getParameter(1).getIdentifier(0).getUniqueIdentifier());
+				.getMethod().getParameter(1).getIdentifier(0).getName());
+		assertEquals("8822",
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(1).getIdentifier(0)
+						.getUniqueIdentifier());
 		assertEquals("Latitude of 1st standard parallel", projectedGeographicCrs
-				.getMapProjection().getParameter(2).getName());
+				.getMapProjection().getMethod().getParameter(2).getName());
 		assertEquals(28.383333333333, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(2).getValue(), 0);
+				.getMethod().getParameter(2).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(2).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(2).getUnit().getType());
 		assertEquals("degree", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(2).getUnit().getName());
+				.getMethod().getParameter(2).getUnit().getName());
 		assertEquals(0.0174532925199433,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(2).getUnit()
-						.getConversionFactor(),
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(2).getUnit().getConversionFactor(),
 				0);
 		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
-				.getParameter(2).getIdentifier(0).getName());
-		assertEquals("8823", projectedGeographicCrs.getMapProjection()
-				.getParameter(2).getIdentifier(0).getUniqueIdentifier());
+				.getMethod().getParameter(2).getIdentifier(0).getName());
+		assertEquals("8823",
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(2).getIdentifier(0)
+						.getUniqueIdentifier());
 		assertEquals("Latitude of 2nd standard parallel", projectedGeographicCrs
-				.getMapProjection().getParameter(3).getName());
+				.getMapProjection().getMethod().getParameter(3).getName());
 		assertEquals(30.283333333333, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(3).getValue(), 0);
+				.getMethod().getParameter(3).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(3).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(3).getUnit().getType());
 		assertEquals("degree", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(3).getUnit().getName());
+				.getMethod().getParameter(3).getUnit().getName());
 		assertEquals(0.0174532925199433,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(3).getUnit()
-						.getConversionFactor(),
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(3).getUnit().getConversionFactor(),
 				0);
 		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
-				.getParameter(3).getIdentifier(0).getName());
-		assertEquals("8824", projectedGeographicCrs.getMapProjection()
-				.getParameter(3).getIdentifier(0).getUniqueIdentifier());
+				.getMethod().getParameter(3).getIdentifier(0).getName());
+		assertEquals("8824",
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(3).getIdentifier(0)
+						.getUniqueIdentifier());
 		assertEquals("Easting at false origin", projectedGeographicCrs
-				.getMapProjection().getParameter(4).getName());
+				.getMapProjection().getMethod().getParameter(4).getName());
 		assertEquals(2000000.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(4).getValue(), 0);
+				.getMethod().getParameter(4).getValue(), 0);
 		assertEquals(UnitType.LENGTHUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(4).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(4).getUnit().getType());
 		assertEquals("US survey foot", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(4).getUnit().getName());
+				.getMethod().getParameter(4).getUnit().getName());
 		assertEquals(0.304800609601219,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(4).getUnit()
-						.getConversionFactor(),
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(4).getUnit().getConversionFactor(),
 				0);
 		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
-				.getParameter(4).getIdentifier(0).getName());
-		assertEquals("8826", projectedGeographicCrs.getMapProjection()
-				.getParameter(4).getIdentifier(0).getUniqueIdentifier());
+				.getMethod().getParameter(4).getIdentifier(0).getName());
+		assertEquals("8826",
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(4).getIdentifier(0)
+						.getUniqueIdentifier());
 		assertEquals("Northing at false origin", projectedGeographicCrs
-				.getMapProjection().getParameter(5).getName());
-		assertEquals(0.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(5).getValue(), 0);
+				.getMapProjection().getMethod().getParameter(5).getName());
+		assertEquals(0.0, projectedGeographicCrs.getMapProjection().getMethod()
+				.getParameter(5).getValue(), 0);
 		assertEquals(UnitType.LENGTHUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(5).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(5).getUnit().getType());
 		assertEquals("US survey foot", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(5).getUnit().getName());
+				.getMethod().getParameter(5).getUnit().getName());
 		assertEquals(0.304800609601219,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(5).getUnit()
-						.getConversionFactor(),
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(5).getUnit().getConversionFactor(),
 				0);
 		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
-				.getParameter(5).getIdentifier(0).getName());
-		assertEquals("8827", projectedGeographicCrs.getMapProjection()
-				.getParameter(5).getIdentifier(0).getUniqueIdentifier());
+				.getMethod().getParameter(5).getIdentifier(0).getName());
+		assertEquals("8827",
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(5).getIdentifier(0)
+						.getUniqueIdentifier());
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				projectedGeographicCrs.getCoordinateSystem().getType());
 		assertEquals(2,
@@ -2251,25 +2260,25 @@ public class CRSReaderWriterTest {
 		assertEquals("Transverse Mercator", projectedGeographicCrs
 				.getMapProjection().getMethod().getName());
 		assertEquals("Latitude of natural origin", projectedGeographicCrs
-				.getMapProjection().getParameter(0).getName());
-		assertEquals(0.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(0).getValue(), 0);
+				.getMapProjection().getMethod().getParameter(0).getName());
+		assertEquals(0.0, projectedGeographicCrs.getMapProjection().getMethod()
+				.getParameter(0).getValue(), 0);
 		assertEquals("Longitude of natural origin", projectedGeographicCrs
-				.getMapProjection().getParameter(1).getName());
+				.getMapProjection().getMethod().getParameter(1).getName());
 		assertEquals(-123.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(1).getValue(), 0);
+				.getMethod().getParameter(1).getValue(), 0);
 		assertEquals("Scale factor", projectedGeographicCrs.getMapProjection()
-				.getParameter(2).getName());
+				.getMethod().getParameter(2).getName());
 		assertEquals(0.9996, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(2).getValue(), 0);
+				.getMethod().getParameter(2).getValue(), 0);
 		assertEquals("False easting", projectedGeographicCrs.getMapProjection()
-				.getParameter(3).getName());
+				.getMethod().getParameter(3).getName());
 		assertEquals(500000.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(3).getValue(), 0);
+				.getMethod().getParameter(3).getValue(), 0);
 		assertEquals("False northing", projectedGeographicCrs.getMapProjection()
-				.getParameter(4).getName());
-		assertEquals(0.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(4).getValue(), 0);
+				.getMethod().getParameter(4).getName());
+		assertEquals(0.0, projectedGeographicCrs.getMapProjection().getMethod()
+				.getParameter(4).getValue(), 0);
 		assertEquals("EPSG", projectedGeographicCrs.getMapProjection()
 				.getIdentifier(0).getName());
 		assertEquals("16010", projectedGeographicCrs.getMapProjection()
@@ -2353,66 +2362,64 @@ public class CRSReaderWriterTest {
 		assertEquals("Transverse Mercator (3D)", projectedGeographicCrs
 				.getMapProjection().getMethod().getName());
 		assertEquals("Latitude of origin", projectedGeographicCrs
-				.getMapProjection().getParameter(0).getName());
-		assertEquals(0.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(0).getValue(), 0);
+				.getMapProjection().getMethod().getParameter(0).getName());
+		assertEquals(0.0, projectedGeographicCrs.getMapProjection().getMethod()
+				.getParameter(0).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(0).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(0).getUnit().getType());
 		assertEquals("degree", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(0).getUnit().getName());
+				.getMethod().getParameter(0).getUnit().getName());
 		assertEquals(0.0174532925199433,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(0).getUnit()
-						.getConversionFactor(),
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(0).getUnit().getConversionFactor(),
 				0);
 		assertEquals("Longitude of origin", projectedGeographicCrs
-				.getMapProjection().getParameter(1).getName());
-		assertEquals(3.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(1).getValue(), 0);
+				.getMapProjection().getMethod().getParameter(1).getName());
+		assertEquals(3.0, projectedGeographicCrs.getMapProjection().getMethod()
+				.getParameter(1).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(1).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(1).getUnit().getType());
 		assertEquals("degree", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(1).getUnit().getName());
+				.getMethod().getParameter(1).getUnit().getName());
 		assertEquals(0.0174532925199433,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(1).getUnit()
-						.getConversionFactor(),
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(1).getUnit().getConversionFactor(),
 				0);
 		assertEquals("Scale factor", projectedGeographicCrs.getMapProjection()
-				.getParameter(2).getName());
+				.getMethod().getParameter(2).getName());
 		assertEquals(0.9996, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(2).getValue(), 0);
+				.getMethod().getParameter(2).getValue(), 0);
 		assertEquals(UnitType.SCALEUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(2).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(2).getUnit().getType());
 		assertEquals("unity", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(2).getUnit().getName());
-		assertEquals(1.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(2).getUnit().getConversionFactor(), 0);
+				.getMethod().getParameter(2).getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getMapProjection().getMethod()
+				.getParameter(2).getUnit().getConversionFactor(), 0);
 		assertEquals("False easting", projectedGeographicCrs.getMapProjection()
-				.getParameter(3).getName());
+				.getMethod().getParameter(3).getName());
 		assertEquals(500000.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(3).getValue(), 0);
+				.getMethod().getParameter(3).getValue(), 0);
 		assertEquals(UnitType.LENGTHUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(3).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(3).getUnit().getType());
 		assertEquals("metre", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(3).getUnit().getName());
-		assertEquals(1.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(3).getUnit().getConversionFactor(), 0);
+				.getMethod().getParameter(3).getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getMapProjection().getMethod()
+				.getParameter(3).getUnit().getConversionFactor(), 0);
 		assertEquals("False northing", projectedGeographicCrs.getMapProjection()
-				.getParameter(4).getName());
-		assertEquals(0.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(4).getValue(), 0);
+				.getMethod().getParameter(4).getName());
+		assertEquals(0.0, projectedGeographicCrs.getMapProjection().getMethod()
+				.getParameter(4).getValue(), 0);
 		assertEquals(UnitType.LENGTHUNIT,
-				projectedGeographicCrs.getMapProjection()
-						.getOperationParameter(4).getUnit().getType());
+				projectedGeographicCrs.getMapProjection().getMethod()
+						.getParameter(4).getUnit().getType());
 		assertEquals("metre", projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(4).getUnit().getName());
-		assertEquals(1.0, projectedGeographicCrs.getMapProjection()
-				.getOperationParameter(4).getUnit().getConversionFactor(), 0);
+				.getMethod().getParameter(4).getUnit().getName());
+		assertEquals(1.0, projectedGeographicCrs.getMapProjection().getMethod()
+				.getParameter(4).getUnit().getConversionFactor(), 0);
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				projectedGeographicCrs.getCoordinateSystem().getType());
 		assertEquals(3,
@@ -3111,45 +3118,39 @@ public class CRSReaderWriterTest {
 		assertEquals("123", derivingConversion.getMethod().getIdentifier(0)
 				.getUniqueIdentifier());
 		assertEquals("parameter 1 name",
-				derivingConversion.getParameter(0).getName());
-		assertEquals(0,
-				((OperationParameter) derivingConversion.getParameter(0))
-						.getValue(),
-				0);
+				derivingConversion.getMethod().getParameter(0).getName());
+		assertEquals(0, ((OperationParameter) derivingConversion.getMethod()
+				.getParameter(0)).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				((OperationParameter) derivingConversion.getParameter(0))
-						.getUnit().getType());
-		assertEquals("degree",
-				((OperationParameter) derivingConversion.getParameter(0))
-						.getUnit().getName());
+				((OperationParameter) derivingConversion.getMethod()
+						.getParameter(0)).getUnit().getType());
+		assertEquals("degree", ((OperationParameter) derivingConversion
+				.getMethod().getParameter(0)).getUnit().getName());
 		assertEquals(0.0174532925199433,
-				((OperationParameter) derivingConversion.getParameter(0))
-						.getUnit().getConversionFactor(),
+				((OperationParameter) derivingConversion.getMethod()
+						.getParameter(0)).getUnit().getConversionFactor(),
 				0);
-		assertEquals("authority",
-				derivingConversion.getParameter(0).getIdentifier(0).getName());
-		assertEquals("456", derivingConversion.getParameter(0).getIdentifier(0)
-				.getUniqueIdentifier());
+		assertEquals("authority", derivingConversion.getMethod().getParameter(0)
+				.getIdentifier(0).getName());
+		assertEquals("456", derivingConversion.getMethod().getParameter(0)
+				.getIdentifier(0).getUniqueIdentifier());
 		assertEquals("parameter 2 name",
-				derivingConversion.getParameter(1).getName());
-		assertEquals(-123,
-				((OperationParameter) derivingConversion.getParameter(1))
-						.getValue(),
-				0);
+				derivingConversion.getMethod().getParameter(1).getName());
+		assertEquals(-123, ((OperationParameter) derivingConversion.getMethod()
+				.getParameter(1)).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				((OperationParameter) derivingConversion.getParameter(1))
-						.getUnit().getType());
-		assertEquals("degree",
-				((OperationParameter) derivingConversion.getParameter(1))
-						.getUnit().getName());
+				((OperationParameter) derivingConversion.getMethod()
+						.getParameter(1)).getUnit().getType());
+		assertEquals("degree", ((OperationParameter) derivingConversion
+				.getMethod().getParameter(1)).getUnit().getName());
 		assertEquals(0.0174532925199433,
-				((OperationParameter) derivingConversion.getParameter(1))
-						.getUnit().getConversionFactor(),
+				((OperationParameter) derivingConversion.getMethod()
+						.getParameter(1)).getUnit().getConversionFactor(),
 				0);
-		assertEquals("authority",
-				derivingConversion.getParameter(1).getIdentifier(0).getName());
-		assertEquals("789", derivingConversion.getParameter(1).getIdentifier(0)
-				.getUniqueIdentifier());
+		assertEquals("authority", derivingConversion.getMethod().getParameter(1)
+				.getIdentifier(0).getName());
+		assertEquals("789", derivingConversion.getMethod().getParameter(1)
+				.getIdentifier(0).getUniqueIdentifier());
 		reader.close();
 		text = text.replace(",0,", ",0.0,").replace(",-123,", ",-123.0,");
 		assertEquals(text, derivingConversion.toString());
@@ -3217,40 +3218,43 @@ public class CRSReaderWriterTest {
 				.getIdentifier(0).getName());
 		assertEquals("1234", derivedCrs.getConversion().getMethod()
 				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Latitude of rotated pole",
-				derivedCrs.getConversion().getParameter(0).getName());
+		assertEquals("Latitude of rotated pole", derivedCrs.getConversion()
+				.getMethod().getParameter(0).getName());
 		assertEquals(52.0, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(0)).getValue(), 0);
-		assertEquals(UnitType.ANGLEUNIT, ((OperationParameter) derivedCrs
-				.getConversion().getParameter(0)).getUnit().getType());
+				.getMethod().getParameter(0)).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT,
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(0)).getUnit().getType());
 		assertEquals("degree", ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(0)).getUnit().getName());
+				.getMethod().getParameter(0)).getUnit().getName());
 		assertEquals(0.0174532925199433,
-				((OperationParameter) derivedCrs.getConversion()
+				((OperationParameter) derivedCrs.getConversion().getMethod()
 						.getParameter(0)).getUnit().getConversionFactor(),
 				0);
-		assertEquals("Longitude of rotated pole",
-				derivedCrs.getConversion().getParameter(1).getName());
+		assertEquals("Longitude of rotated pole", derivedCrs.getConversion()
+				.getMethod().getParameter(1).getName());
 		assertEquals(-30.0, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(1)).getValue(), 0);
-		assertEquals(UnitType.ANGLEUNIT, ((OperationParameter) derivedCrs
-				.getConversion().getParameter(1)).getUnit().getType());
+				.getMethod().getParameter(1)).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT,
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(1)).getUnit().getType());
 		assertEquals("degree", ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(1)).getUnit().getName());
+				.getMethod().getParameter(1)).getUnit().getName());
 		assertEquals(0.0174532925199433,
-				((OperationParameter) derivedCrs.getConversion()
+				((OperationParameter) derivedCrs.getConversion().getMethod()
 						.getParameter(1)).getUnit().getConversionFactor(),
 				0);
-		assertEquals("Axis rotation",
-				derivedCrs.getConversion().getParameter(2).getName());
+		assertEquals("Axis rotation", derivedCrs.getConversion().getMethod()
+				.getParameter(2).getName());
 		assertEquals(-25.0, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(2)).getValue(), 0);
-		assertEquals(UnitType.ANGLEUNIT, ((OperationParameter) derivedCrs
-				.getConversion().getParameter(2)).getUnit().getType());
+				.getMethod().getParameter(2)).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT,
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(2)).getUnit().getType());
 		assertEquals("degree", ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(2)).getUnit().getName());
+				.getMethod().getParameter(2)).getUnit().getName());
 		assertEquals(0.0174532925199433,
-				((OperationParameter) derivedCrs.getConversion()
+				((OperationParameter) derivedCrs.getConversion().getMethod()
 						.getParameter(2)).getUnit().getConversionFactor(),
 				0);
 		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
@@ -3371,90 +3375,96 @@ public class CRSReaderWriterTest {
 				.getIdentifier(0).getName());
 		assertEquals("9802", projectedCrs.getMapProjection().getMethod()
 				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Latitude of false origin",
-				projectedCrs.getMapProjection().getParameter(0).getName());
+		assertEquals("Latitude of false origin", projectedCrs.getMapProjection()
+				.getMethod().getParameter(0).getName());
 		assertEquals(27.83333333333333, projectedCrs.getMapProjection()
-				.getOperationParameter(0).getValue(), 0);
+				.getMethod().getParameter(0).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection()
-				.getOperationParameter(0).getUnit().getType());
-		assertEquals("degree", projectedCrs.getMapProjection()
-				.getOperationParameter(0).getUnit().getName());
+				.getMethod().getParameter(0).getUnit().getType());
+		assertEquals("degree", projectedCrs.getMapProjection().getMethod()
+				.getParameter(0).getUnit().getName());
 		assertEquals(0.0174532925199433, projectedCrs.getMapProjection()
-				.getOperationParameter(0).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", projectedCrs.getMapProjection().getParameter(0)
-				.getIdentifier(0).getName());
-		assertEquals("8821", projectedCrs.getMapProjection().getParameter(0)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Longitude of false origin",
-				projectedCrs.getMapProjection().getParameter(1).getName());
-		assertEquals(-99.0, projectedCrs.getMapProjection()
-				.getOperationParameter(1).getValue(), 0);
+				.getMethod().getParameter(0).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getMethod()
+				.getParameter(0).getIdentifier(0).getName());
+		assertEquals("8821", projectedCrs.getMapProjection().getMethod()
+				.getParameter(0).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Longitude of false origin", projectedCrs
+				.getMapProjection().getMethod().getParameter(1).getName());
+		assertEquals(-99.0, projectedCrs.getMapProjection().getMethod()
+				.getParameter(1).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection()
-				.getOperationParameter(1).getUnit().getType());
-		assertEquals("degree", projectedCrs.getMapProjection()
-				.getOperationParameter(1).getUnit().getName());
+				.getMethod().getParameter(1).getUnit().getType());
+		assertEquals("degree", projectedCrs.getMapProjection().getMethod()
+				.getParameter(1).getUnit().getName());
 		assertEquals(0.0174532925199433, projectedCrs.getMapProjection()
-				.getOperationParameter(1).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", projectedCrs.getMapProjection().getParameter(1)
-				.getIdentifier(0).getName());
-		assertEquals("8822", projectedCrs.getMapProjection().getParameter(1)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Latitude of 1st standard parallel",
-				projectedCrs.getMapProjection().getParameter(2).getName());
+				.getMethod().getParameter(1).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getMethod()
+				.getParameter(1).getIdentifier(0).getName());
+		assertEquals("8822", projectedCrs.getMapProjection().getMethod()
+				.getParameter(1).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Latitude of 1st standard parallel", projectedCrs
+				.getMapProjection().getMethod().getParameter(2).getName());
 		assertEquals(28.383333333333, projectedCrs.getMapProjection()
-				.getOperationParameter(2).getValue(), 0);
+				.getMethod().getParameter(2).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection()
-				.getOperationParameter(2).getUnit().getType());
-		assertEquals("degree", projectedCrs.getMapProjection()
-				.getOperationParameter(2).getUnit().getName());
+				.getMethod().getParameter(2).getUnit().getType());
+		assertEquals("degree", projectedCrs.getMapProjection().getMethod()
+				.getParameter(2).getUnit().getName());
 		assertEquals(0.0174532925199433, projectedCrs.getMapProjection()
-				.getOperationParameter(2).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", projectedCrs.getMapProjection().getParameter(2)
-				.getIdentifier(0).getName());
-		assertEquals("8823", projectedCrs.getMapProjection().getParameter(2)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Latitude of 2nd standard parallel",
-				projectedCrs.getMapProjection().getParameter(3).getName());
+				.getMethod().getParameter(2).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getMethod()
+				.getParameter(2).getIdentifier(0).getName());
+		assertEquals("8823", projectedCrs.getMapProjection().getMethod()
+				.getParameter(2).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Latitude of 2nd standard parallel", projectedCrs
+				.getMapProjection().getMethod().getParameter(3).getName());
 		assertEquals(30.283333333333, projectedCrs.getMapProjection()
-				.getOperationParameter(3).getValue(), 0);
+				.getMethod().getParameter(3).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT, projectedCrs.getMapProjection()
-				.getOperationParameter(3).getUnit().getType());
-		assertEquals("degree", projectedCrs.getMapProjection()
-				.getOperationParameter(3).getUnit().getName());
+				.getMethod().getParameter(3).getUnit().getType());
+		assertEquals("degree", projectedCrs.getMapProjection().getMethod()
+				.getParameter(3).getUnit().getName());
 		assertEquals(0.0174532925199433, projectedCrs.getMapProjection()
-				.getOperationParameter(3).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", projectedCrs.getMapProjection().getParameter(3)
-				.getIdentifier(0).getName());
-		assertEquals("8824", projectedCrs.getMapProjection().getParameter(3)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Easting at false origin",
-				projectedCrs.getMapProjection().getParameter(4).getName());
-		assertEquals(2000000.0, projectedCrs.getMapProjection()
-				.getOperationParameter(4).getValue(), 0);
+				.getMethod().getParameter(3).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getMethod()
+				.getParameter(3).getIdentifier(0).getName());
+		assertEquals("8824", projectedCrs.getMapProjection().getMethod()
+				.getParameter(3).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Easting at false origin", projectedCrs.getMapProjection()
+				.getMethod().getParameter(4).getName());
+		assertEquals(2000000.0, projectedCrs.getMapProjection().getMethod()
+				.getParameter(4).getValue(), 0);
 		assertEquals(UnitType.LENGTHUNIT, projectedCrs.getMapProjection()
-				.getOperationParameter(4).getUnit().getType());
+				.getMethod().getParameter(4).getUnit().getType());
 		assertEquals("US survey foot", projectedCrs.getMapProjection()
-				.getOperationParameter(4).getUnit().getName());
+				.getMethod().getParameter(4).getUnit().getName());
 		assertEquals(0.304800609601219, projectedCrs.getMapProjection()
-				.getOperationParameter(4).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", projectedCrs.getMapProjection().getParameter(4)
-				.getIdentifier(0).getName());
-		assertEquals("8826", projectedCrs.getMapProjection().getParameter(4)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Northing at false origin",
-				projectedCrs.getMapProjection().getParameter(5).getName());
-		assertEquals(0.0, projectedCrs.getMapProjection()
-				.getOperationParameter(5).getValue(), 0);
+				.getMethod().getParameter(4).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getMethod()
+				.getParameter(4).getIdentifier(0).getName());
+		assertEquals("8826", projectedCrs.getMapProjection().getMethod()
+				.getParameter(4).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Northing at false origin", projectedCrs.getMapProjection()
+				.getMethod().getParameter(5).getName());
+		assertEquals(0.0, projectedCrs.getMapProjection().getMethod()
+				.getParameter(5).getValue(), 0);
 		assertEquals(UnitType.LENGTHUNIT, projectedCrs.getMapProjection()
-				.getOperationParameter(5).getUnit().getType());
+				.getMethod().getParameter(5).getUnit().getType());
 		assertEquals("US survey foot", projectedCrs.getMapProjection()
-				.getOperationParameter(5).getUnit().getName());
+				.getMethod().getParameter(5).getUnit().getName());
 		assertEquals(0.304800609601219, projectedCrs.getMapProjection()
-				.getOperationParameter(5).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", projectedCrs.getMapProjection().getParameter(5)
-				.getIdentifier(0).getName());
-		assertEquals("8827", projectedCrs.getMapProjection().getParameter(5)
-				.getIdentifier(0).getUniqueIdentifier());
+				.getMethod().getParameter(5).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", projectedCrs.getMapProjection().getMethod()
+				.getParameter(5).getIdentifier(0).getName());
+		assertEquals("8827", projectedCrs.getMapProjection().getMethod()
+				.getParameter(5).getIdentifier(0).getUniqueIdentifier());
 		assertEquals("Gulf of Mexico speculative survey bin grid",
 				derivedCrs.getConversion().getName());
 		assertEquals("P6 (I = J-90°) seismic bin grid transformation",
@@ -3463,156 +3473,175 @@ public class CRSReaderWriterTest {
 				.getIdentifier(0).getName());
 		assertEquals("1049", derivedCrs.getConversion().getMethod()
 				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Bin grid origin I",
-				derivedCrs.getConversion().getParameter(0).getName());
+		assertEquals("Bin grid origin I", derivedCrs.getConversion().getMethod()
+				.getParameter(0).getName());
 		assertEquals(5000, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(0)).getValue(), 0);
-		assertEquals(UnitType.SCALEUNIT, ((OperationParameter) derivedCrs
-				.getConversion().getParameter(0)).getUnit().getType());
+				.getMethod().getParameter(0)).getValue(), 0);
+		assertEquals(UnitType.SCALEUNIT,
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(0)).getUnit().getType());
 		assertEquals("Bin", ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(0)).getUnit().getName());
+				.getMethod().getParameter(0)).getUnit().getName());
 		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(0)).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", derivedCrs.getConversion().getParameter(0)
-				.getIdentifier(0).getName());
-		assertEquals("8733", derivedCrs.getConversion().getParameter(0)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Bin grid origin J",
-				derivedCrs.getConversion().getParameter(1).getName());
+				.getMethod().getParameter(0)).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", derivedCrs.getConversion().getMethod()
+				.getParameter(0).getIdentifier(0).getName());
+		assertEquals("8733", derivedCrs.getConversion().getMethod()
+				.getParameter(0).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Bin grid origin J", derivedCrs.getConversion().getMethod()
+				.getParameter(1).getName());
 		assertEquals(0, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(1)).getValue(), 0);
-		assertEquals(UnitType.SCALEUNIT, ((OperationParameter) derivedCrs
-				.getConversion().getParameter(1)).getUnit().getType());
+				.getMethod().getParameter(1)).getValue(), 0);
+		assertEquals(UnitType.SCALEUNIT,
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(1)).getUnit().getType());
 		assertEquals("Bin", ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(1)).getUnit().getName());
+				.getMethod().getParameter(1)).getUnit().getName());
 		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(1)).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", derivedCrs.getConversion().getParameter(1)
-				.getIdentifier(0).getName());
-		assertEquals("8734", derivedCrs.getConversion().getParameter(1)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Bin grid origin Easting",
-				derivedCrs.getConversion().getParameter(2).getName());
+				.getMethod().getParameter(1)).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", derivedCrs.getConversion().getMethod()
+				.getParameter(1).getIdentifier(0).getName());
+		assertEquals("8734", derivedCrs.getConversion().getMethod()
+				.getParameter(1).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Bin grid origin Easting", derivedCrs.getConversion()
+				.getMethod().getParameter(2).getName());
 		assertEquals(871200, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(2)).getValue(), 0);
-		assertEquals(UnitType.LENGTHUNIT, ((OperationParameter) derivedCrs
-				.getConversion().getParameter(2)).getUnit().getType());
-		assertEquals("US survey foot", ((OperationParameter) derivedCrs
-				.getConversion().getParameter(2)).getUnit().getName());
+				.getMethod().getParameter(2)).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(2)).getUnit().getType());
+		assertEquals("US survey foot",
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(2)).getUnit().getName());
 		assertEquals(0.304800609601219,
-				((OperationParameter) derivedCrs.getConversion()
+				((OperationParameter) derivedCrs.getConversion().getMethod()
 						.getParameter(2)).getUnit().getConversionFactor(),
 				0);
-		assertEquals("EPSG", derivedCrs.getConversion().getParameter(2)
-				.getIdentifier(0).getName());
-		assertEquals("8735", derivedCrs.getConversion().getParameter(2)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Bin grid origin Northing",
-				derivedCrs.getConversion().getParameter(3).getName());
+		assertEquals("EPSG", derivedCrs.getConversion().getMethod()
+				.getParameter(2).getIdentifier(0).getName());
+		assertEquals("8735", derivedCrs.getConversion().getMethod()
+				.getParameter(2).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Bin grid origin Northing", derivedCrs.getConversion()
+				.getMethod().getParameter(3).getName());
 		assertEquals(10280160, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(3)).getValue(), 0);
-		assertEquals(UnitType.LENGTHUNIT, ((OperationParameter) derivedCrs
-				.getConversion().getParameter(3)).getUnit().getType());
-		assertEquals("US survey foot", ((OperationParameter) derivedCrs
-				.getConversion().getParameter(3)).getUnit().getName());
+				.getMethod().getParameter(3)).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(3)).getUnit().getType());
+		assertEquals("US survey foot",
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(3)).getUnit().getName());
 		assertEquals(0.304800609601219,
-				((OperationParameter) derivedCrs.getConversion()
+				((OperationParameter) derivedCrs.getConversion().getMethod()
 						.getParameter(3)).getUnit().getConversionFactor(),
 				0);
-		assertEquals("EPSG", derivedCrs.getConversion().getParameter(3)
-				.getIdentifier(0).getName());
-		assertEquals("8736", derivedCrs.getConversion().getParameter(3)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Scale factor of bin grid",
-				derivedCrs.getConversion().getParameter(4).getName());
+		assertEquals("EPSG", derivedCrs.getConversion().getMethod()
+				.getParameter(3).getIdentifier(0).getName());
+		assertEquals("8736", derivedCrs.getConversion().getMethod()
+				.getParameter(3).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Scale factor of bin grid", derivedCrs.getConversion()
+				.getMethod().getParameter(4).getName());
 		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(4)).getValue(), 0);
-		assertEquals(UnitType.SCALEUNIT, ((OperationParameter) derivedCrs
-				.getConversion().getParameter(4)).getUnit().getType());
+				.getMethod().getParameter(4)).getValue(), 0);
+		assertEquals(UnitType.SCALEUNIT,
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(4)).getUnit().getType());
 		assertEquals("Unity", ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(4)).getUnit().getName());
+				.getMethod().getParameter(4)).getUnit().getName());
 		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(4)).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", derivedCrs.getConversion().getParameter(4)
-				.getIdentifier(0).getName());
-		assertEquals("8737", derivedCrs.getConversion().getParameter(4)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Bin width on I-axis",
-				derivedCrs.getConversion().getParameter(5).getName());
+				.getMethod().getParameter(4)).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", derivedCrs.getConversion().getMethod()
+				.getParameter(4).getIdentifier(0).getName());
+		assertEquals("8737", derivedCrs.getConversion().getMethod()
+				.getParameter(4).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Bin width on I-axis", derivedCrs.getConversion()
+				.getMethod().getParameter(5).getName());
 		assertEquals(82.5, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(5)).getValue(), 0);
-		assertEquals(UnitType.LENGTHUNIT, ((OperationParameter) derivedCrs
-				.getConversion().getParameter(5)).getUnit().getType());
-		assertEquals("US survey foot", ((OperationParameter) derivedCrs
-				.getConversion().getParameter(5)).getUnit().getName());
+				.getMethod().getParameter(5)).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(5)).getUnit().getType());
+		assertEquals("US survey foot",
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(5)).getUnit().getName());
 		assertEquals(0.304800609601219,
-				((OperationParameter) derivedCrs.getConversion()
+				((OperationParameter) derivedCrs.getConversion().getMethod()
 						.getParameter(5)).getUnit().getConversionFactor(),
 				0);
-		assertEquals("EPSG", derivedCrs.getConversion().getParameter(5)
-				.getIdentifier(0).getName());
-		assertEquals("8738", derivedCrs.getConversion().getParameter(5)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Bin width on J-axis",
-				derivedCrs.getConversion().getParameter(6).getName());
+		assertEquals("EPSG", derivedCrs.getConversion().getMethod()
+				.getParameter(5).getIdentifier(0).getName());
+		assertEquals("8738", derivedCrs.getConversion().getMethod()
+				.getParameter(5).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Bin width on J-axis", derivedCrs.getConversion()
+				.getMethod().getParameter(6).getName());
 		assertEquals(41.25, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(6)).getValue(), 0);
-		assertEquals(UnitType.LENGTHUNIT, ((OperationParameter) derivedCrs
-				.getConversion().getParameter(6)).getUnit().getType());
-		assertEquals("US survey foot", ((OperationParameter) derivedCrs
-				.getConversion().getParameter(6)).getUnit().getName());
+				.getMethod().getParameter(6)).getValue(), 0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(6)).getUnit().getType());
+		assertEquals("US survey foot",
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(6)).getUnit().getName());
 		assertEquals(0.304800609601219,
-				((OperationParameter) derivedCrs.getConversion()
+				((OperationParameter) derivedCrs.getConversion().getMethod()
 						.getParameter(6)).getUnit().getConversionFactor(),
 				0);
-		assertEquals("EPSG", derivedCrs.getConversion().getParameter(6)
-				.getIdentifier(0).getName());
-		assertEquals("8739", derivedCrs.getConversion().getParameter(6)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Map grid bearing of bin grid J-axis",
-				derivedCrs.getConversion().getParameter(7).getName());
+		assertEquals("EPSG", derivedCrs.getConversion().getMethod()
+				.getParameter(6).getIdentifier(0).getName());
+		assertEquals("8739", derivedCrs.getConversion().getMethod()
+				.getParameter(6).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Map grid bearing of bin grid J-axis", derivedCrs
+				.getConversion().getMethod().getParameter(7).getName());
 		assertEquals(340, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(7)).getValue(), 0);
-		assertEquals(UnitType.ANGLEUNIT, ((OperationParameter) derivedCrs
-				.getConversion().getParameter(7)).getUnit().getType());
+				.getMethod().getParameter(7)).getValue(), 0);
+		assertEquals(UnitType.ANGLEUNIT,
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(7)).getUnit().getType());
 		assertEquals("degree", ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(7)).getUnit().getName());
+				.getMethod().getParameter(7)).getUnit().getName());
 		assertEquals(0.0174532925199433,
-				((OperationParameter) derivedCrs.getConversion()
+				((OperationParameter) derivedCrs.getConversion().getMethod()
 						.getParameter(7)).getUnit().getConversionFactor(),
 				0);
-		assertEquals("EPSG", derivedCrs.getConversion().getParameter(7)
-				.getIdentifier(0).getName());
-		assertEquals("8740", derivedCrs.getConversion().getParameter(7)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Bin node increment on I-axis",
-				derivedCrs.getConversion().getParameter(8).getName());
+		assertEquals("EPSG", derivedCrs.getConversion().getMethod()
+				.getParameter(7).getIdentifier(0).getName());
+		assertEquals("8740", derivedCrs.getConversion().getMethod()
+				.getParameter(7).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Bin node increment on I-axis", derivedCrs.getConversion()
+				.getMethod().getParameter(8).getName());
 		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(8)).getValue(), 0);
-		assertEquals(UnitType.SCALEUNIT, ((OperationParameter) derivedCrs
-				.getConversion().getParameter(8)).getUnit().getType());
+				.getMethod().getParameter(8)).getValue(), 0);
+		assertEquals(UnitType.SCALEUNIT,
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(8)).getUnit().getType());
 		assertEquals("Bin", ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(8)).getUnit().getName());
+				.getMethod().getParameter(8)).getUnit().getName());
 		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(8)).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", derivedCrs.getConversion().getParameter(8)
-				.getIdentifier(0).getName());
-		assertEquals("8741", derivedCrs.getConversion().getParameter(8)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Bin node increment on J-axis",
-				derivedCrs.getConversion().getParameter(9).getName());
+				.getMethod().getParameter(8)).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", derivedCrs.getConversion().getMethod()
+				.getParameter(8).getIdentifier(0).getName());
+		assertEquals("8741", derivedCrs.getConversion().getMethod()
+				.getParameter(8).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Bin node increment on J-axis", derivedCrs.getConversion()
+				.getMethod().getParameter(9).getName());
 		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(9)).getValue(), 0);
-		assertEquals(UnitType.SCALEUNIT, ((OperationParameter) derivedCrs
-				.getConversion().getParameter(9)).getUnit().getType());
+				.getMethod().getParameter(9)).getValue(), 0);
+		assertEquals(UnitType.SCALEUNIT,
+				((OperationParameter) derivedCrs.getConversion().getMethod()
+						.getParameter(9)).getUnit().getType());
 		assertEquals("Bin", ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(9)).getUnit().getName());
+				.getMethod().getParameter(9)).getUnit().getName());
 		assertEquals(1.0, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(9)).getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", derivedCrs.getConversion().getParameter(9)
-				.getIdentifier(0).getName());
-		assertEquals("8742", derivedCrs.getConversion().getParameter(9)
-				.getIdentifier(0).getUniqueIdentifier());
+				.getMethod().getParameter(9)).getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG", derivedCrs.getConversion().getMethod()
+				.getParameter(9).getIdentifier(0).getName());
+		assertEquals("8742", derivedCrs.getConversion().getMethod()
+				.getParameter(9).getIdentifier(0).getUniqueIdentifier());
 		assertEquals(CoordinateSystemType.ORDINAL,
 				derivedCrs.getCoordinateSystem().getType());
 		assertEquals(2, derivedCrs.getCoordinateSystem().getDimension());
@@ -3677,22 +3706,22 @@ public class CRSReaderWriterTest {
 				derivedCrs.getConversion().getName());
 		assertEquals("Affine",
 				derivedCrs.getConversion().getMethod().getName());
-		assertEquals("num_row",
-				derivedCrs.getConversion().getParameter(0).getName());
+		assertEquals("num_row", derivedCrs.getConversion().getMethod()
+				.getParameter(0).getName());
 		assertEquals(2, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(0)).getValue(), 0);
-		assertEquals("num_col",
-				derivedCrs.getConversion().getParameter(1).getName());
+				.getMethod().getParameter(0)).getValue(), 0);
+		assertEquals("num_col", derivedCrs.getConversion().getMethod()
+				.getParameter(1).getName());
 		assertEquals(2, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(1)).getValue(), 0);
-		assertEquals("elt_0_0",
-				derivedCrs.getConversion().getParameter(2).getName());
+				.getMethod().getParameter(1)).getValue(), 0);
+		assertEquals("elt_0_0", derivedCrs.getConversion().getMethod()
+				.getParameter(2).getName());
 		assertEquals(10, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(2)).getValue(), 0);
-		assertEquals("elt_0_1",
-				derivedCrs.getConversion().getParameter(3).getName());
+				.getMethod().getParameter(2)).getValue(), 0);
+		assertEquals("elt_0_1", derivedCrs.getConversion().getMethod()
+				.getParameter(3).getName());
 		assertEquals(100, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(3)).getValue(), 0);
+				.getMethod().getParameter(3)).getValue(), 0);
 		assertEquals(CoordinateSystemType.VERTICAL,
 				derivedCrs.getCoordinateSystem().getType());
 		assertEquals(1, derivedCrs.getCoordinateSystem().getDimension());
@@ -3761,14 +3790,14 @@ public class CRSReaderWriterTest {
 				derivedCrs.getConversion().getName());
 		assertEquals("Method",
 				derivedCrs.getConversion().getMethod().getName());
-		assertEquals("param1",
-				derivedCrs.getConversion().getParameter(0).getName());
+		assertEquals("param1", derivedCrs.getConversion().getMethod()
+				.getParameter(0).getName());
 		assertEquals(1, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(0)).getValue(), 0);
-		assertEquals("param2",
-				derivedCrs.getConversion().getParameter(1).getName());
+				.getMethod().getParameter(0)).getValue(), 0);
+		assertEquals("param2", derivedCrs.getConversion().getMethod()
+				.getParameter(1).getName());
 		assertEquals(2, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(1)).getValue(), 0);
+				.getMethod().getParameter(1)).getValue(), 0);
 		assertEquals(CoordinateSystemType.CARTESIAN,
 				derivedCrs.getCoordinateSystem().getType());
 		assertEquals(2, derivedCrs.getCoordinateSystem().getDimension());
@@ -3829,14 +3858,14 @@ public class CRSReaderWriterTest {
 				derivedCrs.getConversion().getName());
 		assertEquals("Method",
 				derivedCrs.getConversion().getMethod().getName());
-		assertEquals("param1",
-				derivedCrs.getConversion().getParameter(0).getName());
+		assertEquals("param1", derivedCrs.getConversion().getMethod()
+				.getParameter(0).getName());
 		assertEquals(1, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(0)).getValue(), 0);
-		assertEquals("param2",
-				derivedCrs.getConversion().getParameter(1).getName());
+				.getMethod().getParameter(0)).getValue(), 0);
+		assertEquals("param2", derivedCrs.getConversion().getMethod()
+				.getParameter(1).getName());
 		assertEquals(2, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(1)).getValue(), 0);
+				.getMethod().getParameter(1)).getValue(), 0);
 		assertEquals(CoordinateSystemType.PARAMETRIC,
 				derivedCrs.getCoordinateSystem().getType());
 		assertEquals(1, derivedCrs.getCoordinateSystem().getDimension());
@@ -3892,14 +3921,14 @@ public class CRSReaderWriterTest {
 				derivedCrs.getConversion().getName());
 		assertEquals("Method",
 				derivedCrs.getConversion().getMethod().getName());
-		assertEquals("param1",
-				derivedCrs.getConversion().getParameter(0).getName());
+		assertEquals("param1", derivedCrs.getConversion().getMethod()
+				.getParameter(0).getName());
 		assertEquals(1, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(0)).getValue(), 0);
-		assertEquals("param2",
-				derivedCrs.getConversion().getParameter(1).getName());
+				.getMethod().getParameter(0)).getValue(), 0);
+		assertEquals("param2", derivedCrs.getConversion().getMethod()
+				.getParameter(1).getName());
 		assertEquals(2, ((OperationParameter) derivedCrs.getConversion()
-				.getParameter(1)).getValue(), 0);
+				.getMethod().getParameter(1)).getValue(), 0);
 		assertEquals(CoordinateSystemType.TEMPORAL_DATE_TIME,
 				derivedCrs.getCoordinateSystem().getType());
 		assertEquals(1, derivedCrs.getCoordinateSystem().getDimension());
@@ -3965,8 +3994,7 @@ public class CRSReaderWriterTest {
 		assertEquals("Greenwich",
 				geo.getReferenceFrame().getPrimeMeridian().getName());
 		assertEquals(0,
-				geo.getReferenceFrame().getPrimeMeridian().getLongitude(),
-				0);
+				geo.getReferenceFrame().getPrimeMeridian().getLongitude(), 0);
 		assertEquals(CoordinateSystemType.ELLIPSOIDAL,
 				geo.getCoordinateSystem().getType());
 		assertEquals(2, geo.getCoordinateSystem().getDimension());
@@ -4311,48 +4339,72 @@ public class CRSReaderWriterTest {
 		assertEquals("EPSG", operation.getMethod().getIdentifier(0).getName());
 		assertEquals("1031",
 				operation.getMethod().getIdentifier(0).getUniqueIdentifier());
-		assertEquals("X-axis translation", operation.getParameter(0).getName());
+		assertEquals("X-axis translation",
+				operation.getMethod().getParameter(0).getName());
 		assertEquals(-146.414,
-				((OperationParameter) operation.getParameter(0)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getValue(),
+				0);
 		assertEquals(UnitType.LENGTHUNIT,
-				((OperationParameter) operation.getParameter(0)).getUnit()
-						.getType());
-		assertEquals("metre", ((OperationParameter) operation.getParameter(0))
-				.getUnit().getName());
-		assertEquals(1.0, ((OperationParameter) operation.getParameter(0))
-				.getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", ((OperationParameter) operation.getParameter(0))
-				.getIdentifier(0).getName());
-		assertEquals("8605", ((OperationParameter) operation.getParameter(0))
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Y-axis translation", operation.getParameter(1).getName());
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG",
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getIdentifier(0).getName());
+		assertEquals("8605",
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Y-axis translation",
+				operation.getMethod().getParameter(1).getName());
 		assertEquals(507.337,
-				((OperationParameter) operation.getParameter(1)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getValue(),
+				0);
 		assertEquals(UnitType.LENGTHUNIT,
-				((OperationParameter) operation.getParameter(1)).getUnit()
-						.getType());
-		assertEquals("metre", ((OperationParameter) operation.getParameter(1))
-				.getUnit().getName());
-		assertEquals(1.0, ((OperationParameter) operation.getParameter(1))
-				.getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", ((OperationParameter) operation.getParameter(1))
-				.getIdentifier(0).getName());
-		assertEquals("8606", ((OperationParameter) operation.getParameter(1))
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Z-axis translation", operation.getParameter(2).getName());
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG",
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getIdentifier(0).getName());
+		assertEquals("8606",
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Z-axis translation",
+				operation.getMethod().getParameter(2).getName());
 		assertEquals(680.507,
-				((OperationParameter) operation.getParameter(2)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getValue(),
+				0);
 		assertEquals(UnitType.LENGTHUNIT,
-				((OperationParameter) operation.getParameter(2)).getUnit()
-						.getType());
-		assertEquals("metre", ((OperationParameter) operation.getParameter(2))
-				.getUnit().getName());
-		assertEquals(1.0, ((OperationParameter) operation.getParameter(2))
-				.getUnit().getConversionFactor(), 0);
-		assertEquals("EPSG", ((OperationParameter) operation.getParameter(2))
-				.getIdentifier(0).getName());
-		assertEquals("8607", ((OperationParameter) operation.getParameter(2))
-				.getIdentifier(0).getUniqueIdentifier());
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("EPSG",
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getIdentifier(0).getName());
+		assertEquals("8607",
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getIdentifier(0).getUniqueIdentifier());
 
 		assertEquals(text, operation.toString());
 		assertEquals(text, CRSWriter.write(operation));
@@ -4389,36 +4441,54 @@ public class CRSReaderWriterTest {
 		assertEquals("EPSG", operation.getMethod().getIdentifier(0).getName());
 		assertEquals("1031",
 				operation.getMethod().getIdentifier(0).getUniqueIdentifier());
-		assertEquals("X-axis translation", operation.getParameter(0).getName());
+		assertEquals("X-axis translation",
+				operation.getMethod().getParameter(0).getName());
 		assertEquals(-128.5,
-				((OperationParameter) operation.getParameter(0)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getValue(),
+				0);
 		assertEquals(UnitType.LENGTHUNIT,
-				((OperationParameter) operation.getParameter(0)).getUnit()
-						.getType());
-		assertEquals("metre", ((OperationParameter) operation.getParameter(0))
-				.getUnit().getName());
-		assertEquals(1.0, ((OperationParameter) operation.getParameter(0))
-				.getUnit().getConversionFactor(), 0);
-		assertEquals("Y-axis translation", operation.getParameter(1).getName());
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Y-axis translation",
+				operation.getMethod().getParameter(1).getName());
 		assertEquals(-53.0,
-				((OperationParameter) operation.getParameter(1)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getValue(),
+				0);
 		assertEquals(UnitType.LENGTHUNIT,
-				((OperationParameter) operation.getParameter(1)).getUnit()
-						.getType());
-		assertEquals("metre", ((OperationParameter) operation.getParameter(1))
-				.getUnit().getName());
-		assertEquals(1.0, ((OperationParameter) operation.getParameter(1))
-				.getUnit().getConversionFactor(), 0);
-		assertEquals("Z-axis translation", operation.getParameter(2).getName());
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Z-axis translation",
+				operation.getMethod().getParameter(2).getName());
 		assertEquals(153.4,
-				((OperationParameter) operation.getParameter(2)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getValue(),
+				0);
 		assertEquals(UnitType.LENGTHUNIT,
-				((OperationParameter) operation.getParameter(2)).getUnit()
-						.getType());
-		assertEquals("metre", ((OperationParameter) operation.getParameter(2))
-				.getUnit().getName());
-		assertEquals(1.0, ((OperationParameter) operation.getParameter(2))
-				.getUnit().getConversionFactor(), 0);
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getUnit().getConversionFactor(),
+				0);
 		assertEquals(5, operation.getAccuracy(), 0);
 		assertEquals("Low accuracy applications.",
 				operation.getUsage(0).getScope());
@@ -4472,9 +4542,9 @@ public class CRSReaderWriterTest {
 		assertEquals("9615",
 				operation.getMethod().getIdentifier(0).getUniqueIdentifier());
 		assertEquals("Latitude and longitude difference file",
-				operation.getParameter(0).getName());
+				operation.getMethod().getParameter(0).getName());
 		assertEquals("nzgd2kgrid0005.gsb",
-				((OperationParameterFile) operation.getParameter(0))
+				((OperationParameterFile) operation.getMethod().getParameter(0))
 						.getFileName());
 		assertEquals("EPSG", operation.getIdentifier(0).getName());
 		assertEquals("1568", operation.getIdentifier(0).getUniqueIdentifier());
@@ -4518,80 +4588,118 @@ public class CRSReaderWriterTest {
 		assertEquals(CRSType.GEOGRAPHIC, geographic2.getType());
 		assertEquals("ETRS89", geographic2.getName());
 		assertEquals("Coordinate Frame", operation.getMethod().getName());
-		assertEquals("X-axis translation", operation.getParameter(0).getName());
+		assertEquals("X-axis translation",
+				operation.getMethod().getParameter(0).getName());
 		assertEquals(565.2369,
-				((OperationParameter) operation.getParameter(0)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getValue(),
+				0);
 		assertEquals(UnitType.LENGTHUNIT,
-				((OperationParameter) operation.getParameter(0)).getUnit()
-						.getType());
-		assertEquals("metre", ((OperationParameter) operation.getParameter(0))
-				.getUnit().getName());
-		assertEquals(1.0, ((OperationParameter) operation.getParameter(0))
-				.getUnit().getConversionFactor(), 0);
-		assertEquals("Y-axis translation", operation.getParameter(1).getName());
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Y-axis translation",
+				operation.getMethod().getParameter(1).getName());
 		assertEquals(50.0087,
-				((OperationParameter) operation.getParameter(1)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getValue(),
+				0);
 		assertEquals(UnitType.LENGTHUNIT,
-				((OperationParameter) operation.getParameter(1)).getUnit()
-						.getType());
-		assertEquals("metre", ((OperationParameter) operation.getParameter(1))
-				.getUnit().getName());
-		assertEquals(1.0, ((OperationParameter) operation.getParameter(1))
-				.getUnit().getConversionFactor(), 0);
-		assertEquals("Z-axis translation", operation.getParameter(2).getName());
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Z-axis translation",
+				operation.getMethod().getParameter(2).getName());
 		assertEquals(465.658,
-				((OperationParameter) operation.getParameter(2)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getValue(),
+				0);
 		assertEquals(UnitType.LENGTHUNIT,
-				((OperationParameter) operation.getParameter(2)).getUnit()
-						.getType());
-		assertEquals("metre", ((OperationParameter) operation.getParameter(2))
-				.getUnit().getName());
-		assertEquals(1.0, ((OperationParameter) operation.getParameter(2))
-				.getUnit().getConversionFactor(), 0);
-		assertEquals("X-axis rotation", operation.getParameter(3).getName());
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("X-axis rotation",
+				operation.getMethod().getParameter(3).getName());
 		assertEquals(1.9725,
-				((OperationParameter) operation.getParameter(3)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(3))
+						.getValue(),
+				0);
 		assertEquals(UnitType.ANGLEUNIT,
-				((OperationParameter) operation.getParameter(3)).getUnit()
-						.getType());
+				((OperationParameter) operation.getMethod().getParameter(3))
+						.getUnit().getType());
 		assertEquals("microradian",
-				((OperationParameter) operation.getParameter(3)).getUnit()
-						.getName());
-		assertEquals(1E-06, ((OperationParameter) operation.getParameter(3))
-				.getUnit().getConversionFactor(), 0);
-		assertEquals("Y-axis rotation", operation.getParameter(4).getName());
+				((OperationParameter) operation.getMethod().getParameter(3))
+						.getUnit().getName());
+		assertEquals(1E-06,
+				((OperationParameter) operation.getMethod().getParameter(3))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Y-axis rotation",
+				operation.getMethod().getParameter(4).getName());
 		assertEquals(-1.7004,
-				((OperationParameter) operation.getParameter(4)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(4))
+						.getValue(),
+				0);
 		assertEquals(UnitType.ANGLEUNIT,
-				((OperationParameter) operation.getParameter(4)).getUnit()
-						.getType());
+				((OperationParameter) operation.getMethod().getParameter(4))
+						.getUnit().getType());
 		assertEquals("microradian",
-				((OperationParameter) operation.getParameter(4)).getUnit()
-						.getName());
-		assertEquals(1E-06, ((OperationParameter) operation.getParameter(4))
-				.getUnit().getConversionFactor(), 0);
-		assertEquals("Z-axis rotation", operation.getParameter(5).getName());
+				((OperationParameter) operation.getMethod().getParameter(4))
+						.getUnit().getName());
+		assertEquals(1E-06,
+				((OperationParameter) operation.getMethod().getParameter(4))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Z-axis rotation",
+				operation.getMethod().getParameter(5).getName());
 		assertEquals(9.0677,
-				((OperationParameter) operation.getParameter(5)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(5))
+						.getValue(),
+				0);
 		assertEquals(UnitType.ANGLEUNIT,
-				((OperationParameter) operation.getParameter(5)).getUnit()
-						.getType());
+				((OperationParameter) operation.getMethod().getParameter(5))
+						.getUnit().getType());
 		assertEquals("microradian",
-				((OperationParameter) operation.getParameter(5)).getUnit()
-						.getName());
-		assertEquals(1E-06, ((OperationParameter) operation.getParameter(5))
-				.getUnit().getConversionFactor(), 0);
-		assertEquals("Scale difference", operation.getParameter(6).getName());
+				((OperationParameter) operation.getMethod().getParameter(5))
+						.getUnit().getName());
+		assertEquals(1E-06,
+				((OperationParameter) operation.getMethod().getParameter(5))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Scale difference",
+				operation.getMethod().getParameter(6).getName());
 		assertEquals(4.0812,
-				((OperationParameter) operation.getParameter(6)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(6))
+						.getValue(),
+				0);
 		assertEquals(UnitType.SCALEUNIT,
-				((OperationParameter) operation.getParameter(6)).getUnit()
-						.getType());
+				((OperationParameter) operation.getMethod().getParameter(6))
+						.getUnit().getType());
 		assertEquals("parts per million",
-				((OperationParameter) operation.getParameter(6)).getUnit()
-						.getName());
-		assertEquals(1E-06, ((OperationParameter) operation.getParameter(6))
-				.getUnit().getConversionFactor(), 0);
+				((OperationParameter) operation.getMethod().getParameter(6))
+						.getUnit().getName());
+		assertEquals(1E-06,
+				((OperationParameter) operation.getMethod().getParameter(6))
+						.getUnit().getConversionFactor(),
+				0);
 		assertEquals("EPSG", operation.getIdentifier(0).getName());
 		assertEquals("15739", operation.getIdentifier(0).getUniqueIdentifier());
 
@@ -4638,68 +4746,84 @@ public class CRSReaderWriterTest {
 		assertEquals("1046",
 				operation.getMethod().getIdentifier(0).getUniqueIdentifier());
 		assertEquals("Inclination in latitude",
-				operation.getParameter(0).getName());
+				operation.getMethod().getParameter(0).getName());
 		assertEquals(-0.010,
-				((OperationParameter) operation.getParameter(0)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getValue(),
+				0);
 		assertEquals(UnitType.ANGLEUNIT,
-				((OperationParameter) operation.getParameter(0)).getUnit()
-						.getType());
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getUnit().getType());
 		assertEquals("arc-second",
-				((OperationParameter) operation.getParameter(0)).getUnit()
-						.getName());
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getUnit().getName());
 		assertEquals(4.84813681109535E-06,
-				((OperationParameter) operation.getParameter(0)).getUnit()
-						.getConversionFactor(),
+				((OperationParameter) operation.getMethod().getParameter(0))
+						.getUnit().getConversionFactor(),
 				0);
 		assertEquals("Inclination in longitude",
-				operation.getParameter(1).getName());
+				operation.getMethod().getParameter(1).getName());
 		assertEquals(0.002,
-				((OperationParameter) operation.getParameter(1)).getValue(), 0);
-		assertEquals(UnitType.ANGLEUNIT,
-				((OperationParameter) operation.getParameter(1)).getUnit()
-						.getType());
-		assertEquals("arc-second",
-				((OperationParameter) operation.getParameter(1)).getUnit()
-						.getName());
-		assertEquals(4.84813681109535E-06,
-				((OperationParameter) operation.getParameter(1)).getUnit()
-						.getConversionFactor(),
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getValue(),
 				0);
-		assertEquals("Vertical offset", operation.getParameter(2).getName());
-		assertEquals(0.015,
-				((OperationParameter) operation.getParameter(2)).getValue(), 0);
-		assertEquals(UnitType.LENGTHUNIT,
-				((OperationParameter) operation.getParameter(2)).getUnit()
-						.getType());
-		assertEquals("metre", ((OperationParameter) operation.getParameter(2))
-				.getUnit().getName());
-		assertEquals(1.0, ((OperationParameter) operation.getParameter(2))
-				.getUnit().getConversionFactor(), 0);
-		assertEquals("Ordinate 1 of evaluation point",
-				operation.getParameter(3).getName());
-		assertEquals(51.05,
-				((OperationParameter) operation.getParameter(3)).getValue(), 0);
 		assertEquals(UnitType.ANGLEUNIT,
-				((OperationParameter) operation.getParameter(3)).getUnit()
-						.getType());
-		assertEquals("degree", ((OperationParameter) operation.getParameter(3))
-				.getUnit().getName());
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getUnit().getType());
+		assertEquals("arc-second",
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getUnit().getName());
+		assertEquals(4.84813681109535E-06,
+				((OperationParameter) operation.getMethod().getParameter(1))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Vertical offset",
+				operation.getMethod().getParameter(2).getName());
+		assertEquals(0.015,
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getValue(),
+				0);
+		assertEquals(UnitType.LENGTHUNIT,
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getUnit().getType());
+		assertEquals("metre",
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getUnit().getName());
+		assertEquals(1.0,
+				((OperationParameter) operation.getMethod().getParameter(2))
+						.getUnit().getConversionFactor(),
+				0);
+		assertEquals("Ordinate 1 of evaluation point",
+				operation.getMethod().getParameter(3).getName());
+		assertEquals(51.05,
+				((OperationParameter) operation.getMethod().getParameter(3))
+						.getValue(),
+				0);
+		assertEquals(UnitType.ANGLEUNIT,
+				((OperationParameter) operation.getMethod().getParameter(3))
+						.getUnit().getType());
+		assertEquals("degree",
+				((OperationParameter) operation.getMethod().getParameter(3))
+						.getUnit().getName());
 		assertEquals(0.0174532925199433,
-				((OperationParameter) operation.getParameter(3)).getUnit()
-						.getConversionFactor(),
+				((OperationParameter) operation.getMethod().getParameter(3))
+						.getUnit().getConversionFactor(),
 				0);
 		assertEquals("Ordinate 2 of evaluation point",
-				operation.getParameter(4).getName());
+				operation.getMethod().getParameter(4).getName());
 		assertEquals(10.2166666666667,
-				((OperationParameter) operation.getParameter(4)).getValue(), 0);
+				((OperationParameter) operation.getMethod().getParameter(4))
+						.getValue(),
+				0);
 		assertEquals(UnitType.ANGLEUNIT,
-				((OperationParameter) operation.getParameter(4)).getUnit()
-						.getType());
-		assertEquals("degree", ((OperationParameter) operation.getParameter(4))
-				.getUnit().getName());
+				((OperationParameter) operation.getMethod().getParameter(4))
+						.getUnit().getType());
+		assertEquals("degree",
+				((OperationParameter) operation.getMethod().getParameter(4))
+						.getUnit().getName());
 		assertEquals(0.0174532925199433,
-				((OperationParameter) operation.getParameter(4)).getUnit()
-						.getConversionFactor(),
+				((OperationParameter) operation.getMethod().getParameter(4))
+						.getUnit().getConversionFactor(),
 				0);
 		geographic = (GeoCoordinateReferenceSystem) operation
 				.getInterpolation();
@@ -4747,9 +4871,9 @@ public class CRSReaderWriterTest {
 		assertEquals("Point motion by grid (Canada NTv2_Vel)",
 				operation.getMethod().getName());
 		assertEquals("Point motion velocity grid file",
-				operation.getParameter(0).getName());
+				operation.getMethod().getParameter(0).getName());
 		assertEquals("cvg60.cvb",
-				((OperationParameterFile) operation.getParameter(0))
+				((OperationParameterFile) operation.getMethod().getParameter(0))
 						.getFileName());
 		assertEquals(0.01, operation.getAccuracy(), 0);
 
@@ -4832,13 +4956,11 @@ public class CRSReaderWriterTest {
 				.getIdentifier(0).getName());
 		assertEquals("9607", operation.getOperation(0).getMethod()
 				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals(7, operation.getOperation(0).numParameters());
-		assertEquals("X-axis translation",
-				operation.getOperation(0).getParameter(0).getName());
-		assertEquals(414.1,
-				((OperationParameter) operation.getOperation(0).getParameter(0))
-						.getValue(),
-				0);
+		assertEquals(7, operation.getOperation(0).getMethod().numParameters());
+		assertEquals("X-axis translation", operation.getOperation(0).getMethod()
+				.getParameter(0).getName());
+		assertEquals(414.1, ((OperationParameter) operation.getOperation(0)
+				.getMethod().getParameter(0)).getValue(), 0);
 		assertEquals("EPSG",
 				operation.getOperation(0).getIdentifier(0).getName());
 		assertEquals("1437", operation.getOperation(0).getIdentifier(0)
@@ -4860,13 +4982,11 @@ public class CRSReaderWriterTest {
 				.getIdentifier(0).getName());
 		assertEquals("9606", operation.getOperation(1).getMethod()
 				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals(7, operation.getOperation(1).numParameters());
-		assertEquals("X-axis translation",
-				operation.getOperation(1).getParameter(0).getName());
-		assertEquals(-96.062,
-				((OperationParameter) operation.getOperation(1).getParameter(0))
-						.getValue(),
-				0);
+		assertEquals(7, operation.getOperation(1).getMethod().numParameters());
+		assertEquals("X-axis translation", operation.getOperation(1).getMethod()
+				.getParameter(0).getName());
+		assertEquals(-96.062, ((OperationParameter) operation.getOperation(1)
+				.getMethod().getParameter(0)).getValue(), 0);
 		assertEquals("EPSG",
 				operation.getOperation(1).getIdentifier(0).getName());
 		assertEquals("10098", operation.getOperation(1).getIdentifier(0)
@@ -4939,13 +5059,11 @@ public class CRSReaderWriterTest {
 				.getIdentifier(0).getName());
 		assertEquals("9607", operation.getOperation(0).getMethod()
 				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals(7, operation.getOperation(0).numParameters());
-		assertEquals("X-axis translation",
-				operation.getOperation(0).getParameter(0).getName());
-		assertEquals(414.1,
-				((OperationParameter) operation.getOperation(0).getParameter(0))
-						.getValue(),
-				0);
+		assertEquals(7, operation.getOperation(0).getMethod().numParameters());
+		assertEquals("X-axis translation", operation.getOperation(0).getMethod()
+				.getParameter(0).getName());
+		assertEquals(414.1, ((OperationParameter) operation.getOperation(0)
+				.getMethod().getParameter(0)).getValue(), 0);
 		assertEquals(OperationType.COORDINATE_OPERATION,
 				operation.getOperation(1).getOperationType());
 		assertEquals("ETRS89 to KKJ", operation.getOperation(1).getName());
@@ -4959,13 +5077,11 @@ public class CRSReaderWriterTest {
 		assertEquals("KKJ", geographic2.getName());
 		assertEquals("Position Vector transformation",
 				operation.getOperation(1).getMethod().getName());
-		assertEquals(7, operation.getOperation(1).numParameters());
-		assertEquals("X-axis translation",
-				operation.getOperation(1).getParameter(0).getName());
-		assertEquals(96.062,
-				((OperationParameter) operation.getOperation(1).getParameter(0))
-						.getValue(),
-				0);
+		assertEquals(7, operation.getOperation(1).getMethod().numParameters());
+		assertEquals("X-axis translation", operation.getOperation(1).getMethod()
+				.getParameter(0).getName());
+		assertEquals(96.062, ((OperationParameter) operation.getOperation(1)
+				.getMethod().getParameter(0)).getValue(), 0);
 
 		text = text.replace("\",1,", "\",1.0,").replace("6378388", "6378388.0")
 				.replace("297", "297.0").replace("6378137", "6378137.0");
@@ -5000,23 +5116,17 @@ public class CRSReaderWriterTest {
 		assertEquals("1031", transformation.getMethod().getIdentifier(0)
 				.getUniqueIdentifier());
 		assertEquals("X-axis translation",
-				transformation.getParameter(0).getName());
-		assertEquals(-146.414,
-				((OperationParameter) transformation.getParameter(0))
-						.getValue(),
-				0);
+				transformation.getMethod().getParameter(0).getName());
+		assertEquals(-146.414, ((OperationParameter) transformation.getMethod()
+				.getParameter(0)).getValue(), 0);
 		assertEquals("Y-axis translation",
-				transformation.getParameter(1).getName());
-		assertEquals(507.337,
-				((OperationParameter) transformation.getParameter(1))
-						.getValue(),
-				0);
+				transformation.getMethod().getParameter(1).getName());
+		assertEquals(507.337, ((OperationParameter) transformation.getMethod()
+				.getParameter(1)).getValue(), 0);
 		assertEquals("Z-axis translation",
-				transformation.getParameter(2).getName());
-		assertEquals(680.507,
-				((OperationParameter) transformation.getParameter(2))
-						.getValue(),
-				0);
+				transformation.getMethod().getParameter(2).getName());
+		assertEquals(680.507, ((OperationParameter) transformation.getMethod()
+				.getParameter(2)).getValue(), 0);
 		reader.close();
 		assertEquals(text, transformation.toString());
 
@@ -5122,14 +5232,16 @@ public class CRSReaderWriterTest {
 				.getIdentifier(0).getName());
 		assertEquals("9613", bound.getTransformation().getMethod()
 				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Latitude difference file",
-				bound.getTransformation().getParameter(0).getName());
-		assertEquals("alaska.las", ((OperationParameterFile) bound
-				.getTransformation().getParameter(0)).getFileName());
-		assertEquals("Longitude difference file",
-				bound.getTransformation().getParameter(1).getName());
-		assertEquals("alaska.los", ((OperationParameterFile) bound
-				.getTransformation().getParameter(1)).getFileName());
+		assertEquals("Latitude difference file", bound.getTransformation()
+				.getMethod().getParameter(0).getName());
+		assertEquals("alaska.las",
+				((OperationParameterFile) bound.getTransformation().getMethod()
+						.getParameter(0)).getFileName());
+		assertEquals("Longitude difference file", bound.getTransformation()
+				.getMethod().getParameter(1).getName());
+		assertEquals("alaska.los",
+				((OperationParameterFile) bound.getTransformation().getMethod()
+						.getParameter(1)).getFileName());
 
 		text = text.replace("6378137", "6378137.0");
 		assertEquals(text, bound.toString());
@@ -5159,10 +5271,11 @@ public class CRSReaderWriterTest {
 				.getIdentifier(0).getName());
 		assertEquals("9615", bound.getTransformation().getMethod()
 				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Latitude and longitude difference file",
-				bound.getTransformation().getParameter(0).getName());
-		assertEquals("NTv2_0.gsb", ((OperationParameterFile) bound
-				.getTransformation().getParameter(0)).getFileName());
+		assertEquals("Latitude and longitude difference file", bound
+				.getTransformation().getMethod().getParameter(0).getName());
+		assertEquals("NTv2_0.gsb",
+				((OperationParameterFile) bound.getTransformation().getMethod()
+						.getParameter(0)).getFileName());
 
 		text = text.replace("6378137", "6378137.0").replace("\",1,", "\",1.0,");
 		assertEquals(text, bound.toString());
@@ -5199,76 +5312,63 @@ public class CRSReaderWriterTest {
 				.getIdentifier(0).getName());
 		assertEquals("1032", bound.getTransformation().getMethod()
 				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("X-axis translation",
-				bound.getTransformation().getParameter(0).getName());
-		assertEquals(565.2369,
-				((OperationParameter) bound.getTransformation().getParameter(0))
-						.getValue(),
+		assertEquals("X-axis translation", bound.getTransformation().getMethod()
+				.getParameter(0).getName());
+		assertEquals(565.2369, ((OperationParameter) bound.getTransformation()
+				.getMethod().getParameter(0)).getValue(), 0);
+		assertEquals("EPSG", bound.getTransformation().getMethod()
+				.getParameter(0).getIdentifier(0).getName());
+		assertEquals("8605", bound.getTransformation().getMethod()
+				.getParameter(0).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Y-axis translation", bound.getTransformation().getMethod()
+				.getParameter(1).getName());
+		assertEquals(50.0087, ((OperationParameter) bound.getTransformation()
+				.getMethod().getParameter(1)).getValue(), 0);
+		assertEquals("EPSG", bound.getTransformation().getMethod()
+				.getParameter(1).getIdentifier(0).getName());
+		assertEquals("8606", bound.getTransformation().getMethod()
+				.getParameter(1).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Z-axis translation", bound.getTransformation().getMethod()
+				.getParameter(2).getName());
+		assertEquals(465.658, ((OperationParameter) bound.getTransformation()
+				.getMethod().getParameter(2)).getValue(), 0);
+		assertEquals("EPSG", bound.getTransformation().getMethod()
+				.getParameter(2).getIdentifier(0).getName());
+		assertEquals("8607", bound.getTransformation().getMethod()
+				.getParameter(2).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("X-axis rotation", bound.getTransformation().getMethod()
+				.getParameter(3).getName());
+		assertEquals(0.407, ((OperationParameter) bound.getTransformation()
+				.getMethod().getParameter(3)).getValue(), 0);
+		assertEquals("EPSG", bound.getTransformation().getMethod()
+				.getParameter(3).getIdentifier(0).getName());
+		assertEquals("8608", bound.getTransformation().getMethod()
+				.getParameter(3).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Y-axis rotation", bound.getTransformation().getMethod()
+				.getParameter(4).getName());
+		assertEquals(-0.351, ((OperationParameter) bound.getTransformation()
+				.getMethod().getParameter(4)).getValue(), 0);
+		assertEquals("EPSG", bound.getTransformation().getMethod()
+				.getParameter(4).getIdentifier(0).getName());
+		assertEquals("8609", bound.getTransformation().getMethod()
+				.getParameter(4).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Z-axis rotation", bound.getTransformation().getMethod()
+				.getParameter(5).getName());
+		assertEquals(1.870, ((OperationParameter) bound.getTransformation()
+				.getMethod().getParameter(5)).getValue(), 0);
+		assertEquals("EPSG", bound.getTransformation().getMethod()
+				.getParameter(5).getIdentifier(0).getName());
+		assertEquals("8610", bound.getTransformation().getMethod()
+				.getParameter(5).getIdentifier(0).getUniqueIdentifier());
+		assertEquals("Scale difference", bound.getTransformation().getMethod()
+				.getParameter(6).getName());
+		assertEquals(1.000004812, ((OperationParameter) bound
+				.getTransformation().getMethod().getParameter(6)).getValue(),
 				0);
-		assertEquals("EPSG", bound.getTransformation().getParameter(0)
-				.getIdentifier(0).getName());
-		assertEquals("8605", bound.getTransformation().getParameter(0)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Y-axis translation",
-				bound.getTransformation().getParameter(1).getName());
-		assertEquals(50.0087,
-				((OperationParameter) bound.getTransformation().getParameter(1))
-						.getValue(),
-				0);
-		assertEquals("EPSG", bound.getTransformation().getParameter(1)
-				.getIdentifier(0).getName());
-		assertEquals("8606", bound.getTransformation().getParameter(1)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Z-axis translation",
-				bound.getTransformation().getParameter(2).getName());
-		assertEquals(465.658,
-				((OperationParameter) bound.getTransformation().getParameter(2))
-						.getValue(),
-				0);
-		assertEquals("EPSG", bound.getTransformation().getParameter(2)
-				.getIdentifier(0).getName());
-		assertEquals("8607", bound.getTransformation().getParameter(2)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("X-axis rotation",
-				bound.getTransformation().getParameter(3).getName());
-		assertEquals(0.407,
-				((OperationParameter) bound.getTransformation().getParameter(3))
-						.getValue(),
-				0);
-		assertEquals("EPSG", bound.getTransformation().getParameter(3)
-				.getIdentifier(0).getName());
-		assertEquals("8608", bound.getTransformation().getParameter(3)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Y-axis rotation",
-				bound.getTransformation().getParameter(4).getName());
-		assertEquals(-0.351,
-				((OperationParameter) bound.getTransformation().getParameter(4))
-						.getValue(),
-				0);
-		assertEquals("EPSG", bound.getTransformation().getParameter(4)
-				.getIdentifier(0).getName());
-		assertEquals("8609", bound.getTransformation().getParameter(4)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Z-axis rotation",
-				bound.getTransformation().getParameter(5).getName());
-		assertEquals(1.870,
-				((OperationParameter) bound.getTransformation().getParameter(5))
-						.getValue(),
-				0);
-		assertEquals("EPSG", bound.getTransformation().getParameter(5)
-				.getIdentifier(0).getName());
-		assertEquals("8610", bound.getTransformation().getParameter(5)
-				.getIdentifier(0).getUniqueIdentifier());
-		assertEquals("Scale difference",
-				bound.getTransformation().getParameter(6).getName());
-		assertEquals(1.000004812,
-				((OperationParameter) bound.getTransformation().getParameter(6))
-						.getValue(),
-				0);
-		assertEquals("EPSG", bound.getTransformation().getParameter(6)
-				.getIdentifier(0).getName());
-		assertEquals("8611", bound.getTransformation().getParameter(6)
-				.getIdentifier(0).getUniqueIdentifier());
+		assertEquals("EPSG", bound.getTransformation().getMethod()
+				.getParameter(6).getIdentifier(0).getName());
+		assertEquals("8611", bound.getTransformation().getMethod()
+				.getParameter(6).getIdentifier(0).getUniqueIdentifier());
 
 		text = text.replace("6378137", "6378137.0")
 				.replaceAll("\",1,", "\",1.0,").replace("1.870", "1.87");
@@ -5299,20 +5399,25 @@ public class CRSReaderWriterTest {
 		assertEquals("Transverse Mercator",
 				mapProjection.getMethod().getName());
 		assertEquals("Latitude of origin",
-				mapProjection.getParameter(0).getName());
-		assertEquals(0, mapProjection.getOperationParameter(0).getValue(), 0);
+				mapProjection.getMethod().getParameter(0).getName());
+		assertEquals(0, mapProjection.getMethod().getParameter(0).getValue(),
+				0);
 		assertEquals("Central meridian",
-				mapProjection.getParameter(1).getName());
-		assertEquals(-123, mapProjection.getOperationParameter(1).getValue(),
+				mapProjection.getMethod().getParameter(1).getName());
+		assertEquals(-123, mapProjection.getMethod().getParameter(1).getValue(),
 				0);
-		assertEquals("Scale factor", mapProjection.getParameter(2).getName());
-		assertEquals(0.9996, mapProjection.getOperationParameter(2).getValue(),
+		assertEquals("Scale factor",
+				mapProjection.getMethod().getParameter(2).getName());
+		assertEquals(0.9996,
+				mapProjection.getMethod().getParameter(2).getValue(), 0);
+		assertEquals("False easting",
+				mapProjection.getMethod().getParameter(3).getName());
+		assertEquals(500000,
+				mapProjection.getMethod().getParameter(3).getValue(), 0);
+		assertEquals("False northing",
+				mapProjection.getMethod().getParameter(4).getName());
+		assertEquals(0, mapProjection.getMethod().getParameter(4).getValue(),
 				0);
-		assertEquals("False easting", mapProjection.getParameter(3).getName());
-		assertEquals(500000, mapProjection.getOperationParameter(3).getValue(),
-				0);
-		assertEquals("False northing", mapProjection.getParameter(4).getName());
-		assertEquals(0, mapProjection.getOperationParameter(4).getValue(), 0);
 		reader.close();
 
 		String expectedText = "CONVERSION[\"Transverse Mercator\",METHOD[\"Transverse Mercator\"],"
@@ -5334,21 +5439,23 @@ public class CRSReaderWriterTest {
 		assertEquals("UTM zone 10N", mapProjection.getName());
 		assertEquals("UTM zone 10N", mapProjection.getMethod().getName());
 		assertEquals("Latitude of natural origin",
-				mapProjection.getParameter(0).getName());
-		assertEquals(0, mapProjection.getOperationParameter(0).getValue(), 0);
+				mapProjection.getMethod().getParameter(0).getName());
+		assertEquals(0, mapProjection.getMethod().getParameter(0).getValue(),
+				0);
 		assertEquals("Longitude of natural origin",
-				mapProjection.getParameter(1).getName());
-		assertEquals(-123, mapProjection.getOperationParameter(1).getValue(),
+				mapProjection.getMethod().getParameter(1).getName());
+		assertEquals(-123, mapProjection.getMethod().getParameter(1).getValue(),
 				0);
 		assertEquals("Scale factor at natural origin",
-				mapProjection.getParameter(2).getName());
-		assertEquals(0.9996, mapProjection.getOperationParameter(2).getValue(),
+				mapProjection.getMethod().getParameter(2).getName());
+		assertEquals(0.9996,
+				mapProjection.getMethod().getParameter(2).getValue(), 0);
+		assertEquals("FE", mapProjection.getMethod().getParameter(3).getName());
+		assertEquals(500000,
+				mapProjection.getMethod().getParameter(3).getValue(), 0);
+		assertEquals("FN", mapProjection.getMethod().getParameter(4).getName());
+		assertEquals(0, mapProjection.getMethod().getParameter(4).getValue(),
 				0);
-		assertEquals("FE", mapProjection.getParameter(3).getName());
-		assertEquals(500000, mapProjection.getOperationParameter(3).getValue(),
-				0);
-		assertEquals("FN", mapProjection.getParameter(4).getName());
-		assertEquals(0, mapProjection.getOperationParameter(4).getValue(), 0);
 		reader.close();
 
 		expectedText = "CONVERSION[\"UTM zone 10N\",METHOD[\"UTM zone 10N\"],"
@@ -5571,26 +5678,26 @@ public class CRSReaderWriterTest {
 				projectedCrs.getMapProjection().getName());
 		assertEquals("Transverse Mercator",
 				projectedCrs.getMapProjection().getMethod().getName());
-		assertEquals("Latitude of origin",
-				projectedCrs.getMapProjection().getParameter(0).getName());
-		assertEquals(0.0, projectedCrs.getMapProjection()
-				.getOperationParameter(0).getValue(), 0);
-		assertEquals("Longitude of origin",
-				projectedCrs.getMapProjection().getParameter(1).getName());
-		assertEquals(-123, projectedCrs.getMapProjection()
-				.getOperationParameter(1).getValue(), 0);
-		assertEquals("Scale factor",
-				projectedCrs.getMapProjection().getParameter(2).getName());
-		assertEquals(0.9996, projectedCrs.getMapProjection()
-				.getOperationParameter(2).getValue(), 0);
-		assertEquals("False easting",
-				projectedCrs.getMapProjection().getParameter(3).getName());
-		assertEquals(500000, projectedCrs.getMapProjection()
-				.getOperationParameter(3).getValue(), 0);
-		assertEquals("False northing",
-				projectedCrs.getMapProjection().getParameter(4).getName());
-		assertEquals(0, projectedCrs.getMapProjection().getOperationParameter(4)
-				.getValue(), 0);
+		assertEquals("Latitude of origin", projectedCrs.getMapProjection()
+				.getMethod().getParameter(0).getName());
+		assertEquals(0.0, projectedCrs.getMapProjection().getMethod()
+				.getParameter(0).getValue(), 0);
+		assertEquals("Longitude of origin", projectedCrs.getMapProjection()
+				.getMethod().getParameter(1).getName());
+		assertEquals(-123, projectedCrs.getMapProjection().getMethod()
+				.getParameter(1).getValue(), 0);
+		assertEquals("Scale factor", projectedCrs.getMapProjection().getMethod()
+				.getParameter(2).getName());
+		assertEquals(0.9996, projectedCrs.getMapProjection().getMethod()
+				.getParameter(2).getValue(), 0);
+		assertEquals("False easting", projectedCrs.getMapProjection()
+				.getMethod().getParameter(3).getName());
+		assertEquals(500000, projectedCrs.getMapProjection().getMethod()
+				.getParameter(3).getValue(), 0);
+		assertEquals("False northing", projectedCrs.getMapProjection()
+				.getMethod().getParameter(4).getName());
+		assertEquals(0, projectedCrs.getMapProjection().getMethod()
+				.getParameter(4).getValue(), 0);
 		assertEquals(UnitType.UNIT,
 				projectedCrs.getCoordinateSystem().getUnit().getType());
 		assertEquals("metre",
@@ -5652,26 +5759,26 @@ public class CRSReaderWriterTest {
 		assertEquals("UTM zone 10N", projectedCrs.getMapProjection().getName());
 		assertEquals("UTM zone 10N",
 				projectedCrs.getMapProjection().getMethod().getName());
-		assertEquals("Latitude of origin",
-				projectedCrs.getMapProjection().getParameter(0).getName());
-		assertEquals(0.0, projectedCrs.getMapProjection()
-				.getOperationParameter(0).getValue(), 0);
-		assertEquals("Longitude of origin",
-				projectedCrs.getMapProjection().getParameter(1).getName());
-		assertEquals(-123, projectedCrs.getMapProjection()
-				.getOperationParameter(1).getValue(), 0);
-		assertEquals("Scale factor at natural origin",
-				projectedCrs.getMapProjection().getParameter(2).getName());
-		assertEquals(0.9996, projectedCrs.getMapProjection()
-				.getOperationParameter(2).getValue(), 0);
-		assertEquals("FE",
-				projectedCrs.getMapProjection().getParameter(3).getName());
-		assertEquals(500000, projectedCrs.getMapProjection()
-				.getOperationParameter(3).getValue(), 0);
-		assertEquals("FN",
-				projectedCrs.getMapProjection().getParameter(4).getName());
-		assertEquals(0, projectedCrs.getMapProjection().getOperationParameter(4)
-				.getValue(), 0);
+		assertEquals("Latitude of origin", projectedCrs.getMapProjection()
+				.getMethod().getParameter(0).getName());
+		assertEquals(0.0, projectedCrs.getMapProjection().getMethod()
+				.getParameter(0).getValue(), 0);
+		assertEquals("Longitude of origin", projectedCrs.getMapProjection()
+				.getMethod().getParameter(1).getName());
+		assertEquals(-123, projectedCrs.getMapProjection().getMethod()
+				.getParameter(1).getValue(), 0);
+		assertEquals("Scale factor at natural origin", projectedCrs
+				.getMapProjection().getMethod().getParameter(2).getName());
+		assertEquals(0.9996, projectedCrs.getMapProjection().getMethod()
+				.getParameter(2).getValue(), 0);
+		assertEquals("FE", projectedCrs.getMapProjection().getMethod()
+				.getParameter(3).getName());
+		assertEquals(500000, projectedCrs.getMapProjection().getMethod()
+				.getParameter(3).getValue(), 0);
+		assertEquals("FN", projectedCrs.getMapProjection().getMethod()
+				.getParameter(4).getName());
+		assertEquals(0, projectedCrs.getMapProjection().getMethod()
+				.getParameter(4).getValue(), 0);
 		assertEquals(UnitType.UNIT,
 				projectedCrs.getCoordinateSystem().getUnit().getType());
 		assertEquals("metre",

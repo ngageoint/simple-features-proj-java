@@ -1,6 +1,10 @@
 package mil.nga.crs.projected;
 
+import java.util.List;
+
 import mil.nga.crs.operation.OperationMethod;
+import mil.nga.crs.operation.Parameter;
+import mil.nga.proj.ProjectionException;
 
 /**
  * Map Projection Method
@@ -76,6 +80,65 @@ public class MapProjectionMethod extends OperationMethod {
 	 */
 	public void updateMethod() {
 		setMethod(MapProjectionMethods.getMethod(getName()));
+	}
+
+	/**
+	 * Get the parameters
+	 * 
+	 * @return parameters
+	 */
+	public List<MapProjectionParameter> getMapProjectionParameters() {
+		@SuppressWarnings("unchecked")
+		List<MapProjectionParameter> mapProjectionParameters = (List<MapProjectionParameter>) (List<?>) getParameters();
+		return mapProjectionParameters;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public MapProjectionParameter getParameter(int index) {
+		return (MapProjectionParameter) super.getParameter(index);
+	}
+
+	/**
+	 * Set the parameters
+	 * 
+	 * @param parameters
+	 *            parameters
+	 */
+	public void setMapProjectionParameters(
+			List<MapProjectionParameter> parameters) {
+		@SuppressWarnings("unchecked")
+		List<Parameter> params = (List<Parameter>) (List<?>) parameters;
+		setParameters(params);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addParameter(Parameter parameter) {
+		if (!(parameter instanceof MapProjectionParameter)) {
+			throw new ProjectionException(
+					"Parameter is not a Map Projection Parameter. name: "
+							+ parameter.getName() + ", type: "
+							+ parameter.getClass().getSimpleName());
+		}
+		super.addParameter(parameter);
+	}
+
+	/**
+	 * Add the parameters
+	 * 
+	 * @param parameters
+	 *            parameters
+	 */
+	public void addMapProjectionParameters(
+			List<MapProjectionParameter> parameters) {
+		@SuppressWarnings("unchecked")
+		List<Parameter> params = (List<Parameter>) (List<?>) parameters;
+		addParameters(params);
 	}
 
 }

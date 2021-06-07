@@ -11,7 +11,6 @@ import mil.nga.crs.common.Identifier;
 import mil.nga.crs.operation.CommonOperation;
 import mil.nga.crs.operation.OperationMethod;
 import mil.nga.crs.operation.OperationType;
-import mil.nga.crs.operation.Parameter;
 import mil.nga.crs.wkt.CRSWriter;
 
 /**
@@ -36,11 +35,6 @@ public class DerivingConversion implements CommonOperation {
 	 * Method
 	 */
 	private OperationMethod method = null;
-
-	/**
-	 * Parameters
-	 */
-	private List<Parameter> parameters = null;
 
 	/**
 	 * Identifiers
@@ -135,68 +129,6 @@ public class DerivingConversion implements CommonOperation {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Parameter> getParameters() {
-		return parameters;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasParameters() {
-		return parameters != null && !parameters.isEmpty();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int numParameters() {
-		return parameters != null ? parameters.size() : 0;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Parameter getParameter(int index) {
-		return parameters.get(index);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setParameters(List<Parameter> parameters) {
-		this.parameters = parameters;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void addParameter(Parameter parameter) {
-		if (this.parameters == null) {
-			this.parameters = new ArrayList<>();
-		}
-		this.parameters.add(parameter);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void addParameters(List<Parameter> parameters) {
-		if (this.parameters == null) {
-			this.parameters = new ArrayList<>();
-		}
-		this.parameters.addAll(parameters);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public List<Identifier> getIdentifiers() {
 		return identifiers;
 	}
@@ -266,8 +198,6 @@ public class DerivingConversion implements CommonOperation {
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
 		result = prime * result + ((method == null) ? 0 : method.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((parameters == null) ? 0 : parameters.hashCode());
 		return result;
 	}
 
@@ -297,11 +227,6 @@ public class DerivingConversion implements CommonOperation {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
-			return false;
-		if (parameters == null) {
-			if (other.parameters != null)
-				return false;
-		} else if (!parameters.equals(other.parameters))
 			return false;
 		return true;
 	}

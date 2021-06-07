@@ -29,6 +29,11 @@ public class OperationMethod implements Identifiable {
 	private String name = null;
 
 	/**
+	 * Operation parameters
+	 */
+	private List<Parameter> parameters = null;
+
+	/**
 	 * Identifiers
 	 */
 	private List<Identifier> identifiers = null;
@@ -67,6 +72,80 @@ public class OperationMethod implements Identifiable {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * Get the parameters
+	 * 
+	 * @return parameters
+	 */
+	public List<Parameter> getParameters() {
+		return parameters;
+	}
+
+	/**
+	 * Has parameters
+	 * 
+	 * @return true if has parameters
+	 */
+	public boolean hasParameters() {
+		return parameters != null && !parameters.isEmpty();
+	}
+
+	/**
+	 * Number of parameters
+	 * 
+	 * @return parameters count
+	 */
+	public int numParameters() {
+		return parameters != null ? parameters.size() : 0;
+	}
+
+	/**
+	 * Get the parameter at the index
+	 * 
+	 * @param index
+	 *            parameter index
+	 * @return parameter
+	 */
+	public Parameter getParameter(int index) {
+		return parameters.get(index);
+	}
+
+	/**
+	 * Set the parameters
+	 * 
+	 * @param parameters
+	 *            parameters
+	 */
+	public void setParameters(List<Parameter> parameters) {
+		this.parameters = null;
+		addParameters(parameters);
+	}
+
+	/**
+	 * Add the parameter
+	 * 
+	 * @param parameter
+	 *            parameter
+	 */
+	public void addParameter(Parameter parameter) {
+		if (this.parameters == null) {
+			this.parameters = new ArrayList<>();
+		}
+		this.parameters.add(parameter);
+	}
+
+	/**
+	 * Add the parameters
+	 * 
+	 * @param parameters
+	 *            parameters
+	 */
+	public void addParameters(List<Parameter> parameters) {
+		for (Parameter parameter : parameters) {
+			addParameter(parameter);
+		}
 	}
 
 	/**
@@ -141,6 +220,8 @@ public class OperationMethod implements Identifiable {
 		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((parameters == null) ? 0 : parameters.hashCode());
 		return result;
 	}
 
@@ -165,6 +246,11 @@ public class OperationMethod implements Identifiable {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
+			return false;
+		if (parameters == null) {
+			if (other.parameters != null)
+				return false;
+		} else if (!parameters.equals(other.parameters))
 			return false;
 		return true;
 	}
