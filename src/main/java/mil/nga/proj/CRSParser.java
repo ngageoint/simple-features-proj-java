@@ -15,6 +15,8 @@ import org.locationtech.proj4j.util.ProjectionMath;
 
 import mil.nga.crs.CRS;
 import mil.nga.crs.CRSException;
+import mil.nga.crs.common.Axis;
+import mil.nga.crs.common.CoordinateSystem;
 import mil.nga.crs.common.Unit;
 import mil.nga.crs.geo.GeoCoordinateReferenceSystem;
 import mil.nga.crs.geo.GeoDatum;
@@ -115,8 +117,7 @@ public class CRSParser {
 		GeoDatum geoDatum = geo.getGeoDatum();
 		Datum datum = convert(geoDatum);
 
-		Projection projection = createProjection(
-				geo.getCoordinateSystem().getAxisUnit());
+		Projection projection = createProjection(geo.getCoordinateSystem());
 		updateProjection(projection, datum.getEllipsoid(), geoDatum);
 		projection.initialize();
 
@@ -153,7 +154,7 @@ public class CRSParser {
 		Datum datum = datumParameters.getDatum();
 
 		Projection projection = createProjection(
-				projected.getCoordinateSystem().getAxisUnit(), mapProjection);
+				projected.getCoordinateSystem(), mapProjection);
 		updateProjection(projection, datum.getEllipsoid(), geoDatum);
 		updateProjection(projection, method);
 		projection.initialize();
@@ -254,11 +255,14 @@ public class CRSParser {
 	/**
 	 * Create a proj4j projection for the unit
 	 * 
-	 * @param unit
-	 *            unit
+	 * @param coordinateSystem
+	 *            coordinate system
 	 * @return projection
 	 */
-	public static Projection createProjection(Unit unit) {
+	public static Projection createProjection(
+			CoordinateSystem coordinateSystem) {
+
+		Unit unit = coordinateSystem.getAxisUnit();
 
 		org.locationtech.proj4j.units.Unit projUnit = Units.METRES;
 		if (unit != null) {
@@ -272,19 +276,19 @@ public class CRSParser {
 			projectionName = "merc";
 		}
 
-		return createProjection(projectionName, unit);
+		return createProjection(projectionName, coordinateSystem);
 	}
 
 	/**
 	 * Create a proj4j projection for the method and unit
 	 * 
-	 * @param unit
-	 *            unit
+	 * @param coordinateSystem
+	 *            coordinate system
 	 * @param mapProjection
 	 *            map projection
 	 * @return projection
 	 */
-	public static Projection createProjection(Unit unit,
+	public static Projection createProjection(CoordinateSystem coordinateSystem,
 			MapProjection mapProjection) {
 
 		Projection projection = null;
@@ -373,12 +377,12 @@ public class CRSParser {
 			}
 
 			if (projectionName != null) {
-				projection = createProjection(projectionName, unit);
+				projection = createProjection(projectionName, coordinateSystem);
 			}
 		}
 
 		if (projection == null) {
-			projection = createProjection(null);
+			projection = createProjection(coordinateSystem);
 		}
 
 		return projection;
@@ -389,21 +393,29 @@ public class CRSParser {
 	 * 
 	 * @param projectionName
 	 *            projection name
-	 * @param unit
-	 *            unit
+	 * @param coordinateSystem
+	 *            coordinate system
 	 * @return projection
 	 */
 	public static Projection createProjection(String projectionName,
-			Unit unit) {
+			CoordinateSystem coordinateSystem) {
 
 		Projection projection = getCRSFactory().getRegistry()
 				.getProjection(projectionName);
+
+		Unit unit = coordinateSystem.getAxisUnit();
 
 		org.locationtech.proj4j.units.Unit projUnit = Units.METRES;
 		if (unit != null) {
 			projUnit = Units.findUnits(unit.getName());
 		}
 		projection.setUnits(projUnit);
+
+		String axisOrder = convert(coordinateSystem.getAxes());
+		// Only known proj4 axis specification is wsu
+		if (axisOrder.equals("wsu")) {
+			projection.setAxisOrder(axisOrder);
+		}
 
 		return projection;
 	}
@@ -503,6 +515,74 @@ public class CRSParser {
 
 		}
 
+	}
+
+	/**
+	 * Convert the list of axes to a proj4j axis order
+	 * 
+	 * @param axes
+	 *            list of axes
+	 * @return axis order
+	 */
+	private static String convert(List<Axis> axes) {
+
+		String axisValue = null;
+
+		int axesCount = axes.size();
+		if (axesCount == 2 || axesCount == 3) {
+
+			StringBuilder axisString = new StringBuilder();
+
+			for (Axis axis : axes) {
+
+				switch (axis.getDirection()) {
+
+				case EAST:
+					axisString.append("e");
+					break;
+
+				case WEST:
+					axisString.append("w");
+					break;
+
+				case NORTH:
+					axisString.append("n");
+					break;
+
+				case SOUTH:
+					axisString.append("s");
+					break;
+
+				case UP:
+					axisString.append("u");
+					break;
+
+				case DOWN:
+					axisString.append("d");
+					break;
+
+				default:
+					axisString = null;
+
+				}
+
+				if (axisString == null) {
+					break;
+				}
+			}
+
+			if (axisString != null) {
+
+				if (axesCount == 2) {
+					axisString.append("u");
+				}
+
+				axisValue = axisString.toString();
+			}
+
+		}
+
+		return axisValue;
 	}
 
 	/**
