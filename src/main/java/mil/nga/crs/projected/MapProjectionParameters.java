@@ -45,8 +45,8 @@ public enum MapProjectionParameters {
 	 * application of false coordinates has grid coordinates of (0,0).
 	 */
 	LONGITUDE_OF_NATURAL_ORIGIN(8802, "longitude of natural origin",
-			UnitType.ANGLEUNIT, "longitude of origin", "central meridian",
-			"longitude of center"),
+			UnitType.ANGLEUNIT, "longitude of origin", "longitude of center",
+			"central meridian"),
 
 	/**
 	 * 
@@ -145,7 +145,8 @@ public enum MapProjectionParameters {
 	 * which grid coordinate values false easting and false northing are defined
 	 */
 	LONGITUDE_OF_FALSE_ORIGIN(8822, "longitude of false origin",
-			UnitType.ANGLEUNIT, "longitude of origin"),
+			UnitType.ANGLEUNIT, "longitude of origin", "longitude of center",
+			"central meridian"),
 
 	/**
 	 * geodetic latitude of one of the parallels of intersection of the cone
@@ -155,7 +156,7 @@ public enum MapProjectionParameters {
 	 * Scale is true along this parallel.
 	 */
 	LATITUDE_OF_1ST_STANDARD_PARALLEL(8823, "latitude of 1st standard parallel",
-			UnitType.ANGLEUNIT),
+			UnitType.ANGLEUNIT, "standard parallel 1"),
 
 	/**
 	 * 
@@ -166,7 +167,7 @@ public enum MapProjectionParameters {
 	 * Scale is true along this parallel.
 	 */
 	LATITUDE_OF_2ND_STANDARD_PARALLEL(8824, "latitude of 2nd standard parallel",
-			UnitType.ANGLEUNIT),
+			UnitType.ANGLEUNIT, "standard parallel 2"),
 
 	/**
 	 * easting value assigned to the false origin

@@ -69,15 +69,17 @@ public enum MapProjectionMethods {
 	 * Lambert Conic Conformal (1SP)
 	 */
 	LAMBERT_CONIC_CONFORMAL_1SP("Lambert Conic Conformal (1SP)",
-			new String[] { "Lambert Conic Conformal", "LCC" }, 9801, 8801, 8802,
-			8805, 8806, 8807),
+			new String[] { "Lambert Conic Conformal", "LCC",
+					"Lambert Conformal Conic 1SP" },
+			9801, 8801, 8802, 8805, 8806, 8807),
 
 	/**
 	 * Lambert Conic Conformal (2SP)
 	 */
 	LAMBERT_CONIC_CONFORMAL_2SP("Lambert Conic Conformal (2SP)",
-			new String[] { "Lambert Conic Conformal", "LCC" }, 9802, 8821, 8822,
-			8823, 8824, 8826, 8827),
+			new String[] { "Lambert Conic Conformal", "LCC",
+					"Lambert Conformal Conic 2SP" },
+			9802, 8821, 8822, 8823, 8824, 8826, 8827),
 
 	/**
 	 * Lambert Cylindrical Equal Area (Spherical)
@@ -260,7 +262,9 @@ public enum MapProjectionMethods {
 	 */
 	private void addAlias(String alias) {
 		aliases.add(alias);
-		aliases.add(alias.replaceAll(" ", "_"));
+		String underscore = alias.replaceAll(" ", "_");
+		aliases.add(underscore);
+		aliases.add(underscore.replace("(", "").replace(")", ""));
 	}
 
 	/**
