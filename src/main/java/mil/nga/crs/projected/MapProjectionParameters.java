@@ -17,6 +17,13 @@ import mil.nga.crs.common.UnitType;
 public enum MapProjectionParameters {
 
 	/**
+	 * The rotation applied to spherical coordinates for the oblique projection,
+	 * measured on the conformal sphere in the plane of the meridian of origin.
+	 */
+	CO_LATITUDE_OF_CONE_AXIS(1036, "co-latitude of cone axis",
+			UnitType.ANGLEUNIT),
+
+	/**
 	 * geodetic latitude of the point from which the values of both the
 	 * geographical coordinates on the ellipsoid and the grid coordinates on the
 	 * projection are deemed to increment or decrement for computational
@@ -112,6 +119,21 @@ public enum MapProjectionParameters {
 			UnitType.LENGTHUNIT, "false northing"),
 
 	/**
+	 * Latitude of the parallel on which the conic or cylindrical projection is
+	 * based. This latitude is not geographic, but is defined on the conformal
+	 * sphere AFTER its rotation to obtain the oblique aspect of the projection.
+	 */
+	LATITUDE_OF_PSEUDO_STANDARD_PARALLEL(8818,
+			"latitude of pseudo standard parallel", UnitType.ANGLEUNIT),
+
+	/**
+	 * The factor by which the map grid is reduced or enlarged during the
+	 * projection process, defined by its value at the pseudo-standard parallel.
+	 */
+	SCALE_FACTOR_ON_PSEUDO_STANDARD_PARALLEL(8819,
+			"scale factor on pseudo standard parallel", UnitType.SCALEUNIT),
+
+	/**
 	 * geodetic latitude of the point which is not the natural origin and at
 	 * which grid coordinate values false easting and false northing are defined
 	 */
@@ -156,7 +178,14 @@ public enum MapProjectionParameters {
 	 * northing value assigned to the false origin
 	 */
 	NORTHING_AT_FALSE_ORIGIN(8827, "northing at false origin",
-			UnitType.LENGTHUNIT, "false northing");
+			UnitType.LENGTHUNIT, "false northing"),
+
+	/**
+	 * For polar aspect azimuthal projections, the meridian along which the
+	 * northing axis increments and also across which parallels of latitude
+	 * increment towards the north pole.
+	 */
+	LONGITUDE_OF_ORIGIN(8833, "longitude of origin", UnitType.ANGLEUNIT);
 
 	/**
 	 * Alias to parameter mapping

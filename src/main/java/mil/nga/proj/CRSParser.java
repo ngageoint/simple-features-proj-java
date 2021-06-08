@@ -153,7 +153,7 @@ public class CRSParser {
 		Datum datum = datumParameters.getDatum();
 
 		Projection projection = createProjection(
-				projected.getCoordinateSystem().getAxisUnit(), method);
+				projected.getCoordinateSystem().getAxisUnit(), mapProjection);
 		updateProjection(projection, datum.getEllipsoid(), geoDatum);
 		updateProjection(projection, method);
 		projection.initialize();
@@ -280,14 +280,16 @@ public class CRSParser {
 	 * 
 	 * @param unit
 	 *            unit
-	 * @param method
-	 *            map projection method
+	 * @param mapProjection
+	 *            map projection
 	 * @return projection
 	 */
 	public static Projection createProjection(Unit unit,
-			MapProjectionMethod method) {
+			MapProjection mapProjection) {
 
 		Projection projection = null;
+
+		MapProjectionMethod method = mapProjection.getMethod();
 
 		if (method.hasMethod()) {
 
@@ -295,15 +297,76 @@ public class CRSParser {
 
 			switch (method.getMethod()) {
 
+			case ALBERS_EQUAL_AREA:
+				projectionName = "aea";
+				break;
+
+			case AMERICAN_POLYCONIC:
+				projectionName = "poly";
+				break;
+
+			case CASSINI_SOLDNER:
+				projectionName = "cass";
+				break;
+
+			case EQUIDISTANT_CYLINDRICAL:
+				projectionName = "eqc";
+				break;
+
+			case HOTLINE_OBLIQUE_MERCATOR_A:
+			case HOTLINE_OBLIQUE_MERCATOR_B:
+				if (mapProjection.getName().toLowerCase()
+						.contains("swiss oblique mercator")) {
+					projectionName = "somerc";
+				} else {
+					projectionName = "omerc";
+				}
+				break;
+
+			case KROVAK:
+				projectionName = "krovak";
+				break;
+
 			case LAMBERT_AZIMUTHAL_EQUAL_AREA:
 				projectionName = "laea";
+				break;
+
+			case LAMBERT_CONIC_CONFORMAL_1SP:
+			case LAMBERT_CONIC_CONFORMAL_2SP:
+				projectionName = "lcc";
+				break;
+
+			case LAMBERT_CYLINDRICAL_EQUAL_AREA:
+				projectionName = "cea";
+				break;
+
+			case MERCATOR_A:
+			case MERCATOR_B:
+				projectionName = "merc";
+				break;
+
+			case NEW_ZEALAND_MAP_GRID:
+				projectionName = "nzmg";
+				break;
+
+			case OBLIQUE_STEREOGRAPHIC:
+				projectionName = "sterea";
+				break;
+
+			case POLAR_STEREOGRAPHIC_A:
+			case POLAR_STEREOGRAPHIC_B:
+			case POLAR_STEREOGRAPHIC_C:
+				projectionName = "stere";
 				break;
 
 			case POPULAR_VISUALISATION_PSEUDO_MERCATOR:
 				projectionName = "merc";
 				break;
 
-			// TODO
+			case TRANSVERSE_MERCATOR:
+			case TRANSVERSE_MERCATOR_SOUTH_ORIENTATED:
+				projectionName = "tmerc";
+				break;
 
 			default:
 
@@ -341,11 +404,6 @@ public class CRSParser {
 			projUnit = Units.findUnits(unit.getName());
 		}
 		projection.setUnits(projUnit);
-
-		if (unit != null) {
-			// TODO
-			// proj.setFromMetres(unit.getConversionFactor());
-		}
 
 		return projection;
 	}
@@ -403,23 +461,40 @@ public class CRSParser {
 				break;
 
 			case LATITUDE_OF_1ST_STANDARD_PARALLEL:
-				projection.setProjectionLatitude1(value);
+				if (parameterValueIsDegrees(parameter)) {
+					projection.setProjectionLatitude1Degrees(value);
+				} else {
+					projection.setProjectionLatitude1(value);
+				}
 				break;
 
 			case LATITUDE_OF_2ND_STANDARD_PARALLEL:
-				projection.setProjectionLatitude2(value);
+				if (parameterValueIsDegrees(parameter)) {
+					projection.setProjectionLatitude2Degrees(value);
+				} else {
+					projection.setProjectionLatitude2(value);
+				}
 				break;
 
 			case LATITUDE_OF_PROJECTION_CENTRE:
 			case LATITUDE_OF_NATURAL_ORIGIN:
 			case LATITUDE_OF_FALSE_ORIGIN:
-				projection.setProjectionLatitudeDegrees(value);
+				if (parameterValueIsDegrees(parameter)) {
+					projection.setProjectionLatitudeDegrees(value);
+				} else {
+					projection.setProjectionLatitude(value);
+				}
 				break;
 
 			case LONGITUDE_OF_PROJECTION_CENTRE:
 			case LONGITUDE_OF_NATURAL_ORIGIN:
 			case LONGITUDE_OF_FALSE_ORIGIN:
-				projection.setProjectionLongitudeDegrees(value);
+			case LONGITUDE_OF_ORIGIN:
+				if (parameterValueIsDegrees(parameter)) {
+					projection.setProjectionLongitudeDegrees(value);
+				} else {
+					projection.setProjectionLongitude(value);
+				}
 				break;
 
 			default:
@@ -428,6 +503,26 @@ public class CRSParser {
 
 		}
 
+	}
+
+	/**
+	 * Determine if the parameter unit is in degrees, either not specified or
+	 * explicit
+	 * 
+	 * @param parameter
+	 *            map projection parameter
+	 * @return true if degrees
+	 */
+	private static boolean parameterValueIsDegrees(
+			MapProjectionParameter parameter) {
+
+		boolean degrees = true;
+
+		if (parameter.hasUnit()) {
+			degrees = parameter.getUnit().getName().equalsIgnoreCase("degree");
+		}
+
+		return degrees;
 	}
 
 }

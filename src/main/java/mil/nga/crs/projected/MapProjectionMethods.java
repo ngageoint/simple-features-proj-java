@@ -34,6 +34,12 @@ public enum MapProjectionMethods {
 	CASSINI_SOLDNER("Cassini-Soldner", "Cassini", 9806, 8801, 8802, 8806, 8807),
 
 	/**
+	 * Equidistant Cylindrical (Spherical)
+	 */
+	EQUIDISTANT_CYLINDRICAL("Equidistant Cylindrical (Spherical)",
+			"Equidistant Cylindrical", 9823, 8801, 8802, 8806, 8807),
+
+	/**
 	 * Hotine Oblique Mercator (variant A)
 	 */
 	HOTLINE_OBLIQUE_MERCATOR_A("Hotine Oblique Mercator (variant A)",
@@ -46,6 +52,11 @@ public enum MapProjectionMethods {
 	HOTLINE_OBLIQUE_MERCATOR_B("Hotine Oblique Mercator (variant B)",
 			"Rectified skew orthomorphic", 9815, 8811, 8812, 8813, 8814, 8815,
 			8816, 8817),
+
+	/**
+	 * Krovak
+	 */
+	KROVAK("Krovak", 9819, 8811, 8833, 1036, 8818, 8819, 8806, 8807),
 
 	/**
 	 * Lambert Azimuthal Equal Area
@@ -69,6 +80,12 @@ public enum MapProjectionMethods {
 			8823, 8824, 8826, 8827),
 
 	/**
+	 * Lambert Cylindrical Equal Area (Spherical)
+	 */
+	LAMBERT_CYLINDRICAL_EQUAL_AREA("Lambert Cylindrical Equal Area (Spherical)",
+			"Lambert Cylindrical Equal Area", 9834, 8823, 8802, 8806, 8807),
+
+	/**
 	 * Mercator (variant A)
 	 */
 	MERCATOR_A("Mercator (variant A)", "Mercator", 9804, 8801, 8802, 8805, 8806,
@@ -79,6 +96,11 @@ public enum MapProjectionMethods {
 	 */
 	MERCATOR_B("Mercator (variant B)", "Mercator", 9805, 8823, 8802, 8806,
 			8807),
+
+	/**
+	 * New Zealand Map Grid
+	 */
+	NEW_ZEALAND_MAP_GRID("New Zealand Map Grid", 9811, 8801, 8802, 8806, 8807),
 
 	/**
 	 * Oblique stereographic
