@@ -24,7 +24,6 @@ import mil.nga.crs.geo.PrimeMeridian;
 import mil.nga.crs.geo.TriaxialEllipsoid;
 import mil.nga.crs.projected.MapProjection;
 import mil.nga.crs.projected.MapProjectionMethod;
-import mil.nga.crs.projected.MapProjectionMethods;
 import mil.nga.crs.projected.MapProjectionParameter;
 import mil.nga.crs.projected.ProjectedCoordinateReferenceSystem;
 import mil.nga.crs.wkt.CRSReader;
@@ -143,8 +142,11 @@ public class CRSParser {
 		DatumParameters datumParameters = new DatumParameters();
 
 		MapProjectionMethod method = mapProjection.getMethod();
-		if (method != null && method
-				.getMethod() == MapProjectionMethods.POPULAR_VISUALISATION_PSEUDO_MERCATOR) {
+		if (projected.hasIdentifiers()
+				&& projected.getIdentifier(0).getNameAndUniqueIdentifier()
+						.equalsIgnoreCase(ProjectionConstants.AUTHORITY_EPSG
+								+ ":"
+								+ ProjectionConstants.EPSG_WEB_MERCATOR)) {
 			datumParameters.setA(ellipsoid.getA());
 			datumParameters.setES(0);
 		} else {

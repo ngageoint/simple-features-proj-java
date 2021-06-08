@@ -40,6 +40,8 @@ public class ProjectionFactoryEpsgTest {
 	@Test
 	public void test3035() {
 
+		final long code = 3035;
+
 		String definition = "PROJCRS[\"ETRS89-extended / LAEA Europe\",BASEGEOGCRS[\"ETRS89\","
 				+ "ENSEMBLE[\"European Terrestrial Reference System 1989 ensemble\","
 				+ "MEMBER[\"European Terrestrial Reference Frame 1989\",ID[\"EPSG\",1178]],"
@@ -64,7 +66,7 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Northing (Y)\",north],AXIS[\"Easting (X)\",east],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3035]]";
 
-		projectionTestDerived(3035, definition);
+		projectionTestDerived(code, definition);
 
 		definition = "PROJCS[\"ETRS89 / ETRS-LAEA\",GEOGCS[\"ETRS89\","
 				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
@@ -84,7 +86,7 @@ public class ProjectionFactoryEpsgTest {
 				+ "AUTHORITY[\"EPSG\",\"3035\"],"
 				+ "AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]";
 
-		projectionTestDerived(3035, definition);
+		projectionTestDerived(code, definition);
 
 		definition = "PROJCS[\"ETRS89 / LAEA Europe\",GEOGCRS[\"ETRS89\","
 				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
@@ -103,7 +105,80 @@ public class ProjectionFactoryEpsgTest {
 				+ "UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]],"
 				+ "ID[\"EPSG\",\"3035\"]]";
 
-		projectionTestDerived(3035, definition);
+		projectionTestDerived(code, definition);
+
+	}
+
+	/**
+	 * Test EPSG 3395
+	 */
+	@Test
+	public void test3395() {
+
+		final long code = 3395;
+
+		String definition = "PROJCRS[\"WGS 84 / World Mercator\",BASEGEOGCRS[\"WGS 84\","
+				+ "ENSEMBLE[\"World Geodetic System 1984 ensemble\","
+				+ "MEMBER[\"World Geodetic System 1984 (Transit)\",ID[\"EPSG\",1166]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G730)\",ID[\"EPSG\",1152]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G873)\",ID[\"EPSG\",1153]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1150)\",ID[\"EPSG\",1154]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1674)\",ID[\"EPSG\",1155]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1762)\",ID[\"EPSG\",1156]],"
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,ID[\"EPSG\",7030]],"
+				+ "ENSEMBLEACCURACY[2],ID[\"EPSG\",6326]],ID[\"EPSG\",4326]],"
+				+ "CONVERSION[\"World Mercator\",METHOD[\"Mercator (variant A)\",ID[\"EPSG\",9804]],"
+				+ "PARAMETER[\"Latitude of natural origin\",0,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Longitude of natural origin\",0,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Scale factor at natural origin\",1,SCALEUNIT[\"unity\",1,ID[\"EPSG\",9201]]],"
+				+ "PARAMETER[\"False easting\",0,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "PARAMETER[\"False northing\",0,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "ID[\"EPSG\",19883]],CS[Cartesian,2,ID[\"EPSG\",4400]],"
+				+ "AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3395]]";
+
+		projectionTestDerived(code, definition);
+
+		definition = "PROJCS[\"WGS 84 / World Mercator\",GEOGCS[\"WGS 84\","
+				+ "DATUM[\"WGS_1984\","
+				+ "SPHEROID[\"WGS 84\",6378137,298.257223563,"
+				+ "AUTHORITY[\"EPSG\",\"7030\"]],"
+				+ "AUTHORITY[\"EPSG\",\"6326\"]],"
+				+ "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.01745329251994328,"
+				+ "AUTHORITY[\"EPSG\",\"9122\"]],"
+				+ "AUTHORITY[\"EPSG\",\"4326\"]],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "PROJECTION[\"Mercator_1SP\"],"
+				+ "PARAMETER[\"central_meridian\",0],"
+				+ "PARAMETER[\"scale_factor\",1],"
+				+ "PARAMETER[\"false_easting\",0],"
+				+ "PARAMETER[\"false_northing\",0],"
+				+ "AUTHORITY[\"EPSG\",\"3395\"],"
+				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]";
+
+		projectionTestDerived(code, definition);
+
+		definition = "PROJCRS[\"WGS 84 / World Mercator\","
+				+ "BASEGEODCRS[\"WGS 84\","
+				+ "DATUM[\"World Geodetic System 1984\","
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563]]],"
+				+ "CONVERSION[\"Mercator\","
+				+ "METHOD[\"Mercator (variant A)\",ID[\"EPSG\",\"9804\"]],"
+				+ "PARAMETER[\"Latitude of natural origin\",0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"Longitude of natural origin\",0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"Scale factor at natural origin\",1,"
+				+ "SCALEUNIT[\"unity\",1.0]],"
+				+ "PARAMETER[\"False easting\",0,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"False northing\",0,LENGTHUNIT[\"metre\",1.0]],"
+				+ "ID[\"EPSG\",\"19833\"]],CS[Cartesian,2],"
+				+ "AXIS[\"Easting (E)\",east,ORDER[1]],"
+				+ "AXIS[\"Northing (N)\",north,ORDER[2]],"
+				+ "LENGTHUNIT[\"metre\",1.0],ID[\"EPSG\",\"3395\"]]";
+
+		projectionTestDerived(code, definition);
 
 	}
 
@@ -112,6 +187,8 @@ public class ProjectionFactoryEpsgTest {
 	 */
 	@Test
 	public void test3857() {
+
+		final long code = 3857;
 
 		String definition = "PROJCRS[\"WGS 84 / Pseudo-Mercator\",BASEGEOGCRS[\"WGS 84\","
 				+ "ENSEMBLE[\"World Geodetic System 1984 ensemble\","
@@ -133,7 +210,7 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Easting (X)\",east],AXIS[\"Northing (Y)\",north],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3857]]";
 
-		projectionTestDerived(3857, definition);
+		projectionTestDerived(code, definition);
 
 		definition = "PROJCS[\"WGS 84 / Pseudo-Mercator\",GEOGCS[\"WGS 84\","
 				+ "DATUM[\"WGS_1984\","
@@ -154,7 +231,7 @@ public class ProjectionFactoryEpsgTest {
 				+ "EXTENSION[\"PROJ4\",\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs\"],"
 				+ "AUTHORITY[\"EPSG\",\"3857\"]]";
 
-		projectionTestDerived(3857, definition);
+		projectionTestDerived(code, definition);
 
 		definition = "PROJCS[\"WGS 84 / Pseudo-Mercator\","
 				+ "GEOGCRS[\"WGS 84\",DATUM[\"WGS_1984\","
@@ -172,7 +249,7 @@ public class ProjectionFactoryEpsgTest {
 				+ ",AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]"
 				+ ",ID[\"EPSG\",\"3857\"]]";
 
-		projectionTestDerived(3857, definition);
+		projectionTestDerived(code, definition);
 
 	}
 
@@ -181,6 +258,8 @@ public class ProjectionFactoryEpsgTest {
 	 */
 	@Test
 	public void test4326() {
+
+		final long code = 4326;
 
 		String definition = "GEOGCRS[\"WGS 84\",ENSEMBLE[\"World Geodetic System 1984 ensemble\","
 				+ "MEMBER[\"World Geodetic System 1984 (Transit)\",ID[\"EPSG\",1166]],"
@@ -196,7 +275,7 @@ public class ProjectionFactoryEpsgTest {
 				+ "ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],"
 				+ "ID[\"EPSG\",4326]]";
 
-		projectionTestDerived(4326, definition);
+		projectionTestDerived(code, definition);
 
 		definition = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\","
 				+ "SPHEROID[\"WGS 84\",6378137,298.257223563,"
@@ -207,14 +286,14 @@ public class ProjectionFactoryEpsgTest {
 				+ "AUTHORITY[\"EPSG\",\"9122\"]],"
 				+ "AUTHORITY[\"EPSG\",\"4326\"]]";
 
-		projectionTestDerived(4326, definition);
+		projectionTestDerived(code, definition);
 
 		definition = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\","
 				+ "SPHEROID[\"WGS84\",6378137,298.257223563]],"
 				+ "PRIMEM[\"Greenwich\",0],"
 				+ "UNIT[\"degree\",0.0174532925199433]]";
 
-		projectionTestSpecified(4326, definition);
+		projectionTestSpecified(code, definition);
 
 	}
 
@@ -223,6 +302,8 @@ public class ProjectionFactoryEpsgTest {
 	 */
 	@Test
 	public void test4979() {
+
+		final long code = 4979;
 
 		String definition = "GEOGCRS[\"WGS 84\",ENSEMBLE[\"World Geodetic System 1984 ensemble\","
 				+ "MEMBER[\"World Geodetic System 1984 (Transit)\",ID[\"EPSG\",1166]],"
@@ -238,7 +319,7 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Geodetic longitude (Lon)\",east,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
 				+ "AXIS[\"Ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",4979]]";
 
-		projectionTestDerived(4979, definition);
+		projectionTestDerived(code, definition);
 
 		definition = "GEOGCS[\"WGS 84\","
 				+ "DATUM[\"World Geodetic System 1984\","
@@ -252,7 +333,7 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Ellipsoidal height\",UP],"
 				+ "AUTHORITY[\"EPSG\",\"4979\"]]";
 
-		projectionTestDerived(4979, definition);
+		projectionTestDerived(code, definition);
 
 		definition = "GEODCRS[\"WGS 84\",DATUM[\"World Geodetic System 1984\","
 				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,"
@@ -264,7 +345,7 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Ellipsoidal height (h)\",up,"
 				+ "LENGTHUNIT[\"metre\",1.0]],ID[\"EPSG\",4979]]";
 
-		projectionTestDerived(4979, definition);
+		projectionTestDerived(code, definition);
 
 	}
 
@@ -501,7 +582,7 @@ public class ProjectionFactoryEpsgTest {
 
 		assertEquals(proj.getAlpha(), proj2.getAlpha(), 0);
 		assertEquals(proj.getAxisOrder(), proj2.getAxisOrder());
-		//assertEquals(proj.getEPSGCode(), proj2.getEPSGCode(), 0);
+		// assertEquals(proj.getEPSGCode(), proj2.getEPSGCode(), 0);
 		assertEquals(proj.getEquatorRadius(), proj2.getEquatorRadius(), 0);
 		assertEquals(proj.getFalseEasting(), proj2.getFalseEasting(), 0);
 		assertEquals(proj.getFalseNorthing(), proj2.getFalseNorthing(), 0);
