@@ -18,9 +18,14 @@ public class ProjectionConstants {
 	public static final String AUTHORITY_NONE = "NONE";
 
 	/**
-	 * OGC authority name
+	 * OGC (Open Geospatial Consortium) authority name
 	 */
 	public static final String AUTHORITY_OGC = "OGC";
+
+	/**
+	 * NSG (National Systems for Geospatial Intelligence) authority name
+	 */
+	public static final String AUTHORITY_NSG = "NSG";
 
 	/**
 	 * Undefined Cartesian

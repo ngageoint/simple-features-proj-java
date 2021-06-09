@@ -704,8 +704,8 @@ public class ProjectionFactoryCodeTest {
 				+ "LENGTHUNIT[\"metre\",1.0]ID[\"EPSG\",\"3855\"]],"
 				+ "ID[“NSG”,”8101”]]";
 
-		projectionTestDerived("NSG", code, ProjectionConstants.AUTHORITY_EPSG,
-				"4326", definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_NSG, code,
+				ProjectionConstants.AUTHORITY_EPSG, "4326", definition);
 
 	}
 
