@@ -3,6 +3,8 @@ package mil.nga.proj;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.locationtech.proj4j.CoordinateReferenceSystem;
@@ -16,16 +18,11 @@ import junit.framework.TestCase;
 import mil.nga.sf.GeometryEnvelope;
 
 /**
- * Projection Factory EPSG Test
+ * Projection Factory authority code Test
  * 
  * @author osbornb
  */
-public class ProjectionFactoryEpsgTest {
-
-	/**
-	 * Authority
-	 */
-	private final String authority = "EPSG";
+public class ProjectionFactoryCodeTest {
 
 	/**
 	 * Clear the projections before each test
@@ -42,7 +39,7 @@ public class ProjectionFactoryEpsgTest {
 	@Test
 	public void test3035() {
 
-		final long code = 3035;
+		final String code = "3035";
 
 		String definition = "PROJCRS[\"ETRS89-extended / LAEA Europe\",BASEGEOGCRS[\"ETRS89\","
 				+ "ENSEMBLE[\"European Terrestrial Reference System 1989 ensemble\","
@@ -68,7 +65,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Northing (Y)\",north],AXIS[\"Easting (X)\",east],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3035]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "PROJCS[\"ETRS89 / ETRS-LAEA\",GEOGCS[\"ETRS89\","
 				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
@@ -88,7 +86,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AUTHORITY[\"EPSG\",\"3035\"],"
 				+ "AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "PROJCS[\"ETRS89 / LAEA Europe\",GEOGCRS[\"ETRS89\","
 				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
@@ -107,7 +106,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]],"
 				+ "ID[\"EPSG\",\"3035\"]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 	}
 
@@ -117,7 +117,7 @@ public class ProjectionFactoryEpsgTest {
 	@Test
 	public void test3395() {
 
-		final long code = 3395;
+		final String code = "3395";
 
 		String definition = "PROJCRS[\"WGS 84 / World Mercator\",BASEGEOGCRS[\"WGS 84\","
 				+ "ENSEMBLE[\"World Geodetic System 1984 ensemble\","
@@ -139,7 +139,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3395]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "PROJCS[\"WGS 84 / World Mercator\",GEOGCS[\"WGS 84\","
 				+ "DATUM[\"WGS_1984\","
@@ -159,7 +160,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AUTHORITY[\"EPSG\",\"3395\"],"
 				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "PROJCRS[\"WGS 84 / World Mercator\","
 				+ "BASEGEODCRS[\"WGS 84\","
@@ -180,7 +182,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Northing (N)\",north,ORDER[2]],"
 				+ "LENGTHUNIT[\"metre\",1.0],ID[\"EPSG\",\"3395\"]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 	}
 
@@ -190,7 +193,7 @@ public class ProjectionFactoryEpsgTest {
 	@Test
 	public void test3857() {
 
-		final long code = 3857;
+		final String code = "3857";
 
 		String definition = "PROJCRS[\"WGS 84 / Pseudo-Mercator\",BASEGEOGCRS[\"WGS 84\","
 				+ "ENSEMBLE[\"World Geodetic System 1984 ensemble\","
@@ -212,7 +215,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Easting (X)\",east],AXIS[\"Northing (Y)\",north],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3857]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "PROJCS[\"WGS 84 / Pseudo-Mercator\",GEOGCS[\"WGS 84\","
 				+ "DATUM[\"WGS_1984\","
@@ -233,7 +237,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "EXTENSION[\"PROJ4\",\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs\"],"
 				+ "AUTHORITY[\"EPSG\",\"3857\"]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "PROJCS[\"WGS 84 / Pseudo-Mercator\","
 				+ "GEOGCRS[\"WGS 84\",DATUM[\"WGS_1984\","
@@ -251,7 +256,8 @@ public class ProjectionFactoryEpsgTest {
 				+ ",AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]"
 				+ ",ID[\"EPSG\",\"3857\"]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 	}
 
@@ -261,7 +267,7 @@ public class ProjectionFactoryEpsgTest {
 	@Test
 	public void test3978() {
 
-		final long code = 3978;
+		final String code = "3978";
 
 		String definition = "PROJCRS[\"NAD83 / Canada Atlas Lambert\",BASEGEOGCRS[\"NAD83\","
 				+ "DATUM[\"North American Datum 1983\","
@@ -278,7 +284,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3978]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "PROJCS[\"NAD83 / Canada Atlas Lambert\",GEOGCS[\"NAD83\","
 				+ "DATUM[\"North_American_Datum_1983\","
@@ -299,7 +306,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
 				+ "AUTHORITY[\"EPSG\",\"3978\"]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "PROJCS[\"NAD83 / Canada Atlas Lambert\",GEOGCRS[\"NAD83\","
 				+ "DATUM[\"North_American_Datum_1983\","
@@ -321,7 +329,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
 				+ "ID[\"EPSG\",\"3978\"]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 	}
 
@@ -331,7 +340,7 @@ public class ProjectionFactoryEpsgTest {
 	@Test
 	public void test4326() {
 
-		final long code = 4326;
+		final String code = "4326";
 
 		String definition = "GEOGCRS[\"WGS 84\",ENSEMBLE[\"World Geodetic System 1984 ensemble\","
 				+ "MEMBER[\"World Geodetic System 1984 (Transit)\",ID[\"EPSG\",1166]],"
@@ -347,7 +356,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]],"
 				+ "ID[\"EPSG\",4326]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\","
 				+ "SPHEROID[\"WGS 84\",6378137,298.257223563,"
@@ -358,14 +368,16 @@ public class ProjectionFactoryEpsgTest {
 				+ "AUTHORITY[\"EPSG\",\"9122\"]],"
 				+ "AUTHORITY[\"EPSG\",\"4326\"]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\","
 				+ "SPHEROID[\"WGS84\",6378137,298.257223563]],"
 				+ "PRIMEM[\"Greenwich\",0],"
 				+ "UNIT[\"degree\",0.0174532925199433]]";
 
-		projectionTestSpecified(code, definition);
+		projectionTestSpecified(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 	}
 
@@ -375,7 +387,7 @@ public class ProjectionFactoryEpsgTest {
 	@Test
 	public void test4979() {
 
-		final long code = 4979;
+		final String code = "4979";
 
 		String definition = "GEOGCRS[\"WGS 84\",ENSEMBLE[\"World Geodetic System 1984 ensemble\","
 				+ "MEMBER[\"World Geodetic System 1984 (Transit)\",ID[\"EPSG\",1166]],"
@@ -391,7 +403,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Geodetic longitude (Lon)\",east,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
 				+ "AXIS[\"Ellipsoidal height (h)\",up,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",4979]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "GEOGCS[\"WGS 84\","
 				+ "DATUM[\"World Geodetic System 1984\","
@@ -405,7 +418,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Ellipsoidal height\",UP],"
 				+ "AUTHORITY[\"EPSG\",\"4979\"]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "GEODCRS[\"WGS 84\",DATUM[\"World Geodetic System 1984\","
 				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,"
@@ -417,7 +431,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Ellipsoidal height (h)\",up,"
 				+ "LENGTHUNIT[\"metre\",1.0]],ID[\"EPSG\",4979]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 	}
 
@@ -427,7 +442,7 @@ public class ProjectionFactoryEpsgTest {
 	@Test
 	public void test5041() {
 
-		final long code = 5041;
+		final String code = "5041";
 
 		String definition = "PROJCRS[\"WGS 84 / UPS North (E,N)\",BASEGEOGCRS[\"WGS 84\","
 				+ "ENSEMBLE[\"World Geodetic System 1984 ensemble\","
@@ -451,7 +466,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Northing (N)\",South,MERIDIAN[180.0,ANGLEUNIT[\"degree\",0.0174532925199433]]],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5041]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "PROJCS[\"WGS 84 / UPS North (E,N)\","
 				+ "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\","
@@ -472,7 +488,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
 				+ "AUTHORITY[\"EPSG\",\"5041\"]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "PROJCRS[\"WGS 84 / UPS North (E,N)\","
 				+ "BASEGEODCRS[\"WGS 84\","
@@ -498,7 +515,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "ORDER[2]],LENGTHUNIT[\"metre\",1.0],"
 				+ "ID[\"EPSG\",\"5041\"]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 	}
 
@@ -508,7 +526,7 @@ public class ProjectionFactoryEpsgTest {
 	@Test
 	public void test5042() {
 
-		final long code = 5042;
+		final String code = "5042";
 
 		String definition = "PROJCRS[\"WGS 84 / UPS South (E,N)\",BASEGEOGCRS[\"WGS 84\","
 				+ "ENSEMBLE[\"World Geodetic System 1984 ensemble\","
@@ -532,7 +550,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Northing (N)\",North,MERIDIAN[0.0,ANGLEUNIT[\"degree\",0.0174532925199433]]],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5042]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "PROJCS[\"WGS 84 / UPS South (E,N)\","
 				+ "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\","
@@ -553,7 +572,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
 				+ "AUTHORITY[\"EPSG\",\"5042\"]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 		definition = "PROJCRS[\"WGS 84 / UPS South (E,N)\","
 				+ "BASEGEODCRS[\"WGS 84\","
@@ -579,7 +599,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "ORDER[2]],LENGTHUNIT[\"metre\",1.0],"
 				+ "ID[\"EPSG\",\"5042\"]]";
 
-		projectionTestDerived(code, definition);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition);
 
 	}
 
@@ -589,7 +610,7 @@ public class ProjectionFactoryEpsgTest {
 	@Test
 	public void test7405() {
 
-		final long code = 7405;
+		final String code = "7405";
 
 		String definition = "COMPOUNDCRS[\"OSGB36 / British National Grid + ODN height\","
 				+ "PROJCRS[\"OSGB36 / British National Grid\",BASEGEOGCRS[\"OSGB36\","
@@ -611,12 +632,15 @@ public class ProjectionFactoryEpsgTest {
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5701]],"
 				+ "ID[\"EPSG\",7405]]";
 
-		// projectionTestDerived(code, 27700, definition);
+		// TODO
+		// projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+		// ProjectionConstants.AUTHORITY_EPSG, "27700", definition);
 		Projection projection = ProjectionFactory
 				.getProjectionByDefinition(definition);
 		TestCase.assertNotNull(projection);
-		TestCase.assertEquals(authority, projection.getAuthority());
-		TestCase.assertEquals(Long.toString(code), projection.getCode());
+		TestCase.assertEquals(ProjectionConstants.AUTHORITY_EPSG,
+				projection.getAuthority());
+		TestCase.assertEquals(code, projection.getCode());
 		TestCase.assertEquals(definition, projection.getDefinition());
 
 		definition = "COMPD_CS[\"OSGB 1936 / British National Grid + ODN height\","
@@ -644,12 +668,44 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Up\",UP],AUTHORITY[\"EPSG\",\"5701\"]],"
 				+ "AUTHORITY[\"EPSG\",\"7405\"]]";
 
-		// projectionTestDerived(code, 27700, definition);
+		// projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+		// ProjectionConstants.AUTHORITY_EPSG, "27700", definition);
 		projection = ProjectionFactory.getProjectionByDefinition(definition);
 		TestCase.assertNotNull(projection);
-		TestCase.assertEquals(authority, projection.getAuthority());
-		TestCase.assertEquals(Long.toString(code), projection.getCode());
+		TestCase.assertEquals(ProjectionConstants.AUTHORITY_EPSG,
+				projection.getAuthority());
+		TestCase.assertEquals(code, projection.getCode());
 		TestCase.assertEquals(definition, projection.getDefinition());
+
+	}
+
+	/**
+	 * Test NGA 8101
+	 * 
+	 * @throws IOException
+	 *             upon error
+	 */
+	@Test
+	public void test8101() throws IOException {
+
+		final String code = "8101";
+
+		String definition = "COMPOUNDCRS[“WGS84 Height (EGM08)”,"
+				+ "GEODCRS[\"WGS 84\","
+				+ "DATUM[\"World Geodetic System 1984\","
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1.0]]],"
+				+ "CS[ellipsoidal,2],"
+				+ "AXIS[\"Geodetic latitude (Lat)\",north],"
+				+ "AXIS[\"Geodetic longitude (Long)\",east],"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",4326]],"
+				+ "VERTCRS[\"EGM2008 geoid height\","
+				+ "VDATUM[\"EGM2008 geoid\",ANCHOR[\"WGS 84 ellipsoid\"]],"
+				+ "CS[vertical,1],AXIS[\"Gravity-related height (H)\",up],"
+				+ "LENGTHUNIT[\"metre\",1.0]ID[\"EPSG\",\"3855\"]],"
+				+ "ID[“NSG”,”8101”]]";
+
+		projectionTestDerived("NSG", code, ProjectionConstants.AUTHORITY_EPSG,
+				"4326", definition);
 
 	}
 
@@ -680,7 +736,8 @@ public class ProjectionFactoryEpsgTest {
 				.getProjectionByDefinition(definition);
 
 		TestCase.assertNotNull(projection);
-		TestCase.assertEquals(authority, projection.getAuthority());
+		TestCase.assertEquals(ProjectionConstants.AUTHORITY_EPSG,
+				projection.getAuthority());
 		TestCase.assertEquals(Long.toString(code), projection.getCode());
 		TestCase.assertEquals(definition, projection.getDefinition());
 		TestCase.assertTrue(projection.getCrs()
@@ -717,7 +774,8 @@ public class ProjectionFactoryEpsgTest {
 				.getProjectionByDefinition(definition);
 
 		TestCase.assertNotNull(projection);
-		TestCase.assertEquals(authority, projection.getAuthority());
+		TestCase.assertEquals(ProjectionConstants.AUTHORITY_EPSG,
+				projection.getAuthority());
 		TestCase.assertEquals(Long.toString(code), projection.getCode());
 		TestCase.assertEquals(definition, projection.getDefinition());
 		TestCase.assertTrue(projection.getCrs()
@@ -733,7 +791,7 @@ public class ProjectionFactoryEpsgTest {
 	@Test
 	public void test32660() {
 
-		final long code = 32660;
+		final String code = "32660";
 		double delta = 0.00001;
 
 		String definition = "PROJCRS[\"WGS 84 / UTM zone 60N\",BASEGEOGCRS[\"WGS 84\","
@@ -755,7 +813,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "CS[Cartesian,2,ID[\"EPSG\",4400]],AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",32660]]";
 
-		projectionTestDerived(code, definition, delta);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition, delta);
 
 		definition = "PROJCS[\"WGS 84 / UTM zone 60N\",GEOGCS[\"WGS 84\","
 				+ "DATUM[\"WGS_1984\","
@@ -776,7 +835,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AUTHORITY[\"EPSG\",\"32660\"],"
 				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]";
 
-		projectionTestDerived(code, definition, delta);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition, delta);
 
 		definition = "PROJCS[\"WGS 84 / UTM zone 60N\",GEOGCRS[\"WGS 84\","
 				+ "DATUM[\"WGS_1984\","
@@ -795,7 +855,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
 				+ "ID[\"EPSG\",\"32660\"]]";
 
-		projectionTestDerived(code, definition, delta);
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				definition, delta);
 
 	}
 
@@ -803,139 +864,177 @@ public class ProjectionFactoryEpsgTest {
 	 * Test projection creation and transformations with derived authority and
 	 * epsg
 	 * 
-	 * @param epsg
-	 *            EPSG code
+	 * @param authority
+	 *            authority
+	 * @param code
+	 *            code
 	 * @param definition
 	 *            WKT definition
 	 */
-	private void projectionTestDerived(long epsg, String definition) {
-		projectionTestDerived(epsg, definition, 0);
-	}
-
-	/**
-	 * Test projection creation and transformations with specified authority and
-	 * epsg
-	 * 
-	 * @param epsg
-	 *            EPSG code
-	 * @param definition
-	 *            WKT definition
-	 */
-	private void projectionTestSpecified(long epsg, String definition) {
-		projectionTestSpecified(epsg, definition, 0);
-	}
-
-	/**
-	 * Test projection creation and transformations with derived authority and
-	 * epsg
-	 * 
-	 * @param epsg
-	 *            EPSG code
-	 * @param compareEpsg
-	 *            compareEPSG code
-	 * @param definition
-	 *            WKT definition
-	 */
-	private void projectionTestDerived(long epsg, long compareEpsg,
+	private void projectionTestDerived(String authority, String code,
 			String definition) {
-		projectionTestDerived(epsg, compareEpsg, definition, 0);
+		projectionTestDerived(authority, code, definition, 0);
 	}
 
 	/**
 	 * Test projection creation and transformations with specified authority and
 	 * epsg
 	 * 
-	 * @param epsg
-	 *            EPSG code
-	 * @param compareEpsg
-	 *            compareEPSG code
+	 * @param authority
+	 *            authority
+	 * @param code
+	 *            code
 	 * @param definition
 	 *            WKT definition
 	 */
-	private void projectionTestSpecified(long epsg, long compareEpsg,
+	private void projectionTestSpecified(String authority, String code,
 			String definition) {
-		projectionTestSpecified(epsg, compareEpsg, definition, 0);
+		projectionTestSpecified(authority, code, definition, 0);
 	}
 
 	/**
 	 * Test projection creation and transformations with derived authority and
 	 * epsg
 	 * 
-	 * @param epsg
-	 *            EPSG code
+	 * @param authority
+	 *            authority
+	 * @param code
+	 *            code
+	 * @param compareAuthority
+	 *            compare authority
+	 * @param compareCode
+	 *            compare code
 	 * @param definition
 	 *            WKT definition
-	 * @param delta
-	 *            delta comparison
 	 */
-	private void projectionTestDerived(long epsg, String definition,
-			double delta) {
-		projectionTestDerived(epsg, epsg, definition, delta);
+	private void projectionTestDerived(String authority, String code,
+			String compareAuthority, String compareCode, String definition) {
+		projectionTestDerived(authority, code, compareAuthority, compareCode,
+				definition, 0);
 	}
 
 	/**
 	 * Test projection creation and transformations with specified authority and
 	 * epsg
 	 * 
-	 * @param epsg
-	 *            EPSG code
+	 * @param authority
+	 *            authority
+	 * @param code
+	 *            code
+	 * @param compareAuthority
+	 *            compare authority
+	 * @param compareCode
+	 *            compare code
 	 * @param definition
 	 *            WKT definition
-	 * @param delta
-	 *            delta comparison
 	 */
-	private void projectionTestSpecified(long epsg, String definition,
-			double delta) {
-		projectionTestSpecified(epsg, epsg, definition, delta);
+	private void projectionTestSpecified(String authority, String code,
+			String compareAuthority, String compareCode, String definition) {
+		projectionTestSpecified(authority, code, compareAuthority, compareCode,
+				definition, 0);
 	}
 
 	/**
 	 * Test projection creation and transformations with derived authority and
 	 * epsg
 	 * 
-	 * @param epsg
-	 *            EPSG code
-	 * @param compareEpsg
-	 *            compareEPSG code
+	 * @param authority
+	 *            authority
+	 * @param code
+	 *            code
 	 * @param definition
 	 *            WKT definition
 	 * @param delta
 	 *            delta comparison
 	 */
-	private void projectionTestDerived(long epsg, long compareEpsg,
+	private void projectionTestDerived(String authority, String code,
 			String definition, double delta) {
+		projectionTestDerived(authority, code, authority, code, definition,
+				delta);
+	}
+
+	/**
+	 * Test projection creation and transformations with specified authority and
+	 * epsg
+	 * 
+	 * @param authority
+	 *            authority
+	 * @param code
+	 *            code
+	 * @param definition
+	 *            WKT definition
+	 * @param delta
+	 *            delta comparison
+	 */
+	private void projectionTestSpecified(String authority, String code,
+			String definition, double delta) {
+		projectionTestSpecified(authority, code, authority, code, definition,
+				delta);
+	}
+
+	/**
+	 * Test projection creation and transformations with derived authority and
+	 * epsg
+	 * 
+	 * @param authority
+	 *            authority
+	 * @param code
+	 *            code
+	 * @param compareAuthority
+	 *            compare authority
+	 * @param compareCode
+	 *            compare code
+	 * @param definition
+	 *            WKT definition
+	 * @param delta
+	 *            delta comparison
+	 */
+	private void projectionTestDerived(String authority, String code,
+			String compareAuthority, String compareCode, String definition,
+			double delta) {
 		Projection projection = ProjectionFactory
 				.getProjectionByDefinition(definition);
-		projectionTest(epsg, compareEpsg, definition, projection, delta);
+		projectionTest(authority, code, compareAuthority, compareCode,
+				definition, projection, delta);
 	}
 
 	/**
 	 * Test projection creation and transformations with specified authority and
 	 * epsg
 	 * 
-	 * @param epsg
-	 *            EPSG code
-	 * @param compareEpsg
-	 *            compareEPSG code
+	 * @param authority
+	 *            authority
+	 * @param code
+	 *            code
+	 * @param compareAuthority
+	 *            compare authority
+	 * @param compareCode
+	 *            compare code
 	 * @param definition
 	 *            WKT definition
 	 * @param delta
 	 *            delta comparison
 	 */
-	private void projectionTestSpecified(long epsg, long compareEpsg,
-			String definition, double delta) {
+	private void projectionTestSpecified(String authority, String code,
+			String compareAuthority, String compareCode, String definition,
+			double delta) {
 		Projection projection = ProjectionFactory
-				.getProjectionByDefinition(authority, epsg, definition);
-		projectionTest(epsg, compareEpsg, definition, projection, delta);
+				.getProjectionByDefinition(authority, code, definition);
+		projectionTest(authority, code, compareAuthority, compareCode,
+				definition, projection, delta);
 	}
 
 	/**
 	 * Test projection creation and transformations
 	 * 
-	 * @param epsg
-	 *            EPSG code
-	 * @param compareEpsg
-	 *            compareEPSG code
+	 * @param authority
+	 *            authority
+	 * @param code
+	 *            code
+	 * @param compareAuthority
+	 *            compare authority
+	 * @param compareCode
+	 *            compare code
 	 * @param definition
 	 *            WKT definition
 	 * @param projection
@@ -943,19 +1042,20 @@ public class ProjectionFactoryEpsgTest {
 	 * @param delta
 	 *            delta comparison
 	 */
-	private void projectionTest(long epsg, long compareEpsg, String definition,
+	private void projectionTest(String authority, String code,
+			String compareAuthority, String compareCode, String definition,
 			Projection projection, double delta) {
 
 		TestCase.assertNotNull(projection);
 		TestCase.assertEquals(authority, projection.getAuthority());
-		TestCase.assertEquals(Long.toString(epsg), projection.getCode());
+		TestCase.assertEquals(code, projection.getCode());
 		TestCase.assertEquals(definition, projection.getDefinition());
 
 		clear();
 
-		Projection projection2 = ProjectionFactory.getProjection(compareEpsg);
+		Projection projection2 = ProjectionFactory.getProjection(compareCode);
 
-		compare(projection, projection2, compareEpsg, delta);
+		compare(projection, projection2, compareAuthority, compareCode, delta);
 
 		GeometryEnvelope range = new GeometryEnvelope();
 
@@ -1093,16 +1193,19 @@ public class ProjectionFactoryEpsgTest {
 	 *            projection
 	 * @param projection2
 	 *            projection 2
-	 * @param compareEpsg
-	 *            compareEPSG code
+	 * @param compareAuthority
+	 *            compare authority
+	 * @param compareCode
+	 *            compare code
 	 * @param delta
 	 *            delta comparison
 	 */
 	private void compare(Projection projection, Projection projection2,
-			long compareEpsg, double delta) {
+			String compareAuthority, String compareCode, double delta) {
 
-		if (Long.valueOf(projection.getCode()) != compareEpsg) {
-			projection2 = new Projection(projection2.getAuthority(),
+		if (!projection.getCode().equals(compareCode)
+				|| !projection.getAuthority().equals(compareAuthority)) {
+			projection2 = new Projection(projection.getAuthority(),
 					projection.getCode(), projection2.getCrs());
 		}
 
