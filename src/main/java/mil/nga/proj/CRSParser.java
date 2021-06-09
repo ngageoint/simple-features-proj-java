@@ -435,7 +435,7 @@ public class CRSParser {
 		if (method.hasParameters()) {
 			for (MapProjectionParameter parameter : method
 					.getMapProjectionParameters()) {
-				updateProjection(projection, parameter);
+				updateProjection(projection, method, parameter);
 			}
 		}
 	}
@@ -445,11 +445,13 @@ public class CRSParser {
 	 * 
 	 * @param projection
 	 *            proj4j projection
+	 * @param method
+	 *            map projection method
 	 * @param parameter
 	 *            map projection parameter
 	 */
 	public static void updateProjection(Projection projection,
-			MapProjectionParameter parameter) {
+			MapProjectionMethod method, MapProjectionParameter parameter) {
 
 		if (parameter.hasParameter()) {
 
@@ -497,6 +499,17 @@ public class CRSParser {
 					projection.setProjectionLatitudeDegrees(value);
 				} else {
 					projection.setProjectionLatitude(value);
+				}
+				if (method.hasMethod()) {
+					switch (method.getMethod()) {
+					case POLAR_STEREOGRAPHIC_A:
+					case POLAR_STEREOGRAPHIC_B:
+					case POLAR_STEREOGRAPHIC_C:
+						projection.setTrueScaleLatitude(
+								projection.getProjectionLatitude());
+						break;
+					default:
+					}
 				}
 				break;
 

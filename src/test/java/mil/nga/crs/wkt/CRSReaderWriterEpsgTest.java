@@ -848,8 +848,8 @@ public class CRSReaderWriterEpsgTest {
 		assertEquals(expectedText, CRSWriter.write(crs));
 		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
-		text = "PROJCS[\"WGS 84 / UPS North (E,N)\"," + "GEOGCS[\"WGS 84\","
-				+ "DATUM[\"WGS_1984\","
+		text = "PROJCS[\"WGS 84 / UPS North (E,N)\","
+				+ "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\","
 				+ "SPHEROID[\"WGS 84\",6378137,298.257223563,"
 				+ "AUTHORITY[\"EPSG\",\"7030\"]],"
 				+ "AUTHORITY[\"EPSG\",\"6326\"]],"
@@ -862,8 +862,8 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"central_meridian\",0],"
 				+ "PARAMETER[\"scale_factor\",0.994],"
 				+ "PARAMETER[\"false_easting\",2000000],"
-				+ "PARAMETER[\"false_northing\",2000000]," + "UNIT[\"metre\",1,"
-				+ "AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "PARAMETER[\"false_northing\",2000000],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
 				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
 				+ "AUTHORITY[\"EPSG\",\"5041\"]]";
 

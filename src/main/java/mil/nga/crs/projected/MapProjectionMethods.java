@@ -113,8 +113,8 @@ public enum MapProjectionMethods {
 	/**
 	 * Polar Stereographic (variant A)
 	 */
-	POLAR_STEREOGRAPHIC_A("Polar Stereographic (variant A)", 9810, 8801, 8802,
-			8805, 8806, 8807),
+	POLAR_STEREOGRAPHIC_A("Polar Stereographic (variant A)",
+			"Polar Stereographic", 9810, 8801, 8802, 8805, 8806, 8807),
 
 	/**
 	 * Polar Stereographic (variant B)
