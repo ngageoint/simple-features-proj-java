@@ -5674,7 +5674,7 @@ public class CRSReaderWriterTest {
 				projectedCrs.getReferenceFrame().getPrimeMeridian().getName());
 		assertEquals(0, projectedCrs.getReferenceFrame().getPrimeMeridian()
 				.getLongitude(), 0);
-		assertEquals("Transverse Mercator",
+		assertEquals("NAD83 / UTM zone 10N / Transverse Mercator",
 				projectedCrs.getMapProjection().getName());
 		assertEquals("Transverse Mercator",
 				projectedCrs.getMapProjection().getMethod().getName());
@@ -5709,7 +5709,7 @@ public class CRSReaderWriterTest {
 				+ "DATUM[\"North American Datum 1983\","
 				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101]],"
 				+ "PRIMEM[\"Greenwich\",0.0]],"
-				+ "CONVERSION[\"Transverse Mercator\",METHOD[\"Transverse Mercator\"],"
+				+ "CONVERSION[\"NAD83 / UTM zone 10N / Transverse Mercator\",METHOD[\"Transverse Mercator\"],"
 				+ "PARAMETER[\"Latitude of origin\",0.0],"
 				+ "PARAMETER[\"Longitude of origin\",-123.0],"
 				+ "PARAMETER[\"Scale factor\",0.9996],"
@@ -5756,7 +5756,8 @@ public class CRSReaderWriterTest {
 				projectedCrs.getReferenceFrame().getPrimeMeridian().getName());
 		assertEquals(0, projectedCrs.getReferenceFrame().getPrimeMeridian()
 				.getLongitude(), 0);
-		assertEquals("UTM zone 10N", projectedCrs.getMapProjection().getName());
+		assertEquals("NAD83 / UTM zone 10N",
+				projectedCrs.getMapProjection().getName());
 		assertEquals("UTM zone 10N",
 				projectedCrs.getMapProjection().getMethod().getName());
 		assertEquals("Latitude of origin", projectedCrs.getMapProjection()
@@ -5790,7 +5791,7 @@ public class CRSReaderWriterTest {
 				+ "DATUM[\"North American Datum 1983\","
 				+ "ELLIPSOID[\"GRS 1980\",6378137.0,298.257222101]],"
 				+ "PRIMEM[\"Greenwich\",0.0]],"
-				+ "CONVERSION[\"UTM zone 10N\",METHOD[\"UTM zone 10N\"],"
+				+ "CONVERSION[\"NAD83 / UTM zone 10N\",METHOD[\"UTM zone 10N\"],"
 				+ "PARAMETER[\"Latitude of origin\",0.0],"
 				+ "PARAMETER[\"Longitude of origin\",-123.0],"
 				+ "PARAMETER[\"Scale factor at natural origin\",0.9996],"

@@ -1,6 +1,7 @@
 package mil.nga.proj;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -8,6 +9,7 @@ import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.locationtech.proj4j.ProjCoordinate;
 import org.locationtech.proj4j.datum.Datum;
 import org.locationtech.proj4j.datum.Ellipsoid;
+import org.locationtech.proj4j.proj.LambertConformalConicProjection;
 import org.locationtech.proj4j.units.Units;
 
 import junit.framework.TestCase;
@@ -452,7 +454,7 @@ public class ProjectionFactoryEpsgTest {
 		projectionTestDerived(code, definition);
 
 		definition = "PROJCS[\"WGS 84 / UPS North (E,N)\","
-				+ "GEOGCS[\"WGS 84\"," + "DATUM[\"WGS_1984\","
+				+ "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\","
 				+ "SPHEROID[\"WGS 84\",6378137,298.257223563,"
 				+ "AUTHORITY[\"EPSG\",\"7030\"]],"
 				+ "AUTHORITY[\"EPSG\",\"6326\"]],"
@@ -465,8 +467,8 @@ public class ProjectionFactoryEpsgTest {
 				+ "PARAMETER[\"central_meridian\",0],"
 				+ "PARAMETER[\"scale_factor\",0.994],"
 				+ "PARAMETER[\"false_easting\",2000000],"
-				+ "PARAMETER[\"false_northing\",2000000]," + "UNIT[\"metre\",1,"
-				+ "AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "PARAMETER[\"false_northing\",2000000],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
 				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
 				+ "AUTHORITY[\"EPSG\",\"5041\"]]";
 
@@ -501,6 +503,245 @@ public class ProjectionFactoryEpsgTest {
 	}
 
 	/**
+	 * Test EPSG 5042
+	 */
+	@Test
+	public void test5042() {
+
+		final long code = 5042;
+
+		String definition = "PROJCRS[\"WGS 84 / UPS South (E,N)\",BASEGEOGCRS[\"WGS 84\","
+				+ "ENSEMBLE[\"World Geodetic System 1984 ensemble\","
+				+ "MEMBER[\"World Geodetic System 1984 (Transit)\",ID[\"EPSG\",1166]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G730)\",ID[\"EPSG\",1152]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G873)\",ID[\"EPSG\",1153]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1150)\",ID[\"EPSG\",1154]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1674)\",ID[\"EPSG\",1155]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1762)\",ID[\"EPSG\",1156]],"
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,ID[\"EPSG\",7030]],"
+				+ "ENSEMBLEACCURACY[2],ID[\"EPSG\",6326]],ID[\"EPSG\",4326]],"
+				+ "CONVERSION[\"Universal Polar Stereographic South\","
+				+ "METHOD[\"Polar Stereographic (variant A)\",ID[\"EPSG\",9810]],"
+				+ "PARAMETER[\"Latitude of natural origin\",-90,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Longitude of natural origin\",0,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.994,SCALEUNIT[\"unity\",1,ID[\"EPSG\",9201]]],"
+				+ "PARAMETER[\"False easting\",2000000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "PARAMETER[\"False northing\",2000000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "ID[\"EPSG\",16161]],CS[Cartesian,2,ID[\"EPSG\",1027]],"
+				+ "AXIS[\"Easting (E)\",North,MERIDIAN[90.0,ANGLEUNIT[\"degree\",0.0174532925199433]]],"
+				+ "AXIS[\"Northing (N)\",North,MERIDIAN[0.0,ANGLEUNIT[\"degree\",0.0174532925199433]]],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5042]]";
+
+		projectionTestDerived(code, definition);
+
+		definition = "PROJCS[\"WGS 84 / UPS South (E,N)\","
+				+ "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\","
+				+ "SPHEROID[\"WGS 84\",6378137,298.257223563,"
+				+ "AUTHORITY[\"EPSG\",\"7030\"]],"
+				+ "AUTHORITY[\"EPSG\",\"6326\"]],"
+				+ "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "AUTHORITY[\"EPSG\",\"9122\"]],"
+				+ "AUTHORITY[\"EPSG\",\"4326\"]],"
+				+ "PROJECTION[\"Polar_Stereographic\"],"
+				+ "PARAMETER[\"latitude_of_origin\",-90],"
+				+ "PARAMETER[\"central_meridian\",0],"
+				+ "PARAMETER[\"scale_factor\",0.994],"
+				+ "PARAMETER[\"false_easting\",2000000],"
+				+ "PARAMETER[\"false_northing\",2000000],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
+				+ "AUTHORITY[\"EPSG\",\"5042\"]]";
+
+		projectionTestDerived(code, definition);
+
+		definition = "PROJCRS[\"WGS 84 / UPS South (E,N)\","
+				+ "BASEGEODCRS[\"WGS 84\","
+				+ "DATUM[\"World Geodetic System 1984\","
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,"
+				+ "LENGTHUNIT[\"metre\",1.0]]]],"
+				+ "CONVERSION[\"Universal Polar Stereographic North\","
+				+ "METHOD[\"Polar Stereographic (variant A)\",ID[\"EPSG\",\"9810\"]],"
+				+ "PARAMETER[\"Latitude of natural origin\",-90,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"Longitude of natural origin\",0,"
+				+ "ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.994,"
+				+ "SCALEUNIT[\"unity\",1.0]],"
+				+ "PARAMETER[\"False easting\",2000000,"
+				+ "LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"False northing\",2000000,"
+				+ "LENGTHUNIT[\"metre\",1.0]],ID[\"EPSG\",\"16161\"]],"
+				+ "CS[Cartesian,2],AXIS[\"Easting (E)\",north,"
+				+ "MERIDIAN[90,ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "ORDER[1]],AXIS[\"Northing (N)\",north,"
+				+ "MERIDIAN[0,ANGLEUNIT[\"degree\",0.0174532925199433]],"
+				+ "ORDER[2]],LENGTHUNIT[\"metre\",1.0],"
+				+ "ID[\"EPSG\",\"5042\"]]";
+
+		projectionTestDerived(code, definition);
+
+	}
+
+	/**
+	 * Test EPSG 7405
+	 */
+	@Test
+	public void test7405() {
+
+		final long code = 7405;
+
+		// TODO
+
+	}
+
+	/**
+	 * Test EPSG 9801
+	 */
+	@Test
+	public void test9801() {
+
+		final long code = 9801;
+
+		String definition = "PROJCS[\"Lambert_Conformal_Conic (1SP)\","
+				+ "GEODCRS[\"GCS_North_American_1983\","
+				+ "DATUM[\"North_American_Datum_1983\","
+				+ "SPHEROID[\"GRS_1980\",6371000,0]],"
+				+ "PRIMEM[\"Greenwich\",0],"
+				+ "UNIT[\"Degree\",0.017453292519943295]],"
+				+ "PROJECTION[\"Lambert_Conformal_Conic_1SP\"],"
+				+ "PARAMETER[\"latitude_of_origin\",25],"
+				+ "PARAMETER[\"central_meridian\",-95],"
+				+ "PARAMETER[\"scale_factor\",1],"
+				+ "PARAMETER[\"false_easting\",0],"
+				+ "PARAMETER[\"false_northing\",0],"
+				+ "PARAMETER[\"standard_parallel_1\",25],"
+				+ "UNIT[\"Meter\",1],AUTHORITY[\"EPSG\",\"9801\"]]";
+
+		Projection projection = ProjectionFactory
+				.getProjectionByDefinition(definition);
+
+		TestCase.assertNotNull(projection);
+		TestCase.assertEquals(authority, projection.getAuthority());
+		TestCase.assertEquals(Long.toString(code), projection.getCode());
+		TestCase.assertEquals(definition, projection.getDefinition());
+		TestCase.assertTrue(projection.getCrs()
+				.getProjection() instanceof LambertConformalConicProjection);
+		TestCase.assertEquals(6371000, projection.getCrs().getProjection()
+				.getEllipsoid().getEquatorRadius(), 0);
+
+	}
+
+	/**
+	 * Test EPSG 9802
+	 */
+	@Test
+	public void test9802() {
+
+		final long code = 9802;
+
+		String definition = "PROJCS[\"Lambert Conic Conformal (2SP)\","
+				+ "GEODCRS[\"GCS_North_American_1983\","
+				+ "DATUM[\"North_American_Datum_1983\","
+				+ "SPHEROID[\"GRS_1980\",6378160,298.2539162964695]],"
+				+ "PRIMEM[\"Greenwich\",0],"
+				+ "UNIT[\"degree\",0.0174532925199433]],"
+				+ "PROJECTION[\"Lambert_Conformal_Conic_2SP\"],"
+				+ "PARAMETER[\"standard_parallel_1\",30],"
+				+ "PARAMETER[\"standard_parallel_2\",60],"
+				+ "PARAMETER[\"latitude_of_origin\",30],"
+				+ "PARAMETER[\"central_meridian\",126],"
+				+ "PARAMETER[\"false_easting\",0],"
+				+ "PARAMETER[\"false_northing\",0],"
+				+ "AUTHORITY[\"EPSG\",\"9802\"]]";
+
+		Projection projection = ProjectionFactory
+				.getProjectionByDefinition(definition);
+
+		TestCase.assertNotNull(projection);
+		TestCase.assertEquals(authority, projection.getAuthority());
+		TestCase.assertEquals(Long.toString(code), projection.getCode());
+		TestCase.assertEquals(definition, projection.getDefinition());
+		TestCase.assertTrue(projection.getCrs()
+				.getProjection() instanceof LambertConformalConicProjection);
+		TestCase.assertEquals(6378160, projection.getCrs().getProjection()
+				.getEllipsoid().getEquatorRadius(), 0);
+
+	}
+
+	/**
+	 * Test EPSG 32660
+	 */
+	@Test
+	public void test32660() {
+
+		final long code = 32660;
+		double delta = 0.00001;
+
+		String definition = "PROJCRS[\"WGS 84 / UTM zone 60N\",BASEGEOGCRS[\"WGS 84\","
+				+ "ENSEMBLE[\"World Geodetic System 1984 ensemble\","
+				+ "MEMBER[\"World Geodetic System 1984 (Transit)\",ID[\"EPSG\",1166]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G730)\",ID[\"EPSG\",1152]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G873)\",ID[\"EPSG\",1153]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1150)\",ID[\"EPSG\",1154]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1674)\",ID[\"EPSG\",1155]],"
+				+ "MEMBER[\"World Geodetic System 1984 (G1762)\",ID[\"EPSG\",1156]],"
+				+ "ELLIPSOID[\"WGS 84\",6378137,298.257223563,ID[\"EPSG\",7030]],"
+				+ "ENSEMBLEACCURACY[2],ID[\"EPSG\",6326]],ID[\"EPSG\",4326]],"
+				+ "CONVERSION[\"UTM zone 60N\",METHOD[\"Transverse Mercator\",ID[\"EPSG\",9807]],"
+				+ "PARAMETER[\"Latitude of natural origin\",0,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Longitude of natural origin\",177,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.9996,SCALEUNIT[\"unity\",1,ID[\"EPSG\",9201]]],"
+				+ "PARAMETER[\"False easting\",500000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "PARAMETER[\"False northing\",0,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",16060]],"
+				+ "CS[Cartesian,2,ID[\"EPSG\",4400]],AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",32660]]";
+
+		projectionTestDerived(code, definition, delta);
+
+		definition = "PROJCS[\"WGS 84 / UTM zone 60N\",GEOGCS[\"WGS 84\","
+				+ "DATUM[\"WGS_1984\","
+				+ "SPHEROID[\"WGS 84\",6378137,298.257223563,"
+				+ "AUTHORITY[\"EPSG\",\"7030\"]],"
+				+ "AUTHORITY[\"EPSG\",\"6326\"]],"
+				+ "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.01745329251994328,"
+				+ "AUTHORITY[\"EPSG\",\"9122\"]],"
+				+ "AUTHORITY[\"EPSG\",\"4326\"]],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "PROJECTION[\"Transverse_Mercator\"],"
+				+ "PARAMETER[\"latitude_of_origin\",0],"
+				+ "PARAMETER[\"central_meridian\",177],"
+				+ "PARAMETER[\"scale_factor\",0.9996],"
+				+ "PARAMETER[\"false_easting\",500000],"
+				+ "PARAMETER[\"false_northing\",0],"
+				+ "AUTHORITY[\"EPSG\",\"32660\"],"
+				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]";
+
+		projectionTestDerived(code, definition, delta);
+
+		definition = "PROJCS[\"WGS 84 / UTM zone 60N\",GEOGCRS[\"WGS 84\","
+				+ "DATUM[\"WGS_1984\","
+				+ "SPHEROID[\"WGS84\",6378137,298.257223563,"
+				+ "ID[\"EPSG\",\"7030\"]],ID[\"EPSG\",\"6326\"]],"
+				+ "PRIMEM[\"Greenwich\",0,ID[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",\"9122\"]],"
+				+ "ID[\"EPSG\",\"4326\"]],"
+				+ "PROJECTION[\"Transverse_Mercator\"],"
+				+ "PARAMETER[\"latitude_of_origin\",0],"
+				+ "PARAMETER[\"central_meridian\",177],"
+				+ "PARAMETER[\"scale_factor\",0.9996],"
+				+ "PARAMETER[\"false_easting\",500000],"
+				+ "PARAMETER[\"false_northing\",0],"
+				+ "UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]],"
+				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
+				+ "ID[\"EPSG\",\"32660\"]]";
+
+		projectionTestDerived(code, definition, delta);
+
+	}
+
+	/**
 	 * Test projection creation and transformations with derived authority and
 	 * epsg
 	 * 
@@ -510,11 +751,7 @@ public class ProjectionFactoryEpsgTest {
 	 *            WKT definition
 	 */
 	private void projectionTestDerived(long epsg, String definition) {
-
-		Projection projection = ProjectionFactory
-				.getProjectionByDefinition(definition);
-		projectionTest(epsg, definition, projection);
-
+		projectionTestDerived(epsg, definition, 0);
 	}
 
 	/**
@@ -527,10 +764,46 @@ public class ProjectionFactoryEpsgTest {
 	 *            WKT definition
 	 */
 	private void projectionTestSpecified(long epsg, String definition) {
+		projectionTestSpecified(epsg, definition, 0);
+	}
+
+	/**
+	 * Test projection creation and transformations with derived authority and
+	 * epsg
+	 * 
+	 * @param epsg
+	 *            EPSG code
+	 * @param definition
+	 *            WKT definition
+	 * @param delta
+	 *            delta comparison
+	 */
+	private void projectionTestDerived(long epsg, String definition,
+			double delta) {
+
+		Projection projection = ProjectionFactory
+				.getProjectionByDefinition(definition);
+		projectionTest(epsg, definition, projection, delta);
+
+	}
+
+	/**
+	 * Test projection creation and transformations with specified authority and
+	 * epsg
+	 * 
+	 * @param epsg
+	 *            EPSG code
+	 * @param definition
+	 *            WKT definition
+	 * @param delta
+	 *            delta comparison
+	 */
+	private void projectionTestSpecified(long epsg, String definition,
+			double delta) {
 
 		Projection projection = ProjectionFactory
 				.getProjectionByDefinition(authority, epsg, definition);
-		projectionTest(epsg, definition, projection);
+		projectionTest(epsg, definition, projection, delta);
 
 	}
 
@@ -545,7 +818,7 @@ public class ProjectionFactoryEpsgTest {
 	 *            projection
 	 */
 	private void projectionTest(long epsg, String definition,
-			Projection projection) {
+			Projection projection, double delta) {
 
 		TestCase.assertNotNull(projection);
 		TestCase.assertEquals(authority, projection.getAuthority());
@@ -556,7 +829,7 @@ public class ProjectionFactoryEpsgTest {
 
 		Projection projection2 = ProjectionFactory.getProjection(epsg);
 
-		compare(projection, projection2);
+		compare(projection, projection2, delta);
 
 		GeometryEnvelope range = new GeometryEnvelope();
 
@@ -593,31 +866,31 @@ public class ProjectionFactoryEpsgTest {
 		double midX = range.getMinX() + (xRange / 2.0);
 		double midY = range.getMinY() + (yRange / 2.0);
 
-		coordinateTest(range.getMinX(), range.getMinY(), transformTo,
+		coordinateTest(range.getMinX(), range.getMinY(), delta, transformTo,
 				transformTo2, transformFrom, transformFrom2);
-		coordinateTest(range.getMinX(), range.getMaxY(), transformTo,
+		coordinateTest(range.getMinX(), range.getMaxY(), delta, transformTo,
 				transformTo2, transformFrom, transformFrom2);
-		coordinateTest(range.getMaxX(), range.getMinY(), transformTo,
+		coordinateTest(range.getMaxX(), range.getMinY(), delta, transformTo,
 				transformTo2, transformFrom, transformFrom2);
-		coordinateTest(range.getMaxX(), range.getMaxY(), transformTo,
+		coordinateTest(range.getMaxX(), range.getMaxY(), delta, transformTo,
 				transformTo2, transformFrom, transformFrom2);
-		coordinateTest(midX, range.getMinY(), transformTo, transformTo2,
+		coordinateTest(midX, range.getMinY(), delta, transformTo, transformTo2,
 				transformFrom, transformFrom2);
-		coordinateTest(midX, range.getMaxY(), transformTo, transformTo2,
+		coordinateTest(midX, range.getMaxY(), delta, transformTo, transformTo2,
 				transformFrom, transformFrom2);
-		coordinateTest(range.getMinX(), midY, transformTo, transformTo2,
+		coordinateTest(range.getMinX(), midY, delta, transformTo, transformTo2,
 				transformFrom, transformFrom2);
-		coordinateTest(range.getMaxX(), midY, transformTo, transformTo2,
+		coordinateTest(range.getMaxX(), midY, delta, transformTo, transformTo2,
 				transformFrom, transformFrom2);
-		coordinateTest(midX, midY, transformTo, transformTo2, transformFrom,
-				transformFrom2);
+		coordinateTest(midX, midY, delta, transformTo, transformTo2,
+				transformFrom, transformFrom2);
 
 		for (int i = 0; i < 10; i++) {
 
 			double x = range.getMinX() + (Math.random() * xRange);
 			double y = range.getMinY() + (Math.random() * yRange);
-			coordinateTest(x, y, transformTo, transformTo2, transformFrom,
-					transformFrom2);
+			coordinateTest(x, y, delta, transformTo, transformTo2,
+					transformFrom, transformFrom2);
 		}
 
 	}
@@ -629,6 +902,8 @@ public class ProjectionFactoryEpsgTest {
 	 *            x coordinate
 	 * @param y
 	 *            y coordinate
+	 * @param delta
+	 *            delta comparison
 	 * @param transformTo
 	 *            transformation to
 	 * @param transformTo2
@@ -638,12 +913,12 @@ public class ProjectionFactoryEpsgTest {
 	 * @param transformFrom2
 	 *            transformation from 2
 	 */
-	private void coordinateTest(double x, double y,
+	private void coordinateTest(double x, double y, double delta,
 			ProjectionTransform transformTo, ProjectionTransform transformTo2,
 			ProjectionTransform transformFrom,
 			ProjectionTransform transformFrom2) {
-		coordinateTest(new ProjCoordinate(x, y), transformTo, transformTo2,
-				transformFrom, transformFrom2);
+		coordinateTest(new ProjCoordinate(x, y), delta, transformTo,
+				transformTo2, transformFrom, transformFrom2);
 	}
 
 	/**
@@ -651,6 +926,8 @@ public class ProjectionFactoryEpsgTest {
 	 * 
 	 * @param coordinate
 	 *            projection coordinate
+	 * @param delta
+	 *            delta comparison
 	 * @param transformTo
 	 *            transformation to
 	 * @param transformTo2
@@ -660,20 +937,26 @@ public class ProjectionFactoryEpsgTest {
 	 * @param transformFrom2
 	 *            transformation from 2
 	 */
-	private void coordinateTest(ProjCoordinate coordinate,
+	private void coordinateTest(ProjCoordinate coordinate, double delta,
 			ProjectionTransform transformTo, ProjectionTransform transformTo2,
 			ProjectionTransform transformFrom,
 			ProjectionTransform transformFrom2) {
 
 		ProjCoordinate coordinateTo = transformTo.transform(coordinate);
 		ProjCoordinate coordinateTo2 = transformTo2.transform(coordinate);
-		assertEquals(coordinateTo2.x, coordinateTo.x, 0);
-		assertEquals(coordinateTo2.y, coordinateTo.y, 0);
+		assertEquals(coordinateTo2.x, coordinateTo.x, delta);
+		assertEquals(coordinateTo2.y, coordinateTo.y, delta);
 
 		ProjCoordinate coordinateFrom = transformFrom.transform(coordinateTo);
 		ProjCoordinate coordinateFrom2 = transformFrom2.transform(coordinateTo);
-		assertEquals(coordinateFrom2.x, coordinateFrom.x, 0);
-		assertEquals(coordinateFrom2.y, coordinateFrom.y, 0);
+		if (delta > 0.0) {
+			double difference = Math.abs(coordinateFrom2.x - coordinateFrom.x);
+			assertTrue(difference <= delta
+					|| Math.abs(difference - 360.0) <= delta);
+		} else {
+			assertEquals(coordinateFrom2.x, coordinateFrom.x, delta);
+		}
+		assertEquals(coordinateFrom2.y, coordinateFrom.y, delta);
 
 	}
 
@@ -684,8 +967,11 @@ public class ProjectionFactoryEpsgTest {
 	 *            projection
 	 * @param projection2
 	 *            projection 2
+	 * @param delta
+	 *            delta comparison
 	 */
-	private void compare(Projection projection, Projection projection2) {
+	private void compare(Projection projection, Projection projection2,
+			double delta) {
 
 		assertEquals(projection, projection2);
 
@@ -733,7 +1019,7 @@ public class ProjectionFactoryEpsgTest {
 
 		assertEquals(proj.getAlpha(), proj2.getAlpha(), 0);
 		assertEquals(proj.getAxisOrder(), proj2.getAxisOrder());
-		// assertEquals(proj.getEPSGCode(), proj2.getEPSGCode(), 0);
+		assertEquals(proj.getEPSGCode(), proj2.getEPSGCode(), 0);
 		assertEquals(proj.getEquatorRadius(), proj2.getEquatorRadius(), 0);
 		assertEquals(proj.getFalseEasting(), proj2.getFalseEasting(), 0);
 		assertEquals(proj.getFalseNorthing(), proj2.getFalseNorthing(), 0);
@@ -752,8 +1038,10 @@ public class ProjectionFactoryEpsgTest {
 		assertEquals(proj.getMinLongitudeDegrees(),
 				proj2.getMinLongitudeDegrees(), 0);
 		assertEquals(proj.getPrimeMeridian(), proj2.getPrimeMeridian());
-		assertEquals(proj.getPROJ4Description().toLowerCase(),
-				proj2.getPROJ4Description().toLowerCase());
+		if (delta == 0.0) {
+			assertEquals(proj.getPROJ4Description().toLowerCase(),
+					proj2.getPROJ4Description().toLowerCase());
+		}
 		assertEquals(proj.getProjectionLatitude(),
 				proj2.getProjectionLatitude(), 0);
 		assertEquals(proj.getProjectionLatitude1(),
@@ -767,9 +1055,9 @@ public class ProjectionFactoryEpsgTest {
 		assertEquals(proj.getProjectionLatitudeDegrees(),
 				proj2.getProjectionLatitudeDegrees(), 0);
 		assertEquals(proj.getProjectionLongitude(),
-				proj2.getProjectionLongitude(), 0);
+				proj2.getProjectionLongitude(), delta);
 		assertEquals(proj.getProjectionLongitudeDegrees(),
-				proj2.getProjectionLongitudeDegrees(), 0);
+				proj2.getProjectionLongitudeDegrees(), delta);
 		assertEquals(proj.getScaleFactor(), proj2.getScaleFactor(), 0);
 		assertEquals(proj.getTrueScaleLatitude(), proj2.getTrueScaleLatitude(),
 				0);

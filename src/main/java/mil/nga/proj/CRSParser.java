@@ -371,7 +371,12 @@ public class CRSParser {
 
 			case TRANSVERSE_MERCATOR:
 			case TRANSVERSE_MERCATOR_SOUTH_ORIENTATED:
-				projectionName = "tmerc";
+				if (mapProjection.getName().toLowerCase()
+						.contains("utm zone")) {
+					projectionName = "utm";
+				} else {
+					projectionName = "tmerc";
+				}
 				break;
 
 			default:

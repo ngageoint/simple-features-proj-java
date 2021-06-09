@@ -63,6 +63,7 @@ import mil.nga.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.crs.parametric.ParametricDatum;
 import mil.nga.crs.projected.MapProjection;
 import mil.nga.crs.projected.MapProjectionMethod;
+import mil.nga.crs.projected.MapProjectionMethods;
 import mil.nga.crs.projected.MapProjectionParameter;
 import mil.nga.crs.projected.ProjectedCoordinateReferenceSystem;
 import mil.nga.crs.temporal.TemporalCoordinateReferenceSystem;
@@ -4028,6 +4029,19 @@ public class CRSReader implements Closeable {
 
 		readSeparator();
 		MapProjection mapProjection = readMapProjectionCompat();
+
+		String mapProjectionName = crs.getName();
+		if (!mapProjectionName.toLowerCase()
+				.contains(mapProjection.getName().toLowerCase())) {
+			MapProjectionMethod method = mapProjection.getMethod();
+			if (!method.hasMethod()
+					|| method.getMethod() != MapProjectionMethods
+							.getMethod(mapProjectionName)) {
+				mapProjectionName += " / " + mapProjection.getName();
+			}
+		}
+		mapProjection.setName(mapProjectionName);
+
 		crs.setMapProjection(mapProjection);
 
 		crs.setCoordinateSystem(readCoordinateSystemCompat(CRSType.PROJECTED,
