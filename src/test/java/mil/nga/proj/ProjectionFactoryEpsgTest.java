@@ -591,7 +591,65 @@ public class ProjectionFactoryEpsgTest {
 
 		final long code = 7405;
 
-		// TODO
+		String definition = "COMPOUNDCRS[\"OSGB36 / British National Grid + ODN height\","
+				+ "PROJCRS[\"OSGB36 / British National Grid\",BASEGEOGCRS[\"OSGB36\","
+				+ "DATUM[\"Ordnance Survey of Great Britain 1936\","
+				+ "ELLIPSOID[\"Airy 1830\",6377563.396,299.3249646,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],"
+				+ "ID[\"EPSG\",7001]],ID[\"EPSG\",6277]],ID[\"EPSG\",4277]],"
+				+ "CONVERSION[\"British National Grid\",METHOD[\"Transverse Mercator\",ID[\"EPSG\",9807]],"
+				+ "PARAMETER[\"Latitude of natural origin\",49,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Longitude of natural origin\",-2,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.999601272,SCALEUNIT[\"unity\",1,ID[\"EPSG\",9201]]],"
+				+ "PARAMETER[\"False easting\",400000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "PARAMETER[\"False northing\",-100000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",19916]],"
+				+ "CS[Cartesian,2,ID[\"EPSG\",4400]],"
+				+ "AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",27700]],"
+				+ "VERTCRS[\"ODN height\",VDATUM[\"Ordnance Datum Newlyn\",ID[\"EPSG\",5101]],"
+				+ "CS[vertical,1,ID[\"EPSG\",6499]],"
+				+ "AXIS[\"Gravity-related height (H)\",up],"
+				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5701]],"
+				+ "ID[\"EPSG\",7405]]";
+
+		// projectionTestDerived(code, 27700, definition);
+		Projection projection = ProjectionFactory
+				.getProjectionByDefinition(definition);
+		TestCase.assertNotNull(projection);
+		TestCase.assertEquals(authority, projection.getAuthority());
+		TestCase.assertEquals(Long.toString(code), projection.getCode());
+		TestCase.assertEquals(definition, projection.getDefinition());
+
+		definition = "COMPD_CS[\"OSGB 1936 / British National Grid + ODN height\","
+				+ "PROJCS[\"OSGB 1936 / British National Grid\",GEOGCS[\"OSGB 1936\","
+				+ "DATUM[\"OSGB_1936\","
+				+ "SPHEROID[\"Airy 1830\",6377563.396,299.3249646,"
+				+ "AUTHORITY[\"EPSG\",\"7001\"]],"
+				+ "TOWGS84[446.448,-125.157,542.06,0.15,0.247,0.842,-20.489],AUTHORITY[\"EPSG\",\"6277\"]],"
+				+ "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],"
+				+ "UNIT[\"degree\",0.0174532925199433,"
+				+ "AUTHORITY[\"EPSG\",\"9122\"]],"
+				+ "AUTHORITY[\"EPSG\",\"4277\"]],"
+				+ "PROJECTION[\"Transverse_Mercator\"],"
+				+ "PARAMETER[\"latitude_of_origin\",49],"
+				+ "PARAMETER[\"central_meridian\",-2],"
+				+ "PARAMETER[\"scale_factor\",0.9996012717],"
+				+ "PARAMETER[\"false_easting\",400000],"
+				+ "PARAMETER[\"false_northing\",-100000],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],"
+				+ "AUTHORITY[\"EPSG\",\"27700\"]],"
+				+ "VERT_CS[\"ODN height\",VERT_DATUM[\"Ordnance Datum Newlyn\",2005,"
+				+ "AUTHORITY[\"EPSG\",\"5101\"]],"
+				+ "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],"
+				+ "AXIS[\"Up\",UP],AUTHORITY[\"EPSG\",\"5701\"]],"
+				+ "AUTHORITY[\"EPSG\",\"7405\"]]";
+
+		// projectionTestDerived(code, 27700, definition);
+		projection = ProjectionFactory.getProjectionByDefinition(definition);
+		TestCase.assertNotNull(projection);
+		TestCase.assertEquals(authority, projection.getAuthority());
+		TestCase.assertEquals(Long.toString(code), projection.getCode());
+		TestCase.assertEquals(definition, projection.getDefinition());
 
 	}
 
@@ -773,6 +831,38 @@ public class ProjectionFactoryEpsgTest {
 	 * 
 	 * @param epsg
 	 *            EPSG code
+	 * @param compareEpsg
+	 *            compareEPSG code
+	 * @param definition
+	 *            WKT definition
+	 */
+	private void projectionTestDerived(long epsg, long compareEpsg,
+			String definition) {
+		projectionTestDerived(epsg, compareEpsg, definition, 0);
+	}
+
+	/**
+	 * Test projection creation and transformations with specified authority and
+	 * epsg
+	 * 
+	 * @param epsg
+	 *            EPSG code
+	 * @param compareEpsg
+	 *            compareEPSG code
+	 * @param definition
+	 *            WKT definition
+	 */
+	private void projectionTestSpecified(long epsg, long compareEpsg,
+			String definition) {
+		projectionTestSpecified(epsg, compareEpsg, definition, 0);
+	}
+
+	/**
+	 * Test projection creation and transformations with derived authority and
+	 * epsg
+	 * 
+	 * @param epsg
+	 *            EPSG code
 	 * @param definition
 	 *            WKT definition
 	 * @param delta
@@ -780,11 +870,7 @@ public class ProjectionFactoryEpsgTest {
 	 */
 	private void projectionTestDerived(long epsg, String definition,
 			double delta) {
-
-		Projection projection = ProjectionFactory
-				.getProjectionByDefinition(definition);
-		projectionTest(epsg, definition, projection, delta);
-
+		projectionTestDerived(epsg, epsg, definition, delta);
 	}
 
 	/**
@@ -800,11 +886,47 @@ public class ProjectionFactoryEpsgTest {
 	 */
 	private void projectionTestSpecified(long epsg, String definition,
 			double delta) {
+		projectionTestSpecified(epsg, epsg, definition, delta);
+	}
 
+	/**
+	 * Test projection creation and transformations with derived authority and
+	 * epsg
+	 * 
+	 * @param epsg
+	 *            EPSG code
+	 * @param compareEpsg
+	 *            compareEPSG code
+	 * @param definition
+	 *            WKT definition
+	 * @param delta
+	 *            delta comparison
+	 */
+	private void projectionTestDerived(long epsg, long compareEpsg,
+			String definition, double delta) {
+		Projection projection = ProjectionFactory
+				.getProjectionByDefinition(definition);
+		projectionTest(epsg, compareEpsg, definition, projection, delta);
+	}
+
+	/**
+	 * Test projection creation and transformations with specified authority and
+	 * epsg
+	 * 
+	 * @param epsg
+	 *            EPSG code
+	 * @param compareEpsg
+	 *            compareEPSG code
+	 * @param definition
+	 *            WKT definition
+	 * @param delta
+	 *            delta comparison
+	 */
+	private void projectionTestSpecified(long epsg, long compareEpsg,
+			String definition, double delta) {
 		Projection projection = ProjectionFactory
 				.getProjectionByDefinition(authority, epsg, definition);
-		projectionTest(epsg, definition, projection, delta);
-
+		projectionTest(epsg, compareEpsg, definition, projection, delta);
 	}
 
 	/**
@@ -812,12 +934,16 @@ public class ProjectionFactoryEpsgTest {
 	 * 
 	 * @param epsg
 	 *            EPSG code
+	 * @param compareEpsg
+	 *            compareEPSG code
 	 * @param definition
 	 *            WKT definition
 	 * @param projection
 	 *            projection
+	 * @param delta
+	 *            delta comparison
 	 */
-	private void projectionTest(long epsg, String definition,
+	private void projectionTest(long epsg, long compareEpsg, String definition,
 			Projection projection, double delta) {
 
 		TestCase.assertNotNull(projection);
@@ -827,9 +953,9 @@ public class ProjectionFactoryEpsgTest {
 
 		clear();
 
-		Projection projection2 = ProjectionFactory.getProjection(epsg);
+		Projection projection2 = ProjectionFactory.getProjection(compareEpsg);
 
-		compare(projection, projection2, delta);
+		compare(projection, projection2, compareEpsg, delta);
 
 		GeometryEnvelope range = new GeometryEnvelope();
 
@@ -967,11 +1093,18 @@ public class ProjectionFactoryEpsgTest {
 	 *            projection
 	 * @param projection2
 	 *            projection 2
+	 * @param compareEpsg
+	 *            compareEPSG code
 	 * @param delta
 	 *            delta comparison
 	 */
 	private void compare(Projection projection, Projection projection2,
-			double delta) {
+			long compareEpsg, double delta) {
+
+		if (Long.valueOf(projection.getCode()) != compareEpsg) {
+			projection2 = new Projection(projection2.getAuthority(),
+					projection.getCode(), projection2.getCrs());
+		}
 
 		assertEquals(projection, projection2);
 

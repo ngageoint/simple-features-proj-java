@@ -15,6 +15,8 @@ import org.locationtech.proj4j.util.ProjectionMath;
 
 import mil.nga.crs.CRS;
 import mil.nga.crs.CRSException;
+import mil.nga.crs.CompoundCoordinateReferenceSystem;
+import mil.nga.crs.SimpleCoordinateReferenceSystem;
 import mil.nga.crs.common.Axis;
 import mil.nga.crs.common.CoordinateSystem;
 import mil.nga.crs.common.Unit;
@@ -95,6 +97,10 @@ public class CRSParser {
 			crs = convert((ProjectedCoordinateReferenceSystem) crsObject);
 			break;
 
+		case COMPOUND:
+			crs = convert((CompoundCoordinateReferenceSystem) crsObject);
+			break;
+
 		default:
 
 		}
@@ -163,6 +169,32 @@ public class CRSParser {
 
 		return new CoordinateReferenceSystem(projected.getName(), null, datum,
 				projection);
+	}
+
+	/**
+	 * Convert a compound crs into a proj4 coordinate reference system
+	 * 
+	 * @param compound
+	 *            compound crs
+	 * @return coordinate reference system
+	 */
+	public static CoordinateReferenceSystem convert(
+			CompoundCoordinateReferenceSystem compound) {
+
+		CoordinateReferenceSystem crs = null;
+
+		for (SimpleCoordinateReferenceSystem simpleCrs : compound
+				.getCoordinateReferenceSystems()) {
+
+			crs = convert(simpleCrs);
+
+			if (crs != null) {
+				break;
+			}
+
+		}
+
+		return crs;
 	}
 
 	/**
