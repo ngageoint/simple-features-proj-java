@@ -2,6 +2,7 @@ package mil.nga.proj;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -620,10 +621,17 @@ public class ProjectionFactoryCodeTest {
 				+ "CONVERSION[\"British National Grid\",METHOD[\"Transverse Mercator\",ID[\"EPSG\",9807]],"
 				+ "PARAMETER[\"Latitude of natural origin\",49,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
 				+ "PARAMETER[\"Longitude of natural origin\",-2,ANGLEUNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",9102]]],"
-				+ "PARAMETER[\"Scale factor at natural origin\",0.999601272,SCALEUNIT[\"unity\",1,ID[\"EPSG\",9201]]],"
+				+ "PARAMETER[\"Scale factor at natural origin\",0.9996012717,SCALEUNIT[\"unity\",1,ID[\"EPSG\",9201]]],"
 				+ "PARAMETER[\"False easting\",400000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
-				+ "PARAMETER[\"False northing\",-100000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],ID[\"EPSG\",19916]],"
-				+ "CS[Cartesian,2,ID[\"EPSG\",4400]],"
+				+ "PARAMETER[\"False northing\",-100000,LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],"
+				+ "PARAMETER[\"X-axis translation\",446.448,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"Y-axis translation\",-125.157,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"Z-axis translation\",542.06,LENGTHUNIT[\"metre\",1.0]],"
+				+ "PARAMETER[\"X-axis rotation\",0.15,ANGLEUNIT[\"microradian\",1E-06]],"
+				+ "PARAMETER[\"Y-axis rotation\",0.247,ANGLEUNIT[\"microradian\",1E-06]],"
+				+ "PARAMETER[\"Z-axis rotation\",0.842,ANGLEUNIT[\"microradian\",1E-06]],"
+				+ "PARAMETER[\"Scale difference\",-20.489,SCALEUNIT[\"parts per million\",1E-06]],"
+				+ "ID[\"EPSG\",19916]],CS[Cartesian,2,ID[\"EPSG\",4400]],"
 				+ "AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",27700]],"
 				+ "VERTCRS[\"ODN height\",VDATUM[\"Ordnance Datum Newlyn\",ID[\"EPSG\",5101]],"
@@ -632,16 +640,8 @@ public class ProjectionFactoryCodeTest {
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5701]],"
 				+ "ID[\"EPSG\",7405]]";
 
-		// TODO
-		// projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
-		// ProjectionConstants.AUTHORITY_EPSG, "27700", definition);
-		Projection projection = ProjectionFactory
-				.getProjectionByDefinition(definition);
-		TestCase.assertNotNull(projection);
-		TestCase.assertEquals(ProjectionConstants.AUTHORITY_EPSG,
-				projection.getAuthority());
-		TestCase.assertEquals(code, projection.getCode());
-		TestCase.assertEquals(definition, projection.getDefinition());
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				ProjectionConstants.AUTHORITY_EPSG, "27700", definition);
 
 		definition = "COMPD_CS[\"OSGB 1936 / British National Grid + ODN height\","
 				+ "PROJCS[\"OSGB 1936 / British National Grid\",GEOGCS[\"OSGB 1936\","
@@ -668,14 +668,8 @@ public class ProjectionFactoryCodeTest {
 				+ "AXIS[\"Up\",UP],AUTHORITY[\"EPSG\",\"5701\"]],"
 				+ "AUTHORITY[\"EPSG\",\"7405\"]]";
 
-		// projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
-		// ProjectionConstants.AUTHORITY_EPSG, "27700", definition);
-		projection = ProjectionFactory.getProjectionByDefinition(definition);
-		TestCase.assertNotNull(projection);
-		TestCase.assertEquals(ProjectionConstants.AUTHORITY_EPSG,
-				projection.getAuthority());
-		TestCase.assertEquals(code, projection.getCode());
-		TestCase.assertEquals(definition, projection.getDefinition());
+		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
+				ProjectionConstants.AUTHORITY_EPSG, "27700", definition);
 
 	}
 
@@ -1173,16 +1167,30 @@ public class ProjectionFactoryCodeTest {
 		assertEquals(coordinateTo2.x, coordinateTo.x, delta);
 		assertEquals(coordinateTo2.y, coordinateTo.y, delta);
 
-		ProjCoordinate coordinateFrom = transformFrom.transform(coordinateTo);
-		ProjCoordinate coordinateFrom2 = transformFrom2.transform(coordinateTo);
-		if (delta > 0.0) {
-			double difference = Math.abs(coordinateFrom2.x - coordinateFrom.x);
-			assertTrue(difference <= delta
-					|| Math.abs(difference - 360.0) <= delta);
-		} else {
-			assertEquals(coordinateFrom2.x, coordinateFrom.x, delta);
+		ProjCoordinate coordinateFrom = null;
+		ProjCoordinate coordinateFrom2 = null;
+		try {
+			coordinateFrom = transformFrom.transform(coordinateTo);
+		} catch (IllegalStateException e) {
+			try {
+				coordinateFrom2 = transformFrom2.transform(coordinateTo);
+				fail();
+			} catch (IllegalStateException e2) {
+
+			}
 		}
-		assertEquals(coordinateFrom2.y, coordinateFrom.y, delta);
+		if (coordinateFrom != null) {
+			coordinateFrom2 = transformFrom2.transform(coordinateTo);
+			if (delta > 0.0) {
+				double difference = Math
+						.abs(coordinateFrom2.x - coordinateFrom.x);
+				assertTrue(difference <= delta
+						|| Math.abs(difference - 360.0) <= delta);
+			} else {
+				assertEquals(coordinateFrom2.x, coordinateFrom.x, delta);
+			}
+			assertEquals(coordinateFrom2.y, coordinateFrom.y, delta);
+		}
 
 	}
 

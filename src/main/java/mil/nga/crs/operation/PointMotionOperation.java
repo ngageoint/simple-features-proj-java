@@ -37,7 +37,7 @@ public class PointMotionOperation extends SimpleOperation {
 	 */
 	@Override
 	public OperationType getOperationType() {
-		return OperationType.POINT_MOTION_OPERATION;
+		return OperationType.POINT_MOTION;
 	}
 
 	/**

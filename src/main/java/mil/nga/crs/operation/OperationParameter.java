@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mil.nga.crs.common.Identifiable;
 import mil.nga.crs.common.Identifier;
 import mil.nga.crs.common.Unit;
 import mil.nga.crs.wkt.CRSWriter;
@@ -15,7 +16,7 @@ import mil.nga.crs.wkt.CRSWriter;
  * 
  * @author osbornb
  */
-public class OperationParameter implements Parameter {
+public class OperationParameter implements Identifiable {
 
 	/**
 	 * Logger
@@ -39,9 +40,19 @@ public class OperationParameter implements Parameter {
 	private Unit unit;
 
 	/**
+	 * Name
+	 */
+	private String fileName = null;
+
+	/**
 	 * Identifiers
 	 */
 	private List<Identifier> identifiers = null;
+
+	/**
+	 * Commonly encountered operation parameters
+	 */
+	private OperationParameters parameter;
 
 	/**
 	 * Constructor
@@ -59,32 +70,57 @@ public class OperationParameter implements Parameter {
 	 *            value
 	 */
 	public OperationParameter(String name, double value) {
-		setName(name);
-		setValue(value);
+		this.name = name;
+		this.value = value;
+		updateParameter();
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Constructor
+	 * 
+	 * @param parameter
+	 *            operation parameter
+	 * @param value
+	 *            value
 	 */
-	@Override
-	public ParameterType getParameterType() {
-		return ParameterType.PARAMETER;
+	public OperationParameter(OperationParameters parameter, double value) {
+		this.name = parameter.getName();
+		this.value = value;
+		this.parameter = parameter;
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Constructor
+	 * 
+	 * @param name
+	 *            name
+	 * @param fileName
+	 *            file name
 	 */
-	@Override
+	public OperationParameter(String name, String fileName) {
+		this.name = name;
+		this.fileName = fileName;
+		updateParameter();
+	}
+
+	/**
+	 * Get the name
+	 * 
+	 * @return name
+	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Set the name
+	 * 
+	 * @param name
+	 *            name
 	 */
-	@Override
 	public void setName(String name) {
 		this.name = name;
+		updateParameter();
 	}
 
 	/**
@@ -132,6 +168,34 @@ public class OperationParameter implements Parameter {
 	 */
 	public void setUnit(Unit unit) {
 		this.unit = unit;
+	}
+
+	/**
+	 * Get the file name
+	 * 
+	 * @return file name
+	 */
+	public String getFileName() {
+		return fileName;
+	}
+
+	/**
+	 * Is a parameter file
+	 * 
+	 * @return true if file
+	 */
+	public boolean isFile() {
+		return getFileName() != null;
+	}
+
+	/**
+	 * Set the file name
+	 * 
+	 * @param fileName
+	 *            file name
+	 */
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 	/**
@@ -197,6 +261,41 @@ public class OperationParameter implements Parameter {
 	}
 
 	/**
+	 * Get the commonly known parameter type
+	 * 
+	 * @return parameter type or null
+	 */
+	public OperationParameters getParameter() {
+		return parameter;
+	}
+
+	/**
+	 * Is a commonly known parameter type
+	 * 
+	 * @return true if has common parameter type
+	 */
+	public boolean hasParameter() {
+		return getParameter() != null;
+	}
+
+	/**
+	 * Set the commonly known parameter type
+	 * 
+	 * @param parameter
+	 *            parameter type or null
+	 */
+	public void setParameter(OperationParameters parameter) {
+		this.parameter = parameter;
+	}
+
+	/**
+	 * Update the commonly known parameter type using the name
+	 */
+	public void updateParameter() {
+		setParameter(OperationParameters.getParameter(getName()));
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -204,8 +303,12 @@ public class OperationParameter implements Parameter {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
+				+ ((fileName == null) ? 0 : fileName.hashCode());
+		result = prime * result
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((parameter == null) ? 0 : parameter.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(value);
@@ -225,6 +328,11 @@ public class OperationParameter implements Parameter {
 		if (getClass() != obj.getClass())
 			return false;
 		OperationParameter other = (OperationParameter) obj;
+		if (fileName == null) {
+			if (other.fileName != null)
+				return false;
+		} else if (!fileName.equals(other.fileName))
+			return false;
 		if (identifiers == null) {
 			if (other.identifiers != null)
 				return false;
@@ -234,6 +342,8 @@ public class OperationParameter implements Parameter {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
+			return false;
+		if (parameter != other.parameter)
 			return false;
 		if (unit == null) {
 			if (other.unit != null)

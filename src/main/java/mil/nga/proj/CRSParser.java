@@ -1,7 +1,9 @@
 package mil.nga.proj;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.locationtech.proj4j.CRSFactory;
 import org.locationtech.proj4j.CoordinateReferenceSystem;
@@ -24,9 +26,9 @@ import mil.nga.crs.geo.GeoCoordinateReferenceSystem;
 import mil.nga.crs.geo.GeoDatum;
 import mil.nga.crs.geo.PrimeMeridian;
 import mil.nga.crs.geo.TriaxialEllipsoid;
+import mil.nga.crs.operation.OperationMethod;
+import mil.nga.crs.operation.OperationParameter;
 import mil.nga.crs.projected.MapProjection;
-import mil.nga.crs.projected.MapProjectionMethod;
-import mil.nga.crs.projected.MapProjectionParameter;
 import mil.nga.crs.projected.ProjectedCoordinateReferenceSystem;
 import mil.nga.crs.wkt.CRSReader;
 
@@ -43,12 +45,35 @@ public class CRSParser {
 	private static final CRSFactory crsFactory = new CRSFactory();
 
 	/**
+	 * Name to known ellipsoid mapping
+	 */
+	private static final Map<String, Ellipsoid> ellipsoids = new HashMap<>();
+
+	static {
+		for (Ellipsoid ellipsoid : Ellipsoid.ellipsoids) {
+			ellipsoids.put(ellipsoid.getShortName().toLowerCase(), ellipsoid);
+			ellipsoids.put(ellipsoid.getName().toLowerCase(), ellipsoid);
+		}
+	}
+
+	/**
 	 * Get the CRS Factory
 	 * 
 	 * @return crs factory
 	 */
 	public static CRSFactory getCRSFactory() {
 		return crsFactory;
+	}
+
+	/**
+	 * Get a predefined proj4j ellipsoid by name or short name
+	 * 
+	 * @param name
+	 *            name or short name
+	 * @return ellipsoid or null
+	 */
+	public static Ellipsoid getEllipsoid(String name) {
+		return ellipsoids.get(name.toLowerCase());
 	}
 
 	/**
@@ -147,7 +172,7 @@ public class CRSParser {
 		Ellipsoid ellipsoid = convert(geoDatum.getEllipsoid());
 		DatumParameters datumParameters = new DatumParameters();
 
-		MapProjectionMethod method = mapProjection.getMethod();
+		OperationMethod method = mapProjection.getMethod();
 		if (projected.hasIdentifiers()
 				&& projected.getIdentifier(0).getNameAndUniqueIdentifier()
 						.equalsIgnoreCase(ProjectionConstants.AUTHORITY_EPSG
@@ -156,8 +181,13 @@ public class CRSParser {
 			datumParameters.setA(ellipsoid.getA());
 			datumParameters.setES(0);
 		} else {
+			// datumParameters.setDatumTransform(new double[] { 446.448,
+			// -125.157,
+			// 542.06, 0.15, 0.247, 0.842, -20.489 }); // TODO
 			datumParameters.setEllipsoid(ellipsoid);
 		}
+
+		datumParameters.setDatumTransform(convertDatumTransform(method));
 
 		Datum datum = datumParameters.getDatum();
 
@@ -229,32 +259,118 @@ public class CRSParser {
 	public static Ellipsoid convert(mil.nga.crs.geo.Ellipsoid ellipsoid) {
 
 		String name = ellipsoid.getName();
-		String shortName = name;
-		if (ellipsoid.hasIdentifiers()) {
-			shortName = ellipsoid.getIdentifier(0).getNameAndUniqueIdentifier();
-		}
-		double equatorRadius = ellipsoid.getSemiMajorAxis();
-		double poleRadius = 0;
-		double reciprocalFlattening = 0;
 
-		switch (ellipsoid.getType()) {
-		case OBLATE:
-			reciprocalFlattening = ellipsoid.getInverseFlattening();
-			if (reciprocalFlattening == 0) {
-				reciprocalFlattening = Double.POSITIVE_INFINITY;
+		Ellipsoid converted = getEllipsoid(name);
+
+		if (converted == null) {
+
+			String shortName = name;
+			if (ellipsoid.hasIdentifiers()) {
+				shortName = ellipsoid.getIdentifier(0)
+						.getNameAndUniqueIdentifier();
 			}
-			break;
-		case TRIAXIAL:
-			TriaxialEllipsoid triaxial = (TriaxialEllipsoid) ellipsoid;
-			poleRadius = triaxial.getSemiMinorAxis();
-			break;
-		default:
-			throw new CRSException(
-					"Unsupported Ellipsoid Type: " + ellipsoid.getType());
+			double equatorRadius = ellipsoid.getSemiMajorAxis();
+			double poleRadius = 0;
+			double reciprocalFlattening = 0;
+
+			switch (ellipsoid.getType()) {
+			case OBLATE:
+				reciprocalFlattening = ellipsoid.getInverseFlattening();
+				if (reciprocalFlattening == 0) {
+					reciprocalFlattening = Double.POSITIVE_INFINITY;
+				}
+				break;
+			case TRIAXIAL:
+				TriaxialEllipsoid triaxial = (TriaxialEllipsoid) ellipsoid;
+				poleRadius = triaxial.getSemiMinorAxis();
+				break;
+			default:
+				throw new CRSException(
+						"Unsupported Ellipsoid Type: " + ellipsoid.getType());
+			}
+
+			converted = new Ellipsoid(shortName, equatorRadius, poleRadius,
+					reciprocalFlattening, name);
 		}
 
-		return new Ellipsoid(shortName, equatorRadius, poleRadius,
-				reciprocalFlattening, name);
+		return converted;
+	}
+
+	/**
+	 * Convert the operation method into datum transform
+	 * 
+	 * @param method
+	 *            operation method
+	 * @return transform
+	 */
+	public static double[] convertDatumTransform(OperationMethod method) {
+
+		double[] transform3 = new double[3];
+		double[] transform7 = new double[7];
+		boolean has3 = false;
+		boolean has7 = false;
+
+		for (OperationParameter parameter : method.getParameters()) {
+
+			if (parameter.hasParameter()) {
+
+				// TODO units
+
+				switch (parameter.getParameter()) {
+
+				case X_AXIS_TRANSLATION:
+					transform3[0] = parameter.getValue();
+					has3 = true;
+					break;
+
+				case Y_AXIS_TRANSLATION:
+					transform3[1] = parameter.getValue();
+					has3 = true;
+					break;
+
+				case Z_AXIS_TRANSLATION:
+					transform3[2] = parameter.getValue();
+					has3 = true;
+					break;
+
+				case X_AXIS_ROTATION:
+					transform7[3] = parameter.getValue();
+					has7 = true;
+					break;
+
+				case Y_AXIS_ROTATION:
+					transform7[4] = parameter.getValue();
+					has7 = true;
+					break;
+
+				case Z_AXIS_ROTATION:
+					transform7[5] = parameter.getValue();
+					has7 = true;
+					break;
+
+				case SCALE_DIFFERENCE:
+					transform7[6] = parameter.getValue();
+					has7 = true;
+					break;
+
+				default:
+					break;
+
+				}
+			}
+		}
+
+		double[] transform = null;
+		if (has7) {
+			transform7[0] = transform3[0];
+			transform7[1] = transform3[1];
+			transform7[2] = transform3[2];
+			transform = transform7;
+		} else if (has3) {
+			transform = transform3;
+		}
+
+		return transform;
 	}
 
 	/**
@@ -327,7 +443,7 @@ public class CRSParser {
 
 		Projection projection = null;
 
-		MapProjectionMethod method = mapProjection.getMethod();
+		OperationMethod method = mapProjection.getMethod();
 
 		if (method.hasMethod()) {
 
@@ -465,13 +581,12 @@ public class CRSParser {
 	 * @param projection
 	 *            proj4j projection
 	 * @param method
-	 *            map projection method
+	 *            operation method
 	 */
 	public static void updateProjection(Projection projection,
-			MapProjectionMethod method) {
+			OperationMethod method) {
 		if (method.hasParameters()) {
-			for (MapProjectionParameter parameter : method
-					.getMapProjectionParameters()) {
+			for (OperationParameter parameter : method.getParameters()) {
 				updateProjection(projection, method, parameter);
 			}
 		}
@@ -483,12 +598,12 @@ public class CRSParser {
 	 * @param projection
 	 *            proj4j projection
 	 * @param method
-	 *            map projection method
+	 *            operation method
 	 * @param parameter
-	 *            map projection parameter
+	 *            operation parameter
 	 */
 	public static void updateProjection(Projection projection,
-			MapProjectionMethod method, MapProjectionParameter parameter) {
+			OperationMethod method, OperationParameter parameter) {
 
 		if (parameter.hasParameter()) {
 
@@ -646,7 +761,7 @@ public class CRSParser {
 	 * @return true if degrees
 	 */
 	private static boolean parameterValueIsDegrees(
-			MapProjectionParameter parameter) {
+			OperationParameter parameter) {
 
 		boolean degrees = true;
 

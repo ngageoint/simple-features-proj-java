@@ -31,12 +31,17 @@ public class OperationMethod implements Identifiable {
 	/**
 	 * Operation parameters
 	 */
-	private List<Parameter> parameters = null;
+	private List<OperationParameter> parameters = null;
 
 	/**
 	 * Identifiers
 	 */
 	private List<Identifier> identifiers = null;
+
+	/**
+	 * Commonly encountered operation methods
+	 */
+	private OperationMethods method;
 
 	/**
 	 * Constructor
@@ -52,7 +57,19 @@ public class OperationMethod implements Identifiable {
 	 *            name
 	 */
 	public OperationMethod(String name) {
-		setName(name);
+		this.name = name;
+		updateMethod();
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param method
+	 *            operation method
+	 */
+	public OperationMethod(OperationMethods method) {
+		this.name = method.getName();
+		this.method = method;
 	}
 
 	/**
@@ -72,6 +89,7 @@ public class OperationMethod implements Identifiable {
 	 */
 	public void setName(String name) {
 		this.name = name;
+		updateMethod();
 	}
 
 	/**
@@ -79,7 +97,7 @@ public class OperationMethod implements Identifiable {
 	 * 
 	 * @return parameters
 	 */
-	public List<Parameter> getParameters() {
+	public List<OperationParameter> getParameters() {
 		return parameters;
 	}
 
@@ -108,7 +126,7 @@ public class OperationMethod implements Identifiable {
 	 *            parameter index
 	 * @return parameter
 	 */
-	public Parameter getParameter(int index) {
+	public OperationParameter getParameter(int index) {
 		return parameters.get(index);
 	}
 
@@ -118,9 +136,8 @@ public class OperationMethod implements Identifiable {
 	 * @param parameters
 	 *            parameters
 	 */
-	public void setParameters(List<Parameter> parameters) {
-		this.parameters = null;
-		addParameters(parameters);
+	public void setParameters(List<OperationParameter> parameters) {
+		this.parameters = parameters;
 	}
 
 	/**
@@ -129,7 +146,7 @@ public class OperationMethod implements Identifiable {
 	 * @param parameter
 	 *            parameter
 	 */
-	public void addParameter(Parameter parameter) {
+	public void addParameter(OperationParameter parameter) {
 		if (this.parameters == null) {
 			this.parameters = new ArrayList<>();
 		}
@@ -142,10 +159,11 @@ public class OperationMethod implements Identifiable {
 	 * @param parameters
 	 *            parameters
 	 */
-	public void addParameters(List<Parameter> parameters) {
-		for (Parameter parameter : parameters) {
-			addParameter(parameter);
+	public void addParameters(List<OperationParameter> parameters) {
+		if (this.parameters == null) {
+			this.parameters = new ArrayList<>();
 		}
+		this.parameters.addAll(parameters);
 	}
 
 	/**
@@ -208,6 +226,41 @@ public class OperationMethod implements Identifiable {
 			this.identifiers = new ArrayList<>();
 		}
 		this.identifiers.addAll(identifiers);
+	}
+
+	/**
+	 * Get the commonly known method type
+	 * 
+	 * @return method type or null
+	 */
+	public OperationMethods getMethod() {
+		return method;
+	}
+
+	/**
+	 * Is a commonly known method type
+	 * 
+	 * @return true if has common method type
+	 */
+	public boolean hasMethod() {
+		return getMethod() != null;
+	}
+
+	/**
+	 * Set the commonly known method type
+	 * 
+	 * @param method
+	 *            method type or null
+	 */
+	public void setMethod(OperationMethods method) {
+		this.method = method;
+	}
+
+	/**
+	 * Update the commonly known method type using the name
+	 */
+	public void updateMethod() {
+		setMethod(OperationMethods.getMethod(getName()));
 	}
 
 	/**

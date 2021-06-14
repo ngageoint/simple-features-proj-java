@@ -9,7 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,7 +16,6 @@ import java.util.logging.Logger;
 import mil.nga.crs.CRS;
 import mil.nga.crs.CRSException;
 import mil.nga.crs.CRSType;
-import mil.nga.crs.CommonCRS;
 import mil.nga.crs.CompoundCoordinateReferenceSystem;
 import mil.nga.crs.CoordinateReferenceSystem;
 import mil.nga.crs.SimpleCoordinateReferenceSystem;
@@ -55,16 +53,12 @@ import mil.nga.crs.operation.CommonOperation;
 import mil.nga.crs.operation.ConcatenatedOperation;
 import mil.nga.crs.operation.CoordinateOperation;
 import mil.nga.crs.operation.OperationMethod;
+import mil.nga.crs.operation.OperationMethods;
 import mil.nga.crs.operation.OperationParameter;
-import mil.nga.crs.operation.OperationParameterFile;
-import mil.nga.crs.operation.Parameter;
 import mil.nga.crs.operation.PointMotionOperation;
 import mil.nga.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.crs.parametric.ParametricDatum;
 import mil.nga.crs.projected.MapProjection;
-import mil.nga.crs.projected.MapProjectionMethod;
-import mil.nga.crs.projected.MapProjectionMethods;
-import mil.nga.crs.projected.MapProjectionParameter;
 import mil.nga.crs.projected.ProjectedCoordinateReferenceSystem;
 import mil.nga.crs.temporal.TemporalCoordinateReferenceSystem;
 import mil.nga.crs.temporal.TemporalDatum;
@@ -700,7 +694,7 @@ public class CRSReader implements Closeable {
 	/**
 	 * Backward Compatible extras
 	 */
-	private Map<String, String> extras = new LinkedHashMap<>();
+	private Map<String, Object> extras = new LinkedHashMap<>();
 
 	/**
 	 * Constructor
@@ -3329,13 +3323,13 @@ public class CRSReader implements Closeable {
 		mapProjection.setName(reader.readExpectedToken());
 
 		readSeparator();
-		MapProjectionMethod method = readMapProjectionMethod();
+		OperationMethod method = readMethod();
 		mapProjection.setMethod(method);
 
 		CRSKeyword keyword = readToKeyword(CRSKeyword.PARAMETER, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.PARAMETER) {
-			method.setMapProjectionParameters(readMapProjectionParameters());
+			method.setParameters(readProjectedParameters());
 			keyword = readToKeyword(CRSKeyword.ID);
 		}
 
@@ -3355,34 +3349,9 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public MapProjectionMethod readMapProjectionMethod() throws IOException {
-		MapProjectionMethod method = new MapProjectionMethod();
-		readMethod(method);
-		return method;
-	}
-
-	/**
-	 * Read an operation method
-	 * 
-	 * @return operation method
-	 * @throws IOException
-	 *             upon failure to read
-	 */
 	public OperationMethod readMethod() throws IOException {
-		OperationMethod method = new OperationMethod();
-		readMethod(method);
-		return method;
-	}
 
-	/**
-	 * Read an operation method
-	 * 
-	 * @param method
-	 *            operation method
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public void readMethod(OperationMethod method) throws IOException {
+		OperationMethod method = new OperationMethod();
 
 		readKeyword(CRSKeyword.METHOD);
 
@@ -3397,31 +3366,19 @@ public class CRSReader implements Closeable {
 
 		readRightDelimiter();
 
+		return method;
 	}
 
 	/**
-	 * Read Map projection parameters
+	 * Read projected parameters
 	 * 
-	 * @return map projection parameters
+	 * @return operation parameters
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public List<MapProjectionParameter> readMapProjectionParameters()
+	public List<OperationParameter> readProjectedParameters()
 			throws IOException {
-
-		List<MapProjectionParameter> parameters = new ArrayList<>();
-
-		do {
-
-			if (!parameters.isEmpty()) {
-				readSeparator();
-			}
-
-			parameters.add(readMapProjectionParameter(CRSType.PROJECTED));
-
-		} while (isKeywordNext(CRSKeyword.PARAMETER));
-
-		return parameters;
+		return readParameters(CRSType.PROJECTED);
 	}
 
 	/**
@@ -3453,23 +3410,6 @@ public class CRSReader implements Closeable {
 	}
 
 	/**
-	 * Read a Map projection parameter
-	 * 
-	 * @param type
-	 *            coordinate reference system type
-	 * 
-	 * @return map projection parameter
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public MapProjectionParameter readMapProjectionParameter(CRSType type)
-			throws IOException {
-		MapProjectionParameter parameter = new MapProjectionParameter();
-		readParameter(parameter, type);
-		return parameter;
-	}
-
-	/**
 	 * Read an Operation parameter
 	 * 
 	 * @param type
@@ -3480,25 +3420,8 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public OperationParameter readParameter(CRSType type) throws IOException {
-		OperationParameter parameter = new OperationParameter();
-		readParameter(parameter, type);
-		return parameter;
-	}
 
-	/**
-	 * Read an Operation parameter
-	 * 
-	 * @param parameter
-	 *            operation parameter
-	 * @param type
-	 *            coordinate reference system type
-	 * 
-	 * @return operation parameter
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public OperationParameter readParameter(OperationParameter parameter,
-			CRSType type) throws IOException {
+		OperationParameter parameter = new OperationParameter();
 
 		readKeyword(CRSKeyword.PARAMETER);
 
@@ -3633,7 +3556,7 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public List<Parameter> readDerivedParameters() throws IOException {
+	public List<OperationParameter> readDerivedParameters() throws IOException {
 		return readParametersAndFiles(CRSType.DERIVED);
 	}
 
@@ -3647,10 +3570,10 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public List<Parameter> readParametersAndFiles(CRSType type)
+	public List<OperationParameter> readParametersAndFiles(CRSType type)
 			throws IOException {
 
-		List<Parameter> parameters = new ArrayList<>();
+		List<OperationParameter> parameters = new ArrayList<>();
 
 		do {
 
@@ -3676,9 +3599,9 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public OperationParameterFile readParameterFile() throws IOException {
+	public OperationParameter readParameterFile() throws IOException {
 
-		OperationParameterFile parameterFile = new OperationParameterFile();
+		OperationParameter parameterFile = new OperationParameter();
 
 		readKeyword(CRSKeyword.PARAMETERFILE);
 
@@ -3707,7 +3630,7 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public List<Parameter> readCoordinateOperationParameters()
+	public List<OperationParameter> readCoordinateOperationParameters()
 			throws IOException {
 		return readParametersAndFiles(CRSType.COORDINATE_OPERATION);
 	}
@@ -3813,7 +3736,7 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public List<Parameter> readPointMotionOperationParameters()
+	public List<OperationParameter> readPointMotionOperationParameters()
 			throws IOException {
 		return readParametersAndFiles(CRSType.POINT_MOTION_OPERATION);
 	}
@@ -3864,7 +3787,7 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public List<Parameter> readBoundParameters() throws IOException {
+	public List<OperationParameter> readBoundParameters() throws IOException {
 		return readParametersAndFiles(CRSType.BOUND);
 	}
 
@@ -3954,7 +3877,7 @@ public class CRSReader implements Closeable {
 
 		readRightDelimiter();
 
-		crs.setRemark(writeExtras());
+		crs.addExtras(extras);
 
 		return crs;
 	}
@@ -4033,10 +3956,9 @@ public class CRSReader implements Closeable {
 		String mapProjectionName = crs.getName();
 		if (!mapProjectionName.toLowerCase()
 				.contains(mapProjection.getName().toLowerCase())) {
-			MapProjectionMethod method = mapProjection.getMethod();
-			if (!method.hasMethod()
-					|| method.getMethod() != MapProjectionMethods
-							.getMethod(mapProjectionName)) {
+			OperationMethod method = mapProjection.getMethod();
+			if (!method.hasMethod() || method.getMethod() != OperationMethods
+					.getMethod(mapProjectionName)) {
 				mapProjectionName += " / " + mapProjection.getName();
 			}
 		}
@@ -4067,7 +3989,7 @@ public class CRSReader implements Closeable {
 
 		readRightDelimiter();
 
-		crs.setRemark(writeExtras());
+		crs.addExtras(extras);
 
 		return crs;
 	}
@@ -4109,7 +4031,7 @@ public class CRSReader implements Closeable {
 
 		readRightDelimiter();
 
-		crs.setRemark(writeExtras());
+		crs.addExtras(extras);
 
 		return crs;
 	}
@@ -4151,7 +4073,7 @@ public class CRSReader implements Closeable {
 
 		readRightDelimiter();
 
-		crs.setRemark(writeExtras());
+		crs.addExtras(extras);
 
 		return crs;
 	}
@@ -4167,14 +4089,14 @@ public class CRSReader implements Closeable {
 
 		MapProjection mapProjection = new MapProjection();
 
-		MapProjectionMethod method = readMapProjectionMethod();
+		OperationMethod method = readMethod();
 		mapProjection.setName(method.getName());
 		mapProjection.setMethod(method);
 
 		CRSKeyword keyword = readToKeyword(CRSKeyword.PARAMETER, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.PARAMETER) {
-			method.setMapProjectionParameters(readMapProjectionParameters());
+			method.setParameters(readProjectedParameters());
 		}
 
 		if (isKeywordNext(CRSKeyword.ID)) {
@@ -4401,100 +4323,6 @@ public class CRSReader implements Closeable {
 		} while (isKeywordNext(CRSKeyword.EXTENSION));
 
 		return extensions;
-	}
-
-	/**
-	 * Write backwards compatible extras map to text
-	 * 
-	 * @return extras text
-	 * @throws IOException
-	 *             upon failure to write
-	 */
-	public String writeExtras() throws IOException {
-		return writeExtras(extras);
-	}
-
-	/**
-	 * Write backwards compatible extras map to text
-	 * 
-	 * @param extras
-	 *            extras map
-	 * @return extras text
-	 * @throws IOException
-	 *             upon failure to write
-	 */
-	public static String writeExtras(Map<String, String> extras)
-			throws IOException {
-
-		String value = null;
-
-		if (!extras.isEmpty()) {
-
-			StringBuilder builder = new StringBuilder();
-
-			for (Entry<String, String> extension : extras.entrySet()) {
-
-				if (builder.length() > 0) {
-					builder.append(WKTConstants.SEPARATOR);
-				}
-
-				builder.append(WKTConstants.LEFT_DELIMITER);
-				builder.append("\"");
-				builder.append(extension.getKey());
-				builder.append("\"");
-				builder.append(WKTConstants.SEPARATOR);
-				builder.append("\"");
-				builder.append(extension.getValue());
-				builder.append("\"");
-				builder.append(WKTConstants.RIGHT_DELIMITER);
-			}
-
-			value = builder.toString();
-		}
-
-		return value;
-	}
-
-	/**
-	 * Read backwards compatible extras text (extensions, unsupported values)
-	 * that were saved as CRS remarks, retrievable by
-	 * {@link CommonCRS#getRemark()}
-	 * 
-	 * @param text
-	 *            extras text
-	 * @return extras map
-	 * @throws IOException
-	 *             upon failure to read
-	 */
-	public static Map<String, String> readExtras(String text)
-			throws IOException {
-
-		Map<String, String> extras = new LinkedHashMap<>();
-
-		CRSReader reader = new CRSReader(text);
-		try {
-
-			while (reader.peekLeftDelimiter()) {
-				reader.readLeftDelimiter();
-
-				String key = reader.getTextReader().readExpectedToken();
-				reader.readSeparator();
-				String value = reader.getTextReader().readExpectedToken();
-				extras.put(key, value);
-
-				reader.readRightDelimiter();
-
-				if (reader.peekSeparator()) {
-					reader.readSeparator();
-				}
-			}
-			reader.readEnd();
-
-		} finally {
-			reader.close();
-		}
-
-		return extras;
 	}
 
 }

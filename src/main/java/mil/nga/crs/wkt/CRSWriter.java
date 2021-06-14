@@ -43,8 +43,6 @@ import mil.nga.crs.operation.ConcatenatedOperation;
 import mil.nga.crs.operation.CoordinateOperation;
 import mil.nga.crs.operation.OperationMethod;
 import mil.nga.crs.operation.OperationParameter;
-import mil.nga.crs.operation.OperationParameterFile;
-import mil.nga.crs.operation.Parameter;
 import mil.nga.crs.operation.PointMotionOperation;
 import mil.nga.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.crs.projected.MapProjection;
@@ -1296,10 +1294,10 @@ public class CRSWriter implements Closeable {
 			writeLeftDelimiter();
 
 			switch (concatenable.getOperationType()) {
-			case COORDINATE_OPERATION:
+			case COORDINATE:
 				writeCoordinateOperation((CoordinateOperation) concatenable);
 				break;
-			case POINT_MOTION_OPERATION:
+			case POINT_MOTION:
 				writePointMotionOperation((PointMotionOperation) concatenable);
 				break;
 			case MAP_PROJECTION:
@@ -2142,18 +2140,26 @@ public class CRSWriter implements Closeable {
 	 */
 	public void write(OperationParameter parameter) throws IOException {
 
-		write(CRSKeyword.PARAMETER);
+		if (parameter.isFile()) {
+			write(CRSKeyword.PARAMETERFILE);
+		} else {
+			write(CRSKeyword.PARAMETER);
+		}
 
 		writeLeftDelimiter();
 
 		writeQuotedText(parameter.getName());
 
 		writeSeparator();
-		write(parameter.getValue());
+		if (parameter.isFile()) {
+			writeQuotedText(parameter.getFileName());
+		} else {
+			write(parameter.getValue());
 
-		if (parameter.hasUnit()) {
-			writeSeparator();
-			write(parameter.getUnit());
+			if (parameter.hasUnit()) {
+				writeSeparator();
+				write(parameter.getUnit());
+			}
 		}
 
 		if (parameter.hasIdentifiers()) {
@@ -2249,7 +2255,8 @@ public class CRSWriter implements Closeable {
 	 * @throws IOException
 	 *             upon failure to write
 	 */
-	public void writeParameters(List<Parameter> parameters) throws IOException {
+	public void writeParameters(List<OperationParameter> parameters)
+			throws IOException {
 
 		for (int i = 0; i < parameters.size(); i++) {
 
@@ -2260,57 +2267,6 @@ public class CRSWriter implements Closeable {
 			write(parameters.get(i));
 		}
 
-	}
-
-	/**
-	 * Write a parameter to well-known text
-	 * 
-	 * @param parameter
-	 *            parameter
-	 * @throws IOException
-	 *             upon failure to write
-	 */
-	public void write(Parameter parameter) throws IOException {
-
-		switch (parameter.getParameterType()) {
-		case PARAMETER:
-			write((OperationParameter) parameter);
-			break;
-		case PARAMETER_FILE:
-			write((OperationParameterFile) parameter);
-			break;
-		default:
-			throw new CRSException("Unsupported parameter type: "
-					+ parameter.getParameterType());
-		}
-
-	}
-
-	/**
-	 * Write an operation parameter to well-known text
-	 * 
-	 * @param file
-	 *            operation parameter file
-	 * @throws IOException
-	 *             upon failure to write
-	 */
-	public void write(OperationParameterFile file) throws IOException {
-
-		write(CRSKeyword.PARAMETERFILE);
-
-		writeLeftDelimiter();
-
-		writeQuotedText(file.getName());
-
-		writeSeparator();
-		writeQuotedText(file.getFileName());
-
-		if (file.hasIdentifiers()) {
-			writeSeparator();
-			writeIdentifiers(file.getIdentifiers());
-		}
-
-		writeRightDelimiter();
 	}
 
 	/**

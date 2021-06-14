@@ -3,7 +3,6 @@ package mil.nga.crs.wkt;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Map;
 
 import org.junit.Test;
 
@@ -133,8 +132,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"false_northing\",3210000.0]],"
 				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
 				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
-				+ "ID[\"EPSG\",3035],"
-				+ "REMARK[\"[\"\"TOWGS84\"\",\"\"0,0,0,0,0,0,0\"\"]\"]]";
+				+ "ID[\"EPSG\",3035]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -172,8 +170,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"false_northing\",3210000.0]],"
 				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
 				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
-				+ "ID[\"EPSG\",3035],"
-				+ "REMARK[\"[\"\"TOWGS84\"\",\"\"0,0,0,0,0,0,0\"\"]\"]]";
+				+ "ID[\"EPSG\",3035]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -211,8 +208,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"false_northing\",3210000.0]],"
 				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
 				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
-				+ "ID[\"EPSG\",3035],"
-				+ "REMARK[\"[\"\"TOWGS84\"\",\"\"0,0,0,0,0,0,0\"\"]\"]]";
+				+ "ID[\"EPSG\",3035]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -369,23 +365,17 @@ public class CRSReaderWriterEpsgTest {
 				+ "VDATUM[\"EGM2008 geoid\",ID[\"EPSG\",1027]],"
 				+ "CS[vertical,1],AXIS[\"Up\",up],"
 				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
-				+ "ID[\"EPSG\",3855],"
-				+ "REMARK[\"[\"\"datumType\"\",\"\"2005.0\"\"],[\"\"PROJ4_GRIDS\"\",\"\"egm08_25.gtx\"\"]\"]]";
+				+ "ID[\"EPSG\",3855]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
 		assertEquals(WKTUtils.pretty(expectedText), CRSWriter.writePretty(crs));
 
-		assertEquals(
-				"[\"datumType\",\"2005.0\"],[\"PROJ4_GRIDS\",\"egm08_25.gtx\"]",
-				coordinateReferenceSystem.getRemark());
-		Map<String, String> extras = CRSReader
-				.readExtras(coordinateReferenceSystem.getRemark());
-		assertEquals(2, extras.size());
-		assertEquals("2005.0", extras.get(WKTConstants.DATUM_TYPE));
-		assertEquals("egm08_25.gtx", extras.get("PROJ4_GRIDS"));
-		assertEquals(coordinateReferenceSystem.getRemark(),
-				CRSReader.writeExtras(extras));
+		assertEquals(2, coordinateReferenceSystem.numExtras());
+		assertEquals("2005.0",
+				coordinateReferenceSystem.getExtra(WKTConstants.DATUM_TYPE));
+		assertEquals("egm08_25.gtx",
+				coordinateReferenceSystem.getExtra("PROJ4_GRIDS"));
 
 		text = "VERTCRS[\"EGM2008 geoid height\","
 				+ "VDATUM[\"EGM2008 geoid\",ANCHOR[\"WGS 84 ellipsoid\"]],"
@@ -476,8 +466,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"false_easting\",0.0],"
 				+ "PARAMETER[\"false_northing\",0.0]],"
 				+ "CS[ellipsoidal,2],AXIS[\"X\",east],AXIS[\"Y\",north],"
-				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],ID[\"EPSG\",3857],"
-				+ "REMARK[\"[\"\"PROJ4\"\",\"\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs\"\"]\"]]";
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],ID[\"EPSG\",3857]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -595,8 +584,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"false_northing\",0.0]],"
 				+ "CS[ellipsoidal,2],AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
 				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
-				+ "ID[\"EPSG\",3978],"
-				+ "REMARK[\"[\"\"TOWGS84\"\",\"\"0,0,0,0,0,0,0\"\"]\"]]";
+				+ "ID[\"EPSG\",3978]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -640,8 +628,7 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"false_northing\",0.0]],"
 				+ "CS[ellipsoidal,2],AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
 				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],"
-				+ "ID[\"EPSG\",3978],"
-				+ "REMARK[\"[\"\"TOWGS84\"\",\"\"0,0,0,0,0,0,0\"\"]\"]]";
+				+ "ID[\"EPSG\",3978]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -1083,8 +1070,7 @@ public class CRSReaderWriterEpsgTest {
 		expectedText = "VERTCRS[\"mean sea level height\","
 				+ "VDATUM[\"Mean Sea Level\",ID[\"EPSG\",5100]],"
 				+ "CS[vertical,1],AXIS[\"Gravity-related height\",up],"
-				+ "UNIT[\"m\",1.0],ID[\"EPSG\",5714],"
-				+ "REMARK[\"[\"\"datumType\"\",\"\"2005.0\"\"]\"]]";
+				+ "UNIT[\"m\",1.0],ID[\"EPSG\",5714]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -1139,8 +1125,7 @@ public class CRSReaderWriterEpsgTest {
 
 		expectedText = "VERTCRS[\"mean sea level depth\",VDATUM[\"Mean Sea Level\",ID[\"EPSG\",5100]],"
 				+ "CS[vertical,1],AXIS[\"Gravity-related depth\",down],"
-				+ "UNIT[\"m\",1.0],ID[\"EPSG\",5715],"
-				+ "REMARK[\"[\"\"datumType\"\",\"\"2005.0\"\"]\"]]";
+				+ "UNIT[\"m\",1.0],ID[\"EPSG\",5715]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -1195,8 +1180,7 @@ public class CRSReaderWriterEpsgTest {
 		expectedText = "VERTCRS[\"EGM96 geoid\","
 				+ "VDATUM[\"EGM96 geoid\",ID[\"EPSG\",5171]],"
 				+ "CS[vertical,1],AXIS[\"Gravity-related height\",up],"
-				+ "UNIT[\"m\",1.0],ID[\"EPSG\",5773],"
-				+ "REMARK[\"[\"\"datumType\"\",\"\"2005.0\"\"]\"]]";
+				+ "UNIT[\"m\",1.0],ID[\"EPSG\",5773]]";
 
 		assertEquals(expectedText, crs.toString());
 		assertEquals(expectedText, CRSWriter.write(crs));
@@ -1300,12 +1284,10 @@ public class CRSReaderWriterEpsgTest {
 				+ "PARAMETER[\"false_easting\",400000.0],"
 				+ "PARAMETER[\"false_northing\",-100000.0]],"
 				+ "CS[ellipsoidal,2],AXIS[\"Easting\",east],AXIS[\"Northing\",north],"
-				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],ID[\"EPSG\",27700],"
-				+ "REMARK[\"[\"\"TOWGS84\"\",\"\"446.448,-125.157,542.06,0.15,0.247,0.842,-20.489\"\"]\"]],"
+				+ "UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],ID[\"EPSG\",27700]],"
 				+ "VERTCRS[\"ODN height\",VDATUM[\"Ordnance Datum Newlyn\","
 				+ "ID[\"EPSG\",5101]],"
-				+ "CS[vertical,1],AXIS[\"Up\",up],UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],ID[\"EPSG\",5701],"
-				+ "REMARK[\"[\"\"TOWGS84\"\",\"\"446.448,-125.157,542.06,0.15,0.247,0.842,-20.489\"\"],[\"\"datumType\"\",\"\"2005.0\"\"]\"]],"
+				+ "CS[vertical,1],AXIS[\"Up\",up],UNIT[\"metre\",1.0,ID[\"EPSG\",9001]],ID[\"EPSG\",5701]],"
 				+ "ID[\"EPSG\",7405]]";
 
 		assertEquals(expectedText, crs.toString());

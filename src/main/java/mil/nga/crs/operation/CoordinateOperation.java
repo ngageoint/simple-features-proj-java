@@ -50,7 +50,7 @@ public class CoordinateOperation extends SimpleOperation {
 	 */
 	@Override
 	public OperationType getOperationType() {
-		return OperationType.COORDINATE_OPERATION;
+		return OperationType.COORDINATE;
 	}
 
 	/**

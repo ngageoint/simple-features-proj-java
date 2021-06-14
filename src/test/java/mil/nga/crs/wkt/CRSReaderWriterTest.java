@@ -46,7 +46,6 @@ import mil.nga.crs.metadata.CoordinateMetadata;
 import mil.nga.crs.operation.ConcatenatedOperation;
 import mil.nga.crs.operation.CoordinateOperation;
 import mil.nga.crs.operation.OperationParameter;
-import mil.nga.crs.operation.OperationParameterFile;
 import mil.nga.crs.operation.OperationType;
 import mil.nga.crs.operation.PointMotionOperation;
 import mil.nga.crs.parametric.ParametricCoordinateReferenceSystem;
@@ -4544,8 +4543,7 @@ public class CRSReaderWriterTest {
 		assertEquals("Latitude and longitude difference file",
 				operation.getMethod().getParameter(0).getName());
 		assertEquals("nzgd2kgrid0005.gsb",
-				((OperationParameterFile) operation.getMethod().getParameter(0))
-						.getFileName());
+				operation.getMethod().getParameter(0).getFileName());
 		assertEquals("EPSG", operation.getIdentifier(0).getName());
 		assertEquals("1568", operation.getIdentifier(0).getUniqueIdentifier());
 		assertEquals("LINZS25000", operation.getIdentifier(0).getCitation());
@@ -4873,8 +4871,7 @@ public class CRSReaderWriterTest {
 		assertEquals("Point motion velocity grid file",
 				operation.getMethod().getParameter(0).getName());
 		assertEquals("cvg60.cvb",
-				((OperationParameterFile) operation.getMethod().getParameter(0))
-						.getFileName());
+				operation.getMethod().getParameter(0).getFileName());
 		assertEquals(0.01, operation.getAccuracy(), 0);
 
 		text = text.replace("\",1,", "\",1.0,").replace("6378137", "6378137.0");
@@ -4939,7 +4936,7 @@ public class CRSReaderWriterTest {
 				.getTarget();
 		assertEquals(CRSType.GEOGRAPHIC, geographic2.getType());
 		assertEquals("KKJ", geographic2.getName());
-		assertEquals(OperationType.COORDINATE_OPERATION,
+		assertEquals(OperationType.COORDINATE,
 				operation.getOperation(0).getOperationType());
 		assertEquals("RT90 to ETRS89", operation.getOperation(0).getName());
 		geographic1 = (GeoCoordinateReferenceSystem) ((CoordinateOperation) operation
@@ -4965,7 +4962,7 @@ public class CRSReaderWriterTest {
 				operation.getOperation(0).getIdentifier(0).getName());
 		assertEquals("1437", operation.getOperation(0).getIdentifier(0)
 				.getUniqueIdentifier());
-		assertEquals(OperationType.COORDINATE_OPERATION,
+		assertEquals(OperationType.COORDINATE,
 				operation.getOperation(1).getOperationType());
 		assertEquals("KKJ to ETRS89", operation.getOperation(1).getName());
 		geographic1 = (GeoCoordinateReferenceSystem) ((CoordinateOperation) operation
@@ -5042,7 +5039,7 @@ public class CRSReaderWriterTest {
 		geographic2 = (GeoCoordinateReferenceSystem) operation.getTarget();
 		assertEquals(CRSType.GEOGRAPHIC, geographic2.getType());
 		assertEquals("KKJ", geographic2.getName());
-		assertEquals(OperationType.COORDINATE_OPERATION,
+		assertEquals(OperationType.COORDINATE,
 				operation.getOperation(0).getOperationType());
 		assertEquals("RT90 to ETRS89", operation.getOperation(0).getName());
 		geographic1 = (GeoCoordinateReferenceSystem) ((CoordinateOperation) operation
@@ -5064,7 +5061,7 @@ public class CRSReaderWriterTest {
 				.getParameter(0).getName());
 		assertEquals(414.1, ((OperationParameter) operation.getOperation(0)
 				.getMethod().getParameter(0)).getValue(), 0);
-		assertEquals(OperationType.COORDINATE_OPERATION,
+		assertEquals(OperationType.COORDINATE,
 				operation.getOperation(1).getOperationType());
 		assertEquals("ETRS89 to KKJ", operation.getOperation(1).getName());
 		geographic1 = (GeoCoordinateReferenceSystem) ((CoordinateOperation) operation
@@ -5234,14 +5231,12 @@ public class CRSReaderWriterTest {
 				.getIdentifier(0).getUniqueIdentifier());
 		assertEquals("Latitude difference file", bound.getTransformation()
 				.getMethod().getParameter(0).getName());
-		assertEquals("alaska.las",
-				((OperationParameterFile) bound.getTransformation().getMethod()
-						.getParameter(0)).getFileName());
+		assertEquals("alaska.las", bound.getTransformation().getMethod()
+				.getParameter(0).getFileName());
 		assertEquals("Longitude difference file", bound.getTransformation()
 				.getMethod().getParameter(1).getName());
-		assertEquals("alaska.los",
-				((OperationParameterFile) bound.getTransformation().getMethod()
-						.getParameter(1)).getFileName());
+		assertEquals("alaska.los", bound.getTransformation().getMethod()
+				.getParameter(1).getFileName());
 
 		text = text.replace("6378137", "6378137.0");
 		assertEquals(text, bound.toString());
@@ -5273,9 +5268,8 @@ public class CRSReaderWriterTest {
 				.getIdentifier(0).getUniqueIdentifier());
 		assertEquals("Latitude and longitude difference file", bound
 				.getTransformation().getMethod().getParameter(0).getName());
-		assertEquals("NTv2_0.gsb",
-				((OperationParameterFile) bound.getTransformation().getMethod()
-						.getParameter(0)).getFileName());
+		assertEquals("NTv2_0.gsb", bound.getTransformation().getMethod()
+				.getParameter(0).getFileName());
 
 		text = text.replace("6378137", "6378137.0").replace("\",1,", "\",1.0,");
 		assertEquals(text, bound.toString());

@@ -10,12 +10,12 @@ public enum OperationType {
 	/**
 	 * Coordinate Operation
 	 */
-	COORDINATE_OPERATION,
+	COORDINATE,
 
 	/**
 	 * Point Motion Operation
 	 */
-	POINT_MOTION_OPERATION,
+	POINT_MOTION,
 
 	/**
 	 * Map Projection
