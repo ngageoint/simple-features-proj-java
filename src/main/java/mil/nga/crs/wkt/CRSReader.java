@@ -36,6 +36,7 @@ import mil.nga.crs.common.ScopeExtentIdentifierRemark;
 import mil.nga.crs.common.TemporalExtent;
 import mil.nga.crs.common.Unit;
 import mil.nga.crs.common.UnitType;
+import mil.nga.crs.common.Units;
 import mil.nga.crs.common.Usage;
 import mil.nga.crs.common.VerticalExtent;
 import mil.nga.crs.derived.DerivedCoordinateReferenceSystem;
@@ -55,6 +56,7 @@ import mil.nga.crs.operation.CoordinateOperation;
 import mil.nga.crs.operation.OperationMethod;
 import mil.nga.crs.operation.OperationMethods;
 import mil.nga.crs.operation.OperationParameter;
+import mil.nga.crs.operation.OperationParameters;
 import mil.nga.crs.operation.PointMotionOperation;
 import mil.nga.crs.parametric.ParametricCoordinateReferenceSystem;
 import mil.nga.crs.parametric.ParametricDatum;
@@ -690,11 +692,6 @@ public class CRSReader implements Closeable {
 	 * Strict rule enforcement
 	 */
 	private boolean strict = false;
-
-	/**
-	 * Backward Compatible extras
-	 */
-	private Map<String, Object> extras = new LinkedHashMap<>();
 
 	/**
 	 * Constructor
@@ -1452,7 +1449,9 @@ public class CRSReader implements Closeable {
 
 		if (isDynamic || isKeywordNext(CRSKeyword.DATUM)) {
 			readSeparator();
-			GeoReferenceFrame referenceFrame = readGeoReferenceFrame();
+			crs.initializeExtras();
+			GeoReferenceFrame referenceFrame = readGeoReferenceFrame(
+					crs.getExtras());
 			referenceFrame.setType(baseCrs.getType());
 			baseCrs.setReferenceFrame(referenceFrame);
 		} else if (isKeywordNext(CRSKeyword.ENSEMBLE)) {
@@ -1570,7 +1569,9 @@ public class CRSReader implements Closeable {
 
 		if (isDynamic || isKeywordNext(CRSKeyword.DATUM)) {
 			readSeparator();
-			GeoReferenceFrame referenceFrame = readGeoReferenceFrame();
+			crs.initializeExtras();
+			GeoReferenceFrame referenceFrame = readGeoReferenceFrame(
+					crs.getExtras());
 			referenceFrame.setType(crsType);
 			crs.setReferenceFrame(referenceFrame);
 		} else if (isKeywordNext(CRSKeyword.ENSEMBLE)) {
@@ -1648,7 +1649,9 @@ public class CRSReader implements Closeable {
 
 		if (isDynamic || isKeywordNext(CRSKeyword.VDATUM)) {
 			readSeparator();
-			baseCrs.setReferenceFrame(readVerticalReferenceFrame());
+			crs.initializeExtras();
+			baseCrs.setReferenceFrame(
+					readVerticalReferenceFrame(crs.getExtras()));
 		} else if (isKeywordNext(CRSKeyword.ENSEMBLE)) {
 			readSeparator();
 			baseCrs.setDatumEnsemble(readVerticalDatumEnsemble());
@@ -1727,7 +1730,8 @@ public class CRSReader implements Closeable {
 		crs.setName(name);
 
 		readSeparator();
-		baseCrs.setDatum(readEngineeringDatum());
+		crs.initializeExtras();
+		baseCrs.setDatum(readEngineeringDatum(crs.getExtras()));
 
 		if (derivedCrs != null) {
 
@@ -1786,7 +1790,8 @@ public class CRSReader implements Closeable {
 		crs.setName(name);
 
 		readSeparator();
-		baseCrs.setDatum(readParametricDatum());
+		crs.initializeExtras();
+		baseCrs.setDatum(readParametricDatum(crs.getExtras()));
 
 		if (derivedCrs != null) {
 
@@ -1915,7 +1920,9 @@ public class CRSReader implements Closeable {
 
 		if (isDynamic || isKeywordNext(CRSKeyword.DATUM)) {
 			readSeparator();
-			GeoReferenceFrame referenceFrame = readGeoReferenceFrame();
+			crs.initializeExtras();
+			GeoReferenceFrame referenceFrame = readGeoReferenceFrame(
+					crs.getExtras());
 			referenceFrame.setType(projectedCrs.getBaseType());
 			projectedCrs.setReferenceFrame(referenceFrame);
 		} else if (isKeywordNext(CRSKeyword.ENSEMBLE)) {
@@ -2281,7 +2288,22 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public GeoReferenceFrame readGeoReferenceFrame() throws IOException {
-		ReferenceFrame referenceFrame = readReferenceFrame();
+		return readGeoReferenceFrame(null);
+	}
+
+	/**
+	 * Read a Geo reference frame
+	 * 
+	 * @param extras
+	 *            used to store extra elements
+	 * 
+	 * @return geo reference frame
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public GeoReferenceFrame readGeoReferenceFrame(Map<String, Object> extras)
+			throws IOException {
+		ReferenceFrame referenceFrame = readReferenceFrame(extras);
 		if (!(referenceFrame instanceof GeoReferenceFrame)) {
 			throw new CRSException(
 					"Reference frame was not an expected Geo Reference Frame");
@@ -2298,7 +2320,22 @@ public class CRSReader implements Closeable {
 	 */
 	public VerticalReferenceFrame readVerticalReferenceFrame()
 			throws IOException {
-		ReferenceFrame referenceFrame = readReferenceFrame();
+		return readVerticalReferenceFrame(null);
+	}
+
+	/**
+	 * Read a Vertical reference frame
+	 * 
+	 * @param extras
+	 *            used to store extra elements
+	 * 
+	 * @return vertical reference frame
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public VerticalReferenceFrame readVerticalReferenceFrame(
+			Map<String, Object> extras) throws IOException {
+		ReferenceFrame referenceFrame = readReferenceFrame(extras);
 		if (!(referenceFrame instanceof VerticalReferenceFrame)) {
 			throw new CRSException(
 					"Reference frame was not an expected Vertical Reference Frame");
@@ -2314,7 +2351,22 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public EngineeringDatum readEngineeringDatum() throws IOException {
-		ReferenceFrame referenceFrame = readReferenceFrame();
+		return readEngineeringDatum(null);
+	}
+
+	/**
+	 * Read an Engineering datum
+	 * 
+	 * @param extras
+	 *            used to store extra elements
+	 * 
+	 * @return engineering datum
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public EngineeringDatum readEngineeringDatum(Map<String, Object> extras)
+			throws IOException {
+		ReferenceFrame referenceFrame = readReferenceFrame(extras);
 		if (!(referenceFrame instanceof EngineeringDatum)) {
 			throw new CRSException(
 					"Reference frame was not an expected Engineering Datum");
@@ -2330,7 +2382,22 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public ParametricDatum readParametricDatum() throws IOException {
-		ReferenceFrame referenceFrame = readReferenceFrame();
+		return readParametricDatum(null);
+	}
+
+	/**
+	 * Read a Parametric datum
+	 * 
+	 * @param extras
+	 *            used to store extra elements
+	 * 
+	 * @return parametric datum
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ParametricDatum readParametricDatum(Map<String, Object> extras)
+			throws IOException {
+		ReferenceFrame referenceFrame = readReferenceFrame(extras);
 		if (!(referenceFrame instanceof ParametricDatum)) {
 			throw new CRSException(
 					"Reference frame was not an expected Parametric Datum");
@@ -2346,6 +2413,21 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public ReferenceFrame readReferenceFrame() throws IOException {
+		return readReferenceFrame(null);
+	}
+
+	/**
+	 * Read a Reference frame (datum)
+	 * 
+	 * @param extras
+	 *            used to store extra elements
+	 * 
+	 * @return reference frame
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ReferenceFrame readReferenceFrame(Map<String, Object> extras)
+			throws IOException {
 
 		ReferenceFrame referenceFrame = null;
 		GeoReferenceFrame geoReferenceFrame = null;
@@ -2383,7 +2465,10 @@ public class CRSReader implements Closeable {
 				CRSKeyword.ANCHOR, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.TOWGS84) {
-			extras.put(CRSKeyword.TOWGS84.name(), readToWGS84Compat());
+			double[] toWGS84 = readToWGS84Compat();
+			if (extras != null) {
+				extras.put(CRSKeyword.TOWGS84.name(), toWGS84);
+			}
 			keyword = readToKeyword(CRSKeyword.ANCHOR, CRSKeyword.ID);
 		}
 
@@ -2399,7 +2484,10 @@ public class CRSReader implements Closeable {
 		}
 
 		if (keyword == CRSKeyword.TOWGS84) {
-			extras.put(CRSKeyword.TOWGS84.name(), readToWGS84Compat());
+			double[] toWGS84 = readToWGS84Compat();
+			if (extras != null) {
+				extras.put(CRSKeyword.TOWGS84.name(), toWGS84);
+			}
 		}
 
 		readRightDelimiter();
@@ -3857,7 +3945,9 @@ public class CRSReader implements Closeable {
 		crs.setName(reader.readExpectedToken());
 
 		readSeparator();
-		GeoReferenceFrame referenceFrame = readGeoReferenceFrame();
+		crs.initializeExtras();
+		GeoReferenceFrame referenceFrame = readGeoReferenceFrame(
+				crs.getExtras());
 		referenceFrame.setType(crsType);
 		crs.setReferenceFrame(referenceFrame);
 
@@ -3867,7 +3957,7 @@ public class CRSReader implements Closeable {
 		CRSKeyword keyword = readToKeyword(CRSKeyword.EXTENSION, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.EXTENSION) {
-			extras.putAll(readExtensionsCompat());
+			crs.addExtras(readExtensionsCompat());
 			keyword = readToKeyword(CRSKeyword.ID);
 		}
 
@@ -3876,8 +3966,6 @@ public class CRSReader implements Closeable {
 		}
 
 		readRightDelimiter();
-
-		crs.addExtras(extras);
 
 		return crs;
 	}
@@ -3941,7 +4029,8 @@ public class CRSReader implements Closeable {
 		crs.setName(reader.readExpectedToken());
 
 		readSeparator();
-		crs.setBase(readGeoCompat(expectedBaseType));
+		GeoCoordinateReferenceSystem base = readGeoCompat(expectedBaseType);
+		crs.setBase(base);
 
 		// Not spec based, but some implementations provide the unit here
 		Unit unit = null;
@@ -3964,6 +4053,11 @@ public class CRSReader implements Closeable {
 		}
 		mapProjection.setName(mapProjectionName);
 
+		Object toWGS84 = base.getExtra(CRSKeyword.TOWGS84.name());
+		if (toWGS84 != null) {
+			addTransformParameters((double[]) toWGS84, mapProjection);
+		}
+
 		crs.setMapProjection(mapProjection);
 
 		crs.setCoordinateSystem(readCoordinateSystemCompat(CRSType.PROJECTED,
@@ -3976,7 +4070,7 @@ public class CRSReader implements Closeable {
 		CRSKeyword keyword = readToKeyword(CRSKeyword.EXTENSION, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.EXTENSION) {
-			extras.putAll(readExtensionsCompat());
+			crs.addExtras(readExtensionsCompat());
 			keyword = readToKeyword(CRSKeyword.ID);
 		}
 
@@ -3989,9 +4083,76 @@ public class CRSReader implements Closeable {
 
 		readRightDelimiter();
 
-		crs.addExtras(extras);
-
 		return crs;
+	}
+
+	/**
+	 * Add transform parameters to the map projection
+	 * 
+	 * @param transform
+	 *            transform array
+	 * @param mapProjection
+	 *            map projection
+	 */
+	public static void addTransformParameters(double[] transform,
+			MapProjection mapProjection) {
+
+		boolean param3 = false;
+		boolean param7 = false;
+
+		if (transform != null) {
+
+			for (int i = 0; i < transform.length; i++) {
+				if (transform[i] != 0.0) {
+					param3 = true;
+					if (i >= 3) {
+						param7 = true;
+						break;
+					}
+				}
+			}
+
+			if (param3) {
+				param3 = transform.length >= 3;
+
+				if (param7) {
+					param7 = transform.length >= 7;
+				}
+			}
+
+		}
+
+		if (param3) {
+
+			OperationMethod method = mapProjection.getMethod();
+
+			method.addParameter(new OperationParameter(
+					OperationParameters.X_AXIS_TRANSLATION, transform[0],
+					Units.getMetre()));
+			method.addParameter(new OperationParameter(
+					OperationParameters.Y_AXIS_TRANSLATION, transform[1],
+					Units.getMetre()));
+			method.addParameter(new OperationParameter(
+					OperationParameters.Z_AXIS_TRANSLATION, transform[2],
+					Units.getMetre()));
+
+			if (param7) {
+
+				method.addParameter(new OperationParameter(
+						OperationParameters.X_AXIS_ROTATION, transform[3],
+						Units.getArcSecond()));
+				method.addParameter(new OperationParameter(
+						OperationParameters.Y_AXIS_ROTATION, transform[4],
+						Units.getArcSecond()));
+				method.addParameter(new OperationParameter(
+						OperationParameters.Z_AXIS_ROTATION, transform[5],
+						Units.getArcSecond()));
+				method.addParameter(new OperationParameter(
+						OperationParameters.SCALE_DIFFERENCE, transform[6],
+						Units.getPartsPerMillion()));
+			}
+
+		}
 	}
 
 	/**
@@ -4013,7 +4174,8 @@ public class CRSReader implements Closeable {
 		crs.setName(reader.readExpectedToken());
 
 		readSeparator();
-		crs.setReferenceFrame(readVerticalDatumCompat());
+		crs.initializeExtras();
+		crs.setReferenceFrame(readVerticalDatumCompat(crs.getExtras()));
 
 		crs.setCoordinateSystem(readCoordinateSystemCompat(CRSType.VERTICAL,
 				crs.getReferenceFrame()));
@@ -4021,7 +4183,7 @@ public class CRSReader implements Closeable {
 		CRSKeyword keyword = readToKeyword(CRSKeyword.EXTENSION, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.EXTENSION) {
-			extras.putAll(readExtensionsCompat());
+			crs.addExtras(readExtensionsCompat());
 			keyword = readToKeyword(CRSKeyword.ID);
 		}
 
@@ -4030,8 +4192,6 @@ public class CRSReader implements Closeable {
 		}
 
 		readRightDelimiter();
-
-		crs.addExtras(extras);
 
 		return crs;
 	}
@@ -4055,7 +4215,8 @@ public class CRSReader implements Closeable {
 		crs.setName(reader.readExpectedToken());
 
 		readSeparator();
-		crs.setDatum(readEngineeringDatumCompat());
+		crs.initializeExtras();
+		crs.setDatum(readEngineeringDatumCompat(crs.getExtras()));
 
 		crs.setCoordinateSystem(readCoordinateSystemCompat(CRSType.ENGINEERING,
 				crs.getDatum()));
@@ -4063,7 +4224,7 @@ public class CRSReader implements Closeable {
 		CRSKeyword keyword = readToKeyword(CRSKeyword.EXTENSION, CRSKeyword.ID);
 
 		if (keyword == CRSKeyword.EXTENSION) {
-			extras.putAll(readExtensionsCompat());
+			crs.addExtras(readExtensionsCompat());
 			keyword = readToKeyword(CRSKeyword.ID);
 		}
 
@@ -4072,8 +4233,6 @@ public class CRSReader implements Closeable {
 		}
 
 		readRightDelimiter();
-
-		crs.addExtras(extras);
 
 		return crs;
 	}
@@ -4196,7 +4355,22 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public VerticalReferenceFrame readVerticalDatumCompat() throws IOException {
-		ReferenceFrame referenceFrame = readDatumCompat();
+		return readVerticalDatumCompat(null);
+	}
+
+	/**
+	 * Read a Backward Compatible vertical datum
+	 * 
+	 * @param extras
+	 *            used to store extra elements
+	 * 
+	 * @return vertical reference frame
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public VerticalReferenceFrame readVerticalDatumCompat(
+			Map<String, Object> extras) throws IOException {
+		ReferenceFrame referenceFrame = readDatumCompat(extras);
 		if (!(referenceFrame instanceof VerticalReferenceFrame)) {
 			throw new CRSException(
 					"Datum was not an expected Vertical Reference Frame");
@@ -4212,7 +4386,22 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public EngineeringDatum readEngineeringDatumCompat() throws IOException {
-		ReferenceFrame referenceFrame = readDatumCompat();
+		return readEngineeringDatumCompat(null);
+	}
+
+	/**
+	 * Read a Backward Compatible engineering datum
+	 * 
+	 * @param extras
+	 *            used to store extra elements
+	 * 
+	 * @return engineering datum
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public EngineeringDatum readEngineeringDatumCompat(
+			Map<String, Object> extras) throws IOException {
+		ReferenceFrame referenceFrame = readDatumCompat(extras);
 		if (!(referenceFrame instanceof EngineeringDatum)) {
 			throw new CRSException(
 					"Datum was not an expected Engineering Datum");
@@ -4228,6 +4417,21 @@ public class CRSReader implements Closeable {
 	 *             upon failure to read
 	 */
 	public ReferenceFrame readDatumCompat() throws IOException {
+		return readDatumCompat(null);
+	}
+
+	/**
+	 * Read a Backward Compatible datum
+	 * 
+	 * @param extras
+	 *            used to store extra elements
+	 * 
+	 * @return reference frame
+	 * @throws IOException
+	 *             upon failure to read
+	 */
+	public ReferenceFrame readDatumCompat(Map<String, Object> extras)
+			throws IOException {
 
 		ReferenceFrame referenceFrame = null;
 
@@ -4248,8 +4452,10 @@ public class CRSReader implements Closeable {
 		referenceFrame.setName(reader.readExpectedToken());
 
 		readSeparator();
-		extras.put(WKTConstants.DATUM_TYPE,
-				Double.toString(reader.readNumber()));
+		double datumType = reader.readNumber();
+		if (extras != null) {
+			extras.put(WKTConstants.DATUM_TYPE, Double.toString(datumType));
+		}
 
 		CRSKeyword keyword = readToKeyword(CRSKeyword.ID, CRSKeyword.EXTENSION);
 
@@ -4259,7 +4465,10 @@ public class CRSReader implements Closeable {
 		}
 
 		if (keyword == CRSKeyword.EXTENSION) {
-			extras.putAll(readExtensionsCompat());
+			Map<String, Object> extensions = readExtensionsCompat();
+			if (extras != null) {
+				extras.putAll(extensions);
+			}
 		}
 
 		readRightDelimiter();
@@ -4274,21 +4483,25 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public String readToWGS84Compat() throws IOException {
+	public double[] readToWGS84Compat() throws IOException {
 
-		StringBuilder value = new StringBuilder();
+		double[] value = new double[7];
 
 		readKeyword(CRSKeyword.TOWGS84);
 
 		readLeftDelimiter();
 
-		while (!peekRightDelimiter()) {
-			value.append(reader.readToken());
-		}
+		for (int i = 0; i < value.length; i++) {
 
+			if (i > 0) {
+				readSeparator();
+			}
+
+			value[i] = reader.readNumber();
+		}
 		readRightDelimiter();
 
-		return value.toString();
+		return value;
 	}
 
 	/**
@@ -4298,9 +4511,9 @@ public class CRSReader implements Closeable {
 	 * @throws IOException
 	 *             upon failure to read
 	 */
-	public Map<String, String> readExtensionsCompat() throws IOException {
+	public Map<String, Object> readExtensionsCompat() throws IOException {
 
-		Map<String, String> extensions = new LinkedHashMap<>();
+		Map<String, Object> extensions = new LinkedHashMap<>();
 
 		do {
 

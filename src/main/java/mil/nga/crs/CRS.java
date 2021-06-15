@@ -91,6 +91,15 @@ public abstract class CRS implements ScopeExtentIdentifierRemark {
 	}
 
 	/**
+	 * Initialize the extras map if not already
+	 */
+	public void initializeExtras() {
+		if (extras == null) {
+			extras = new LinkedHashMap<>();
+		}
+	}
+
+	/**
 	 * Determine if there are temporary extras that are not part of the CRS
 	 * definition
 	 * 
@@ -144,9 +153,7 @@ public abstract class CRS implements ScopeExtentIdentifierRemark {
 	 *            extra value
 	 */
 	public void addExtra(String name, Object extra) {
-		if (extras == null) {
-			extras = new LinkedHashMap<>();
-		}
+		initializeExtras();
 		extras.put(name, extra);
 	}
 
@@ -157,9 +164,7 @@ public abstract class CRS implements ScopeExtentIdentifierRemark {
 	 *            extra values
 	 */
 	public void addExtras(Map<String, Object> extras) {
-		if (this.extras == null) {
-			this.extras = new LinkedHashMap<>();
-		}
+		initializeExtras();
 		this.extras.putAll(extras);
 	}
 

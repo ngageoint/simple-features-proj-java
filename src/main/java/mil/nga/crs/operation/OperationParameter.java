@@ -70,8 +70,23 @@ public class OperationParameter implements Identifiable {
 	 *            value
 	 */
 	public OperationParameter(String name, double value) {
+		this(name, value, null);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param name
+	 *            name
+	 * @param value
+	 *            value
+	 * @param unit
+	 *            unit
+	 */
+	public OperationParameter(String name, double value, Unit unit) {
 		this.name = name;
 		this.value = value;
+		this.unit = unit;
 		updateParameter();
 	}
 
@@ -84,8 +99,24 @@ public class OperationParameter implements Identifiable {
 	 *            value
 	 */
 	public OperationParameter(OperationParameters parameter, double value) {
+		this(parameter, value, null);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param parameter
+	 *            operation parameter
+	 * @param value
+	 *            value
+	 * @param unit
+	 *            unit
+	 */
+	public OperationParameter(OperationParameters parameter, double value,
+			Unit unit) {
 		this.name = parameter.getName();
 		this.value = value;
+		this.unit = unit;
 		this.parameter = parameter;
 	}
 

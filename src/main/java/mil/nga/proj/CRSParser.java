@@ -9,11 +9,9 @@ import org.locationtech.proj4j.CRSFactory;
 import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.locationtech.proj4j.datum.Datum;
 import org.locationtech.proj4j.datum.Ellipsoid;
-import org.locationtech.proj4j.datum.Grid;
 import org.locationtech.proj4j.parser.DatumParameters;
 import org.locationtech.proj4j.proj.Projection;
-import org.locationtech.proj4j.units.Units;
-import org.locationtech.proj4j.util.ProjectionMath;
+import org.locationtech.proj4j.units.DegreeUnit;
 
 import mil.nga.crs.CRS;
 import mil.nga.crs.CRSException;
@@ -22,6 +20,8 @@ import mil.nga.crs.SimpleCoordinateReferenceSystem;
 import mil.nga.crs.common.Axis;
 import mil.nga.crs.common.CoordinateSystem;
 import mil.nga.crs.common.Unit;
+import mil.nga.crs.common.UnitType;
+import mil.nga.crs.common.Units;
 import mil.nga.crs.geo.GeoCoordinateReferenceSystem;
 import mil.nga.crs.geo.GeoDatum;
 import mil.nga.crs.geo.PrimeMeridian;
@@ -181,9 +181,6 @@ public class CRSParser {
 			datumParameters.setA(ellipsoid.getA());
 			datumParameters.setES(0);
 		} else {
-			// datumParameters.setDatumTransform(new double[] { 446.448,
-			// -125.157,
-			// 542.06, 0.15, 0.247, 0.842, -20.489 }); // TODO
 			datumParameters.setEllipsoid(ellipsoid);
 		}
 
@@ -237,8 +234,6 @@ public class CRSParser {
 	public static Datum convert(GeoDatum geoDatum) {
 
 		String name = geoDatum.getName();
-		double[] transform = null; // TODO?
-		List<Grid> grids = null; // TODO?
 		Ellipsoid ellipsoid = convert(geoDatum.getEllipsoid());
 
 		String code = name;
@@ -246,7 +241,7 @@ public class CRSParser {
 			code = geoDatum.getIdentifier(0).getNameAndUniqueIdentifier();
 		}
 
-		return new Datum(code, transform, grids, ellipsoid, name);
+		return new Datum(code, null, null, ellipsoid, name);
 	}
 
 	/**
@@ -307,50 +302,49 @@ public class CRSParser {
 
 		double[] transform3 = new double[3];
 		double[] transform7 = new double[7];
-		boolean has3 = false;
-		boolean has7 = false;
+		boolean param3 = false;
+		boolean param7 = false;
 
 		for (OperationParameter parameter : method.getParameters()) {
 
 			if (parameter.hasParameter()) {
 
-				// TODO units
-
 				switch (parameter.getParameter()) {
 
 				case X_AXIS_TRANSLATION:
-					transform3[0] = parameter.getValue();
-					has3 = true;
+					transform3[0] = getValue(parameter, Units.getMetre());
+					param3 = true;
 					break;
 
 				case Y_AXIS_TRANSLATION:
-					transform3[1] = parameter.getValue();
-					has3 = true;
+					transform3[1] = getValue(parameter, Units.getMetre());
+					param3 = true;
 					break;
 
 				case Z_AXIS_TRANSLATION:
-					transform3[2] = parameter.getValue();
-					has3 = true;
+					transform3[2] = getValue(parameter, Units.getMetre());
+					param3 = true;
 					break;
 
 				case X_AXIS_ROTATION:
-					transform7[3] = parameter.getValue();
-					has7 = true;
+					transform7[3] = getValue(parameter, Units.getArcSecond());
+					param7 = true;
 					break;
 
 				case Y_AXIS_ROTATION:
-					transform7[4] = parameter.getValue();
-					has7 = true;
+					transform7[4] = getValue(parameter, Units.getArcSecond());
+					param7 = true;
 					break;
 
 				case Z_AXIS_ROTATION:
-					transform7[5] = parameter.getValue();
-					has7 = true;
+					transform7[5] = getValue(parameter, Units.getArcSecond());
+					param7 = true;
 					break;
 
 				case SCALE_DIFFERENCE:
-					transform7[6] = parameter.getValue();
-					has7 = true;
+					transform7[6] = getValue(parameter,
+							Units.getPartsPerMillion());
+					param7 = true;
 					break;
 
 				default:
@@ -361,12 +355,12 @@ public class CRSParser {
 		}
 
 		double[] transform = null;
-		if (has7) {
+		if (param7) {
 			transform7[0] = transform3[0];
 			transform7[1] = transform3[1];
 			transform7[2] = transform3[2];
 			transform = transform7;
-		} else if (has3) {
+		} else if (param3) {
 			transform = transform3;
 		}
 
@@ -390,12 +384,9 @@ public class CRSParser {
 
 		if (geoDatum.hasPrimeMeridian()) {
 			PrimeMeridian primeMeridian = geoDatum.getPrimeMeridian();
-			double primeMeridianLongitude = primeMeridian.getLongitude();
-			if (primeMeridian.hasLongitudeUnit()
-					&& Units.findUnits(primeMeridian.getLongitudeUnit()
-							.getName()) == Units.RADIANS) {
-				primeMeridianLongitude *= ProjectionMath.RTD;
-			}
+			double primeMeridianLongitude = convertValue(
+					primeMeridian.getLongitude(),
+					primeMeridian.getLongitudeUnit(), Units.getDegree());
 			projection
 					.setPrimeMeridian(Double.toString(primeMeridianLongitude));
 		}
@@ -414,13 +405,10 @@ public class CRSParser {
 
 		Unit unit = coordinateSystem.getAxisUnit();
 
-		org.locationtech.proj4j.units.Unit projUnit = Units.METRES;
-		if (unit != null) {
-			projUnit = Units.findUnits(unit.getName());
-		}
-
 		String projectionName = null;
-		if (projUnit == Units.DEGREES) {
+		if (unit != null && (unit.getType() == UnitType.ANGLEUNIT
+				|| (unit.getType() == UnitType.UNIT
+						&& unit.getName().toLowerCase().startsWith("deg")))) {
 			projectionName = "longlat";
 		} else {
 			projectionName = "merc";
@@ -558,14 +546,6 @@ public class CRSParser {
 		Projection projection = getCRSFactory().getRegistry()
 				.getProjection(projectionName);
 
-		Unit unit = coordinateSystem.getAxisUnit();
-
-		org.locationtech.proj4j.units.Unit projUnit = Units.METRES;
-		if (unit != null) {
-			projUnit = Units.findUnits(unit.getName());
-		}
-		projection.setUnits(projUnit);
-
 		String axisOrder = convert(coordinateSystem.getAxes());
 		// Only known proj4 axis specification is wsu
 		if (axisOrder.equals("wsu")) {
@@ -607,51 +587,43 @@ public class CRSParser {
 
 		if (parameter.hasParameter()) {
 
-			double value = parameter.getValue();
-
 			switch (parameter.getParameter()) {
 
 			case FALSE_EASTING:
 			case EASTING_AT_PROJECTION_CENTRE:
 			case EASTING_AT_FALSE_ORIGIN:
-				projection.setFalseEasting(value);
+				projection.setFalseEasting(
+						getValue(parameter, projection.getUnits()));
 				break;
 
 			case FALSE_NORTHING:
 			case NORTHING_AT_PROJECTION_CENTRE:
 			case NORTHING_AT_FALSE_ORIGIN:
-				projection.setFalseNorthing(value);
+				projection.setFalseNorthing(
+						getValue(parameter, projection.getUnits()));
 				break;
 
 			case SCALE_FACTOR_AT_NATURAL_ORIGIN:
 			case SCALE_FACTOR_ON_INITIAL_LINE:
-				projection.setScaleFactor(value);
+				projection
+						.setScaleFactor(getValue(parameter, Units.getUnity()));
 				break;
 
 			case LATITUDE_OF_1ST_STANDARD_PARALLEL:
-				if (parameterValueIsDegrees(parameter)) {
-					projection.setProjectionLatitude1Degrees(value);
-				} else {
-					projection.setProjectionLatitude1(value);
-				}
+				projection.setProjectionLatitude1(
+						getValue(parameter, Units.getRadian()));
 				break;
 
 			case LATITUDE_OF_2ND_STANDARD_PARALLEL:
-				if (parameterValueIsDegrees(parameter)) {
-					projection.setProjectionLatitude2Degrees(value);
-				} else {
-					projection.setProjectionLatitude2(value);
-				}
+				projection.setProjectionLatitude2(
+						getValue(parameter, Units.getRadian()));
 				break;
 
 			case LATITUDE_OF_PROJECTION_CENTRE:
 			case LATITUDE_OF_NATURAL_ORIGIN:
 			case LATITUDE_OF_FALSE_ORIGIN:
-				if (parameterValueIsDegrees(parameter)) {
-					projection.setProjectionLatitudeDegrees(value);
-				} else {
-					projection.setProjectionLatitude(value);
-				}
+				projection.setProjectionLatitude(
+						getValue(parameter, Units.getRadian()));
 				if (method.hasMethod()) {
 					switch (method.getMethod()) {
 					case POLAR_STEREOGRAPHIC_A:
@@ -669,11 +641,8 @@ public class CRSParser {
 			case LONGITUDE_OF_NATURAL_ORIGIN:
 			case LONGITUDE_OF_FALSE_ORIGIN:
 			case LONGITUDE_OF_ORIGIN:
-				if (parameterValueIsDegrees(parameter)) {
-					projection.setProjectionLongitudeDegrees(value);
-				} else {
-					projection.setProjectionLongitude(value);
-				}
+				projection.setProjectionLongitude(
+						getValue(parameter, Units.getRadian()));
 				break;
 
 			default:
@@ -691,7 +660,7 @@ public class CRSParser {
 	 *            list of axes
 	 * @return axis order
 	 */
-	private static String convert(List<Axis> axes) {
+	public static String convert(List<Axis> axes) {
 
 		String axisValue = null;
 
@@ -753,23 +722,64 @@ public class CRSParser {
 	}
 
 	/**
-	 * Determine if the parameter unit is in degrees, either not specified or
-	 * explicit
+	 * Get the operation parameter value in the specified unit
 	 * 
 	 * @param parameter
-	 *            map projection parameter
-	 * @return true if degrees
+	 *            operation parameter
+	 * @param unit
+	 *            desired unit
+	 * @return value
 	 */
-	private static boolean parameterValueIsDegrees(
-			OperationParameter parameter) {
+	public static double getValue(OperationParameter parameter,
+			org.locationtech.proj4j.units.Unit unit) {
 
-		boolean degrees = true;
+		Unit desiredUnit = null;
 
-		if (parameter.hasUnit()) {
-			degrees = parameter.getUnit().getName().equalsIgnoreCase("degree");
+		if (unit instanceof DegreeUnit) {
+			desiredUnit = Units.getDegree();
+		} else {
+			desiredUnit = Units.getMetre();
 		}
 
-		return degrees;
+		return getValue(parameter, desiredUnit);
+	}
+
+	/**
+	 * Get the operation parameter value in the specified unit
+	 * 
+	 * @param parameter
+	 *            operation parameter
+	 * @param unit
+	 *            desired unit
+	 * @return value
+	 */
+	public static double getValue(OperationParameter parameter, Unit unit) {
+		return convertValue(parameter.getValue(), parameter.getUnit(), unit);
+	}
+
+	/**
+	 * Convert the value from a unit to another
+	 * 
+	 * @param value
+	 *            value to convert
+	 * @param fromUnit
+	 *            from unit
+	 * @param toUnit
+	 *            to unit
+	 * @return value
+	 */
+	public static double convertValue(double value, Unit fromUnit,
+			Unit toUnit) {
+
+		if (fromUnit == null) {
+			fromUnit = Units.getDefaultUnit(toUnit.getType());
+		}
+
+		if (Units.canConvert(fromUnit, toUnit)) {
+			value = Units.convert(value, fromUnit, toUnit);
+		}
+
+		return value;
 	}
 
 }

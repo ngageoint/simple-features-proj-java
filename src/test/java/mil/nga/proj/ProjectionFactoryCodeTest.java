@@ -41,6 +41,7 @@ public class ProjectionFactoryCodeTest {
 	public void test3035() {
 
 		final String code = "3035";
+		double delta = 0.0000001;
 
 		String definition = "PROJCRS[\"ETRS89-extended / LAEA Europe\",BASEGEOGCRS[\"ETRS89\","
 				+ "ENSEMBLE[\"European Terrestrial Reference System 1989 ensemble\","
@@ -67,7 +68,7 @@ public class ProjectionFactoryCodeTest {
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3035]]";
 
 		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
-				definition);
+				definition, delta);
 
 		definition = "PROJCS[\"ETRS89 / ETRS-LAEA\",GEOGCS[\"ETRS89\","
 				+ "DATUM[\"European_Terrestrial_Reference_System_1989\","
@@ -269,6 +270,7 @@ public class ProjectionFactoryCodeTest {
 	public void test3978() {
 
 		final String code = "3978";
+		double delta = 0.000001;
 
 		String definition = "PROJCRS[\"NAD83 / Canada Atlas Lambert\",BASEGEOGCRS[\"NAD83\","
 				+ "DATUM[\"North American Datum 1983\","
@@ -286,7 +288,7 @@ public class ProjectionFactoryCodeTest {
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",3978]]";
 
 		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
-				definition);
+				definition, delta);
 
 		definition = "PROJCS[\"NAD83 / Canada Atlas Lambert\",GEOGCS[\"NAD83\","
 				+ "DATUM[\"North_American_Datum_1983\","
@@ -444,6 +446,7 @@ public class ProjectionFactoryCodeTest {
 	public void test5041() {
 
 		final String code = "5041";
+		double delta = 0.0000000000001;
 
 		String definition = "PROJCRS[\"WGS 84 / UPS North (E,N)\",BASEGEOGCRS[\"WGS 84\","
 				+ "ENSEMBLE[\"World Geodetic System 1984 ensemble\","
@@ -468,7 +471,7 @@ public class ProjectionFactoryCodeTest {
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5041]]";
 
 		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
-				definition);
+				definition, delta);
 
 		definition = "PROJCS[\"WGS 84 / UPS North (E,N)\","
 				+ "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\","
@@ -517,7 +520,7 @@ public class ProjectionFactoryCodeTest {
 				+ "ID[\"EPSG\",\"5041\"]]";
 
 		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
-				definition);
+				definition, delta);
 
 	}
 
@@ -528,6 +531,7 @@ public class ProjectionFactoryCodeTest {
 	public void test5042() {
 
 		final String code = "5042";
+		double delta = 0.0000000000001;
 
 		String definition = "PROJCRS[\"WGS 84 / UPS South (E,N)\",BASEGEOGCRS[\"WGS 84\","
 				+ "ENSEMBLE[\"World Geodetic System 1984 ensemble\","
@@ -552,7 +556,7 @@ public class ProjectionFactoryCodeTest {
 				+ "LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]],ID[\"EPSG\",5042]]";
 
 		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
-				definition);
+				definition, delta);
 
 		definition = "PROJCS[\"WGS 84 / UPS South (E,N)\","
 				+ "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\","
@@ -601,7 +605,7 @@ public class ProjectionFactoryCodeTest {
 				+ "ID[\"EPSG\",\"5042\"]]";
 
 		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
-				definition);
+				definition, delta);
 
 	}
 
@@ -612,6 +616,7 @@ public class ProjectionFactoryCodeTest {
 	public void test7405() {
 
 		final String code = "7405";
+		double delta = 0.0000001;
 
 		String definition = "COMPOUNDCRS[\"OSGB36 / British National Grid + ODN height\","
 				+ "PROJCRS[\"OSGB36 / British National Grid\",BASEGEOGCRS[\"OSGB36\","
@@ -627,9 +632,9 @@ public class ProjectionFactoryCodeTest {
 				+ "PARAMETER[\"X-axis translation\",446.448,LENGTHUNIT[\"metre\",1.0]],"
 				+ "PARAMETER[\"Y-axis translation\",-125.157,LENGTHUNIT[\"metre\",1.0]],"
 				+ "PARAMETER[\"Z-axis translation\",542.06,LENGTHUNIT[\"metre\",1.0]],"
-				+ "PARAMETER[\"X-axis rotation\",0.15,ANGLEUNIT[\"microradian\",1E-06]],"
-				+ "PARAMETER[\"Y-axis rotation\",0.247,ANGLEUNIT[\"microradian\",1E-06]],"
-				+ "PARAMETER[\"Z-axis rotation\",0.842,ANGLEUNIT[\"microradian\",1E-06]],"
+				+ "PARAMETER[\"X-axis rotation\",0.15,ANGLEUNIT[\"arc-second\",4.84813681109535993589914102357E-06]],"
+				+ "PARAMETER[\"Y-axis rotation\",0.247,ANGLEUNIT[\"arc-second\",4.84813681109535993589914102357E-06]],"
+				+ "PARAMETER[\"Z-axis rotation\",0.842,ANGLEUNIT[\"arc-second\",4.84813681109535993589914102357E-06]],"
 				+ "PARAMETER[\"Scale difference\",-20.489,SCALEUNIT[\"parts per million\",1E-06]],"
 				+ "ID[\"EPSG\",19916]],CS[Cartesian,2,ID[\"EPSG\",4400]],"
 				+ "AXIS[\"Easting (E)\",east],AXIS[\"Northing (N)\",north],"
@@ -641,7 +646,7 @@ public class ProjectionFactoryCodeTest {
 				+ "ID[\"EPSG\",7405]]";
 
 		projectionTestDerived(ProjectionConstants.AUTHORITY_EPSG, code,
-				ProjectionConstants.AUTHORITY_EPSG, "27700", definition);
+				ProjectionConstants.AUTHORITY_EPSG, "27700", definition, delta);
 
 		definition = "COMPD_CS[\"OSGB 1936 / British National Grid + ODN height\","
 				+ "PROJCS[\"OSGB 1936 / British National Grid\",GEOGCS[\"OSGB 1936\","
@@ -1287,26 +1292,26 @@ public class ProjectionFactoryCodeTest {
 					proj2.getPROJ4Description().toLowerCase());
 		}
 		assertEquals(proj.getProjectionLatitude(),
-				proj2.getProjectionLatitude(), 0);
+				proj2.getProjectionLatitude(), delta);
 		assertEquals(proj.getProjectionLatitude1(),
-				proj2.getProjectionLatitude1(), 0);
+				proj2.getProjectionLatitude1(), delta);
 		assertEquals(proj.getProjectionLatitude1Degrees(),
-				proj2.getProjectionLatitude1Degrees(), 0);
+				proj2.getProjectionLatitude1Degrees(), delta);
 		assertEquals(proj.getProjectionLatitude2(),
-				proj2.getProjectionLatitude2(), 0);
+				proj2.getProjectionLatitude2(), delta);
 		assertEquals(proj.getProjectionLatitude2Degrees(),
-				proj2.getProjectionLatitude2Degrees(), 0);
+				proj2.getProjectionLatitude2Degrees(), delta);
 		assertEquals(proj.getProjectionLatitudeDegrees(),
-				proj2.getProjectionLatitudeDegrees(), 0);
+				proj2.getProjectionLatitudeDegrees(), delta);
 		assertEquals(proj.getProjectionLongitude(),
 				proj2.getProjectionLongitude(), delta);
 		assertEquals(proj.getProjectionLongitudeDegrees(),
 				proj2.getProjectionLongitudeDegrees(), delta);
 		assertEquals(proj.getScaleFactor(), proj2.getScaleFactor(), 0);
 		assertEquals(proj.getTrueScaleLatitude(), proj2.getTrueScaleLatitude(),
-				0);
+				delta);
 		assertEquals(proj.getTrueScaleLatitudeDegrees(),
-				proj2.getTrueScaleLatitudeDegrees(), 0);
+				proj2.getTrueScaleLatitudeDegrees(), delta);
 		assertEquals(proj.getUnits(), proj2.getUnits());
 
 	}
