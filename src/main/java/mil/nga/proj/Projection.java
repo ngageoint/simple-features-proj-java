@@ -4,6 +4,8 @@ import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.locationtech.proj4j.units.Unit;
 import org.locationtech.proj4j.units.Units;
 
+import mil.nga.crs.CRS;
+
 /**
  * Single Projection for an authority and code
  * 
@@ -22,7 +24,7 @@ public class Projection {
 	private final String code;
 
 	/**
-	 * Coordinate Reference System
+	 * Projection Coordinate Reference System
 	 */
 	private final CoordinateReferenceSystem crs;
 
@@ -32,6 +34,11 @@ public class Projection {
 	private final String definition;
 
 	/**
+	 * Definition parsed Coordinate Reference System
+	 */
+	private final CRS definitionCRS;
+
+	/**
 	 * Constructor
 	 *
 	 * @param authority
@@ -39,7 +46,7 @@ public class Projection {
 	 * @param code
 	 *            coordinate code
 	 * @param crs
-	 *            crs
+	 *            projection coordinate reference system
 	 */
 	public Projection(String authority, long code,
 			CoordinateReferenceSystem crs) {
@@ -54,7 +61,7 @@ public class Projection {
 	 * @param code
 	 *            coordinate code
 	 * @param crs
-	 *            crs
+	 *            projection coordinate reference system
 	 */
 	public Projection(String authority, String code,
 			CoordinateReferenceSystem crs) {
@@ -69,13 +76,13 @@ public class Projection {
 	 * @param code
 	 *            coordinate code
 	 * @param crs
-	 *            crs
+	 *            projection coordinate reference system
 	 * @param definition
 	 *            well-known text coordinate definition
 	 */
 	public Projection(String authority, long code,
 			CoordinateReferenceSystem crs, String definition) {
-		this(authority, String.valueOf(code), crs, definition);
+		this(authority, code, crs, definition, null);
 	}
 
 	/**
@@ -86,12 +93,52 @@ public class Projection {
 	 * @param code
 	 *            coordinate code
 	 * @param crs
-	 *            crs
+	 *            projection coordinate reference system
 	 * @param definition
 	 *            well-known text coordinate definition
 	 */
 	public Projection(String authority, String code,
 			CoordinateReferenceSystem crs, String definition) {
+		this(authority, code, crs, definition, null);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param authority
+	 *            coordinate authority
+	 * @param code
+	 *            coordinate code
+	 * @param crs
+	 *            projection coordinate reference system
+	 * @param definition
+	 *            well-known text coordinate definition
+	 * @param definitionCRS
+	 *            definition parsed coordinate reference system
+	 */
+	public Projection(String authority, long code,
+			CoordinateReferenceSystem crs, String definition,
+			CRS definitionCRS) {
+		this(authority, String.valueOf(code), crs, definition, definitionCRS);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param authority
+	 *            coordinate authority
+	 * @param code
+	 *            coordinate code
+	 * @param crs
+	 *            projection coordinate reference system
+	 * @param definition
+	 *            well-known text coordinate definition
+	 * @param definitionCRS
+	 *            definition parsed coordinate reference system
+	 */
+	public Projection(String authority, String code,
+			CoordinateReferenceSystem crs, String definition,
+			CRS definitionCRS) {
 		if (authority == null || code == null || crs == null) {
 			throw new IllegalArgumentException(
 					"All projection arguments are required. authority: "
@@ -101,6 +148,7 @@ public class Projection {
 		this.code = code;
 		this.crs = crs;
 		this.definition = definition;
+		this.definitionCRS = definitionCRS;
 	}
 
 	/**
@@ -124,7 +172,7 @@ public class Projection {
 	/**
 	 * Get the Coordinate Reference System
 	 * 
-	 * @return Coordinate Reference System
+	 * @return coordinate reference system
 	 */
 	public CoordinateReferenceSystem getCrs() {
 		return crs;
@@ -137,6 +185,15 @@ public class Projection {
 	 */
 	public String getDefinition() {
 		return definition;
+	}
+
+	/**
+	 * Get the definition parsed Coordinate Reference System
+	 * 
+	 * @return coordinate reference system
+	 */
+	public CRS getDefinitionCRS() {
+		return definitionCRS;
 	}
 
 	/**

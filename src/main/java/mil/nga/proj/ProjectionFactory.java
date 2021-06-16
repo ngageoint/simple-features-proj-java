@@ -298,21 +298,21 @@ public class ProjectionFactory {
 
 		if (definition != null && !definition.isEmpty()) {
 
-			CRS crsObject = null;
+			CRS definitionCRS = null;
 			try {
-				crsObject = CRSReader.read(definition);
+				definitionCRS = CRSReader.read(definition);
 			} catch (IOException e) {
 				throw new ProjectionException(
 						"Failed to parse definition: " + definition, e);
 			}
 
-			if (crsObject != null) {
+			if (definitionCRS != null) {
 
 				String authority = null;
 				String code = null;
 
-				if (crsObject.hasIdentifiers()) {
-					Identifier identifier = crsObject.getIdentifier(0);
+				if (definitionCRS.hasIdentifiers()) {
+					Identifier identifier = definitionCRS.getIdentifier(0);
 					authority = identifier.getName();
 					code = identifier.getUniqueIdentifier();
 				}
@@ -347,10 +347,10 @@ public class ProjectionFactory {
 				if (projection == null) {
 
 					CoordinateReferenceSystem crs = CRSParser
-							.convert(crsObject);
+							.convert(definitionCRS);
 					if (crs != null) {
 						projection = new Projection(authority, code, crs,
-								definition);
+								definition, definitionCRS);
 						if (cache) {
 							projections.addProjection(projection);
 						}
@@ -451,10 +451,14 @@ public class ProjectionFactory {
 		if (definition != null && !definition.isEmpty()) {
 
 			try {
-				CoordinateReferenceSystem crs = CRSParser.parse(definition);
+				CoordinateReferenceSystem crs = null;
+				CRS definitionCRS = CRSReader.read(definition);
+				if (definitionCRS != null) {
+					crs = CRSParser.convert(definitionCRS);
+				}
 				if (crs != null) {
 					projection = new Projection(authority, code, crs,
-							definition);
+							definition, definitionCRS);
 					projections.addProjection(projection);
 				}
 			} catch (Exception e) {
