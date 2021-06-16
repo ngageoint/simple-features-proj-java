@@ -4,9 +4,9 @@ Adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## 3.0.5 (TBD)
+## 4.0.0 (TBD)
 
-* TBD
+* Non simple feature projection functionality (including proj4j) moved to new dependency, projections-java
 
 ## [3.0.4](https://github.com/ngageoint/simple-features-proj-java/releases/tag/3.0.4) (03-03-2021)
 

@@ -38,14 +38,14 @@ Geometry transformed = transform.transform(geometry);
 
 ### Installation ###
 
-Pull from the [Maven Central Repository](http://search.maven.org/#artifactdetails|mil.nga.sf|sf-proj|3.0.4|jar) (JAR, POM, Source, Javadoc)
+Pull from the [Maven Central Repository](http://search.maven.org/#artifactdetails|mil.nga.sf|sf-proj|4.0.0|jar) (JAR, POM, Source, Javadoc)
 
 ```xml
 
 <dependency>
     <groupId>mil.nga.sf</groupId>
     <artifactId>sf-proj</artifactId>
-    <version>3.0.4</version>
+    <version>4.0.0</version>
 </dependency>
 
 ```
@@ -61,4 +61,4 @@ Build this repository using Eclipse and/or Maven:
 ### Remote Dependencies ###
 
 * [Simple Features](https://github.com/ngageoint/simple-features-java) (The MIT License (MIT)) - Simple Features Lib
-* [Proj4J](https://github.com/locationtech/proj4j) (Apache License, Version 2.0) - Projection Library
+* [Projections](https://github.com/ngageoint/projections-java) (The MIT License (MIT)) - Projections Lib

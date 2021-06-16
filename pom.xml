@@ -49,9 +49,9 @@
 			<version>2.0.4</version>
 		</dependency>
 		<dependency>
-			<groupId>org.locationtech.proj4j</groupId>
-			<artifactId>proj4j</artifactId>
-			<version>1.1.2</version>
+			<groupId>mil.nga</groupId>
+			<artifactId>proj</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -83,6 +83,8 @@
 				<configuration>
 					<links>
 						<link>http://ngageoint.github.io/simple-features-java/docs/api/</link>
+						<link>http://ngageoint.github.io/projections-java/docs/api/</link>
+						<link>http://ngageoint.github.io/coordinate-reference-systems-java/docs/api/</link>
 					</links>
 				</configuration>
 				<executions>

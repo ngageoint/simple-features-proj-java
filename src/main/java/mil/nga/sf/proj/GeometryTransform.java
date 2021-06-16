@@ -262,29 +262,13 @@ public class GeometryTransform extends ProjectionTransform {
 	 */
 	public GeometryEnvelope transform(GeometryEnvelope envelope) {
 
-		ProjCoordinate lowerLeft = new ProjCoordinate(envelope.getMinX(),
-				envelope.getMinY());
-		ProjCoordinate lowerRight = new ProjCoordinate(envelope.getMaxX(),
-				envelope.getMinY());
-		ProjCoordinate upperRight = new ProjCoordinate(envelope.getMaxX(),
-				envelope.getMaxY());
-		ProjCoordinate upperLeft = new ProjCoordinate(envelope.getMinX(),
-				envelope.getMaxY());
+		double[] bounds = transform(envelope.getMinX(), envelope.getMinY(),
+				envelope.getMaxX(), envelope.getMaxY());
 
-		ProjCoordinate projectedLowerLeft = transform(lowerLeft);
-		ProjCoordinate projectedLowerRight = transform(lowerRight);
-		ProjCoordinate projectedUpperRight = transform(upperRight);
-		ProjCoordinate projectedUpperLeft = transform(upperLeft);
+		GeometryEnvelope projectedEnvelope = new GeometryEnvelope(bounds[0],
+				bounds[1], bounds[2], bounds[3]);
 
-		double minX = Math.min(projectedLowerLeft.x, projectedUpperLeft.x);
-		double maxX = Math.max(projectedLowerRight.x, projectedUpperRight.x);
-		double minY = Math.min(projectedLowerLeft.y, projectedLowerRight.y);
-		double maxY = Math.max(projectedUpperLeft.y, projectedUpperRight.y);
-
-		GeometryEnvelope projectedGeometryEnvelope = new GeometryEnvelope(minX,
-				minY, maxX, maxY);
-
-		return projectedGeometryEnvelope;
+		return projectedEnvelope;
 	}
 
 	/**
