@@ -204,6 +204,17 @@ public class GeometryTransform extends ProjectionTransform {
 	}
 
 	/**
+	 * Create a geometry projection transform
+	 * 
+	 * @param transform
+	 *            projection transform
+	 * @return geometry projection transform
+	 */
+	public static GeometryTransform create(ProjectionTransform transform) {
+		return new GeometryTransform(transform);
+	}
+
+	/**
 	 * Constructor
 	 * 
 	 * @param fromProjection
