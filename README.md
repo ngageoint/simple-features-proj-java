@@ -30,7 +30,8 @@ Projection projection2 = ProjectionFactory.getProjection(
     ProjectionConstants.AUTHORITY_EPSG,
     ProjectionConstants.EPSG_WORLD_GEODETIC_SYSTEM);
 
-ProjectionTransform transform = projection1.getTransformation(projection2);
+GeometryTransform transform = GeometryTransform.create(projection1,
+    projection2);
 
 Geometry transformed = transform.transform(geometry);
 
