@@ -4,9 +4,11 @@ Adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## 4.0.0 (TBD)
+## [4.0.0](https://github.com/ngageoint/simple-features-proj-java/releases/tag/4.0.0) (06-24-2021)
 
-* Non simple feature projection functionality (including proj4j) moved to new dependency, projections-java
+* All projection functionality (including proj4j) moved to new dependency, projections-java
+* Package names from moved classes changed from mil.nga.sf.proj to mil.nga.proj
+* GeometryProjectionTransform renamed to GeometryTransform with added static creations
 
 ## [3.0.4](https://github.com/ngageoint/simple-features-proj-java/releases/tag/3.0.4) (03-03-2021)
 
