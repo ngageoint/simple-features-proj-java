@@ -246,25 +246,6 @@ public class GeometryTransform extends ProjectionTransform {
 	}
 
 	/**
-	 * Transform a list of points
-	 * 
-	 * @param from
-	 *            points to transform
-	 * @return transformed points
-	 */
-	public List<Point> transform(List<Point> from) {
-
-		List<Point> to = new ArrayList<>();
-
-		for (Point fromPoint : from) {
-			Point toPoint = transform(fromPoint);
-			to.add(toPoint);
-		}
-
-		return to;
-	}
-
-	/**
 	 * Transform the geometry envelope
 	 * 
 	 * @param envelope
@@ -373,6 +354,25 @@ public class GeometryTransform extends ProjectionTransform {
 		}
 		if (from.hasM()) {
 			to.setM(from.getM());
+		}
+
+		return to;
+	}
+
+	/**
+	 * Transform a list of points
+	 * 
+	 * @param from
+	 *            points to transform
+	 * @return transformed points
+	 */
+	public List<Point> transform(List<Point> from) {
+
+		List<Point> to = new ArrayList<>();
+
+		for (Point fromPoint : from) {
+			Point toPoint = transform(fromPoint);
+			to.add(toPoint);
 		}
 
 		return to;
