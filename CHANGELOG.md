@@ -7,6 +7,7 @@ Adheres to [Semantic Versioning](http://semver.org/).
 ## 4.1.1 (TBD)
 
 * Java 11
+* proj 1.1.1
 
 ## [4.1.0](https://github.com/ngageoint/simple-features-proj-java/releases/tag/4.1.0) (11-04-2021)
 
