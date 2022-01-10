@@ -1,4 +1,4 @@
-#Change Log
+# Change Log
 All notable changes to this project will be documented in this file.
 Adheres to [Semantic Versioning](http://semver.org/).
 
@@ -6,8 +6,9 @@ Adheres to [Semantic Versioning](http://semver.org/).
 
 ## 4.1.1 (TBD)
 
-* Java 11
+* simple-features-java version 2.0.5
 * proj 1.1.1
+* Java 11
 
 ## [4.1.0](https://github.com/ngageoint/simple-features-proj-java/releases/tag/4.1.0) (11-04-2021)
 
