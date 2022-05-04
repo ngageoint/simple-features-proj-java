@@ -4,7 +4,7 @@ Adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## 4.1.3 (TBD)
+## [4.1.3](https://github.com/ngageoint/simple-features-proj-java/releases/tag/4.1.3) (05-04-2022)
 
 * proj 1.1.2
 * Non projected ETRS89 GeoDatum fix (EPSG:4258)
