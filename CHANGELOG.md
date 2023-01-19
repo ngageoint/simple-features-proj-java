@@ -4,9 +4,10 @@ Adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## 4.3.1 (TBD)
+## [4.3.1](https://github.com/ngageoint/simple-features-proj-java/releases/tag/4.3.1) (01-19-2023)
 
-* TBD
+* simple-features-java version 2.2.1
+* proj 1.1.3
 
 ## [4.3.0](https://github.com/ngageoint/simple-features-proj-java/releases/tag/4.3.0) (09-21-2022)
 
