@@ -6,7 +6,7 @@ Adheres to [Semantic Versioning](http://semver.org/).
 
 ## 4.3.2 (TBD)
 
-* TBD
+* simple-features-java version 2.2.2
 
 ## [4.3.1](https://github.com/ngageoint/simple-features-proj-java/releases/tag/4.3.1) (01-19-2023)
 
